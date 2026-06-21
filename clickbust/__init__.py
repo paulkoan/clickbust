@@ -1,0 +1,1 @@
+"""Clickbust — Rewrite clickbait headlines with informative ones."""
