@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>We had tensors before we had LLMs</title>
+<meta name="description" content="A conversation about where AI goes next. The transformer won because it fit the hardware. Everything since is a patch. The real breakthrough won't run on a GPU.">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<meta property="og:title" content="We had tensors before we had LLMs">
+<meta property="og:description" content="A conversation about where AI goes next. The transformer won because it fit the hardware. Everything since is a patch. The real breakthrough won't run on a GPU.">
+<meta property="og:url" content="https://clickbust.cybr.fi/notes/2026-06-21.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Paul Murphy">
+<meta property="article:published_time" content="21 June 2026">
+<meta property="article:author" content="Paul">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="We had tensors before we had LLMs">
+<meta name="twitter:description" content="A conversation about where AI goes next. The transformer won because it fit the hardware. Everything since is a patch. The real breakthrough won't run on a GPU.">
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    line-height: 1.6;
+  }
+  .container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    padding: 40px 0 20px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  .back-link {
+    display: inline-block;
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .back-link:hover { text-decoration: underline; }
+  h1 { font-size: 1.6rem; color: #fff; line-height: 1.35; margin-bottom: 12px; }
+  .date {
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 24px;
+  }
+  .body {
+    font-size: 1.05rem;
+    color: #ccc;
+    line-height: 1.8;
+  }
+  .body p {
+    margin-bottom: 1.2em;
+  }
+  .body p:last-child { margin-bottom: 0; }
+  .body h2 {
+    font-size: 1.2rem;
+    color: #fff;
+    margin: 1.5em 0 0.5em;
+  }
+  .body .ref {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 0.5em;
+  }
+  .body .ref a { color: #7c5cfc; text-decoration: none; }
+  .body .ref a:hover { text-decoration: underline; }
+  hr {
+    border: none;
+    border-top: 1px solid #2a2a2a;
+    margin: 30px 0;
+  }
+  .notes-link {
+    display: inline-block;
+    background: #1a1a2e;
+    color: #7c5cfc;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    border: 1px solid #2a2a4a;
+    margin-bottom: 20px;
+  }
+  .notes-link:hover { border-color: #7c5cfc; }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+    border-top: 1px solid #1e1e2e;
+    margin-top: 40px;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div>
+    <a href="https://clickbust.cybr.fi/notes/" class="notes-link">← All Notes</a>
+    <a href="https://clickbust.cybr.fi" class="back-link" style="margin-left: 12px;">Clickbust</a>
+  </div>
+
+  <header>
+    <h1>We had tensors before we had LLMs</h1>
+    <div class="date">21 June 2026</div>
+  </header>
+
+  <div class="body">
+
+<p>Had a conversation today that turned into something bigger than I expected. We were talking about where the next AI breakthrough comes from. Most people are looking in the wrong place.</p>
+
+<h2>The accident we built an industry on</h2>
+
+<p>The transformer won for a reason that has nothing to do with smarts. It won because it parallelises on a GPU. Vaswani and the team at Google published Attention Is All You Need in 2017, and the key advantage was never theoretical elegance. It was that you could train the thing at all. RNNs and LSTMs processed tokens one at a time. Transformers did matrix multiplies. GPUs are really good at matrix multiplies. That's it. That's the whole thing.</p>
+
+<p>The model was shaped by the tool. We had tensors before we had LLMs. We had CUDA. We had clusters of H100s that talk to each other over NVLink. The software grew into whatever compute was available. The model grows to fill the box.</p>
+
+<p>That makes the entire scaling era a hardware-driven phenomenon. Not a scientific one.</p>
+
+<h2>Everything since is level one</h2>
+
+<p>Every optimisation we've seen in the last three years is in the "why didn't we do that from the start" category. Mixture of Experts was published by Shazeer at Google in 2017. DeepSeek-V3 runs 671 billion parameters total and only activates 37 billion per token. That's a 94 per cent reduction in per-token compute. Why wasn't that the default?</p>
+
+<p>Mamba, the state space model from Gu and Dao, does linear-time sequence modelling. O(n) instead of O(n squared). Five times higher throughput than transformers, and it scales to million-length sequences. Their follow-up paper proved transformers and SSMs are mathematically dual. We could have been doing this years ago.</p>
+
+<p>Speculative decoding runs a tiny draft model, generates five tokens cheaply, has the big model verify all five at once. Two to three times speedup on inference with no quality change. The idea is so simple it sounds like a bug.</p>
+
+<p>None of these are new architectures. They're patches on the 2017 design. Version 1.1 of a product, not the next generation.</p>
+
+<h2>The brain is the proof</h2>
+
+<p>The human brain runs on 20 watts. A dim lightbulb. An H100 pulls 700 watts. And the brain learns on that 20 watts. It doesn't train on 15 trillion tokens. It doesn't backpropagate through 100 layers. It doesn't compute softmax dot products.</p>
+
+<p>What the brain does is sparse competition. Groups of neurons compete to represent the input. The winners propagate. The losers go silent. There's no quadratic comparison of every element to every other element. There's a fixed pool of representational capacity, and the loudest signal claims it.</p>
+
+<p>This has a formal basis. The Locally Competitive Algorithm for sparse coding, described by Rozell in 2008, frames neural computation as a dynamic system where neurons compete via lateral inhibition. Most are silent at any moment. The computational cost scales with the complexity of the input, not the size of the model. That's the key difference. A transformer pays O(n squared) for every token, every time. A sparse competitive system pays proportional to the difficulty of the task.</p>
+
+<h2>The hardware trap</h2>
+
+<p>The uncomfortable truth is that the next breakthrough probably isn't coming on a GPU. Groq's LPU is a streaming processor with no memory bottleneck. They claim nearly 100 per cent compute utilisation during inference, compared to 30 to 40 per cent for GPUs that spend most of their time waiting on memory. Cerebras uses an entire silicon wafer as one chip with 4 trillion transistors and no NVLink bottleneck because there are no separate chips. Analog compute does matrix multiplies in the physics of the device, with orders of magnitude lower energy.</p>
+
+<p>Each of these changes the constraints. The model that wins on a GPU is not the model that wins on a streaming processor, a wafer-scale engine, or an analog crossbar.</p>
+
+<h2>The thesis</h2>
+
+<p>We built a trillion-dollar infrastructure on an accidental architecture. The transformer succeeded because it was parallelisable on the hardware we already had. The next breakthrough will be stream-oriented, not state-hoarding. Sparse by default. Fixed-budget computation. Designed for the hardware it runs on, not adapted to run on whatever we have lying around.</p>
+
+<p>That hardware won't be a GPU. And the datacenters we're filling with H100s won't run it. Not because the new thing is better. Because it's different. And the old hardware can't do different.</p>
+
+<hr>
+<p class="ref">References: Vaswani et al. 2017, Attention Is All You Need. Shazeer et al. 2017, Outrageously Large Neural Networks. DeepSeek-V3 Technical Report 2024. Gu and Dao 2023, Mamba. Dao and Gu 2024, Transformers are SSMs. Rozell et al. 2008, Sparse Coding via Local Competition. Groq LPU architecture. Cerebras WSE-3.</p>
+
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>Paul · <a href="https://clickbust.cybr.fi/notes/">All notes</a> · <a href="https://clickbust.cybr.fi">Clickbust</a></p>
+  </div>
+</footer>
+</body>
+</html>
