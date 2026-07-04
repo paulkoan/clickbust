@@ -14,6 +14,7 @@ from .generator import generate_notes_index, generate_site
 from .models import AppConfig, LLMConfig, OutputConfig, SiteConfig
 from .notes import generate_note
 from .rewriter import rewrite_all
+from .archive import load_archive, merge_articles, save_archive
 from .seen_cache import (
     get_cached_result,
     is_unchanged,
@@ -103,6 +104,7 @@ def cmd_run(args):
                 art.is_clickbait = cached_result["is_clickbait"]
                 art.rewritten_title = cached_result["rewritten_title"]
                 art.summary = cached_result.get("summary", "")
+                art.image_url = cached_result.get("image_url", "")
                 cached_articles.append(art)
                 continue
         fresh_articles.append(art)
@@ -114,9 +116,10 @@ def cmd_run(args):
     log.info("Extracting article content...")
     for i, art in enumerate(fresh_articles):
         try:
-            text, summary = extract_content(art.url)
+            text, summary, image_url = extract_content(art.url)
             art.content_text = text
             art.summary = summary
+            art.image_url = image_url
         except Exception as e:
             log.warning("  [%d/%d] Failed to extract '%s': %s", i + 1, len(fresh_articles), art.title[:40], e)
             art.content_text = ""
@@ -157,6 +160,7 @@ def cmd_run(args):
             seen_cache, art.url, art.title,
             art.is_clickbait, art.rewritten_title,
             summary=art.summary,
+            image_url=art.image_url,
         )
     for art in cached_articles:
         # Re-mark as seen today (bumps last_seen)
@@ -164,16 +168,23 @@ def cmd_run(args):
             seen_cache, art.url, art.title,
             art.is_clickbait, art.rewritten_title,
             summary=art.summary,
+            image_url=art.image_url,
             is_cached=True,
         )
     seen_cache = prune_stale(seen_cache)
     save_cache(config.output.dir, seen_cache)
 
-    # Step 6: Generate site
+    # Step 6: Merge into persistent archive (keeps historic articles)
+    archive = load_archive(config.output.dir)
+    archive, all_articles = merge_articles(archive, articles_with_content, cached_articles)
+    save_archive(config.output.dir, archive)
+    log.info("Archive merged — %d articles available", len(archive))
+
+    # Step 7: Generate site (full archive, paginated)
     count = generate_site(all_articles, config, stats)
     log.info("Site generated — %s/ with %d articles", config.output.dir, count)
 
-    # Step 7: Generate notes index (if any notes exist)
+    # Step 8: Generate notes index (if any notes exist)
     note_count = generate_notes_index(config.output.dir, config)
     if note_count:
         log.info("Notes index generated — %d notes", note_count)
@@ -212,13 +223,15 @@ def cmd_check(args):
     # Extract content
     print("Extracting content...")
     try:
-        text, summary = extract_content(args.url)
+        text, summary, image_url = extract_content(args.url)
     except Exception as e:
         print(f"  ❌ Failed to extract: {e}")
         sys.exit(1)
 
     print(f"  Content length: {len(text)} chars")
     print(f"  Summary: {summary[:150]}...")
+    if image_url:
+        print(f"  Thumbnail: {image_url}")
 
     # Create a temporary article
     from .models import Article
@@ -229,6 +242,7 @@ def cmd_check(args):
         site_name="Manual Check",
         content_text=text,
         summary=summary,
+        image_url=image_url,
     )
 
     print(f"\nHeadline: {art.title}")

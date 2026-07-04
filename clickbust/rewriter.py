@@ -27,17 +27,45 @@ A headline is **clickbait** if it:
   video game, or stage show. If the article covers a spin-off or adaptation in a
   different medium, the headline MUST name that medium.
   (e.g. "New Bond actor confirmed" → it's an audiobook narrator, not the next movie Bond)
-
-A headline is **NOT clickbait** if it:
-- Simply describes what the article is about in specific terms
-- Names the specific subject, show, person, or event
-- Gives the reader enough context to decide if they're interested
-- Clearly states the medium/format (comic, TV series, movie, game, etc.)
+- **Platform bait**: Describes a work only by its platform and genre without naming the
+  actual title ("Apple TV's hit detective show", "Netflix's new thriller series",
+  "Paramount's big budget sci-fi epic"). If the work has a name, the headline MUST
+  name it. "Apple TV's Hit Detective Show" is clickbait when the show is called Sugar.
+  "Disney+'s new Star Wars series" is clickbait if you can name the actual show title.
+- **Description bait (NEW)**: When a headline describes a single specific released/announced
+  work in rich contextual detail — naming the actor, director, author, genre, comparisons
+  to other works, plot elements, or release timeframe — but still withholds the actual
+  title. If the article's content reveals the name of the work being discussed and the
+  headline deliberately omits that name in favour of describing it, that is clickbait.
+  Examples:
+  - "Keanu Reeves' Adaptation Of Philip K. Dick Sci-Fi Novel Is Better Than His Matrix Sequels"
+    → Withholds "A Scanner Darkly" — clickbait
+  - "Jason Statham's Gritty $51M Action Hit Is Leaving Free Streaming Soon"
+    → Withholds "Homefront" — clickbait
+  - "Sci-Fi Action Blockbuster Classic On Netflix Still Blows Our Minds Almost 30 Years Later"
+    → Withholds "The Fifth Element" — clickbait
+  - "FX's 5-Part Thriller Hit Is a Certified Late-Night Streaming Sensation"
+    → Withholds "Damages" — clickbait
+  - "Billion-Dollar Sci-Fi Blockbuster You Never Got Around To Watching Is Now On Disney+"
+    → Withholds the movie title — clickbait
 
 **Critical rule about named subjects:**
-- If the article is about a **released/announced work** (a movie, TV show, game, album, book, etc.), the headline MUST name that work's title. "Gore Verbinski's new R-rated sci-fi thriller" is clickbait if you don't name the movie. "A new Arnold Schwarzenegger movie" is clickbait if the movie has a name.
-- If the article is about a **cancelled, rumoured, or hypothetical project** where no official title ever existed, a descriptive label is acceptable ("Arnold Schwarzenegger's cancelled swashbuckling movie" — if the project never had a real title this is fine).
-- **When in doubt, err on the side of naming the specific work title.** If the article names it and the headline omits it, that's clickbait.
+- If the article is about a **released/announced work** (a movie, TV show, game, album,
+  book, etc.), the headline MUST name that work's title. Naming the actor, author, genre,
+  or comparison works is NOT a substitute for naming the title. "Gore Verbinski's new
+  R-rated sci-fi thriller" is clickbait if you don't name the movie. "A new Arnold
+  Schwarzenegger movie" is clickbait if the movie has a name, even if you describe it.
+- If the article is about a **cancelled, rumoured, or hypothetical project** where no
+  official title ever existed, a descriptive label is acceptable ("Arnold Schwarzenegger's
+  cancelled swashbuckling movie" — if the project never had a real title this is fine).
+- **When in doubt, err on the side of naming the specific work title.** If the article
+  names it and the headline omits it, that's clickbait.
+
+A headline is **NOT clickbait** if it:
+- Names the specific work title and simply describes what the article is about
+- Gives the reader enough context to decide if they're interested
+- Is a listicle or roundup that covers multiple works (e.g. "10 Best '90s Sci-Fi Shows")
+- Clearly states the medium/format (comic, TV series, movie, game, etc.) AND names the work
 
 For each headline you analyze, output ONLY valid JSON with two fields:
 {

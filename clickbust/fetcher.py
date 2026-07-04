@@ -66,11 +66,60 @@ def fetch_rss(url: str, timeout: float = 30) -> list[dict]:
     return feed.entries
 
 
-def extract_content(url: str, timeout: float = 30) -> tuple[str, str]:
-    """Fetch article URL and extract readable content + summary.
+def _extract_image_url(raw_html: str, base_url: str | None = None) -> str:
+    """Extract the best thumbnail URL from article HTML.
+
+    Precedence:
+      1. og:image meta tag
+      2. twitter:image meta tag
+      3. First <img> with a large-looking src
+
+    Returns empty string if nothing found.
+    """
+    import lxml.html
+    try:
+        tree = lxml.html.fromstring(raw_html)
+    except Exception:
+        return ""
+
+    # 1. og:image
+    for el in tree.xpath('//meta[@property="og:image"]'):
+        content = el.get("content", "").strip()
+        if content:
+            return content
+
+    # 2. twitter:image
+    for el in tree.xpath('//meta[@name="twitter:image"] | //meta[@property="twitter:image"]'):
+        content = el.get("content", "").strip()
+        if content:
+            return content
+
+    # 3. First img with a reasonable src (skip tracking pixels / icons)
+    for el in tree.xpath('//img[@src]'):
+        src = el.get("src", "").strip()
+        if not src or src.startswith("data:"):
+            continue
+        width = el.get("width")
+        # Skip tiny images
+        if width and width.isdigit() and int(width) < 100:
+            continue
+        # Make relative URLs absolute
+        if src.startswith("/") and base_url:
+            src = base_url.rstrip("/") + src
+        elif src.startswith("//"):
+            src = "https:" + src
+        if src.startswith("http"):
+            return src
+
+    return ""
+
+
+def extract_content(url: str, timeout: float = 30) -> tuple[str, str, str]:
+    """Fetch article URL and extract readable content + summary + thumbnail.
 
     Returns:
-        (full_text, summary) where summary is the first ~300 chars of clean text.
+        (full_text, summary, image_url) where summary is the first ~300 chars
+        of clean text and image_url is the article thumbnail.
     """
     log.info("Extracting content: %s", url)
     with httpx.Client(timeout=timeout, follow_redirects=True) as client:
@@ -85,7 +134,12 @@ def extract_content(url: str, timeout: float = 30) -> tuple[str, str]:
         )
         resp.raise_for_status()
 
-    doc = Document(resp.text)
+    raw_html = resp.text
+
+    # Extract image from raw HTML before readability strips it
+    image_url = _extract_image_url(raw_html)
+
+    doc = Document(raw_html)
     html = doc.summary()
 
     # Clean up the HTML
@@ -111,7 +165,7 @@ def extract_content(url: str, timeout: float = 30) -> tuple[str, str]:
         if last_period > 100:
             summary = summary[: last_period + 1]
 
-    return full_text, summary
+    return full_text, summary, image_url
 
 
 def fetch_all_sites(sites: list[SiteConfig], max_per_site: int = 20) -> list[Article]:

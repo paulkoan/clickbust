@@ -21,7 +21,7 @@ UV_CACHE_DIR=/tmp/uv-cache UV_LINK_MODE=copy uv run clickbust note --context "Cl
 # Prepare deploy directory
 rm -rf "$TMP_DIR"
 mkdir -p "$TMP_DIR"
-cp -r "$OUTPUT_DIR"/* "$TMP_DIR"/
+cp -r "$OUTPUT_DIR"/. "$TMP_DIR"/
 
 # Push to gh-pages
 cd "$TMP_DIR"

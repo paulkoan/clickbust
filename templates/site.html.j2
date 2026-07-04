@@ -15,6 +15,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="{{ site.base_url }}/{{ site_slug }}.html">
 <meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="{{ site_name }}" href="{{ site.base_url }}/feed.xml">
 
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -55,20 +56,43 @@
   .back-link:hover { text-decoration: underline; }
   header p { color: #888; font-size: 0.9rem; }
   .article-card {
+    display: block;
     background: #1a1a2e;
     border-radius: 12px;
     padding: 24px;
     margin-bottom: 16px;
     border: 1px solid #2a2a4a;
     transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
   }
   .article-card:hover { border-color: #7c5cfc; }
-  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
-  .article-card h2 a {
-    color: #e0e0e0;
-    text-decoration: none;
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
   }
-  .article-card h2 a:hover { color: #7c5cfc; }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
   .article-card p.meta {
     color: #666;
     font-size: 0.8rem;
@@ -107,6 +131,32 @@
     color: #666;
     font-size: 0.85rem;
     margin-bottom: 20px;
+  }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
   }
   .site-stats {
     display: flex;
@@ -150,6 +200,15 @@
     <h1>{{ site_name }}</h1>
   </div>
   <p>{{ site_description }}</p>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
 </header>
 
 <div class="stats">
@@ -175,29 +234,38 @@
 
 <main>
 {% for article in articles %}
-<article class="article-card">
-  <p class="meta">
-    {% if article.published_date %}
-    {{ article.published_date.strftime('%d %b %Y') }}
+<a href="{{ article.url }}" class="article-card">
+  <div class="card-inner">
+    {% if article.image_url %}
+    <div class="card-thumb">
+      <img src="{{ article.image_url }}" alt="" loading="lazy">
+    </div>
     {% endif %}
-  </p>
-  <h2>
-    <a href="{{ article.url }}">
+    <div class="card-body">
+      <p class="meta">
+        {% if article.published_date %}
+        {{ article.published_date.strftime('%d %b %Y') }}
+        {% endif %}
+      </p>
+      <h2>
+        <span class="clickable-title">
+          {% if article.is_clickbait and article.rewritten_title %}
+            {{ article.rewritten_title }}
+            <span class="clickbait-badge">REWRITTEN</span>
+          {% else %}
+            {{ article.title }}
+          {% endif %}
+        </span>
+      </h2>
       {% if article.is_clickbait and article.rewritten_title %}
-        {{ article.rewritten_title }}
-        <span class="clickbait-badge">REWRITTEN</span>
-      {% else %}
-        {{ article.title }}
+      <div class="original-title">Original: {{ article.title }}</div>
       {% endif %}
-    </a>
-  </h2>
-  {% if article.is_clickbait and article.rewritten_title %}
-  <div class="original-title">Original: {{ article.title }}</div>
-  {% endif %}
-  {% if article.summary %}
-  <div class="summary">{{ article.summary[:250] }}{% if article.summary|length > 250 %}…{% endif %}</div>
-  {% endif %}
-</article>
+      {% if article.summary %}
+      <div class="summary">{{ article.summary[:250] }}{% if article.summary|length > 250 %}&hellip;{% endif %}</div>
+      {% endif %}
+    </div>
+  </div>
+</a>
 {% endfor %}
 </main>
 

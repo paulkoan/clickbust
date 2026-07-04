@@ -14,6 +14,9 @@ from .stats import get_site_stats
 
 log = logging.getLogger(__name__)
 
+# How many articles per paginated index page
+PAGE_SIZE = 30
+
 # Jinja2 environment
 _env: Environment | None = None
 
@@ -138,6 +141,13 @@ def generate_site(articles: list[Article], config: AppConfig, stats: dict | None
         shutil.copy2(cname_src, os.path.join(output_dir, "CNAME"))
         log.info("Copied CNAME file")
 
+    # Write .nojekyll — prevents GitHub Pages from trying Jekyll processing
+    nojekyll_path = os.path.join(output_dir, ".nojekyll")
+    if not os.path.isfile(nojekyll_path):
+        with open(nojekyll_path, "w") as f:
+            f.write("")
+        log.info("Created .nojekyll")
+
     # Filter to rewritten articles (clickbait ones get new titles, others keep original)
     published = []
     for art in articles:
@@ -146,9 +156,10 @@ def generate_site(articles: list[Article], config: AppConfig, stats: dict | None
         elif not art.is_clickbait:
             published.append(art)
 
-    # Sort by published date (newest first), limit to max
+    # Sort by published date (newest first)
     published.sort(key=lambda a: a.published_date or datetime.min.replace(tzinfo=timezone.utc), reverse=True)
-    published = published[: config.output.max_articles]
+    max_articles = getattr(config.output, "max_articles", 500)
+    published = published[:max_articles]
 
     if not published:
         log.warning("No articles to publish")
@@ -295,21 +306,42 @@ def generate_site(articles: list[Article], config: AppConfig, stats: dict | None
         f.write(sitemap_xml)
     log.info("Generated sitemap.xml")
 
-    # Generate index page
+    # Generate paginated index pages
     index_template = env.get_template("index.html.j2")
-    index_html = index_template.render(
-        articles=published,
-        sites=sites_info,
-        site=config.output,
-        generated_at=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
-    )
-    with open(os.path.join(output_dir, "index.html"), "w", encoding="utf-8") as f:
-        f.write(index_html)
+    total_articles = len(published)
+    total_pages = max(1, (total_articles + PAGE_SIZE - 1) // PAGE_SIZE)
 
-    # Generate RSS feed
+    for page in range(1, total_pages + 1):
+        start = (page - 1) * PAGE_SIZE
+        end = start + PAGE_SIZE
+        page_articles = published[start:end]
+        html = index_template.render(
+            articles=page_articles,
+            page_articles=len(page_articles),
+            sites=sites_info,
+            site=config.output,
+            generated_at=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+            current_page=page,
+            total_pages=total_pages,
+            total_articles=total_articles,
+        )
+        if page == 1:
+            out_path = os.path.join(output_dir, "index.html")
+        else:
+            page_dir = os.path.join(output_dir, "page")
+            os.makedirs(page_dir, exist_ok=True)
+            out_path = os.path.join(page_dir, f"{page}.html")
+        with open(out_path, "w", encoding="utf-8") as f:
+            f.write(html)
+
+    log.info("Generated %d index pages (%d articles)",
+             total_pages, total_articles)
+
+    # Generate RSS feed (limited to latest 50)
+    feed_articles = published[:50]
     feed_template = env.get_template("feed.xml.j2")
     feed_xml = feed_template.render(
-        articles=published,
+        articles=feed_articles,
         notes=notes_for_feed,
         site=config.output,
         generated_at=datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000"),

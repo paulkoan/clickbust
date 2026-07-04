@@ -24,6 +24,7 @@ class Article:
     site_name: str
     content_text: str = ""
     summary: str = ""
+    image_url: str = ""  # thumbnail URL from the original article (og:image)
     rewritten_title: Optional[str] = None
     is_clickbait: bool = False
     published_date: Optional[datetime] = None

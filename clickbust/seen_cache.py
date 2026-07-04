@@ -57,6 +57,7 @@ def get_cached_result(cache: dict, url: str) -> dict | None:
             "is_clickbait": entry.get("is_clickbait", False),
             "rewritten_title": entry.get("rewritten_title"),
             "summary": entry.get("summary", ""),
+            "image_url": entry.get("image_url", ""),
         }
     return None
 
@@ -68,6 +69,7 @@ def mark_processed(
     is_clickbait: bool,
     rewritten_title: str | None,
     summary: str = "",
+    image_url: str = "",
     is_cached: bool = False,
 ) -> None:
     """Store or update an article's result in the cache.
@@ -81,6 +83,7 @@ def mark_processed(
         "is_clickbait": is_clickbait,
         "rewritten_title": rewritten_title,
         "summary": summary,
+        "image_url": image_url,
         "is_cached": is_cached,
         "last_seen": datetime.now(timezone.utc).isoformat(),
     }
