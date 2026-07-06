@@ -32,7 +32,21 @@ git config user.name "Clickbust Bot"
 git add -A
 git commit -q -m "Clickbust update $(date -u '+%Y-%m-%d %H:%M UTC')"
 GIT_SSH_COMMAND="ssh -i $DEPLOY_KEY -o StrictHostKeyChecking=accept-new" git remote add origin "$REPO"
-GIT_SSH_COMMAND="ssh -i $DEPLOY_KEY -o StrictHostKeyChecking=accept-new" git push -f origin gh-pages 2>&1
+# Push to gh-pages with retry (GitHub Pages deploy step is flaky)
+RETRIES=3
+for i in $(seq 1 $RETRIES); do
+    if GIT_SSH_COMMAND="ssh -i $DEPLOY_KEY -o StrictHostKeyChecking=accept-new" git push -f origin gh-pages 2>&1; then
+        DEPLOY_OK=true
+        break
+    fi
+    echo "  ⚠️  Push attempt $i failed, retrying in 30s..."
+    sleep 30
+    DEPLOY_OK=false
+done
 
 echo ""
-echo "✅ Clickbust update complete — $(date -u '+%Y-%m-%d %H:%M UTC')"
+if [ "$DEPLOY_OK" = true ]; then
+    echo "✅ Clickbust update complete — $(date -u '+%Y-%m-%d %H:%M UTC')"
+else
+    echo "❌ Clickbust run complete but deploy failed after $RETRIES attempts — $(date -u '+%Y-%m-%d %H:%M UTC')"
+fi
