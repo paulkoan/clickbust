@@ -14,6 +14,74 @@ from .stats import get_site_stats
 
 log = logging.getLogger(__name__)
 
+# ═══════════════════════════════════════════════════════════════════
+# Image fallback pipeline — uses heuristics module to detect og:image
+# MISMATCH and fall back to first body image or default banner.
+# ═══════════════════════════════════════════════════════════════════
+
+def resolve_article_image(article: "Article", default_banner_url: str = "") -> str:
+    """Use image-subject detection to validate article.image_url.
+
+    Calls detect.predict() with the article's rewritten (or original)
+    headline, image URL, body-image alt text, and full article URL.
+    If the image is classified as MISMATCH, falls back to:
+      1. The first available body image URL (from body_images), or
+      2. The configured default_banner_url, or
+      3. The original image_url (no better option).
+
+    A monitoring log entry is emitted when fallback is triggered.
+
+    Returns the resolved image URL (possibly the unchanged original).
+    """
+    from . import detect
+
+    headline = article.rewritten_title or article.title
+
+    # Extract first body-image alt text for the heuristic signals
+    alt_body = ""
+    if article.body_images:
+        alt_body = article.body_images[0].get("alt", "")
+
+    # Use article summary as the snippet if available
+    snippet = (article.summary or article.content_text or "")[:500]
+
+    label, confidence = detect.predict(
+        headline=headline,
+        image_url=article.image_url,
+        alt_text_body=alt_body,
+        article_snippet=snippet,
+        article_url=article.url,
+    )
+
+    if label == "MISMATCH":
+        # Fallback chain: first body image → default banner → keep original
+        if article.body_images:
+            fallback_url = article.body_images[0].get("url", "")
+            if fallback_url:
+                log.info(
+                    "Image MISMATCH for '%s' (c=%.2f) — fallback to body image",
+                    headline[:40], confidence,
+                )
+                return fallback_url
+
+        if default_banner_url:
+            log.info(
+                "Image MISMATCH for '%s' (c=%.2f) — no body images, "
+                "fallback to default banner",
+                headline[:40], confidence,
+            )
+            return default_banner_url
+
+        log.info(
+            "Image MISMATCH for '%s' (c=%.2f) — keeping original "
+            "(no fallback available)",
+            headline[:40], confidence,
+        )
+        # No fallback — keep original
+
+    return article.image_url
+
+
 # How many articles per paginated index page
 PAGE_SIZE = 30
 
@@ -183,6 +251,16 @@ def generate_site(articles: list[Article], config: AppConfig, stats: dict | None
 
     for art in published:
         display_title = art.rewritten_title if art.is_clickbait and art.rewritten_title else art.title
+
+        # ═══ Image fallback pipeline ═══
+        # Validate og:image against the (rewritten) headline. If the
+        # heuristic detects a subject mismatch, fall back to first body
+        # image or the configured default banner.
+        art.image_url = resolve_article_image(
+            art,
+            default_banner_url=config.output.default_banner_url,
+        )
+
         meta_desc = art.summary[:200] if art.summary else display_title
 
         # Look up the site URL for favicon
