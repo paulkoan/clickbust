@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-08-20 11:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>27 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>59 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>128 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>20 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://movieweb.com/nicolas-cage-parish-action-thriller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/nicolas-cage-in-arcadia.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nicolas Cage Leads Post-Apocalyptic Thriller 'Parish' as a Cannibal-Fighting Survivor
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Nicolas Cage Battles Cannibals in New Post-Apocalyptic Action Thriller</div>
+      
+      
+      <div class="summary">Published Aug 19, 2026, 12:56 PM EDT Marcos Melendez is an entertainment journalist who has been active since 2017. His past work can be read on Collider, Escapist, ScreenRant, CBR, and Full Circle Cinema. He is currently a News Editor for MovieWeb.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/thrill/alone-2020-netflix-review.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2024/05/Alone-2020-1.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Thriller 'Alone' Features a Serial Killer Hunting Humans in the Woods
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Perfect R-Rated Netflix Thriller Has Serial Killer Hunting Humans For Sport</div>
+      
+      
+      <div class="summary">By Robert Scucci | Published 31 seconds ago Alone is one of the best thrillers streaming on Netflix right now, and it tells such a simple story.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/wonder-woman-new-first-costume/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/fallout-edit-6.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wonder Woman Gets New Origin Story and First Costume in DC's Wonder Woman #36
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 85 Years Later, Wonder Woman Gets a New First Costume in DC Lore Rewrite</div>
+      
+      
+      <div class="summary">Wonder Woman is one of the most, if not the most, iconic female hero of all time, standing alongside DC greats like Batman and Superman.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/alien-power-lifter-mech-upgrade/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/ripley-in-alien-resurrection.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel’s Alien: King Killer #5 Reveals Cybernetic Power Loader Design
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Alien Unleashes the Ultimate Form of Ripley's Iconic Power Lifter</div>
+      
+      
+      <div class="summary">Ellen Ripley’s Power Loader is still one of the most recognizable pieces of technology in the Alien franchise, thanks largely to its unforgettable confrontation with the Xenomorph Queen in Aliens.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/ellen-pompeo-good-american-family-season-2-anthology-lorena-bobbitt-story-details-report/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/good-american-family-ellen-pompeo-kristine-barnett.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hulu & Ellen Pompeo’s Good American Family Series Officially Returning For More Episodes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Aug 19, 2026, 12:47 PM EDT Jeff Dodge (he/him), a published author and graduate of Western Washington University, has been a TV news editor for many years and has had the chance to interview multiple reality show stars, including Randy Jack&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2236760/this-town-had-24000-worth-of-flock-cameras-disappear-overnight/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-town-had-24000-worth-of-flock-cameras-disappear-overnight/l-intro-1786663086.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            This Town Had $24,000 Worth Of Flock Cameras Disappear Overnight
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This Town Had $24,000 Worth Of Flock Cameras Disappear Overnight Matthew G Eddy/Shutterstock There is much controversy over Flock cameras and how they gather information.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/baldurs-gate-series-replacing-the-last-of-us-season-3/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/the-last-of-us-jeffrey-wright.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO's Baldur's Gate Series to Replace The Last of Us After Season 3
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO Officially Confirms New Fantasy Series Will Replace 'The Last of Us'</div>
+      
+      
+      <div class="summary">In February, it was officially announced that HBO is developing a Baldur’s Gate television series. At the helm of the adaptation is none other than The Last of Us showrunner Craig Mazin, who is no stranger to turning beloved video games into popular &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/marvel-comics-jean-grey-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/marvel-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Announces Jean Grey Limited Comic Series After X-Men Film Casting
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Officially Announces New X-Men Series After Live-Action Debut</div>
+      
+      
+      <div class="summary">Less than a week ago at D23, fans were finally introduced to the next generation of X-Men who will feature in the upcoming MCU reboot.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-replacement-series-goonies-outsiders-outer-banks-season-5/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/john-b-chase-stokes-outer-banks-netflix.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'Outer Banks' to End with Season 5
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'The Goonies’ Meets ‘The Outsiders’ in Netflix Hit Returning for its Final Season</div>
+      
+      
+      <div class="summary">Netflix’s swashbuckling teen drama returns for one final adventure. Set along the shore of North Carolina, Outer Banks follows a ragtag team of have-nots fighting for their families and livelihoods.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/jason-statham-new-movie-mutiny-rotten-tomatoes-review-roundup/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/05/mutiny.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jason Statham's Mutiny Debuts With Horrible Rotten Tomatoes Score
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Jason Statham, the master of the mid action movie, has a new film out this week. While Mutiny won't be released in theaters until Friday, critic reviews are out now, and they paint a disappointing picture of Statham's latest.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/thrill/thin-red-line-1998-streaming.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2024/08/the-thin-red-line.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Terrence Malick's 'The Thin Red Line' (1998) Is a Masterful R-Rated WWII Epic
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: R-Rated 1990s World War II Epic Better Than Saving Private Ryan</div>
+      
+      
+      <div class="summary">By Matthew Swigonski | Published 27 seconds ago War might never change, but war movies have certainly undergone a dramatic transformation over the years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/pixar-movies-2020s-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2020/01/onward-movie-image-scaled.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 10 Pixar Movies of the 2020s, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Beginning with the premiere of Toy Story in 1995, Pixar has become one of the most beloved and recognized animation companies in the world.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/stranger-things-spin-off-dungeons-and-dragons-eddie-munson/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/stranger-things-dustin-eddie.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Eddie Munson Returns in New 'Stranger Things' Comic Collection
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Stranger Things' Officially Brings Back Eddie Munson For New Spin-Off</div>
+      
+      
+      <div class="summary">Netflix has had a big year in the sci-fi department, especially thanks to the release of War Machine, the big-budget epic starring Alan Ritchson from the Prime Video series, Reacher.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/haikyu-new-trailer-the-place-where-monsters-go/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/haikyu-special.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Haikyu!! Anime Gets New Trailer for 'Where Monsters Go' TV Special and 2027 Films
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Haikyu!!'s upcoming special just got a new trailer ahead of the series' 2027 finale</div>
+      
+      
+      <div class="summary">Everyone’s favorite volleyball boys are almost back for a final match. As part of the Haikyu!! Day celebration, Toho Animation dropped new trailers and teaser images for the upcoming Haikyu!! anime.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/gotham-knight-batman-best-movies-dark-knight-trilogy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/the-dark-knight-rises_e9a07314.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Batman: Gotham Knight Is an Anime-Inspired Dark Knight Trilogy Spinoff
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 18 Years Later, The Dark Knight Trilogy's Secret Fourth Movie Is Still One Of Batman's Best Films</div>
+      
+      
+      <div class="summary">Almost a decade after Batman & Robin had nearly killed off the franchise for good, Christopher Nolan rejuvenated the Caped Crusader on the big screen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/children-of-blood-and-bone-book-author-condemns-paramount-movie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/childrenofbloodandbonecover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Children of Blood and Bone Author Tomi Adeyemi Publicly Condemns Paramount Movie Adaptation
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Paramount Adaptation of Hit Fantasy Book Condemned by Author</div>
+      
+      
+      <div class="summary">After years of waiting, next year, Paramount Pictures is set to bring the unique fantasy world of Children of Blood and Bone to the big screen for the first time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/whalefall-trailer-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/austin-abrams-in-whalefall.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Trailer Released for 'Whalefall' Survival Thriller Starring Austin Adams and Josh Brolin
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New 'Whalefall' Trailer Unleashes Most Intense Survival Thriller of the Year</div>
+      
+      
+      <div class="summary">Published Aug 19, 2026, 12:29 PM EDT Richard is a writer/journalist from Oregon (by way of California) with a love of Marvel, Star Wars, DC, and all kinds of entertainment. He joined MovieWeb in January 2026 as a Movie & TV Writer/Editor.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/taylor-sheridan-confirms-yellowstone-spinoff-6666-is-dead/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/cole-hauser-and-kevin-costner-in-taylor-sheridan-s-yellowstone.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan Confirms Yellowstone Spinoff 6666 Is Dead for Good, Will Never Be Made
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 5 Years Later, Taylor Sheridan Confirms His Best Yellowstone Spinoff Is Dead for Good</div>
+      
+      
+      <div class="summary">Taylor Sheridan just delivered bad news to fans of the Yellowstone franchise. The acclaimed showrunner, one that rocketed to superstardom in large part due to his Yellowstone creation in 2018 for Paramount+, has since delivered several extremely popu&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-sacrifice-anya-taylor-joy-chris-evans-first-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/anya-taylor-joy-sacrifice.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Sacrifice: First Look at Anya Taylor-Joy and Chris Evans in a Meta Action-Adventure
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s Anya Taylor-Joy & Chris Evans Action-Adventure Unveils First Look</div>
+      
+      
+      <div class="summary">Netflix has revealed the first look at Anya Taylor-Joy and Chris Evans in the upcoming action-adventure movie Sacrifice​​​​​​. It's the latest film from Athena director Romain Gavras.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-end-of-oak-street-ending-meaning-jj-abrams-david-robert-mitchell-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/the-end-of-oak-street-j-j-abrams-david-robert-mitchell-interview-feature.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            David Robert Mitchell and J.J. Abrams Break Down 'The End of Oak Street's Most Shocking Twist
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">[Editor's Note: The following contains spoilers for The End of Oak Street] Summary Collider's Aidan Kelley talks with J.J. Abrams and David Robert Mitchell for The End of Oak Street. The pair discuss the movie's inspiration, why it was originally rat&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2239063/robocop-controversial-80s-sci-fi-action-franchise-streaming-free-prime-video/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-controversial-80s-sci-fi-action-franchise-is-streaming-for-free-on-prime-video/l-intro-1787063684.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            RoboCop Franchise Streaming Free On Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Controversial '80s Sci-Fi Action Franchise Is Streaming For Free On Prime Video</div>
+      
+      
+      <div class="summary">This Controversial '80s Sci-Fi Action Franchise Is Streaming For Free On Prime Video Orion Pictures Head on over to Amazon's streaming service, where an '80s action classic is waiting to be brought online.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/whalefall-movie-trailer-josh-brolin/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/austin-abrams-approaches-monastery-bay-in-monterey-in-whalefall.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Whalefall Trailer Shows Austin Abrams Trapped Inside a Whale
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Josh Brolin's Undersea Lessons Are Key To Austin Abrams' Survival Inside A Whale In New Whalefall Trailer</div>
+      
+      
+      <div class="summary">Whalefall has officially dropped a brand-new trailer. Whalefall is an upcoming survival thriller. Austin Abrams stars as a scuba diver named Jay Gardiner, who goes into the ocean to search for his father’s remains, only to be swallowed by a whale.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/battlestar-galactica-biggest-mystery-theories.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2024/12/bsg-starbuck_0003_Layer-3.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ronald D. Moore Confirms Starbuck's Fate in Battlestar Galactica Was Intentionally Ambiguous to Perpetuate Fan Debate
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Battlestar Galactica's Biggest Mystery Was Made To Torment Fans On Purpose, But There's An Answer</div>
+      
+      
+      <div class="summary">By Jonathan Klotz | Published 24 seconds ago Battlestar Galactica is a fantastic series that helped revitalize sci-fi. The first two seasons are filled with great character moments and a tense cat-and-mouse chase between the Cylons and the Colonial F&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/dutton-ranch-season-1-digital-release-date-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/dutton-ranch-beth-rip.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Dutton Ranch' Season 1 Now Available to Buy on Digital Platforms
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Yellowstone Officially Returns With New Beth and Rip Release</div>
+      
+      
+      <div class="summary">Taylor Sheridan has released so many new projects in 2026 it’s almost tough to keep track, especially with all of his new shows claiming hallowed ground on Paramount Plus.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/upcoming-jason-statham-movies-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/jason-statham-smiling-on-shelter-red-carpet.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Upcoming Jason Statham Movie Releasing In 2026 And Beyond
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There aren't many actors in Hollywood who work as consistently as Jason Statham, and his proficiency means audiences are never short on upcoming movies starring him.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/david-tennant-doctor-who-return-audio-drama/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/doctor-who-david-tennant-10-900x506.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            David Tennant to Voice 10th Doctor in New Big Finish Audio Dramas
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: David Tennant is Officially Returning to 'Doctor Who'</div>
+      
+      
+      <div class="summary">The past couple of years have been a roller coaster for Doctor Who fans, one that crashed and burned in timey-wimey fashion. After a disappointing era under showrunner Chris Chibnall, Russell T. Davies returned to his beloved sci-fi product to steer &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/strongest-anime-final-forms-of-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/27481948.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Strongest Anime Final Forms in History, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The evolution of power scaling in anime has pushed protagonist and antagonist transformations into mind-bending cosmic territories. Final forms serve as the narrative and mechanical peak of a character's journey, embodying their ultimate growth, reso&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/jack-ryan-ghost-war-prime-video-streaming-charts-rise-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/untitled.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            John Krasinski's Jack Ryan Series Gets a New Chapter on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It's Officially The Start Of An Era For John Krasinski's Jack Ryan</div>
+      
+      
+      <div class="summary">Jack Ryan is a franchise that has existed long before John Krasinski took over the role, but he has since made it his, and a new era for this iteration of the character has just unexpectedly started, which could lead to future adventures. Krasinski h&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-outer-banks-prequel-series-kildare/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/outer-banks-season-5-first-photo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Outer Banks Spinoff Prequel 'Kildare' Is in Development Ahead of Season 5 Finale
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s Hit 5-Season Action-Adventure’s Future Revealed 1 Day Ahead of Finale</div>
+      
+      
+      <div class="summary">Another hit Netflix series is getting a spinoff. An Outer Banks prequel series is reportedly picking up steam at Netflix ahead of the show's fifth and final season.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/supergirl-david-krumholtz-announces-retirement/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/01/milly-alcock-in-supergirl.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            David Krumholtz, Who Played Kor-El in 'Supergirl', Announces Retirement from Acting
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Supergirl' Star Makes Shock Retirement Announcement</div>
+      
+      
+      <div class="summary">One of the stars of this year's Supergirl has declared they're done with Hollywood after establishing an impressive career spanning more than three decades.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <span class="current">10</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/11.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

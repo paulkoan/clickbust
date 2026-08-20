@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-08-20 11:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>27 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>59 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>128 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>20 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/best-thriller-books-1980s-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/the-hunt-for-red-october-40th-annivasary.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Thriller Books of the 1980s
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 1980s were a solid decade for thriller writing. Giants like Tom Clancy, Stephen King, Michael Crichton, and Thomas Harris were all publishing bangers, while more reflective authors such as Umberto Eco were pushing the genre into fresh new territo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2240456/breakthrough-cancer-treatment-wearable-patch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-breakthrough-cancer-treatment-is-a-surgery-free-wearable-skin-patch/intro-1787078889.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Wearable Skin Patch Uses Sunlight to Treat Melanoma Without Surgery
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Breakthrough Cancer Treatment Is A Surgery-Free Wearable Skin Patch</div>
+      
+      
+      <div class="summary">This Breakthrough Cancer Treatment Is A Surgery-Free Wearable Skin Patch OksanaFedorchuk/Shutterstock Scientists have found a new way to potentially treat melanoma.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/my-life-with-the-walter-boys-drama-success-netflix-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/06/my-life-with-the-walter-boys-season-2-nikki-rodriguez-jackie-putting-on-jacket.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            My Life With the Walter Boys Season 3 Reaches No. 1 on Netflix Worldwide
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's Teen Drama Based on Popular Bestselling Book Finds Redemption as it Shoots to No. 1</div>
+      
+      
+      <div class="summary">My Life With the Walter Boys Season 3 is officially a streaming sensation. It's even pushed the series to the very top of the streaming charts. Per Netflix's Tudum, My Life With the Walter Boys Season 3 is officially the number one most-watched serie&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/batman-animated-series-official-new-release-2026-gotham/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/batman-enemies-of-gotham-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Batman: The Animated Series Returns as Board Game Enemies of Gotham City
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Batman: The Animated Series Officially Returns With New Release Out Now</div>
+      
+      
+      <div class="summary">Batman: The Animated Series is back with Enemies of Gotham City, a new game that lets players become the Dark Knight's greatest villains.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/batgirl-new-mother-amanda-waller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/barbara-gordon-breakout-2-dan-mora-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dark Knights of Steel II Reveals Barbara Gordon Is Amanda Waller's Daughter
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Classic Batgirl’s True Mother Revealed, And Your Jaw Will Hit The Floor</div>
+      
+      
+      <div class="summary">Civil unrest is rampant in Dark Knights of Steel II and the kingdom of Metropolis, which has suddenly turned its blades and pitchforks toward those who hail from the island kingdom of Amazonia after the Els had fallen ill—first Princess Zala-El, foll&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/tracker-season-4-jensen-ackles-russell-shaw-return-better/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/tracker_esveg1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jensen Ackles' Russell Shaw Confirmed for Tracker Season 4
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tracker Major Character Update Sets Up A Better Season 4</div>
+      
+      
+      <div class="summary">Tracker season 4 is going to be a season of change for the hit CBS show, but a major character update is making things seem like they may wind up better than viewers have anticipated.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/godzilla-x-kong-supernova-movie-godzilla-minus-zero-problem/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/03/godzilla-charging-his-atomic-breath-in-godzilla-x-kong-the-new-empire.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Godzilla x Kong: Supernova's 2027 Release Follows Godzilla Minus Zero by Months
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Godzilla X Kong: Supernova's Release Repeats A Big Monsterverse Problem 2 Years Later</div>
+      
+      
+      <div class="summary">The release of Godzilla x Kong: Supernova is repeating a dangerous trend that the last film had to contend with, and that could be a much bigger problem this time around.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/reacher-season-4-no-backstory/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/movieweb-featured-image-template-2026-08-19t160534-902.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Reacher' Season 4 Officially Changes the Show's Formula After 4 Years
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: Spoilers ahead for Reacher Season 4, Episode 4, "Karambits and Pieces."Reacher's main character drifts across the US, trying to live a peaceful life of casual exploration, but often ends up being pulled into an investigation that he simply c&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/tires-season-3-netflix-viewership-increase/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/sofia-hasmik-as-lucy-and-shane-gillis-as-shane-on-tires.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Tires' Season 3 Sees Viewership Increase on Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's The Office Replacement Sees Big Viewership Increase With Season 3</div>
+      
+      
+      <div class="summary">The newest season of Netflix’s The Office replacement is already doing wonders. Tires’ third season is seeing a big increase in viewership. Shane Gillis’ workplace comedy is one of the most-watched shows on streaming. According to Netflix's Tudum, Ti&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-studios-scarlet-witch-avengers-doomsday-return-likely" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/wanda_doomsday.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Studios Just Made Scarlet Witch’s Avengers: Doomsday Return Even Less Likely
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Elizabeth Olsen’s Wanda Maximoff is probably the most popular name among the unconfirmed characters Marvel fans want to see in Avengers: Doomsday. The crossover left the Scarlet Witch off the character roster when Marvel first unveiled the official c&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/bugonia-sci-fi-success-hbo-max-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/mixcollage-12-jan-2026-10-01-pm-9669.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Bugonia' Starring Emma Stone Becomes One of Most-Streamed Movies on HBO Max
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Emma Stone’s 118-Minute Remake of a Sci-Fi Classic Is 1 of the Most-Streamed Movies Worldwide</div>
+      
+      
+      <div class="summary">An underrated sci-fi classic's remake has reappeared on streaming. Bugonia, the Emma Stone-starring remake of the South Korean sci-fi Save the Green Planet!, has hit HBO Max worldwide and, subsequently, its Top 10 streaming list. It currently ranks a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/prime-video-invincible-superhero-series-beat-brand-new-day/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/mark-omni-man-in-invincible-season-4.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Invincible Season 5 Mirrors Spider-Man: Brand New Day's Smaller Scale
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video's Invincible Is Beating Brand New Day At Its Own Game</div>
+      
+      
+      <div class="summary">For a franchise that was supposed to have died alongside Thanos seven years ago, the MCU is looking pretty healthy. Marvel's latest installment, Spider-Man: Brand New Day, is knocking down records for fun, while fans and critics have been united in t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-kpop-demon-hunters-lawsuit-demon-hunter/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/kpop-demon-hunters-eating-noodles.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Gets Sued by Christian Metal Band Over KPop Demon Hunters
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The animated feature KPop Demon Hunters is one of Netflix's biggest movies of all time, and due to its success, a concert tour featuring its characters is on the way.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/violent-ends-thriller-success-hulu-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/billy-magnussen-in-violent-ends.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Billy Magnussen's Action Thriller 'Violent Ends' Conquering Hulu Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Godfather Meets Sicario in Former Bond Star's Action Thriller That's Conquering Streaming</div>
+      
+      
+      <div class="summary">An action thriller that's equal parts The Godfather and Sicario is making a name for itself on streaming platforms. 2025's Violent Ends, which stars James Bond alum Billy Magnussen, is performing well on Hulu.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/ahsoka-dathomir-darth-maul-live-action/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/11/darth-maul-in-the-phantom-menace.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Darth Maul's Home Planet Is Finally Coming To Star Wars in Live-Action
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The next major entry in the Star Wars franchise is Ahsoka Season 2. Set to debut on Jan. 20, 2027, the season will arrive nearly four years after Season 1 concluded in October 2023.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/anime-best-trios-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/04/untitled-5.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            35 Best Anime Trios Of All Time, Officially Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When two Japanese anime characters form a duo, those characters either complete one another or challenge each other, and there is always a sense of co-dependency.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-bear-show-bear-nickname-restaurant-meanings/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/the-bear_gdcrt3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 5 Meanings Of "Bear" In The Bear Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While the title might seem odd for a comedy-drama about a Chicago sandwich shop, there are several reasons why The Bear is called "The Bear". The Bear season 2 saw The Beef turn into The Bear, revealing even more about the show’s title, its character&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-ultimate-borg-weapon/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/star-trek-anti-borg-weapon.jpg?q=49&fit=crop&w=750&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: The Last Starship #10 Reveals Ultimate Anti-Borg Weapon
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek: The Last Starship Unveils The Ultimate Anti-Borg Weapon</div>
+      
+      
+      <div class="summary">Warning: contains spoilers for Star Trek: The Last Starship #10! Star Trek just unveiled the ultimate anti-Borg weapon. Few villains in the Star Trek franchise are as scary as the Borg.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/prime-video-american-gods-the-matrix-meets-lucifer-fantasy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2023/08/orlando-jones-on-a-carousel-in-american-gods.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            American Gods Blends Fantasy and Sci-Fi in Prime Video's 26-Episode Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Matrix Meets Lucifer In Prime Video's 26-Part Fantasy Series</div>
+      
+      
+      <div class="summary">Prime Video's 26-part TV series blended fantasy and sci-fi in a way that has not yet been equaled, even today. The Matrix and Lucifer could not be more different, except that they both use the internet.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/lost-josh-holloway-sawyer-ending/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/01/josh-hollowy-as-sawyer-in-lost.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Josh Holloway Reveals What Happened to Sawyer After The 'Lost' Ending
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Sawyer had one of the best redemption arcs in TV history, as he was introduced as an abrasive antagonist in the first season of Lost, but over the course of his time on the island, he shed that persona as he came to terms with his past.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/tubi-launches-new-horror-era-free-streaming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/sharedimages/2025/01/instar54013578-1.jpg?q=49&fit=crop&w=50&h=65&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tubi Launches Terror on Tubi Hub: Permanent Free Horror Streaming Destination
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tubi Officially Launches a New Era of Horror on Free Streaming</div>
+      
+      
+      <div class="summary">There might be countless streaming services offering paid content for subscribers, but Tubi has always been there for horror fans with the free streaming options available on the platform.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/avengers-doomsday-doctor-doom-mural-mother-history-meaning/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/copy-of-collider-template-4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Avengers: Doomsday' Might Be Hiding Doctor Doom's Goal in Plain Sight
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">If there's been one recurring element in the marketing for Avengers: Doomsday, it's that Doctor Doom (Robert Downey Jr.) will be as menacing and complex as he is in the pages of Marvel's comics.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/steam-sale-carrion-steam-sale-80-percent-off-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/carrion-monster.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Steam Sale Includes Indie Horror Hit Carrion for 80% Off
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Horror games usually put you in the shoes of someone desperately trying to survive. Maybe you’re creeping through a dark hallway with three bullets left, hiding under a bed while something searches the room, or running away from a creature you have a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/kpop-demon-hunters-criterion-collection-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/huntrix-live-in-kpop-demon-hunters.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            KPop Demon Hunters Gets Rare Blu-ray Release Joining Elite Netflix Club
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: KPop Demon Hunters Officially Joins An Elite Netflix Club & It Makes The Sequel More Exciting</div>
+      
+      
+      <div class="summary">The success of KPop Demon Hunters continues, and while the world waits for its sequel, it has officially joined an elite Netflix club.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/orphan-black-tatiana-maslany-every-clone-character/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/orphan-black_38d596.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 17 Clones Tatiana Maslany Played In Orphan Black
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">BBC's sci-fi series Orphan Black isn't just a gripping story of illegal experiments in human cloning — it also featured an acting tour de force by star Tatiana Maslany.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/most-op-anime-transformations-officially-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/jojo-s-bizarre-adventure-gold-experience-requiem.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Overpowered Anime Transformations, Officially Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anime transformations can completely change the balance power in an anime, but the most ridiculous ones do far more than increase strength or speed.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/prime-video-is-god-is-greek-tragedy-spaghetti-western/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/the-two-sisters-looking-enraged-in-is-god-is.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Is God Is: Greek Tragedy Meets Spaghetti Western on Prime Video (97% RT)
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Is God Is: Greek Tragedy Meets Spaghetti Western In Prime's New 97% RT Thriller</div>
+      
+      
+      <div class="summary">Prime Video just added a new Amazon original movie that earned a near-perfect 97% Rotten Tomatoes score and offers a unique mashup of Greek tragedy and spaghetti Western.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/altered-carbon-ridley-scott-meets-paul-verhoeven-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/04/anthony-mackie-in-altered-carbon.jpeg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Altered Carbon Blends Paul Verhoeven and Ridley Scott Influences on Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ridley Scott Meets Paul Verhoeven In 2-Part Netflix Sci-Fi Series</div>
+      
+      
+      <div class="summary">While Netflix’s sci-fi output has not always been able to keep up with the streaming service’s competitors, one of its best offerings in the genre melded Paul Verhoeven’s satirical wit with Ridley Scott’s immersive futuristic vision.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-perfect-fantasy-shows-last-25-years-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/lost-josh-holloway.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Perfect Fantasy Shows of the Last 25 Years
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">If you're the kind of fantasy TV fan who watches the credits roll on a series finale and immediately opens six tabs looking for more dragons, more magic, and more insane world-building, hi, hello, this list is for you.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/playstation-plus-free-100-hour-rpg-kingdom-come-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/kingdom-come-deliverance-2-kuttenberg.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Kingdom Come: Deliverance 2 Now Free to Play on PlayStation Plus
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: PlayStation Plus Makes 10/10 100 Hour Open World Masterpiece Free To Play</div>
+      
+      
+      <div class="summary">One of the many benefits of being a patient PlayStation Plus subscriber is that, eventually, you'll get access to the greatest games being released.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <span class="current">5</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/6.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

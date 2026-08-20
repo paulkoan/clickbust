@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-08-20 11:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>27 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>59 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>128 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>20 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/zodiac-signs-fruits-basket-characters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/fruits-basket-characters-with-the-chinese-zodiac-signs-anime-featured-image.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All Main Fruits Basket Characters & Their Chinese Zodiac Signs, Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fruits Basket puts a supernatural twist on the Chinese Zodiac through the Sohma family, whose members are bound to a mysterious curse tied to the Zodiac animals.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/tim-burton-mars-attacks-sci-fi-4k-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/mars-attacks-still.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tim Burton's 'Mars Attacks!' Gets 4K Release 30 Years After Premiere
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tim Burton's Wild Sci-Fi Cult Classic Shines 30 Years Later With New Release</div>
+      
+      
+      <div class="summary">In less than a decade, Tim Burton introduced audiences to his unique and captivating imagination. The '80s and '90s progressed with great movies. Pee-Wee's Big Adventure, Beetlejuice, Edward Scissorhands, two Batman films, and Ed Wood drew attention &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/tom-holland-uncharted-forgotten-action-adventure-gem/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2022/02/Uncharted-holland-wahlberg-header.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Holland's Uncharted Climbs Prime Video's Streaming Charts
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Holland’s Uncharted Is Prime Video’s Most Forgotten Movie</div>
+      
+      
+      <div class="summary">Four years after its original release, Tom Holland's most-forgotten action-adventure movie deserves new recognition after rising through Prime Video's streaming charts.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/visionquest-marvel-captain-america-human-torch-easter-egg-meaning/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/04/original-human-torch-first-avenger.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How 'VisionQuest' May Pay Off a 15-Year-Old MCU Easter Egg from 'Captain America: The First Avenger'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel’s Newest Series Is Finally Paying Off a Forgotten MCU Easter Egg 15 Years Later</div>
+      
+      
+      <div class="summary">VisionQuest will mark the end of an era for Marvel Studios. It marks the end of a trilogy that began with WandaVision and Agatha All Along, and a shift in Marvel's strategy for developing Disney+ television series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-sci-fi-movies-since-1990/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/matrix-carrie-anne-moss.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Best Sci-Fi Movies Released Since 1990
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Sci-fi is a genre that has been a pervasive and widely important part of pop culture long before the breakthroughs of feature-length filmmaking.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/parodox-inc-sci-fi-movie-lord-miller-universal/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/phil-lord-chris-miller-project-hail-mary.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Phil Lord & Chris Miller Find Next Sci-Fi Book Adaptation After Project Hail Mary
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Christopher Miller and Phil Lord have found their next sci-fi book-to-screen adaptation. Following the blockbuster success of Project Hail Mary, Lord and Miller's production company, Lord Miller, will produce Paradox Inc.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/scary-movie-6-streaming-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/06/ghostface-in-scary-movie-2026.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Scary Movie' Officially Confirms Streaming Release Date
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It took 25 years for the Wayans brothers to return to the Scary Movie franchise, which itself has experienced a 13-year dry spell since the release of the previous installment.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-leaks-rockstar-games-impact/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2025/11/gta-6-delay-dev-cycle-gta-5-success-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6 Is Too Big For These Leaks To Hurt It
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When game companies get hacked, the hackers' motivations are usually the same as for any other data breach: clout, extortion, or simply because they can. That's not the case with this latest Grand Theft Auto 6 leak, which, I regret to inform you, has&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/spider-verse-3-lego-set-leak-minifigures-release-window" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/spider-verse-lego-set.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spider-Verse 3's Historic LEGO Set Gets Leaked - Minifigures, Release Window
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of LEGO's next Spider-Man movie sets is changing the status quo, and new details about it are starting to leak online. Spider-Man: Beyond the Spider-Verse is set to close out Sony Pictures Animation's Spider-Verse trilogy, a franchise that's beco&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/paradox-inc-phil-lord-chris-miller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/03/ryan-gosling-in-project-hail-mary.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Project Hail Mary' Directors Find New Sci-Fi Project in Time-Travel Story
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In Mar. 2026, noted Hollywood duo Phil Lord and Christopher Miller brought their latest hit to the big screen with the release of Project Hail Mary, starring Oscar-nominee and future MCU Ghost Rider star Ryan Gosling.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-wars-galaxys-edge-echoes-of-the-empire-luke-leia/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/star-wars-galaxy-s-edge-echoes-of-the-empire-1-cover-a-full.jpg?q=70&fit=crop&w=711&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Luke Skywalker and Princess Leia Return in Star Wars: Galaxy's Edge — Echoes Of The Empire #5
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Wars Confirms Major Luke Skywalker and Princess Leia Return</div>
+      
+      
+      <div class="summary">Luke Skywalker and Princess Leia stand out as one of the Star Wars franchise's most iconic duos of all time, appearing in countless live-action and animated television shows, feature films, and other projects over the past several decades.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/crime-books-perfectly-written/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/the-talented-mr-ripley.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Crime Books That Are Perfectly Written
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Crime novels aren't known for having quality prose. Rather than serving up well-crafted sentences, they typically lean into juicy plots and grizzled, world-weary protagonists, along with a hearty helping of murder, betrayal, and sexual tension.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/super/another-fan-favorite-loki-actor-hints-at-avengers-doomsday-return.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2023/10/loki-broxton-sophia-di-martino-sylvie.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sophia Di Martino Hints at Sylvie's Return in 'Avengers: Doomsday'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Another Fan-Favorite Loki Actor Hints At Avengers: Doomsday Return</div>
+      
+      
+      <div class="summary">By Chris Snellgrove | Published 4 seconds ago Avengers: Doomsday is a movie in which Marvel will dump out almost its entire toybox full of characters. We already know that it will be bringing together characters from the Avengers, Black Panther, The &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2240111/lanterns-guardians-of-the-universe-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/lanterns-the-guardians-of-the-universe-explained/l-intro-1784757376.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lanterns: The Guardians Of The Universe Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Lanterns: The Guardians Of The Universe Explained John Johnson/HBO Max Contains spoilers for "Lanterns" Season 1, Episode 1 Hal Jordan (Kyle Chandler) and John Stewart (Aaron Pierre) make a formidable, but deeply dysfunctional buddy cop duo on "Lante&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2236988/modular-phones-before-fairphone/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-companies-that-did-modular-phones-before-fairphone/l-intro-1786713769.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Companies That Did Modular Phones Before Fairphone
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Companies That Did Modular Phones Before Fairphone Bryan Bedder/Getty Images Fairphone, which is a Netherlands-based smartphone brand, is known for selling easily repairable Android phones. Its latest phone – the Fairphone (Gen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/every-jimi-hendrix-studio-album-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/jimi-hendrix.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Jimi Hendrix Studio Album, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Jimi Hendrix revolutionized the electric guitar in the late 60s with an innovative blend of blues, rock and psychedelia. The trailblazing guitarist and singer teamed up with Noel Redding on bass and Mitch Mitchell on drums to create a power trio that&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/pokemon-center-new-halloween-merchandise-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/pokemon-halloween-merch.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Halloween 2026 Merch Is Here So Ditch The 12-foot Home Depot Skeleton
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Pokémon Center put its new Halloween merchandise up for sale on Wednesday, because time moves too fast, and somehow it's almost spooky season. 2026, where have you gone? Some of the Pokémon Halloween collection's highlights are the Cubone, Mimiky&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/star-trek-original-series-episodes-everyone-should-watch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/star-trek.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 'Star Trek: The Original Series' Episodes Everyone Should Watch at Least Once
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are few franchises that have had the same impact on popular culture as Star Trek. First appearing in 1967 with what is retroactively referred to as Star Trek: The Original Series, the series has enthralled audiences for almost 60 years with its&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/mcu-spider-man-actress-betty-brant-brand-new-day" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/betty.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Excluded MCU Spider-Man Actress Explains Where Betty Brant Is During Brand New Day
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Spider-Man: Brand New Day completely abandoned one major character from the "Home" trilogy of Tom Holland's Peter Parker, and the MCU actress has since opened up about her omission.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-games-under-20-hours/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/24380559/Link_s_Awakening_official.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Short Games Under 20 Hours
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Games are long. Some would argue too long. Even if you love a beefy, 100-hour RPG, you may not always have the time to invest several months into one game, particularly if you already plan on playing sprawling titles like Fire Emblem: Fortune’s Weave&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/landman-season-3-update-delays/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/landman-james-jordan-billy-bob-thornton.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Landman' Season 3 Update Confirms Harsh Reality For Taylor Sheridan's Neo-Western
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Previously on Laaaaandmaaaan! I get excited like a kid at the beginning of recess whenever I hear those words. I always switch off my phone and lose myself in Taylor Sheridan’s magnificence for about an hour before attending to one of my 99 problems &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/charlie-and-the-chocolate-factory-johnny-depp-netflix-hit-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/06/gene-wilder-in-willy-wonka-and-the-chocolate-factory.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Revives 2005 'Charlie and the Chocolate Factory' Ahead of New 'Willy Wonka' Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Revives Johnny Depp's 115-Minute Dark Classic Ahead of New Series</div>
+      
+      
+      <div class="summary">Netflix has revived a 21-year-old Johnny Depp classic ahead of two new takes on the beloved tale. Released in 2005, the film was the fourth collaboration between Depp and Tim Burton.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/taylor-jenkins-reid-last-days-vic-coco-audiobook-cast/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/taylor-jenkins-reid-at-los-angeles-premiere-of-daisy-jones-the-six.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Jenkins Reid’s 2027 Novel Enlists Sopranos & The L Word Alums For Star-Studded Audiobook
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Taylor Jenkins Reid has a new novel coming out in 2027 called The Last Days of Vic & Coco, and she just revealed the actors who will be recording the audiobook. The Last Days of Vic & Coco will be released on March 2, 2027.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-nc-17-romance-movies-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/blue-is-the-warmest-color-2013-6.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Best NC-17 Romance Movies of All Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The NC-17 rating is given to movies released in the U.S. that are deemed appropriate only for adults, and it’s a rating set apart from the R-rating because NC-17 means “No One 17 and Under Admitted” (the R rating is “Under 17 requires accompanying pa&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/wildwood-longest-stop-motion-movie-ever-record/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/mahershala-ali.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Laika's Wildwood to Become Longest Stop-Motion Animated Film with 140-Minute Runtime
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Mahershala Ali’s Epic Fantasy Adventure Set to Break Historic Record 2 Months Before Release</div>
+      
+      
+      <div class="summary">Fan-favorite studio Laika's next epic fantasy adventure film is just months away. Wildwood is already on track to break a major Hollywood record when it arrives.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/insidious-out-of-the-further-rotten-tomatoes-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/insidious-out-of-the-further.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Insidious: Out of the Further Debuts with 67% Rotten Tomatoes Score, Best in Franchise
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Insidious: Out of the Further Debuts With a Record-Breaking Rotten Tomatoes Score</div>
+      
+      
+      <div class="summary">The sixth Insidious movie is coming to movie theaters this weekend, and ahead of its release, it has earned its debut Rotten Tomatoes score.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/super/kevin-feige-decades-of-xmen.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/08/sadie-sink-jean-grey-intense-1.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Kevin Feige Hints That We’ll Get Decades Of X-Men Movies
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">By Chris Snellgrove | Published 7 seconds ago Marvel Studios has long since confirmed that Avengers: Secret Wars will serve to reboot its ambitious, often uneven cinematic universe.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/telegram-new-anime-piracy-hub/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/01/world-s-biggest-anime-piracy-site-risks-imploding-as-it-surpasses-disney-in-monthly-visits.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 9anime and HiAnime Era Is Over – Here's Where Anime Streamers Are Going Instead, New Study Finds
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Recent crackdowns against anime piracy have resulted in the closures of some of the biggest pirate streaming sites like 9anime and HiAnime. However, displaced audiences have already transitioned to a new platform.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/longmire-walt-like-john-dutton-raylan-givens/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/tcdlong_zx010.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Longmire Blends John Dutton And Raylan Givens In Overlooked Neo-Western Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: John Dutton Meets Raylan Givens In Streaming’s Most Overlooked Neo-Western Series</div>
+      
+      
+      <div class="summary">Kevin Costner’s Montana rancher John Dutton and Timothy Olyphant’s Kentucky lawman Raylan Givens are arguably the two most iconic Western characters of the past two decades. Yet, another hugely overlooked TV series combines the best of both of them i&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-conjuring-first-communion-movie-prequel-new-era/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/09/screenrant-sandbox-2025-09-07t101015-877-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Conjuring: First Communion Will Launch A New Era For The Franchise In 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Conjuring Will Start An Exciting New Era In 2027</div>
+      
+      
+      <div class="summary">The Conjuring franchise is getting a second life in 2027, and The Conjuring: First Communion has the right premise to make that transition feel as meaningful as it should.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <span class="current">6</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/7.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

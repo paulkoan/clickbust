@@ -189,6 +189,8 @@ def generate_site(articles: list[Article], config: AppConfig, stats: dict | None
         art_site_url = site_url_map.get(art.site_name, "")
         art_domain = _extract_domain(art_site_url) if art_site_url else ""
 
+        site_slug = _slugify_name(art.site_name)
+
         html = article_template.render(
             article=art,
             display_title=display_title,
@@ -196,6 +198,7 @@ def generate_site(articles: list[Article], config: AppConfig, stats: dict | None
             site_name=config.output.site_title,
             site_domain=art_domain,
             base_url=config.output.base_url,
+            site_slug=site_slug,
         )
         out_path = os.path.join(articles_dir, f"{art.article_id}.html")
         with open(out_path, "w", encoding="utf-8") as f:
@@ -261,6 +264,13 @@ def generate_site(articles: list[Article], config: AppConfig, stats: dict | None
 
     site_slugs = [(s["name"], s["slug"]) for s in sites_info]
 
+    # Compute latest dates for sitemap lastmod on static pages
+    latest_article_date = published[0].published_date if published else datetime.now(timezone.utc)
+    site_dates = {}
+    for name, slug in site_slugs:
+        site_arts = [a for a in published if a.site_name == name]
+        site_dates[slug] = site_arts[0].published_date if site_arts else latest_article_date
+
     # Gather note files for sitemap
     notes_dir = os.path.join(output_dir, "notes")
     note_files = []
@@ -283,6 +293,18 @@ def generate_site(articles: list[Article], config: AppConfig, stats: dict | None
         title = title_match.group(1).strip() if title_match else fname.replace(".html", "")
         date_match = re.search(r'<div class="date">([^<]+)', content)
         pub_date = date_match.group(1).strip() if date_match else fname.replace(".html", "")
+        # Convert note date to RFC 2822 for RSS feed
+        try:
+            parsed = datetime.strptime(pub_date, "%d %B %Y")
+            pub_date = parsed.strftime("%a, %d %b %Y 00:00:00 +0000")
+        except (ValueError, TypeError):
+            # Fall back to filename-based date (YYYY-MM-DD)
+            date_str = fname.replace(".html", "")
+            try:
+                parsed = datetime.strptime(date_str, "%Y-%m-%d")
+                pub_date = parsed.strftime("%a, %d %b %Y 00:00:00 +0000")
+            except (ValueError, TypeError):
+                pub_date = datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
         body_match = re.search(r'<div class="body">(.*?)</div>', content, re.DOTALL)
         preview = ""
         if body_match:
@@ -295,12 +317,18 @@ def generate_site(articles: list[Article], config: AppConfig, stats: dict | None
             "pub_date": pub_date,
         })
 
+    # How many total pagination pages
+    total_pages = max(1, (len(published) + PAGE_SIZE - 1) // PAGE_SIZE)
+
     sitemap_template = env.get_template("sitemap.xml.j2")
     sitemap_xml = sitemap_template.render(
         base_url=config.output.base_url,
         articles=published,
         site_slugs=site_slugs,
+        site_dates=site_dates,
+        latest_article_date=latest_article_date,
         note_files=note_files,
+        total_pages=total_pages,
     )
     with open(os.path.join(output_dir, "sitemap.xml"), "w", encoding="utf-8") as f:
         f.write(sitemap_xml)

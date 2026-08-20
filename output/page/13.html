@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-08-20 11:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>27 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>59 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>128 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>20 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/lucky-show-apple-tv-finale-showrunner-cassie-pappas-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/collider-signature-lucky-finale.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV's 'Lucky' Was Always Building to That Gut-Punch Ending Between Anya Taylor-Joy and Timothy Olyphant
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's note: The following contains spoilers for the finale of Lucky. In more than one sense, Apple TV's new crime thriller Lucky has a clear endpoint.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/taylor-sheridan-landman-paramount-success-format-change-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/landman-season-2-ali-larter-plane.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Landman Surges on Streaming as Paramount+ Shifts Strategy
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan's Best Show Surges on Streaming After Paramount Abandons Its Winning Format</div>
+      
+      
+      <div class="summary">There's no stopping Taylor Sheridan's hit drama Landman from becoming a streaming success. Even months after it aired its last episode, the show continues to dominate the charts, and it might spell trouble for Paramount's future plans.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hulu-greatest-steamy-television-shows/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/marianne-and-connell-look-at-each-other-before-kissing-in-normal-people.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Best Steamy TV Shows On Hulu Right Now
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Hulu has consistently built a strong lineup of original shows, including The Bear and Only Murders in the Building. Although it is regarded as one of the most esteemed streaming platforms right now, Hulu also features a variety of steamy and provocat&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/jason-statham-mutiny-rotten-tomatoes-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/stath.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jason Statham's 'Mutiny' Receives 38% Rotten Tomatoes Score Ahead of Theatrical Release
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jason Statham's New 'Die Hard'-Esque Action Thriller Lands Rotten Tomatoes Score</div>
+      
+      
+      <div class="summary">Jason Statham is back with a new blockbuster action thriller that takes cues from the Die Hard franchise, while positioning its lead hero on a massive ship instead of a city skyscraper.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/star-wars-luke-skywalker-emperor-palpatine-return-echoes-of-the-empire/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/10/star-wars-episode-vi-return-of-the-jedi-mark-hamill.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Luke Skywalker Confronts Emperor Palpatine Again in New Star Wars Comic
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 43 Years Later, Star Wars Just Reunited Luke Skywalker With His Greatest Enemy</div>
+      
+      
+      <div class="summary">Luke Skywalker has faced some of the most dangerous villains in Star Wars, but his greatest battles have rarely been about who is strongest with a lightsaber. Return of the Jedi put Luke through the ultimate test when he confronted Darth Vader and Em&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-official-avengers-doomsday-watch-list-disney-plus" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/doomdisneyplus.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel’s Official Avengers: Doomsday Must-Watch List Only Includes 1 Disney+ TV Series
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel Studios unveiled its must-watch list for Avengers: Doomsday, and only one Disney+ series made the cut.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/video/nobody-can-stop-you-from-stealing-the-great-gatsby/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/nobody-can-stop-you-from-stealing-the-great-gatsby.jpeg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nobody can stop you from stealing The Great Gatsby
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In January of 2021, F. Scott Fitzgerald's classic novel The Great Gatsby left copyright. In response, two developers organized a game jam on itch.io to celebrate their new ability to "steal" The Great Gatsby.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/video/i-love-note-taking-games-and-i-don-t-care-if-that-sounds-boring/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/i-love-note-taking-games-and-i-don-t-care-if-that-sounds-boring.jpeg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            I love note-taking games and I DON'T CARE if that sounds boring
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Video games like Her Story, Fez, and Tunic beg the player to take detailed notes to keep track of the story. But journaling or note-taking games are part of a long tradition that goes back to the game manuals of the 80s and 90s.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/gambit-new-demon-transformation-uncanny-x-men-34/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/x-men-97-gambit.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Officially Changes Gambit Forever
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Gambit has been going through it in the pages of Uncanny X-Men. Remy LeBeau's troubles began after he stole the Left Eye of Agamotto from the dragon Sadurang, an artifact that came with some serious consequences.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/tom-holland-spider-man-brand-new-day-paycheck/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/03/spider-man-holding-head-in-brand-new-day.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Holland Is Pocketing Massive Paycheck From 'Spider-Man: Brand New Day'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's been a great year for Tom Holland with two critically-acclaimed, billion-dollar films under his belt. The Odyssey and Spider-Man: Brand New Day have now propelled the actor to international superstar status, and now he's the face of the world's &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/amazon-stream-jason-statham-mutiny-mistake/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/download.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Amazon Accidentally Streams Jason Statham's 'Mutiny' on Prime Video Ahead of Theatrical Release
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Amazon Leaks Jason Statham's New 95-Minute Action Thriller Straight to Streaming</div>
+      
+      
+      <div class="summary">The latest gloriously unrelenting action thriller from genre icon Jason Statham has been streamed by mistake ahead of its imminent theatrical release.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/cyberpunk-2077-official-new-release-august-2026-gunnar/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/cyberpunk-2077-image-of-girl-with-katana-in-front-of-a-neon-city.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cyberpunk 2077 x Gunnar DEX Glasses Available for Pre-Order at $125
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Cyberpunk 2077 Officially Drops $125 New Release Out This August</div>
+      
+      
+      <div class="summary">Cyberpunk 2077 fans can officially get their hands on some brand-new gear inspired by one of the game's coolest fixers. As seen on the Gunnar online storefront, the fan-favorite eyewear brand has officially opened pre-orders for the Cyberpunk 2077 DE&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2236645/oregon-solar-farm-building-wildlife-corridor-deer-elk/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/a-solar-farm-in-oregon-is-building-a-massive-wildlife-corridor-for-migrating-deer-and-elk/l-intro-1786651737.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            A Solar Farm In Oregon Is Building A Massive Wildlife Corridor For Migrating Deer And Elk
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A Solar Farm In Oregon Is Building A Massive Wildlife Corridor For Migrating Deer And Elk Zhongguo/Getty Images Inch by inch, humans are taking over wildlife habitats, and this trend is only going to continue.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/wardogs-bulkhead-300k-showcase-trailer/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/06/wardogs-interview-respect-time.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wardogs Devs Reveal How Much It Costs to Have a Trailer in Huge Gaming Showcase
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Gaming showcases are one of the best ways to get your game in front of as many people as possible. The Game Awards, Summer Game Fest, and Gamescom's Opening Night Live are three of the biggest examples (all hosted by Geoff Keighley, funnily enough).</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/marvel-runaways-what-if-ultron-son-kills-captain-america/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/11/mcdaven_ec055.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'What If...? The Runaways Became the Young Pride' One-Shot Kills Captain America
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel's Just Officially Killed Off a Main Avenger</div>
+      
+      
+      <div class="summary">The most conflicted found family in comics is finally in their villain era. Turns out, the Marvel universe actually really needs the Runaways to, well, run away.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/forgotten-cartoon-network-anime-age-gracefully/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/cartoon-network-anime-collage-with-astro-boy-cardcaptor-sakura-and-vampire-hunter-d.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Overlooked Cartoon Network Anime Including Vampire Hunter D
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 5 Forgotten Cartoon Network Anime That Aged Like Fine Wine</div>
+      
+      
+      <div class="summary">Cartoon Network doesn't have the same importance it had back in the '90s and 2000s. However, at one point the network was responsible for introducing some of the biggest anime of all time to the West.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/yellowstone-spin-off-6666-cancelled/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/taylor-sheridan-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan's Most Controversial 'Yellowstone' Spin-Off Is Officially Cancelled
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Of all the expanding franchises on television today, it is Taylor Sheridan's Yellowstone universe that feels as if it could grow exponentially.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-new-captain-kirk-design/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/star-trek-s-captain-kirk.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Captain Kirk Debuts Battle-Damaged Borg-Tech Redesign in Star Trek: The Last Starship #10
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek Officially Debuts Captain Kirk's Hardcore New Design</div>
+      
+      
+      <div class="summary">As Star Trek continues Captain Kirk's far-future return, the legendary captain debuts a hardcore, battle-damaged redesign, his human appearance giving way to advanced tech after two decades of battle.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-playstation-2-games-2001-turning-25/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/ps2-console.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 10/10 PlayStation 2 Games Turning 25 This Year
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Sony's PlayStation 2 is one of the best gaming consoles of all time, and for anyone who had one in the 2000s, you'll remember it fondly. I still have my PS2 and play games on it occasionally in 2026, even if it's hard to believe some of these games a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/mutiny-2026-movie-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/jason-statham-s-cole-looking-intense-and-aiming-a-gun-while-in-an-engine-room-in-mutiny.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mutiny Review: Jason Statham's Formulaic Action Flick Is Destined To Induce Déjà Vu
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The age of the A-list action star may be long gone, but that doesn’t stop Jason Statham from churning out a new movie full of punches, kicks, gunshots, and explosions at a rate that rivals Stallone and Schwarzenegger in the 1980s.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-sopranos-seasons-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/the-sopranos_0m6zvq.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 6 The Sopranos Seasons, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some spoilers for The Sopranos. Ranking the seasons of The Sopranos is not a science, and if you take a look around the internet, you'll find everyone has their own personal tastes, and there's not much in the way of consensus.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/daniel-radcliffe-swiss-army-man-movie-streaming-netflix-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/daniel-radcliffe-smiling-at-new-york-broadway-opening-night-of-just-in-time.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Daniel Radcliffe's Swiss Army Man Is Now Streaming on Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Daniel Radcliffe's Greatest Non-Harry Potter Movie Is Now Streaming On Netflix</div>
+      
+      
+      <div class="summary">Daniel Radcliffe's greatest movie that isn't part of the Harry Potter franchise is now streaming on Netflix, right at the perfect time. Radcliffe is best known for starring in the Harry Potter movies, taking on the mantle of its lead protagonist acro&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/fps-games-show-announcement-september/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/dadgamer.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            FPS Games Are Finally Getting a Dedicated Showcase
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The aptly named FPS Games Show is a brand new pre-recorded showcase dedicated entirely to first-person shooters, and it's coming next month. Taking place on Thursday, Sept. 3 at 2 p.m. EDT, it will be streamed exclusively on Twitch. Check out the ann&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/ffxiv-switch-2-impressions/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/ffxiv-switch-2-impressions.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Final Fantasy XIV on Switch 2: Impressions of Performance and Portability for Casual Players
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: FFXIV’s Switch 2 Version Might Be the Best It’s Ever Been (For Casuals)</div>
+      
+      
+      <div class="summary">Nintendo had a poor reputation for online stability during the Switch 1 era. Mario Kart 8 matches frequently disconnected, Mario Party online was a nightmare, and even Splatoon 3 suffered from regular issues.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/reacher-season-4-plot-holes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/movieweb-featured-image-template-2026-08-19t115306-446.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Reacher' Season 4 Now Has 2 Unforgivable Plot Holes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! Spoilers ahead for Reacher Season 4, Episode 4, "Karambits and Pieces."Reacher Season 4 has upped the show's game massively.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/mutiny-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/stath.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Mutiny' Review: A Jason Statham Action Thriller on a Cargo Ship
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Mutiny' Review: It's 'Die Hard' on the High Seas for Jason Statham</div>
+      
+      
+      <div class="summary">It's Die Hard on the high seas in Mutiny as Jason Statham delivers bloody vengeance on a cargo ship. There's not much thinking required, and that's blissfully okay in a straightforward action thriller with a legitimate body count.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/punisher-vs-the-amazing-spider-man-issue-2-frank-castle-rematch-rhino-marvel-comics/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/the-punisher-jon-bernthal-daredevil-born-again.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New 'Punisher vs. The Amazing Spider-Man' Comic Revives a Classic Punisher Rivalry
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Is Officially Bringing Back The Punisher’s Biggest Rivalry</div>
+      
+      
+      <div class="summary">As forces of good in New York City, Spider-Man and The Punisher naturally share some of the same foes. Both have previously squared off against criminals like Tombstone, while the Jackal helped facilitate their first encounter in the comics after hir&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/tombstone-best-ending-quote-western-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/tombstone-kurt-russell-1993-ph_-john-bramley-_-c-buena-vista-pictures-_-everett-collection.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tombstone's Final Quote Is the Greatest 3 Words in Western History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In 1993, Kurt Russell and Val Kilmer headlined one of the greatest Westerns of all time in Tombstone, a movie responsible for many of the genre's most memorable quotes. Directed by George P.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/playstation-ps2-2006-classic-free-ps-plus/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/playstation-ps2-2006-classic-free-ps-plus-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Onimusha: Dawn of Dreams Is Now Free for PlayStation Plus Premium Members
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: A 2006 PlayStation 2 Classic Is Officially Free With PS Plus Right Now</div>
+      
+      
+      <div class="summary">As of last Tuesday, you can play a beloved PlayStation 2 classic, originally released in 2006, entirely for free with your PlayStation Plus membership, and given the quality of the game, you may want to install it right now.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/the-walking-dead-future-spin-offs-release-scott-gimple" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/walking-dead-future-spin-offs_mBN1mjC.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Walking Dead CCO Scott Gimple Confirms Future Spin-offs Will Release With a Slower Rollout, But Says The AMC TV Franchise Will Live On: "It's Just A Different Time" (Exclusive)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Walking Dead universe's frontman confirmed the franchise's expansion plans to The Direct, noting a slower rollout for future spin-offs than before.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <span class="current">13</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/14.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

@@ -50,3 +50,9 @@ if [ "$DEPLOY_OK" = true ]; then
 else
     echo "❌ Clickbust run complete but deploy failed after $RETRIES attempts — $(date -u '+%Y-%m-%d %H:%M UTC')"
 fi
+
+# Social media cross-posting (post-deploy)
+echo ""
+echo "📱 Cross-posting to social media..."
+cd "$CLICKBUST_DIR"
+UV_CACHE_DIR=/tmp/uv-cache UV_LINK_MODE=copy uv run python3 scripts/social-post.py 2>&1 || echo "  ⚠️  Social posting skipped (not configured or failed)"

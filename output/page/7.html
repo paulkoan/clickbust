@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-08-20 11:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>27 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>59 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>128 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>20 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.polygon.com/mtg-secret-lair-odds-and-ends-commander-decklist-leak/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/esper-sentinel-modern-horizons-2-mtg-art.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Magic: The Gathering Leaked Secret Lair Deck 'Odds and Ends' Includes $60 Cyborg
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Magic’s Leaked Secret Lair Commander Deck Includes an Overpowered $60 Cyborg</div>
+      
+      
+      <div class="summary">The full decklist for yet another upcoming Magic: The Gathering Secret Lair Commander deck has leaked online, and it contains one of the most valuable collections of reprints we’ve seen in quite some time. “Odds and Ends” taps Yennett, Cryptic Sovere&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/legends-fx-series-charlie-hunnam-sons-of-anarchy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/01/jax-and-his-crew-in-sons-of-anarchy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Original 'Sons of Anarchy' Cast Officially Return for a New Meta Thriller
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Kurt Sutter's motorcycle crime series Sons of Anarchy was one of FX's flagship titles, as the drama was a darker exploration of the inner workings of the titular motorcycle gang.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/gta-6-new-wanted-system-gameplay-leak/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/10/gta-6-promo-art-with-a-man-in-a-white-suit-with-black-gloves-holding-a-brown-bag.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6’s New Wanted System Revealed As Leaks Continue
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There is an ongoing deluge of Grand Theft Auto 6 leaks, and the latest clip shows how the developers at Rockstar Games have taken the series' trademark wanted system to the next level.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/near-perfect-forgotten-hbo-miniseries/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/10/full-circle-claire-danes-timothy-olyphant.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Near-Perfect HBO Miniseries That Everyone Forgot About
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">HBO has long held a reputation for quality television, producing many of the greatest TV shows of all time, and that includes several iconic miniseries.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/sons-of-anarchy-reunion-legends-series-fx/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/sons-of-anarchy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Charlie Hunnam's Long-Awaited Sons of Anarchy Follow-Up Show Confirmed, But With a Twist
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Sons of Anarchy ​​​​​​cast is officially returning for a new series on FX. On Wednesday, FX announced that it had ordered the new series Legends, a meta-thriller produced by Emmy-nominated Sons of Anarchy star Charlie Hunnam, who will also star, &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/super/new-delay-marvels-ambitious-movie.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/07/avengers-doomsday-poster-1.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers: Secret Wars Production Enters Five-Week Hiatus, Raising Delay Concerns
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New Delay Has Fans Worried About Marvel’s Most Ambitious Movie</div>
+      
+      
+      <div class="summary">By Chris Snellgrove | Published 19 seconds ago After the runaway success of Spider-Man: Brand New Day (over $2 billion at the box office so far? Talk about big potatoes!), Marvel fans are understandably hyped about Avengers: Doomsday, which premieres&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2236891/fingerprint-smart-lock-amazon-best-selling-biometric-security-product/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-fingerprint-smart-lock-is-amazons-best-selling-biometric-security-product/l-intro-1786695543.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wyze Auto-Lock Bolt v2: Amazon's Best-Selling Biometric Smart Lock
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Fingerprint Smart Lock Is Amazon's Best-Selling Biometric Security Product</div>
+      
+      
+      <div class="summary">This Fingerprint Smart Lock Is Amazon's Best-Selling Biometric Security Product We may receive a commission on purchases made from links. The field of biometrics is both a fascinating and innovative addition to the world of consumer tech.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/levi-ackerman-best-attack-on-titan-quote/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/levi-fighting-with-vertical-maneuvering-equipments-with-a-bandaged-eye-in-attack-on-titan-the-movie_-the-last-attack.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Levi Ackerman's Most Powerful Quote in Attack on Titan
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 3 Years Later, Levi's Greatest Attack On Titan Line Is Still the Most Powerful Quote in Anime History</div>
+      
+      
+      <div class="summary">There are many anime that have irrevocably changed the industry and become evergreen successes, but few have resonated with audiences as strongly as Hajime Isayama's Attack on Titan.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sons-of-anarchy-cast-new-series-legends/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/sons-of-anarchy-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 'Sons of Anarchy' Cast Is Officially Returning for New Thriller Series
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Sons of Anarchy are rolling back on to TV for a new limited series. While almost every principal character on the show was dead by the time the show's seventh and final season concluded back in 2014, the whole gang is getting back together for an&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/alex-ullom-4-x-4-the-event-movie-plot-cast/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/04/beast1.JPG?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Director Alex Ullom's Next Film 4 X 4: The Event Stars Jaden Smith and Sophia Lillis
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: MrBeast Meets 'Battle Royale' In New Thriller From GenZ's Next Great Director</div>
+      
+      
+      <div class="summary">The director of Hollywood's next Gen Z horror hit has already finished filming his next movie. Alex Ullom, the 27-year-old director of It Ends, which premiered at SXSW and is being released in theaters by Neon this weekend, will follow up his lo-fi e&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/james-gunn-dcu-set-up-major-batman-characters" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/gunnbats.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lanterns Premiere Hints at Batman Characters Commissioner Gordon and Batgirl
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: James Gunn’s DCU Just Set Up 2 Major Batman Characters</div>
+      
+      
+      <div class="summary">James Gunn's DCU may have hinted at several major Batman characters in Lanterns' premiere. DC Studios is saving Batman's DCU debut for The Brave and the Bold, which won't be released until 2029 or later.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2240364/recap-before-dark-matter-season-2-apple-tv/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/the-only-recap-you-need-before-dark-matter-season-2/l-intro-1787170234.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV's Dark Matter Season 1 Recap Before Season 2 Premieres
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Only Recap You Need Before Dark Matter Season 2</div>
+      
+      
+      <div class="summary">The Only Recap You Need Before Dark Matter Season 2 VIDEO Blake Crouch's "Dark Matter" is returning to Apple TV on August 28, 2026, continuing the exciting story of Jason (Joel Edgerton) and Daniela Dessen's (Jennifer Connelly) adventures in alternat&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/sons-of-anarchy-spinoff-series-legends-charlie-hunnam-cast-returns/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/charlie-hunham-as-jax-on-the-phone-in-an-episode-of-sons-of-anarchy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Charlie Hunnam Returns In Sons Of Anarchy Meta-Spinoff Series Legends
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Charlie Hunnam’s Sons Of Anarchy Return Revealed With New Spinoff Series</div>
+      
+      
+      <div class="summary">Charlie Hunnam is getting the Sons of Anarchy gang back together. FX is moving ahead with the meta-thriller Legends, which begins when the cast of Sons of Anarchy reunites at a fan convention after more than a decade.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-last-house-movie-netflix-sci-fi-trend/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/the-outer-space-in-the-last-house-with-netflix-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Last House Is Netflix's Latest Sci-Fi Hit With 113.9 Million Hours Viewed
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New Sci-Fi With 113.9M Hours Viewed Continues A Great Netflix Trend</div>
+      
+      
+      <div class="summary">Netflix's new sci-fi movie is one of the most popular releases in the world right now, topping the streaming service's charts, and it just goes to show how a Netflix streak is unlikely to be broken anytime soon. Netflix's library of movies and TV sho&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/wolverine-origins-dark-age/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/hugh-jackman-s-wolverine-wears-his-classic-yellow-and-blue-costume-in-the-mcu.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Wolverine Series Completes Trilogy Revealing His Origin
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel announces a new Wolverine series that revisits his past and adds brand-new details to his origin story. In Marvel canon, James Howlett's mutant powers erupt for the first time when he kills his father Thomas and flees into the wilderness, even&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-the-audacity-best-thriller-to-binge/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/zach-galiafinakis-as-carl-in-the-audacity-episode-4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Audacity: After 4 Months, Netflix's New 8-Part Thriller Is One Of Its Best To Binge
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix just added one of its best new shows to binge-watch this week, and it’s not even one of its original series. Four months after it premiered on AMC, this 8-part comedic thriller series has finally found a new streaming home on Netflix as of We&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-dark-fantasy-books-like-the-witcher-game-of-thrones/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/07/81zd2d-nmzl-_sl1500_.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Dark Fantasy Books for Fans of the Witcher and Game of Thrones
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Over the last two decades, dark fantasy has become one of the most popular literary subgenres thanks to the runaway success of George R.R. Martin's A Song of Ice and Fire saga and Andrzej Sapkowski’s The Witcher.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/x-men-new-hero-repent-debut/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/remy-lebeau-aka-gambit-flicks-a-playing-card-in-x-men-comic-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            X-Men Officially Debuts New Hero REPENT
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel introduces a new X-Men hero with unique supernatural powers. Although both types of superheroes are equally powerful, what makes mutants stand apart from regular superhumans is their X-Gene, which grants them almost completely random abilities&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/top-open-world-rpgs-choices-matter/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/top-open-world-rpgs-choices-matter-baldur-s-gate.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Open-World RPGs Where Your Choices Genuinely Matter
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">RPG is often a genre in which the decisions you make along the campaign change the outcome of the narrative or, at least, some plot points throughout the story. This is one of the most varied genres in gaming, as these titles can have different types&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/stuart-fails-to-save-the-universe-hbo-sci-fi-series-rick-and-morty-quantum-leap/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/kaley-cuoco-in-stuart-fails-to-save-the-universe.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stuart Fails To Save The Universe Mixes Rick And Morty And Quantum Leap In HBO Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Rick & Morty Meets Quantum Leap In HBO's Hit New Sci-Fi Series With 10 Episodes</div>
+      
+      
+      <div class="summary">While Rick and Morty meets Quantum Leap would be a tall order for any sci-fi comedy series to fill, one new HBO Max hit has managed to pull off this promising premise with elan.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/elite-force-action-season-2-netflix-hit-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/elite-force-netflix-action-thriller-streaming-success-july-2026.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Elite Force' (Netflix Action Thriller) Eyes Season 2
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's Explosive New 6-Part Action Thriller Smash Has Sights Set on Season 2</div>
+      
+      
+      <div class="summary">Last month, Netflix debuted an exciting new six-episode action thriller that quickly took the streaming world by storm.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/doctor-doom-mcu-backstory/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/movieweb-featured-image-template-2026-08-19t164320-912.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Doctor Doom's New MCU Backstory, Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Avengers: Doomsday drops this December, and anticipation is high as advance tickets have begun to outpace Spider-Man: Brand New Day.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/ledgerbound-tactical-rpg-insurance-dating-sim/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/ledgerbound-rayna-character-art.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ledgerbound: A Tactical RPG/Dating Sim Blending BG3 Romance and Fire Emblem Combat
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: BG3 meets Fire Emblem in a Steamy New Steam RPG</div>
+      
+      
+      <div class="summary">Rayna’s job is to look grieving widows directly in their eyes and explain, professionally, why their dead spouses don’t qualify for payouts. And that, honestly, the dead heroes probably had it coming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-spoiler-comics-to-read-after-spider-man-brand-new-day/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/peter-parker-testing-his-new-webbing-in-spider-man-brand-new-day.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Spoilery Spider-Man Comics That Fans of Brand New Day Should Read, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Spider-Man: Brand New Day is still breaking records all over the world. That's partially because of the sheer quality of the production and partially because of the way that the film pushes MCU lore forward.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/avengers-doomsday-thor-captain-marvel-mcu-most-powerful-heroes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/doomsday-mural.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers: Doomsday Trailer Hints at Doctor Doom's Fear of Thor and Steve Rogers
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Doctor Doom Revealed the MCU's 2 Strongest Heroes</div>
+      
+      
+      <div class="summary">At D23, Marvel Studios publicly released the second full-length trailer for Avengers: Doomsday, which was previously shown off exclusively to attendees of San Diego Comic-Con 2026. It primarily focused on the film's villain, Doctor Victor von Doom, a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/zendaya-stole-show-netflix-the-oa/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/zendaya-at-the-challengers-photocall-at-the-rolex-monte-carlo-masters.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zendaya's Role as Fola in Netflix's The OA
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Zendaya Stole the Show in 1 of the Best Sci-Fi Series of the 21st Century</div>
+      
+      
+      <div class="summary">Zendaya has become one of the most talented and successful stars in Hollywood, and it started with one of her early mature roles in Netflix's most thought-provoking and unique sci-fi series, The OA.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/review-power-rangers-unlimited-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/81m-s63ltxl-_sl1500_.webp?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Power Rangers Unlimited #2 Review: The Series Finds Its Morphinomenal Voice
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The following contains major spoilers for Power Rangers Unlimited #2, on sale now from BOOM! Studios. 2026 has been a massive year for the Power Rangers, and all thanks to the efforts of BOOM! Studios.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/the-seed-2021-streaming-review.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/08/The-Seed-2021-24.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Seed: 2021 Alien Body Horror Film About Influencers Hits Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Extremely R-Rated Sci-Fi Horror Will Devour Your Soul From The Inside Out</div>
+      
+      
+      <div class="summary">By Robert Scucci | Published 3 minutes ago There’s nothing worse than trying to have a quiet weekend getaway with your friends when they’re also trying to launch their careers as online influencers.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/avengers-doomsday-doctor-doom-robert-downey-jr-david-harbour/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/avengers_-doomsday-_-special-look-_-in-theaters-december-18-1-40-screenshot.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            David Harbour Suggests Red Guardian May Identify Doctor Doom As Tony Stark In Avengers: Doomsday
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Avengers: Doomsday Star Might Have Just Spoiled a Doctor Doom Reveal</div>
+      
+      
+      <div class="summary">With Avengers: Doomsday less than four months away, Marvel Studios has started ramping up the hype for its highly anticipated superhero blockbuster.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/star-wars-new-han-solo-replacing-harrison-ford" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/hansol.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Matthew Rhys Voices Han Solo in Welsh-Language Dub of Star Wars: A New Hope
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Wars’ New Han Solo Breaks Silence On Replacing Harrison Ford</div>
+      
+      
+      <div class="summary">Star Wars has found its new Han Solo, and the actor stepping into Harrison Ford’s orbit finally broke his silence.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <span class="current">7</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/8.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

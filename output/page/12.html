@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-08-20 11:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>27 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>59 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>128 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>20 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/hbo-max-dont-worry-darling-streaming-charts-rise-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/florence-pugh-looking-worried-in-don-t-worry-darling.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Florence Pugh's 'Don't Worry Darling' Is A Top 10 Movie On HBO Max
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Florence Pugh's $87.6 Million R-Rated Psychological Thriller Deserves Its Global HBO Max Streaming Success</div>
+      
+      
+      <div class="summary">Florence Pugh is the star of a psychological thriller that is lighting up HBO Max's global charts, and this underrated movie deserves its streaming success after it got wrapped up in controversies. Pugh is one of the biggest stars in the world at the&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/icefall-streaming-release-prime-video-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/09/joel-kinnaman-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Joel Kinnaman's Action Thriller 'Icefall' Arrives on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'John Wick' Meets 'The Grey' as Joel Kinnaman’s Relentless Thriller Officially Arrives on Prime Video</div>
+      
+      
+      <div class="summary">Best known for his role in one of Netflix’s original sleeper hits, The Killing, Joel Kinnaman has become one of the most reliable action stars in the world in the last few years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/apple-tv-murderbot-season-2-cast-steve-buscemi-tramell-tillman-michael-sheen/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/murderbot_tewyqx.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV+'s Murderbot Season 2 Adds 25 Actors Including Steve Buscemi
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV’s Hit Space Opera Series Adds Steve Buscemi & 24 Others To Stacked Murderbot Season 2 Cast</div>
+      
+      
+      <div class="summary">Published Aug 19, 2026, 10:41 AM EDT Jordan is the Senior Editor for Movies & TV News at Screen Rant. She graduated from the University of Oregon with a B.A. in Psychology and a minor in Media Studies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/disney-next-live-action-genie-will-smith" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/disney_new_live_action_genie.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            James Monroe Iglehart Cast as Genie in Disney's Hidden Heroes: A Descendants Story
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney Officially Casts Its Next Live-Action Genie After Will Smith</div>
+      
+      
+      <div class="summary">Disney has officially found its Will Smith replacement by revealing the new actor for Aladdin's Genie in a new report. The Genie is perhaps the most iconic character in Disney's Aladdin franchise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/stranger-things-tales-from-85-season-2-release-date-images/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/vecna-in-stranger-things-season-5-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stranger Things Officially Confirms 2026 Return Date With New Tales From ’85 Images
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Aug 19, 2026, 10:40 AM EDT Felipe Rangel is a Movie and TV Journalist ScreenRant. He has been writing about movies and TV since 2021. Felipe joined ScreenRant in 2022, working across different teams, covering everything from breaking news t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/marvel-reveals-dan-slott-spectacular-spider-man-ongoing/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/spectacular-spider-man-big-time-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel's 'Spectacular Spider-Man' Comic Series Expanded from Miniseries to Ongoing
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Officially Reveals That Dan Slott's Spectacular Spider-Man is Now an Ongoing Series as it Hits the 'Big Time'</div>
+      
+      
+      <div class="summary">When Dan Slott and Marcus To's Spectacular Spider-Man: Brand-New Day was launched a few months back, it was announced as a five-issue miniseries.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-science-fiction-shudder/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/psycho-goreman-9-1024x576-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Phantasm Remastered and 5 Other Sci-Fi Movies Streaming on Shudder
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 6 Mind-Blowing Sci-Fi Movies Streaming on Shudder (#3 is a Modern Cult Classic)</div>
+      
+      
+      <div class="summary">Shudder is made by and for absolute sickos. This is intended as a compliment. There are other streaming services dedicated to horror, most prominently Screambox, but Shudder has its own unique feel.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/timothy-olyphant-star-wars-lego-mandalorian-return-confirmed-greef-karga-recast/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/timothy-olyphant-wearing-armor-in-the-mandalorian-season-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Timothy Olyphant Returns As Cobb Vanth In Star Wars: The Mandalorian & Grogu
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Wars Officially Confirms Timothy Olyphant’s 2026 Return & Major Recasting</div>
+      
+      
+      <div class="summary">A major Star Wars casting announcement has emerged from hyperspace. The franchise is a sprawling behemoth that began with the 1977 mega-blockbuster A New Hope, which spawned five sequels, three prequels, and three live-action spinoff films on the big&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/movies-so-good-they-created-blueprint-for-a-whole-genre/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/11/groundhog-day-bill-murray-1993.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Movies So Good They Created the Blueprint for a Whole Genre
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Every so often, a movie comes around that defines – or redefines – a genre. It might not be the first film of its kind, but it sets the standard for every movie that follows. It becomes the blueprint for an entirely new kind of storytelling that reve&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/scott-caan-comeback-cbs-ncis-new-york-break-franchise-canon/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/alex-o-loughlin-as-steve-mcgarrett-and-scott-caan-as-danny-williams-in-hawaii-five-0.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Scott Caan Returns to CBS in 'NCIS: New York' as New Character Nick Schaeffer
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: CBS Quietly Rewrites Scott Caan's Hawaii Five-0 Role in NCIS & Breaks Franchise Canon</div>
+      
+      
+      <div class="summary">Hawaii Five-0 star Scott Caan is making his return to CBS in the NCIS spinoff, NCIS: New York. His new character will alter his previous persona and go beyond established franchise canon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/mha-where-movies-fit-series-timeline/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2020/07/boku-no-hero-academia-deku-bakugou.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Where All 4 My Hero Academia Movies Officially Fit Into the Timeline
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Filling in the story gaps in anime is sometimes done best with movies that fit right into anime's plot, but not every series uses them to this advantage.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/pokemon-center-customer-data-breach-july-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/02/sad-pikachu.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokemon Center Hit By Data Breach That Leaks Customer Information
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">You’ve probably heard this before: A major data breach has exposed customer information. Pokémon Center, the official merchandise site for the Pokémon brand, has canceled orders in Europe after hackers stole customers’ personal and order information.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/harvey-smith-black-pony-immersive-new-game-studio/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/24821229/ar7xl.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Dishonored' Veteran Harvey Smith Announces New Studio
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Harvey Smith, the former Arkane developer behind some of gaming’s most influential immersive sims, is starting over with a new studio.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/a-knight-of-the-seven-kingdoms-season-1-soundtrack-physical-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/02/peter-claffey_8-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            A Knight Of The Seven Kingdoms Season 1 Soundtrack CD Arrives In November
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: A Knight Of The Seven Kingdoms Sets New Release This November Amid Season 2 Wait</div>
+      
+      
+      <div class="summary">A Knight Of The Seven Kingdoms returns this fall with a surprise new release. Co-created by Ira Parker and George R.R.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/transformers-minecraft-add-on-optimus-prime-megatron/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/09/transformers-manga-header-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Transformers Officially Adds Optimus Prime, Megatron & 10 More to Minecraft
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The legendary characters of Transformers are officially making their way to Minecraft. A new add-on from Syclone Studios brings the Autobots and Decepticons to the popular video game.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-kpop-demon-hunters-lawsuit-exploitation-accusations/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/rumi-and-zoey-looking-worried-at-a-phone-while-mira-looks-excited-in-kpop-demon-hunters.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix & KPop Demon Hunters Accused Of “Exploitation” In Shocking New Lawsuit
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.Not everyone is thrilled about KPop Demon Hunters' success as a new lawsuit regarding the film arises.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/wildwood-trailer-2026-fantasy-adventure/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/wildwood-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Trailer for Laika's Animated 'Wildwood' Released Ahead of October 2026 Premiere
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Wildwood' Trailer Reveals 'Coraline' Creators' Gothic Fantasy Adventure</div>
+      
+      
+      <div class="summary">Published Aug 19, 2026, 10:17 AM EDT Richard is a writer/journalist from Oregon (by way of California) with a love of Marvel, Star Wars, DC, and all kinds of entertainment. He joined MovieWeb in January 2026 as a Movie & TV Writer/Editor.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2238383/amazon-cyberpunk-series-william-gibson-the-peripheral-deserved-second-season/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/amazons-cyberpunk-series-based-on-a-william-gibson-novel-deserved-a-second-season/l-intro-1786984108.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Amazon's Cyberpunk Series Based On A William Gibson Novel Deserved A Second Season
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Amazon's Cyberpunk Series Based On A William Gibson Novel Deserved A Second Season Amazon Prime Video Amazon Prime Video contains several series you can binge in one day, but "The Peripheral" might frustrate you.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/batman-bad-seeds-parliament-trees/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/batman-looks-at-his-blood-soaked-hands-in-dc-comics-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Batman Finally Has An Enemy That His Prep Time Can't Beat
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">As unbeatable as the Dark Knight might be, Batman has virtually no chance of defeating his next enemies for good, as they're an invincible force of nature. Batman’s infamous “prep time” reputation comes from a very real part of his characterization.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/last-house-60-million-hours-watched/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/greta-lee-the-last-house.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Sci-Fi Thriller 'The End of Oak Street' Surpasses 110 Million Hours Watched
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s New Spielbergian Sci-Fi Thriller Explodes With 110M+ Hours Watched</div>
+      
+      
+      <div class="summary">Netflix's decision to pivot away from mega-budget tentpoles and focus on mid-budget genre movies appears to be paying off. This shift in strategy truly took shape this year, following a streak of expensive misfires such as The Electric State, Red Not&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/forgotten-high-fantasy-anime/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/the-adventuring-party-in-record-of-lodoss-war.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rokka: Braves of the Six Flowers and 6 Other Overlooked High Fantasy Anime
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 7 Forgotten High Fantasy Anime No One Remembers</div>
+      
+      
+      <div class="summary">Fantasy anime remains one of the medium's most versatile genres, spanning sweeping adventures, elaborate magic systems, mythical creatures, and kingdoms shaped by war or political intrigue.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/backrooms-sequel-release-quiet-kane-parsons/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/clark-wandering-in-the-backrooms-in-backrooms.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Backrooms Web Series Returns With New Episode 'Everything Must Go' On YouTube
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Backrooms’ First Sequel Quietly Releases After Record-Smashing Box Office Run</div>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.After the hugely successful theatrical run of the film Backrooms, Kane Parsons has now released the first follow-up t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/horizon-hunters-gathering-playstation-co-op-game-rebooted/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/02/horizon-hunters-gathering-screengrab.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            PlayStation's Horizon Co-Op Game Being Rebooted Following Poor Feedback
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">PlayStation is going back to the drawing board for Horizon Hunters Gathering. The co-op spinoff of Guerrilla Games' Horizon series was announced earlier this year, but Sony Interactive Entertainment has decided to reboot the project in response to ne&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/vince-vaughn-bad-monkey-season-2-apple-tv-release-date-first-images/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/03/vince-vaughn-as-yancy-on-the-phone-in-bad-monkey.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Vince Vaughn's Hit Apple TV Series Bad Monkey Lands Season 2 Release Date & First Images
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Vince Vaughn is almost back for Bad Monkey. Debuting on Apple TV in August 2024, from veteran writer and producer Bill Lawrence, Bad Monkey is based on the 2013 novel of the same name by Carl Hiaasen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2236021/chinese-ev-come-to-us-pros-cons/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-reasons-chinese-evs-should-come-to-to-the-u-s-and-4-reasons-they-shouldnt/l-intro-1786530874.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Reasons Chinese EVs Should Come To The U.S. (And 4 Reasons They Shouldn't)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Reasons Chinese EVs Should Come To The U.S. (And 4 Reasons They Shouldn't) joebarthez/Shutterstock China is having an EV boom so large that it's moving the needle on oil reserves, displacing 1.35 million barrels in the first half of 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/harry-potter-movies-best-scenes-not-in-books/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/mixcollage-04-aug-2026-10-18-pm-1097.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Harry Potter Movie Scenes That Weren't In The Books
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Adapting seven enormous Harry Potter novels into eight movies inevitably meant leaving things behind. Entire characters disappeared, subplots were condensed, and fan-favorite moments never made it onscreen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/spartacus-leaving-netflix-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/09/spartacus-house-of-ashur-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spartacus: Starz's Swords-and-Sandals Series Leaves Netflix on September 14, 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Bloodiest and Horniest TV Show in History Is Leaving Netflix in Just a Few Days</div>
+      
+      
+      <div class="summary">Netflix users, we have bad news for you. One of the best shows on the streamer – well-known for its strong sexual and violent themes – is set to depart in a matter of days, giving fans very little time to catch up.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/where-every-avenger-is-before-doomsday/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/1920x1080-image-format-21.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Where Every Main Avenger Was Last Seen Before 'Doomsday' & What They Were Doing
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Nearly 20 years after Iron Man, Marvel is preparing to release what will presumably be its biggest film yet, Avengers: Doomsday. Set to release on Dec.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/bad-monkey-season-2-release-date-images/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/apple-tv-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV's 'Bad Monkey' Season 2 Returns in December 2026 After Delay
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV's 10/10 Crime Series Is Officially Returning After 2 Year Delay</div>
+      
+      
+      <div class="summary">The latest season of Your Friends and Neighbors has come and gone, leaving viewers who like a rich blend of black comedy and high-stakes crime bereft. Apple TV has good news, however: their most offbeat series is coming back this winter.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/thief-pulse-of-promise-comic-soundtrack-celldweller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/copy-of-collider-template-93.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            First Look at 'Thief: Pulse of Promise' Comic, Soundtrack Teaser Released
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: An Iconic Fantasy Video Game Is Officially Back With a First Look at the New Release [Exclusive]</div>
+      
+      
+      <div class="summary">The legendary Thief franchise of stealth-action video games is enjoying a resurgence of late, re-emerging from the shadows last year with Thief VR: Legacy of Shadows.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <span class="current">12</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/13.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

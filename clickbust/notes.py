@@ -9,50 +9,32 @@ from typing import Optional
 import httpx
 from jinja2 import Environment, FileSystemLoader
 
+from .llm_cache import LLMCache
 from .models import LLMConfig
 from .rewriter import _load_api_key
 
 log = logging.getLogger(__name__)
 
-VOICE_SYSTEM_PROMPT = """You are writing a short daily note in Paul's voice.
+VOICE_SYSTEM_PROMPT = """You write short daily notes in Paul's voice — UK-based, direct, no filler.
 
-Paul is UK-based. He talks the way he thinks - direct, no filler, like he's telling a mate.
+Hard rules:
+- No em dashes (use comma or full stop)
+- No filler: "it's worth noting", "in a world where", "let's explore", "notably", "interestingly", "importantly", "journey", "leverage", "utilise", "however" (use "but")
+- No hedging — say it directly
+- No "in conclusion" — stop when done
+- Title is a statement, not a question
+- One topic, 200-400 words
 
-**Hard rules - violate these and the note is junk:**
-- No em dashes. Use a comma or a full stop.
-- No "it's worth noting", "in a world where", "let's explore", "let's dive in", "as we can see"
-- No "notably", "interestingly", "importantly" - just say the thing
-- No "journey", "explore", "leverage", "utilise", "however" (use "but")
-- No hedging - "this is the thing" is better than "it could be argued"
-- No "in conclusion", "to summarise" - just stop when you're done
-- No title that's a question. Titles are statements.
-- One topic per note. 200-400 words. If you only have 150 words worth of thought, write 150 words.
+CRITICAL: Do not invent actions. Never say "I bought/sold/did". Observations only.
 
-**CRITICAL - DO NOT INVENT SPECIFICS:**
-Never say "I bought", "I sold", "I did", or attribute any action or decision to Paul
-that he hasn't stated. The note must stay at the level of ideas and observations.
-"It reminds me of the dot-com crash" is fine. "I sold my NVIDIA stock" is NOT fine.
-
-**Output format:**
-First line is the title (plain text, no markdown, no quotes).
-Then a blank line.
-Then the body, written as plain paragraphs separated by double newlines.
-No markdown, no formatting, no bullet points.
-
-The note must be about something real - a thing Paul thought about today, a conversation
-he had, or something he noticed. Not generic commentary. Be specific about the observation
-or the idea, but never fabricate personal actions.
-
-End the note with a new line containing just:
-"Paul"
-"""
+Output: First line = title (plain). Blank line. Body in paragraphs separated by double newlines. No markdown, no bullets. End with: Paul"""
 
 
 def _build_prompt(topic: str, context: str = "") -> str:
     """Build the user prompt for the LLM note request."""
     parts = [f"Write a note about: {topic}"]
     if context:
-        parts.append(f"\nContext from today:\n{context}")
+        parts.append(f"\nContext:\n{context}")
     return "\n".join(parts)
 
 
@@ -103,6 +85,7 @@ def generate_note(
     output_dir: str = "output",
     base_url: str = "https://clickbust.cybr.fi",
     today: Optional[Date] = None,
+    cache: Optional[LLMCache] = None,
 ) -> tuple[str, str, str]:
     """Generate a daily note: LLM call + template render + save.
 
@@ -120,6 +103,20 @@ def generate_note(
         return filename, "", ""
 
     prompt = _build_prompt(topic, context)
+
+    # --- Cache check: skip API call if identical note was generated recently ---
+    if cache:
+        cached_resp = cache.get(VOICE_SYSTEM_PROMPT, prompt, config.model)
+        if cached_resp is not None:
+            cached_content = cached_resp.get("content", "")
+            log.info("Note LLM cache HIT — reusing cached response")
+            title, body_html = _parse_note_response(cached_content)
+            if title:
+                _render_and_save_note(title, body_html, date_str, filename,
+                                      template_dir, output_dir, base_url, today)
+                return filename, title, date_str
+            log.warning("Cached note had empty title — falling through to fresh call")
+
     payload = {
         "model": config.model,
         "messages": [
@@ -145,11 +142,30 @@ def generate_note(
         log.error("Note LLM call failed: %s", e)
         return filename, "", ""
 
+    # Store in cache for future identical prompts
+    if cache:
+        cache.set(VOICE_SYSTEM_PROMPT, prompt, config.model, {"content": content})
+
     title, body_html = _parse_note_response(content)
+    _render_and_save_note(title, body_html, date_str, filename,
+                         template_dir, output_dir, base_url, today)
+    return filename, title, date_str
+
+
+def _render_and_save_note(
+    title: str,
+    body_html: str,
+    date_str: str,
+    filename: str,
+    template_dir: str,
+    output_dir: str,
+    base_url: str,
+    today: Date,
+) -> None:
+    """Render a note HTML template and save to disk."""
     meta_description = _get_preview(body_html)
     published_date = today.strftime("%d %B %Y")
 
-    # Render the template
     abs_template_dir = os.path.abspath(template_dir)
     env = Environment(loader=FileSystemLoader(abs_template_dir), autoescape=False)
     template = env.get_template("note.html.j2")
@@ -163,7 +179,6 @@ def generate_note(
         body_html=body_html,
     )
 
-    # Save to output/notes/
     notes_dir = os.path.join(output_dir, "notes")
     os.makedirs(notes_dir, exist_ok=True)
     out_path = os.path.join(notes_dir, filename)
@@ -171,4 +186,3 @@ def generate_note(
         f.write(html)
 
     log.info("Note saved: %s — \"%s\"", filename, title)
-    return filename, title, date_str

@@ -58,6 +58,7 @@ def get_cached_result(cache: dict, url: str) -> dict | None:
             "rewritten_title": entry.get("rewritten_title"),
             "summary": entry.get("summary", ""),
             "image_url": entry.get("image_url", ""),
+            "body_images": entry.get("body_images", []),
         }
     return None
 
@@ -70,6 +71,7 @@ def mark_processed(
     rewritten_title: str | None,
     summary: str = "",
     image_url: str = "",
+    body_images: list | None = None,
     is_cached: bool = False,
 ) -> None:
     """Store or update an article's result in the cache.
@@ -84,6 +86,7 @@ def mark_processed(
         "rewritten_title": rewritten_title,
         "summary": summary,
         "image_url": image_url,
+        "body_images": body_images or [],
         "is_cached": is_cached,
         "last_seen": datetime.now(timezone.utc).isoformat(),
     }

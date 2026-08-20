@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-08-20 11:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>27 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>59 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>128 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>20 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/brandon-sanderson-mistborn-well-of-ascension-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/mistborn-well-of-ascension-cover-art.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brandon Sanderson's Mistborn: The Well Of Ascension Officially Arrives November 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There's no doubt that Brandon Sanderson is one of the premier fantasy authors in the world today, if only because he manages to get new books into the hands of the public with relative regularity.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/wonder-woman-movie-dc-update-tom-king/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/gal-gaot-as-wonder-woman.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DC Studios' Wonder Woman Movie Gets First Update In 14 Months
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Diana Prince will return to the big screen as part of the DC Universe. While the iconic heroine played a major role in the DCEU movie timeline, Wonder Woman is getting reimagined for James Gunn's superhero franchise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/wildwood-movie-trailer-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/curtis-standing-next-to-alexandra-on-the-battlefield-in-wildwood.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Narnia Meets Coraline In Epic New Fantasy Trailer For Wildwood
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Chronicles of Narnia's fantasy and Coraline's animation collide in the new trailer for Wildwood. The upcoming stop-motion animated movie is produced by Laika, the same studio behind Coraline, ParaNorman, The BoxTrolls, Kubo and the Two Strings, a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/wildwood-trailer-laika-movie-coraline/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/ww_curtisalx_still_16x9_1134x2013px_72dpi_rgb-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The New ‘Wildwood’ Trailer Shows a Mix of Coraline’s Style With a Haunting Fairy Tale
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Portland, Oregon-based stop-motion animation studio Laika launched in 2009 with Coraline, Henry Selick’s highly acclaimed adaptation of Neil Gaiman’s dark fairy tale about a girl who discovers another world where a twisted doppelganger of her mother &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/wildwood-trailer-laika/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/ww_curtisalx_still_16x9_1134x2013px_72dpi_rgb-1-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Laika's 'Wildwood' Stop-Motion Fantasy Film Debuts New Trailer
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Laika's Ambitious Stop-Motion Fantasy Adaptation Officially Debuts a Jaw-Dropping New Trailer</div>
+      
+      
+      <div class="summary">Laika hasn't released a film in theaters in seven years, yet the stop-motion giant has still enjoyed a strong run of late thanks to the legacy of their hand-crafted works.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-town-titus-welliver-thriller-hbo-max-streaming-success-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/06/the-town-titus-welliver-2.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ben Affleck's 'The Town' Climbs HBO Max Viewership Chart
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Titus Welliver’s 'The Departed' Meets 'Heat' Thriller Is Officially an HBO Max Favorite</div>
+      
+      
+      <div class="summary">Producer Basil Iwanyk recently revealed on The Town podcast that two movies on his resume needed an extra marketing push to appeal to a broader audience.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2239500/alienware-16x-aurora-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/alienware-16x-aurora-gaming-laptop-review-a-middle-ground-with-no-expense-spared/l-intro-1787082930.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alienware 16X Aurora Gaming Laptop Review: A Middle-Ground With No Expense Spared
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Alienware 16X Aurora Gaming Laptop Review: A Middle-Ground With No Expense Spared Rob Dolen/BGR Modern gaming laptops are characterized by their enduring effort in eschewing the reputation of being brick-laden, gaming-first workhorses.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/historical-fiction-books-like-shogun/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/04/shogun-anna-sawai-as-mariko-leading-a-group-toward-the-camera-and-out-of-osaka.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Historical Fiction Books Perfect for Fans of Shōgun
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Shōgun proved that historical drama need not choose between intimate character stories and massive political stakes.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-suspenseful-mystery-movies-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/06/dennis-hopper-and-kyle-maclachlan-in-blue-velvet-1986.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Suspenseful Mystery Movies of All Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Mystery movies are intriguing, tantalizing us with clues and twists and beckoning us forward through their narrative.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2237329/best-fantasy-tv-show-theme-songs-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/best-fantasy-tv-show-theme-songs-ranked/l-intro-1786986529.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Best Fantasy TV Show Theme Songs Of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Best Fantasy TV Show Theme Songs Of All Time, Ranked HBO The best fantasy TV shows often have a few things in common — complex worldbuilding, interesting webs of character relationships, high stakes, and hopefully, a banger soundtrack to underscore&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2236563/lg-phones-worth-comeback/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-lg-phones-that-we-wish-made-a-comeback-in-2026/l-intro-1786648873.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 LG Phones That We Wish Made A Comeback In 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 LG Phones That We Wish Made A Comeback In 2026 Mamun_Sheikh/Shutterstock For many years, LG was one of the manufacturers most willing to experiment with new things in the smartphone market.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-wars-cancelled-mandalorian-game-reactions/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/mcdstwa_wd120.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cancelled Star Wars ARPG Magellan Centered on Jedi and Mandalorian, Fans React
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Wars Fans Heartbroken Over Cancelled Mandalorian Project</div>
+      
+      
+      <div class="summary">There's no doubt that The Mandalorian was an important shot in the arm for a Star Wars franchise that has been struggling to find its identity in recent years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/david-tennant-returns-doctor-who-audio-drama-rani/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/06/doctor-who-girl-in-the-fireplace-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            David Tennant Reprises Tenth Doctor Role in Big Finish Audio Drama 'The Tenth Doctor and Rani'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: David Tennant Returns to 'Doctor Who' for a New Adventure - but There's a Catch</div>
+      
+      
+      <div class="summary">A few days ago, I said that it would be lovely if the BBC, Whovians, and any future showrunner would lay off poor David Tennant in a desperate bid to save Doctor Who from permanent cancellation. I still stand by that.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/in-the-land-of-saints-and-sinner-action-netflix-streaming-tudum/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/liam-neeson-in-the-land-of-saints-and-sinners-action-thriller-stream-netflix-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'In the Land of Saints and Sinners' Is One of Netflix's Biggest Movies
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Liam Neeson's 9/10 Action Thriller Is Officially One of the Biggest Movies on Streaming</div>
+      
+      
+      <div class="summary">One of Liam Neeson's most underrated action thrillers is finally getting the attention it deserves on streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-last-photograph-zack-snyder-upcoming-thriller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/instar53650331.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zack Snyder's Action Thriller 'The Last Photograph' Described as 'Civil War Meets Apocalypse Now'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Zack Snyder's First New Movie In 3 Years Is a "Civil War Meets Apocalypse Now" Thriller</div>
+      
+      
+      <div class="summary">Hello! Is anyone here? Snyderland has been quiet lately, with the only major treat the adult-animated fantasy series Twilight of the Gods. But Zack Snyder fans shouldn't worry. The director is cooking something, and it isn’t one of his usual meals.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-coziest-western-spin-off-when-hope-calls-september-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/netflix-logo-tv.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Adds Hallmark Spin-Off 'When Hope Calls' Seasons 1-2 in September
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Officially Adds Perfect 2-Part ‘Virgin River’ Replacement</div>
+      
+      
+      <div class="summary">Netflix subscribers in the US have something exciting to look forward to in the coming weeks as the streamer is picking up, for the first time ever, the coziest Western drama you need to watch.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/magic-gathering-mtg-fastest-card-bans/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/the-10-fastest-banned-magic-the-gathering-cards-ever.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Fastest Bans in Magic: The Gathering History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 30-year history of Magic: The Gathering has allowed Wizards of the Coast plenty of time to uncover what makes a card too powerful for certain formats. Despite that, some effects have slipped through the cracks over the years, breaking formats the&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/new-horror-comic-channels-dc-clayface/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/screenshot-2026-04-23-at-10-30-44-am.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Horror Comic 'You'll Never Leave This Place Alive' Channels Clayface Vibes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New Horror Comic Channels Clayface—and It’s Seriously Creepy</div>
+      
+      
+      <div class="summary">You love being horrified, and that's why you're checking out this article, right? You're one of the many who thrive in the horror space, whether its TV, cinema or comics.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hbo-harry-potter-bigger-fantasy-series-game-of-thrones/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/10/hbo-max-new-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO's 'Harry Potter' Reboot Aims to Rival 'Game of Thrones' in Fantasy Television
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: John Lithgow's New HBO Fantasy Show Is Already Bigger Than Game of Thrones in Every Way</div>
+      
+      
+      <div class="summary">Starting this year, there may be a new king of the fantasy television scene. HBO Max's forthcoming reboot of the Harry Potter franchise promises a new, in-depth adaptation of J.K. Rowling's iconic tale of wizardry and magic.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hayden-panettiere-best-movies-shows-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/hayden-panettiere.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hayden Panettiere's 7 Best Movies and Shows, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There was a natural, effervescent quality in Hayden Panettiere that endeared the late star to audiences for, quite literally, nearly her entire life.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-teach-you-a-lesson-korean-action-tv-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/im-han-rim-jin-ki-joo-stands-before-classroom-teach-you-a-lesson.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's South Korean Action Series 'Teach You a Lesson' Hits 514M Hours Watched
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's Best Action Series of 2026 Is Crushing the Streaming Charts With 514M Hours Watched</div>
+      
+      
+      <div class="summary">The action genre rarely challenges the viewer to think beyond the spectacle. Reacher, for one, centers on Alan Ritchson's titular Jack Reacher, who utilizes his talents as a former U.S.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/zack-snyder-direct-300-prequel-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/300_b2f66085.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zack Snyder Reportedly Returning to Netflix for '300' Prequel Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Zack Snyder Reportedly Returning to Netflix for Long-Awaited Action Fantasy Prequel</div>
+      
+      
+      <div class="summary">Divisive director Zack Snyder is reportedly gearing up for the long-awaited return to one of his best movies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-harry-potter-video-games-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/08/hogwarts-legacy-first-person-broom-glitch.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Harry Potter Video Games
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Harry Potter franchise, as many already know, began as a series of young adult low fantasy books. Eventually, they took the world by storm and sold millions and millions of copies, eventually spawning a multi-billion-dollar movie franchise, a lin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/reacher-season-4-lila-twist/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/movieweb-featured-image-template-2026-08-19t101959-761.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Reacher' Season 4 Finally Confirms a Break From Predictable 4-Year-Old Tradition
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: Spoilers ahead for Reacher Season 4, Episode 4, "Karambits and Pieces."Like most other series, Reacher has traditions and trends that it generally upholds.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/end-of-oak-street-jj-abrams-box-office-overtakes-the-thing/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/the-end-of-oak-street-2026.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Anne Hathaway's 'The End of Oak Street' Passes $50 Million at Box Office
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Anne Hathaway’s $80M Sci-Fi Thriller Crosses Major Box Office Milestone</div>
+      
+      
+      <div class="summary">Despite the domination by Spider-Man: Brand New Day and The Odyssey over the last month, the theatrical market finally welcomed another genre movie this past week. Directed by David Robert Mitchell and produced by J.J.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2236478/amazon-prime-50-percent-off-discount-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-does-amazons-50-discount-on-prime-subscriptions-work/l-intro-1786644365.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Does Amazon's 50% Discount On Prime Subscriptions Work?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How Does Amazon's 50% Discount On Prime Subscriptions Work? Daria Nipot/Getty Images Subscription services such as Amazon can be a convenient way to buy items, ship them to you, and stream your favorite show or movie. Amazon Prime is around $14.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/greatest-opening-sci-fi-line-frank-herbert/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/dune-underground-gathering-maud-ib.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dune's Opening Line Remains Unmatched After 61 Years, According to Analysis
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 61 Years Later, The Greatest Opening Line In Sci-Fi Remains Unmatched</div>
+      
+      
+      <div class="summary">The science fiction genre is chock-full of incredible opening lines that serve to immerse readers into their worlds effortlessly and instantly.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/one-mile-streaming-success-paramount-plus-global-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/x.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ryan Phillippe's Two-Part Action Thriller 'One Mile' Scores Big on Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget 'Taken,' 89-Minute Revenge Action Thriller Officially Scores Big on Streaming</div>
+      
+      
+      <div class="summary">One of the most obscure action titles of the year has found a second life on streaming, and viewers are going wild for what seems to be the perfect modern substitute for Rambo and Taken.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/ted-lasso-season-4-alice-nate-villain-arc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/ted-lasso-3-coaches-season-4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Ted Lasso' Season 4 Risks Repeating Divisive Season 2 Storyline
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">I'm happy that Ted Lasso ​​​​​​is back on our screens, but I can't help but fear the Apple TV show is about to repeat a huge mistake.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/silo-rebecca-ferguson-sci-fi-masterpiece-apple-tv-viewership-nielsen-ratings/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/copy-of-collider-template-5.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rebecca Ferguson's 'Silo' Hits Nielsen Top 10 With 385M Minutes in July
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Rebecca Ferguson’s 10/10 Sci-Fi Series Officially Secures a Major Win on Apple TV</div>
+      
+      
+      <div class="summary">It isn't very often that an Apple TV title finds a spot on the Nielsen report. Nielsen, the industry leader in tracking audience viewership across streaming and linear television, releases weekly reports, with the latest edition revealing that one Ap&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <span class="current">14</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/15.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

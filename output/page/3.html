@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-08-20 11:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>27 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>59 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>128 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>20 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.cbr.com/best-60s-tv-shows-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/a-family-reveals-their-disfigured-faces-after-wearing-masks-in-the-twilight-zone-s-the-masks.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Best 1960s TV Shows: I Dream of Jeannie, Bonanza, and More
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 6 Greatest Shows of the 1960s</div>
+      
+      
+      <div class="summary">TV shows come and go, but these 1960s classics still entertain many people today. The industry experienced many significant changes from 1960 to 1969, most notably the switch from black-and-white to color broadcasts.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/why-did-gary-larsons-the-far-side-stop-airing-after-2-tv-specials/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/09/gary-larson-s-tales-from-the-far-side.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why Did Gary Larson’s The Far Side Disappear After Just 2 TV Specials?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Gary Larson's classic comic strip, The Far Side, is generally remembered as a groundbreaking work of art. It was a daily strip that ran in newspapers around the world. Every new issue consisted of a single panel, which told an episodic story with ent&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/planet-of-the-apes-reboot-disney-hulu-best-science-fiction-epic/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/04/caesar-dawn-of-the-planet-of-the-apes-matt-reeves-andy-serkis.jpg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Planet of the Apes Reboot Series Streams on Hulu and Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney's 4-Part Sci-Fi Epic Is One of the Best on Any Streaming Platform</div>
+      
+      
+      <div class="summary">Most science fiction franchises tend to try to reinvent themselves over the years, with mixed results. Some, like Star Wars, return with new installments that often spark divisive discourse. Others, like Blade Runner or Tron, have extremely lengthy g&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2236961/windows-multiple-desktops-one-monitor-solution/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-free-windows-feature-turns-one-monitor-into-as-many-as-you-need/how-to-create-and-use-multiple-desktops-on-your-pc-1786711736.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Windows 11 Virtual Desktop Feature Lets You Create Multiple Workspaces on One Monitor
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Free Windows Feature Turns One Monitor Into As Many As You Need</div>
+      
+      
+      <div class="summary">This Free Windows Feature Turns One Monitor Into As Many As You Need Andreypopov/Getty Images Very rarely do you have just one window open on your PC. Most of the time, you're probably juggling at least three, switching between them with either Alt +&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/star-wars-new-series-ninth-jedi-settles-force-franchise-debate/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/star-warvs-visions-the-ninth-jedi-lah-kara-silver-lightsaber.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Wars: Visions Presents - The Ninth Jedi Debunks Grey Jedi on Disney+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Wars’ New 91% RT Series Quietly Settles the Franchise’s Biggest Debate About the Force</div>
+      
+      
+      <div class="summary">Editor's note: The below contains spoilers for Star Wars: Visions Presents - The Ninth Jedi. When it comes to a franchise as rich in lore as Star Wars, it's sometimes difficult to reconcile what fans think or understand about certain aspects.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-metroidvanias-all-time-ranked-official-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/02/hollow-knight-and-hornet.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Metroidvanias of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Even though the name Metroidvania has only been around for about 25 years, the video game genre has a long and storied history.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/marvel-disney-plus-live-action-shows-report/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/marvel-television-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Multiple Marvel Live-Action Shows Reportedly In Development At Disney+
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While the Marvel Cinematic Universe is not leaving the big screen anytime soon, there have been a lot of questions surrounding its content on the small screen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/james-stewart-best-western-broken-arrow-tv-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/08/broken-arrow-tv-show-cochise-and-jeffords.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Broken Arrow (1950) Inspired a 72-Episode TV Series, Now Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Before ‘Yellowstone,’ James Stewart’s Oscar-Nominated Western Became a 2-Part Sleeper Hit</div>
+      
+      
+      <div class="summary">Very few actors had quite the reputation and range that Jimmy Stewart did, with the actor crossing into nearly every major genre during his career.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/life-is-strange-tv-series-adaptation-raul-castillo-david-madsen/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2022/08/Life-Is-Strange-Max.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Life Is Strange’s Raúl Castillo Officially Confirms a Faithful Character Look in the TV Adaptation
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Life Is Strange television adaptation isn't cutting corners when it comes to its character looks. In 2025, Prime Video announced a TV series adaptation of Life Is Strange, based on the 2015 video game of the same name, was in development.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/cineby-website-shut-down/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/05/world-s-biggest-anime-piracy-site-included-in-2025-government-watch-list-report.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cineby, a Major Pirate Anime and Movie Streaming Site, Shuts Down Permanently
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Another Major Anime Streaming Site Shuts Down in Less Than 1 Week</div>
+      
+      
+      <div class="summary">Challenging times lie ahead for anime fans wishing to sail the high seas, as yet another popular website that hosted numerous anime alongside other media has chosen to cease operations permanently.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-fugitive-harrison-ford-streaming-free-pluto-tv-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/the-fugitive-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Fugitive (1993) Surges on Pluto TV 33 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 33 Years Later, This 'Reacher' Meets 'Bourne Identity' Action Thriller Is Officially a Streaming Sensation</div>
+      
+      
+      <div class="summary">It may be hard to imagine, even with today's massive critical and commercial genre hits like the John Wick and the Mission: Impossible series, but fast-moving, crowd-pleasing action pictures once had a legitimate shot at sweeping the Academy Awards.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/game-of-thrones-dragonfire-witchs-visions-event/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/melisandre-and-stannis-burning-man.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Game of Thrones: Dragonfire Adds The Witch's Visions Event Based on House of the Dragon
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Game Of Thrones: The Witch's Visions Is Coming To Dragonfire</div>
+      
+      
+      <div class="summary">Game of Thrones' expansive lore stretches far beyond dragons and prophecy, with dozens of unresolved mysteries from George R.R. Martin's A Song of Ice and Fire still lingering on fans' minds.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/reacher-season-4-stoic-line-hits-deep/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/2389afdc-0e30-4c4b-ab97-ca6fd5c01dd1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Years Later, One Stoic Reacher Line Hits Even Deeper After A Season 4 Scene
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In both the books and the Prime Video show, Alan Ritchson's Reacher is not much of a talker. More often than not, he carefully observes his surroundings before speaking and only drops dry one-liners when necessary.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-white-lotus-hbo-anthology-getting-better-last-forever/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/parker-posey-in-the-white-lotus-season-3.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why HBO's 'The White Lotus' Could Continue Indefinitely
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO's 21-Episode Series Keeps Getting Better And Could Go On Forever</div>
+      
+      
+      <div class="summary">While anthology shows are always at risk of running out of stories and settings, HBO’s acclaimed murder mystery show truly feels like it could go on forever at its current rate.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/avatar-the-last-airbender-strongest-benders-officially-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/avataraang7-1749455351-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Strongest Benders in Avatar: The Last Airbender, Officially Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Bending in Avatar: The Last Airbender goes far beyond throwing larger blasts or creating more destructive attacks. Mastery depends on control, creativity, adaptability, speed, technique, and the ability to remain effective when a fight stops followin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dune-prophecy-game-of-thrones-harsh-reminder-grrm/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/08/adobe-express-file-2025-08-18t170841-729.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Dune: Prophecy' Reminds Us That Dune Inspired Game of Thrones, Not Vice Versa
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Dune's 'Game Of Thrones In Space' Spinoff Is A Harsh Reminder About George RR Martin</div>
+      
+      
+      <div class="summary">Shows like The Sopranos and The Wire earned HBO a reputation as the home of risky, fiercely original prestige television. But over the past couple of years, HBO has been less interested in originality and more interested in expanding existing I.P.s a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/crunchyroll-just-got-its-biggest-anime-streaming-rival-its-way-cheaper/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/bilibili-2.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bilibili's Free Anime Streaming Service Challenges Crunchyroll's Dominance
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Crunchyroll Just Got Its Biggest Anime Streaming Rival (And It's Free)</div>
+      
+      
+      <div class="summary">Since the Funimation merger, Crunchyroll has had a pretty comfortable run as the biggest dedicated anime streaming service, especially when it comes to simulcasts and English dubs.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/classic-sega-genesis-rpg-masterpieces/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/phantasy-star-iv-sega-key-art.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Classic Sega Genesis RPGs That Are 10/10 Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Sega Genesis established a legacy during the 16-bit era, offering a counterweight to competing consoles with its gritty aesthetic.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/spike-spiegel-cowboy-bebop-greatest-quote-sci-fi-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/faye-valentine-and-spike-spiegel-s-final-conversation-in-cowboy-bebop.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            28 Years Later, Spike Spiegel's Best Cowboy Bebop Line Is Still the Greatest Quote in Sci-Fi History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Spike Spiegel's final conversation with Faye Valentine before he leaves the Bebop is one of the most important scenes in the Cowboy Bebop anime. Faye knows he's heading into a fight with Vicious that could get him killed, and she tries to make him re&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/columbo-one-more-thing-best-murder-mystery-quote/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/columbo.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Columbo's 'Just One More Thing' Remains the Greatest Line in Murder Mystery TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 58 Years Later, Columbo Still Holds The Greatest Line In Murder Mystery History</div>
+      
+      
+      <div class="summary">While there are plenty of iconic murder mystery shows dotted throughout TV history, the best line from Columbo shaped more of them than readers might imagine. The humble murder mystery is one of the most versatile genres in Hollywood history.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/action-thriller-tv-shows-like-lioness/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/lioness-seal-team.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Action Thriller Shows Like 'Lioness' You Can Binge-Watch in One Weekend
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Lioness is having its main character moment. Season 3 premiered on Paramount+ on Aug. 2, 2026, and it's currently sitting at the No. 1 spot on the platform's global charts, according to Flix Patrol.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/mobland-season-3-renewal-uncertain-paramount-plus-tom-hardy-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/10/mobland-tom-hardy-1.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Paramount+ Has Not Renewed 'MobLand' for Season 3 Yet
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Hardy’s ‘MobLand’ Season 3 Officially Hits a Major Roadblock at Paramount+</div>
+      
+      
+      <div class="summary">MobLand faced a major threat a few months ago when reports surfaced of a behind-the-scenes squabble between leading star Tom Hardy and executive producer Jez Butterworth. In the aftermath, Hardy was reportedly booted from the series before being offi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/the-odyssey-streaming-release-window-universal-blu-ray-movie-listing" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/photos/odyssey-sirens.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The Odyssey' Expected on Digital and Blu-ray November 17, per Retail Listing
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Odyssey Gets New Streaming Release Window Target From Universal's Blu-ray Movie Listing</div>
+      
+      
+      <div class="summary">A new physical media listing might have tipped off when The Odyssey will head to streaming. Christopher Nolan's epic has been one of the biggest theatrical success stories of 2026 since it opened, drawing audiences from around the world and keeping 7&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/taylor-sheridan-6666-yellowstone-spin-off-not-happening/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/12/yellowstone-512-jimmy-grieves.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan Confirms '6666' Yellowstone Spin-Off Is Not Happening
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan's 6666 'Yellowstone' Spin-Off Can Still Happen With a Formula Change</div>
+      
+      
+      <div class="summary">Ever since it was first teased back in 2021, folks have wondered if Taylor Sheridan's Texas-based Yellowstone spin-off would ever happen. Deemed 6666 — as in, the historic Four Sixes Ranch — the proposed spin-off would have grown out of Jimmy Hurdstr&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/final-fantasy-kingdom-heats-2027-end-of-an-era/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/06/it-s-the-end-of-an-era-for-kingdom-hearts-and-square-enix.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            2027 Is Officially The End Of An Era For Square Enix
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">2027 is going to be a huge year for Square Enix, with three highly anticipated titles that are expected to be massive hits.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/walking-dead-dead-city-hershel-darkness-logan-kim/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/the-walking-dead-dead-city-season3-episode3-hershel-and-maggie.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Walking Dead: Dead City’s Star Reveals the Truth About Hershel Jr.’s Darkness
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Season 2 of The Walking Dead: Dead City saw a rift between Maggie Rhee (Lauren Cohan) and her teenage son, Hershel Rhee Jr. (Logan Kim). The further Maggie gave in to her vengeance against Negan (Jeffrey Dean Morgan), the more Hershel drifted towards&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tom-holland-wolf-hall-bbc-historical-drama/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/b4a0ffe9-15e5-4da2-8815-4bcd8ae4966d-1.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Holland's Performance in BBC's 'Wolf Hall' Remains a Hidden Gem
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Years Before Spider-Man, Tom Holland's Forgotten Historical Drama Remains a Hidden Gem</div>
+      
+      
+      <div class="summary">In 2015, the same year Marvel handed Tom Holland the Spider-Man suit, he was doing some of the best television work of his career, though you probably didn’t see it. Decked out in a flat cap and fur collar, in rooms usually lit by just one candle, he&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/a-court-of-thorns-and-roses-new-books-titles-release-dates/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/acotar-a-court-of-splintered-harmony.jpg?q=49&fit=contain&w=1862&h=2850&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sarah J. Maas Announces New 'A Court of Thorns and Roses' Novels: 'A Court of Splintered Harmony' and 'A Court of Forgotten Melody'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘A Court of Thorns and Roses’ Officially Returns With 2 New Releases</div>
+      
+      
+      <div class="summary">The fantasy genre is once again dominating our screens, courtesy of House of the Dragon Season 3. The third season opener, "Salt and Sea, Fire and Blood," earned 21.5 million global viewers in its first three days, with that viewership remaining high&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/masterpiece-western-movies-perfect-from-start-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/unbreakable-7-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Western Movies I Knew Would Be Masterpieces Within The First 10 Minutes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Since the dawn of Hollywood, the Western has provided audiences with many of the greatest films ever written, from classics like Shane to modern reimaginings like Logan. A genre ripe for character study, revenge thrillers, and historical epics, stars&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/forgotten-adult-swim-anime-aged-like-milk/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/characters-from-the-blue-gender-anime.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Forgotten Adult Swim Anime That Have Aged Like Milk
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Adult Swim built its early identity on imported anime that arrived with almost no context, dropped into a late-night block next to original cartoons and reruns.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <span class="current">3</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/4.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

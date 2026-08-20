@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-08-20 11:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>27 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>59 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>128 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>20 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.polygon.com/pokemon-30th-anniversary-tcg-rgb-mew-future-rare-real-fake/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/02/68-mew.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon TCG 30th Anniversary Set Includes Extremely Rare RGB Mew Cards
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Pokémon's 30th Anniversary Set Confirmed To Have Rarest Cards Ever Made</div>
+      
+      
+      <div class="summary">For a couple of months now, fans have speculated that The Pokémon Company hasn't shared everything about the new chromatic cards that debut in the 30th anniversary set.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/insidious-out-of-the-further-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/gemma-amelia-eve-in-insidious-out-of-the-further.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Insidious: Out of the Further' Review: The Franchise Falls Further into Mediocrity
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The most impressive thing about the Insidious franchise, which launched in 2011, is that it’s managed to squeeze out one okay original and four disappointing follow-ups based on some of the thinnest, most uninteresting lore in horror.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/nicolas-case-parish-movie-plot-details-report/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/04/untitled-48.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nicolas Cage to Star in Post-Apocalyptic Survival Thriller Parish
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Nicolas Cage Is Set To Fight Against Cannibals In New Survival Thriller Parish</div>
+      
+      
+      <div class="summary">Nicolas Cage will fight cannibals in Parish. Cage recently made a splash on the small screen with Prime Video's Spider-Noir, but most of his most celebrated work has been in the world of movies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/devil-may-cry-games-best-order/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/04/dmc.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Best Order For Playing The Devil May Cry Games
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With a new Netflix series and rumors of an upcoming game, now seems like the perfect time to try out the Devil May Cry games if you've never played them. However, jumping into the series at this point might not be as simple as grabbing the first game&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/south-park-banned-censored-episodes-controversies-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/tcdsopa_ec086-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Banned South Park Episode (& Why They Were Controversial)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While it has always been a controversial series, there are only a small handful of banned South Park episodes in the show's 300+ catalog. Since its inception, South Park has gone out of its way to push the boundaries of what can be shown on televisio&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/daemons-of-the-shadow-realm-fullmetal-alchemist-stream-crunchyroll/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/crunchyroll-daemons-of-the-shadow-realm-streaming-success-anime-fullmetal-alchemist-brotherhood-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Daemons of the Shadow Realm' by Fullmetal Alchemist Author Is Crunchyroll's Fourth Most Popular Anime
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Crunchyroll's 10/10 'Fullmetal Alchemist' Successor Is One of the Biggest Anime on Streaming</div>
+      
+      
+      <div class="summary">Rarely is the Greatest of All Time debate fiercer than in the anime community. Everybody believes that their favorite series is the GOAT. But there are only a few shows where everyone unanimously agrees upon their greatness. Fullmetal Alchemist: Brot&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/ridley-scott-treasure-island-historical-epic/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/pirates-of-the-caribbean-ridley-scott-gladiator.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ridley Scott to Direct 'Treasure Island' Adaptation Starring Hugh Jackman as Long John Silver
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ridley Scott's New Epic Is 'Pirates of the Caribbean Meets Gladiator'</div>
+      
+      
+      <div class="summary">Some classics will be remade until the end of time. Of course, they're classics for a reason, as they've resonated with readers across generations thanks to characters and themes that will never go out of style.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/insidious-out-of-the-further-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/screenshot-2026-08-19-at-11-01-05-am.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Insidious: Out of the Further Review: More Demons, Less Fun
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Insidious keeps fear within the family. Over the years, the franchise from horror masters Leigh Whannell and James Wan has grown into one of Blumhouse’s staple series, tracing various, connected families haunted by demons from the Further, a parallel&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/teenage-mutant-ninja-turtles-shredder-mondo-figure-first-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/copy-of-collider-template-54.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mondo Unveils New Teenage Mutant Ninja Turtles 1/6 Scale Shredder Action Figure
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Teenage Mutant Ninja Turtles Officially Return With a Totally Bodacious New Release [Exclusive]</div>
+      
+      
+      <div class="summary">Over 40 years since their creation, the Teenage Mutant Ninja Turtles are proving to be as long-lived as their reptilian progenitors. Toy company Mondo has recently had success translating the Turtles into gorgeous 1/6 scale action figures, and now it&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/insidious-6-out-of-the-further-movie-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/insidious-out-of-the-further-amelia-eve.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Insidious: Out of the Further' Takes the Franchise on an Unexpected Journey  | Review
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Since debuting in 2011, the Insidious series has been one of the most consistently successful horror franchises around.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-incredibles-3-brad-bird-director-pixar-formula-change/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/09/the-incredibles.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Incredibles 3 Gets New Director Peter Sohn After 22 Years; Brad Bird Steps Down Due to Scheduling Conflicts
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It's Officially the End of an Era for The Incredibles Movies After 22 Years</div>
+      
+      
+      <div class="summary">The world's greatest superhero family is officially returning to the big screen in 2028. Almost a decade after the most recent installment of the beloved franchise, Incredibles 3 was unveiled during Pixar's exciting panel at D23.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/event-horizon-pandemonium-first-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/msdevho_pa002-cropped.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Event Horizon: Pandemonium #1 Gets First Official Preview Pages from IDW
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 29 Years Later, Event Horizon Prequel Gets Its First Official Look</div>
+      
+      
+      <div class="summary">Horror fans just got their first look at IDW Publishing's next blood-soaked science fiction series: Event Horizon: Pandemonium.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/horror/legion-2010-streaming-netflix.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2025/01/Legion-2010.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Legion: A Twisted Biblical Apocalypse Action-Horror Where Angels Are the Villains
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: R-Rated Netflix Action Horror Is A Twisted Take On The Apocalypse</div>
+      
+      
+      <div class="summary">By Jonathan Klotz | Published 1 minute ago The Bible has been the inspiration for countless stories and adaptations, including Russell Crowe’s Noah, the classic, The Ten Commandments starring Charlton Heston, and even Veggietales.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/quentin-tarantino-django-unchained-streaming-success-pluto-tv-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/quentin-tarantino.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Django Unchained Becomes No. 1 Movie on Pluto TV Streaming Service
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 14 Years Later, Quentin Tarantino’s 10/10 Western Thriller Classic Explodes Onto Streaming</div>
+      
+      
+      <div class="summary">Quentin Tarantino has never been particularly interested in making a traditional Western. Instead, the filmmaker has spent much of his career borrowing the genre’s imagery, rhythms, and archetypes and reshaping them into something distinctly his own.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/spider-man-brand-new-day-art-tombstone-scarier" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/spitomb_.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Spider-Man: Brand New Day Concept Art Proves Tombstone Almost Looked Much Scarier (Photos)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">An MCU concept artist revealed a scrapped early design for Tombstone in Spider-Man: Brand New Day. New York mob boss Lonnie Lincoln, aka Tombstone, finally entered the MCU with Spider-Man: Brand New Day's time-skipping opening montage.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/anya-taylor-joy-chris-evans-sacrifice-netflix-action-images/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/anya-taylor-joy-in-sacrifice.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Anya Taylor-Joy & Chris Evans' Upcoming Netflix Action Film 'Sacrifice' Releases New Photos
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Chris Evans has seen better days, at least on screen. The actor, best known as Steve Rogers/Captain America in the Marvel Cinematic Universe, has landed his latest role, which takes him far from the world of high-powered superheroes and drops him int&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/yellowstone-dutton-ranch-season-1-now-on-digital/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/kelly-reilly-as-beth-dutton-in-dutton-ranch-season-1-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dutton Ranch Season 1 Gets Digital Release; Season 2 Confirmed
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Yellowstone's 10/10 Sequel Announces New Release After Replacing John Dutton</div>
+      
+      
+      <div class="summary">Yellowstone fans have just received a whole new way to watch the latest chapter in the neo-Western universe. Dutton Ranch is no longer exclusive to Paramount+. Dutton Ranch Arrives on Digital As of Aug.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/stranger-things-tales-from-85-season-2-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/04/st85_trailer_05.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stranger Things: Tales from '85 Season 2 Premieres on Netflix September 17, 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Stranger Things: Tales From ‘85’ Season 2 Gets September Release Date</div>
+      
+      
+      <div class="summary">Netflix just revealed its upcoming fall slate, and it turns out Stranger Things: Tales from ’85 will return much sooner than you may have guessed. The show’s second season drops on Sept. 17, 2026, just a few months after the first season, which aired&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/insomniac-hack-leak-wolverine/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/marvel-s-wolverine.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel's Wolverine Director Addresses Massive Insomniac Hack In New Interview
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In late 2023, Marvel's Wolverine developer Insomniac Games was the subject of a major data breach. Hacking group Rhysida stole a huge amount of information from the developer, including future plans, sensitive strategy documents, personal employee in&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/avengers-doomsday-marvel-comics-time-runs-out-incursions-series-announced/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/avengers_-doomsday-_-special-look-_-in-theaters-december-18-1-40-screenshot.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers: Doomsday Prep Continues with Marvel's New Incursion Series
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Marvel Cinematic Universe's next major event begins this December with the release of Avengers: Doomsday, which will be followed by Secret Wars next year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/scary-movie-streaming-date-paramount-plus/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/scary-movie-6.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Scary Movie 6 Sets Paramount+ Streaming Date for September 3
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Paramount’s $231M Horror Hit With Just 23% RT Finally Sets Paramount+ Streaming Date</div>
+      
+      
+      <div class="summary">Paramount's horror hit that beat the critics finally has a Paramount+ release date. On Wednesday, Paramount announced that Scary Movie (a.k.a. Scary Movie 6) will stream on Paramount+ beginning Sept. 3.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/inception-2010-nolan-masterwork.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2025/01/IMG_0265.jpeg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Christopher Nolan's Inception: A Mindbending Sci-Fi Blockbuster and the Director's Masterwork
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Mindbending Sci-Fi Blockbuster Is Director's Masterwork</div>
+      
+      
+      <div class="summary">By Chris Snellgrove | Published 20 seconds ago With films like Oppenheimer and The Odyssey further cementing his reputation, it’s fair to declare that Christopher Nolan is one of the greatest and most ambitious directors of his generation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/terminator-2-official-return-new-release-board-game/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/arnold-schwarzenegger-on-a-motorcycle-in-terminator-2_-judgment-day.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Terminator 2: The Board Game Launches on Kickstarter
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Terminator 2 Officially Returns in Upcoming New Release</div>
+      
+      
+      <div class="summary">John Connor's desperate struggle to survive against the unstoppable T-1000 will soon become playable, as Terminator 2: Judgment Day is returning in a new release.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2236564/most-popular-reading-apps/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-of-the-most-popular-reading-apps-in-2026/l-intro-1786648820.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Of The Most Popular Reading Apps In 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Of The Most Popular Reading Apps In 2026 Aana_photo/Shutterstock For any readers who don't have the space to carry numerous books with them when they leave home, using an app, especially a popular app for reading, can be a good alternative.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/disney-luke-skywalker-lego-star-wars/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/01/luke-in-the-mandalorian.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Eric Bauza to Voice Luke Skywalker in Disney+ Lego 'Star Wars: The Mandalorian' Special
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney+ Just Confirmed a New Actor to Play Luke Skywalker</div>
+      
+      
+      <div class="summary">The Mandalorian and Grogu, the first Star Wars movie to come out in theaters since 2019's divisive The Rise of Skywalker, opened this past May, receiving a muted reception from both fans and critics.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/wardogs-beta-start-end-time-edt-pdt/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/04/wardogs-arms-dealer-day-trader.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wardogs Beta Start Times and How to Play Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Wardogs beta is going to be the first opportunity for the public to get their hands on Bulkhead's upcoming FPS game, because previous playtests have been invite-only.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/dune-3-imax-screenings-tickets-scalpers/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/timothee-chalamet-and-zendaya-dune-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dune 3 IMAX Screenings Seemingly Impossible to Get Due to Scalpers
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Dune: Part Three will be released on Dec. 18, but before it hits regular theaters, it'll be available at IMAX theaters for insider screenings starting on Dec. 14. The tickets went up for pre-sale on Aug.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/catherine-zeta-jones-kill-jackie-prime-video-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/catherine-zeta-jones-kill-jackie.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Catherine Zeta-Jones Assassin Thriller 'Kill Jackie' Gets Prime Video and AMC+ Release Date of Oct. 2
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Catherine Zeta-Jones Assassin Thriller Series Sets Prime Video Release Date</div>
+      
+      
+      <div class="summary">Oscar-winning actress Catherine Zeta-Jones has been storming back in a string of fun and interesting roles in recent years. Her millennium-era run established her as a global star.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jeopardy-greatest-game-winning-streak-record-ken-jennings-74-games/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/10/alex-trebek-jeopardy-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Jeopardy!’s Greatest Winning Streak Has Still Never Been Topped Over 20 Years Later
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">If there's one person who's become synonymous with Jeopardy!, other than the late, great Alex Trebek, it's Ken Jennings. Jennings managed to score an impressive 74 wins during his time on Jeopardy!, walking away with a whopping $2.5 million in winnin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2236708/this-state-generated-more-electricity-from-solar-than-coal-or-natural-gas/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/these-states-generated-more-electricity-from-solar-than-coal-or-natural-gas-for-the-first-time/l-intro-1786657363.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            These States Generated More Electricity From Solar Than Coal Or Natural Gas For The First Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">These States Generated More Electricity From Solar Than Coal Or Natural Gas For The First Time Drs Producoes/Getty Images Three U.S. states reached an exciting milestone by generating more electricity from solar panels than any other source for the v&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <span class="current">11</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/12.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

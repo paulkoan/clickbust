@@ -135,6 +135,30 @@ Just copy the `output/` directory to your web server or S3 bucket.
 4. For Google Discover: Google needs to index your pages naturally — the `og:`, `twitter:`, and `article:` meta tags help with this
 5. In your Google News settings, add your Clickbust RSS feed and remove the original clickbait feed
 
+## Post-deploy: Request Indexing via URL Inspection Tool
+
+After each deploy, priority new articles should be manually submitted to Google via the
+[Search Console URL Inspection Tool](https://search.google.com/search-console/inspect).
+This is the closest thing Google offers to a manual "recrawl now" button, with a ~10/day limit.
+
+**Process:**
+
+1. Run the deploy (or wait for the cron job to complete)
+2. Open [Google Search Console → URL Inspection](https://search.google.com/search-console/inspect) for `clickbust.cybr.fi`
+3. Paste the URL of each priority article (one at a time)
+4. Click "Request Indexing"
+
+**Which URLs to submit:**
+
+Pick the most important new articles from the day's run:
+- Breaking news / human interest stories (highest traffic potential)
+- Articles about popular franchises (Marvel, Star Wars, streaming hits)
+- Timely content (reviews, announcements, season premieres)
+- Skip evergreen listicles — they'll get indexed naturally via the sitemap
+
+The deploy script outputs the top 10 priority URLs after each successful deploy as a reminder.
+This is a supplement for the most important individual articles, not a replacement.
+
 ## Examples
 
 **Before (ScreenRant original):**
@@ -151,11 +175,43 @@ Just copy the `output/` directory to your web server or S3 bucket.
 
 *Results depend on your LLM model — better models produce sharper rewrites.*
 
+## Testing
+
+```bash
+# Install dev dependencies
+uv sync --dev
+
+# Run all tests
+uv run pytest -v
+```
+
+Tests live in the `tests/` directory:
+- **`tests/test_llm_cache.py`** — 8 unit tests for the LLM response cache
+- **`tests/test_prompts.py`** — 11 functional tests for prompt templates
+
 ## Requirements
 
 - Python 3.11+
 - `uv` package manager (or `pip`)
 - An OpenAI-compatible API key
+
+## Caching & Optimisation
+
+Clickbust uses a multi-layer caching architecture to minimise LLM API calls and reduce
+token consumption. Three cache layers work together — see
+[docs/optimisation.md](docs/optimisation.md) for full details:
+
+| Layer | What it caches | Cache key | TTL |
+|---|---|---|---|
+| **seen_cache** | Article headlines + LLM results | URL + headline hash | 7 days |
+| **llm_cache** | LLM API responses | SHA256(prompt content) | 1 hour |
+| **Archive** | Article metadata | URL | Indefinite (500 cap) |
+
+**Key numbers:**
+- **42%** seen_cache hit rate on daily runs
+- **44%** token reduction from prompt optimisation
+- **~$0.018** estimated cost per daily run (OpenRouter gpt-4o-mini)
+- **~7** LLM API calls per run (down from ~58 without batching + caching)
 
 ## Extending
 

@@ -11,6 +11,7 @@ import yaml
 
 from .fetcher import extract_content, fetch_all_sites
 from .generator import generate_notes_index, generate_site
+from .llm_cache import LLMCache
 from .models import AppConfig, LLMConfig, OutputConfig, SiteConfig
 from .notes import generate_note
 from .rewriter import rewrite_all
@@ -64,6 +65,7 @@ def load_config(path: str) -> AppConfig:
         site_title=out_raw.get("site_title", "Clickbust"),
         site_description=out_raw.get("site_description", ""),
         base_url=out_raw.get("base_url", ""),
+        default_banner_url=out_raw.get("default_banner_url", ""),
         max_articles=out_raw.get("max_articles", 50),
         max_per_site=out_raw.get("max_per_site", 10),
     )
@@ -94,6 +96,9 @@ def cmd_run(args):
     os.makedirs(config.output.dir, exist_ok=True)
     seen_cache = load_cache(config.output.dir)
 
+    # Initialize LLM response cache (content-addressed, 1-hour TTL)
+    llm_cache = LLMCache(config.output.dir, ttl_seconds=3600)
+
     fresh_articles = []   # Need content extraction + LLM
     cached_articles = []  # Can reuse previous result
 
@@ -105,6 +110,7 @@ def cmd_run(args):
                 art.rewritten_title = cached_result["rewritten_title"]
                 art.summary = cached_result.get("summary", "")
                 art.image_url = cached_result.get("image_url", "")
+                art.body_images = cached_result.get("body_images", [])
                 cached_articles.append(art)
                 continue
         fresh_articles.append(art)
@@ -114,12 +120,14 @@ def cmd_run(args):
 
     # Step 2: Extract content (only for new/changed articles)
     log.info("Extracting article content...")
+    default_banner = config.output.default_banner_url
     for i, art in enumerate(fresh_articles):
         try:
-            text, summary, image_url = extract_content(art.url)
+            text, summary, image_url, body_images = extract_content(art.url, default_banner_url=default_banner)
             art.content_text = text
             art.summary = summary
             art.image_url = image_url
+            art.body_images = body_images
         except Exception as e:
             log.warning("  [%d/%d] Failed to extract '%s': %s", i + 1, len(fresh_articles), art.title[:40], e)
             art.content_text = ""
@@ -131,7 +139,8 @@ def cmd_run(args):
     articles_with_content = [a for a in fresh_articles if a.content_text]
     if articles_with_content:
         log.info("Rewriting headlines for %d articles (batched)...", len(articles_with_content))
-        articles_with_content = rewrite_all(articles_with_content, config.llm, batch_size=10)
+        articles_with_content = rewrite_all(articles_with_content, config.llm,
+                                             batch_size=10, cache=llm_cache)
     log.info("Skipped rewrite for %d cached articles", reused)
 
     # Merge fresh and cached for final list
@@ -161,6 +170,7 @@ def cmd_run(args):
             art.is_clickbait, art.rewritten_title,
             summary=art.summary,
             image_url=art.image_url,
+            body_images=art.body_images,
         )
     for art in cached_articles:
         # Re-mark as seen today (bumps last_seen)
@@ -169,6 +179,7 @@ def cmd_run(args):
             art.is_clickbait, art.rewritten_title,
             summary=art.summary,
             image_url=art.image_url,
+            body_images=art.body_images,
             is_cached=True,
         )
     seen_cache = prune_stale(seen_cache)
@@ -198,6 +209,11 @@ def cmd_run(args):
     print(f"   Clickbait detected: {total_clickbait} ({fresh_clickbait_count} fresh)")
     print(f"   Published: {count} articles")
     print(f"   LLM calls: {(len(articles_with_content) + 9) // 10} (batched)")
+    llm_cache_hit_count = sum(1 for v in llm_cache._cache.values()
+                              if v.get("model") == config.llm.model
+                              and v.get("cached_at", "") > "2020")
+    if llm_cache_hit_count:
+        print(f"   LLM cache entries: {len(llm_cache._cache)}")
     print(f"   Output: {os.path.abspath(config.output.dir)}/")
 
 
@@ -223,7 +239,7 @@ def cmd_check(args):
     # Extract content
     print("Extracting content...")
     try:
-        text, summary, image_url = extract_content(args.url)
+        text, summary, image_url, body_images = extract_content(args.url, default_banner_url=config.output.default_banner_url)
     except Exception as e:
         print(f"  ❌ Failed to extract: {e}")
         sys.exit(1)
@@ -232,6 +248,8 @@ def cmd_check(args):
     print(f"  Summary: {summary[:150]}...")
     if image_url:
         print(f"  Thumbnail: {image_url}")
+    if body_images:
+        print(f"  Body images: {len(body_images)} found")
 
     # Create a temporary article
     from .models import Article
@@ -250,7 +268,10 @@ def cmd_check(args):
 
     # Rewrite headline
     from .rewriter import rewrite_headline as rh
-    is_cb, new_title = rh(art, config.llm)
+
+    # Initialize LLM cache so repeated checks on same content don't hit API
+    llm_cache = LLMCache(config.output.dir, ttl_seconds=3600)
+    is_cb, new_title = rh(art, config.llm, cache=llm_cache)
 
     if is_cb:
         print(f"  🔴 Clickbait detected!")
@@ -279,6 +300,9 @@ def cmd_note(args):
         print(f"⏭️  Note already exists for {today} — not overwriting")
         return
 
+    # Initialize LLM cache (reuses any cached daily-note responses)
+    llm_cache = LLMCache(config.output.dir, ttl_seconds=3600)
+
     log.info("Generating daily note...")
     filename, title, date_str = generate_note(
         topic=topic,
@@ -287,6 +311,7 @@ def cmd_note(args):
         template_dir="templates",
         output_dir=config.output.dir,
         base_url=config.output.base_url,
+        cache=llm_cache,
     )
 
     if title:

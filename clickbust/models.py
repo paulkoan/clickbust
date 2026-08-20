@@ -25,6 +25,9 @@ class Article:
     content_text: str = ""
     summary: str = ""
     image_url: str = ""  # thumbnail URL from the original article (og:image)
+    body_images: list[dict] = field(default_factory=list)
+    # ^ list of {"url": "...", "alt": "..."} from article body, used as fallback
+    #   when og:image doesn't match the actual subject (reference-bait articles)
     rewritten_title: Optional[str] = None
     is_clickbait: bool = False
     published_date: Optional[datetime] = None
@@ -40,6 +43,7 @@ class OutputConfig:
     site_title: str = "Clickbust — Rewritten Headlines"
     site_description: str = "Clickbait-free headlines from your favourite sites"
     base_url: str = "https://your-site.com"
+    default_banner_url: str = ""  # Fallback OG image when article has no usable image
     max_articles: int = 50
     max_per_site: int = 20
 

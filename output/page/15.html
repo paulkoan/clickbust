@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-08-20 11:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>27 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>59 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>128 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>20 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.cbr.com/best-the-far-side-comics-frankensteins-monster-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/12/10-best-the-far-side-comics-featuring-frankenstein-s-monster-ranked.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best The Far Side Frankenstein’s Monster Comics, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The first year of The Far Side was also its most pivotal, as it had the most to gain and lose. 1980 was Gary Larson's year to make it or break it as a cartoonist, thanks to his new deal with the San Francisco Chronicle.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/onslaught-early-reactions-2026-best-action-thriller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/onslaught-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Adam Wingard's 'Onslaught' Hailed as One of the Best Action Movies of the Year
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Terminator Meets Die Hard' Sci-Fi Thriller Hailed as 'One of the Best Action Movies of the Year'</div>
+      
+      
+      <div class="summary">An all-new, all-original action thriller is set to be unleashed next month, with the first reactions delivering plenty of high praise, even calling it "one of the best action films of the year," while also teasing what could become a hugely controver&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2236406/ohio-solar-farms-unexpectedly-massive-bee-colony/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-ohio-solar-farm-houses-an-unexpectedly-massive-bee-colony/l-intro-1786639356.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ohio Solar Farm Houses 3 Million Bees in Apiary Collaboration
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Ohio Solar Farm Houses An Unexpectedly Massive Bee Colony</div>
+      
+      
+      <div class="summary">This Ohio Solar Farm Houses An Unexpectedly Massive Bee Colony Arda Sari/Getty Images It's astounding how little we know about the positive effects solar panels can have on local environments. For example, Minnesota solar farms are having an unexpect&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-american-books-last-15-years-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/the-goldfinch-book-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest American Books of the Last 15 Years
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The past fifteen years have been an interesting time for fiction. Reading in general has been under assault from screens and scrolling, yet some writers have still stubbornly clung to the idea that novels can provide a unique experience.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/super-mario-sunshine-eclipse-fan-sequel/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/sklzhev57v2g1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Super Mario Eclipse: A Fan-Made Sequel to Super Mario Sunshine
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Super Mario Eclipse Is The Sunshine Sequel We Always Wanted</div>
+      
+      
+      <div class="summary">In a series where each new release tends to be universally beloved by the fan base as a whole, Super Mario Sunshine really was spectacularly divisive when it released back in the early 2000s.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/james-bond-casting-list-narrowed-down-patrick-gibson-odds/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/03/daniel-craig-as-james-bond-in-no-time-to-die.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Patrick Gibson Emerges as a Candidate for Next James Bond Casting
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: As James Bond Casting List Officially Narrows, A New Contender Has Emerged</div>
+      
+      
+      <div class="summary">We're getting to the point where we could find out who the next James Bond is at any time. The Daniel Craig run is over; it's time to anoint a new super-spy now that the franchise is under the control of Amazon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/heroes-hayden-pannettiere-superhero-series-netflix-viewership-nielsen-ratings/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/hayden-panettiere-heroes.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hayden Panettiere's 'Heroes' Draws 593M Minutes on Netflix After Her Death
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Hayden Panettiere’s 4-Season Sci-Fi Series Officially Scores Nearly 600M Minutes Watched on Netflix</div>
+      
+      
+      <div class="summary">The tragic passing of Hayden Panettiere came as a shock to fans who grew up watching her on popular television shows and in blockbuster films.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/reacher-season-4-lila-villain-twist-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/alan-ritchson-in-a-bar-in-reacher.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Reacher Season 4 Episode 4 Reveals Lila as the Real Villain
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Reacher Season 4's Massive Villain Twist Explained</div>
+      
+      
+      <div class="summary">This article contains major spoilers for Reacher season 4, episode 4.Reacher season 4's storyline seemed fairly straightforward for the first three episodes. Its primary hook came from its overarching mysteries surrounding the truth behind Anna Meric&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/mononoke-movie-the-curse-of-the-serpent-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/24829944/Mononoke_01.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mononoke The Movie: Chapter III – The Curse of the Serpent Premieres on Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Demon Slayer Fans Can't Miss Netflix's Other Excellent Anime Movie Trilogy's Final Chapter</div>
+      
+      
+      <div class="summary">The finale of Kenji Nakamura's vibrant animated movie trilogy is just around the corner. If you are a Demon Slayer fan and can't wait for the next chapter in the Infinity Castle movie trilogy, Mononoke delivers the same amount of visual flair, unforg&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/nirvana-grunge-rock-nevermind-album-release-party/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/09/nirvana.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            This Legendary Grunge Band was Kicked Out of Their Own Album Release Party
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Chaos ensuing at a grunge rock album release party should come as no surprise – pandemonium comes with the territory. That’s what the genre is all about, really – rejecting societal norms and embracing the weird, the off-beat, the messy. Grunge music&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-studios-black-led-mcu-superhero-movies" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/marvel-studios-black-led.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Studios Announces 'Black Panther 3' as Fourth Black-Led MCU Movie
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Studios Announces Its 4th Black-Led MCU Superhero Movie</div>
+      
+      
+      <div class="summary">Marvel Studios announced its fourth-ever Black-led MCU movie, adding to a group that stayed surprisingly small for nearly two decades.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2236562/cool-new-anker-accessories-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-cool-new-anker-accessories-you-should-check-out-in-2026/l-intro-1786576840.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Cool New Anker Accessories You Should Check Out In 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Cool New Anker Accessories You Should Check Out In 2026 Frederick Hornung/Shutterstock Let's face it: Keeping all of your tech gadgets fully powered in 2026 almost feels like a second job.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/the-sims-4-mean-girls-clueless-capsule-kits/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/the-sims-4-clueless-kit.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The Sims 4' Gets Mean Girls and Clueless Kits Next Week
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'The Sims 4' Is Getting Two Classic Teen Movies-Inspired Kits</div>
+      
+      
+      <div class="summary">Soon enough, Simmers will be able to dress up their Sims like their favorite characters from Mean Girls and Clueless, as Paramount Pictures is collaborating with EA to bring these iconic movies to The Sims 4.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/metal-gear-solid-online-multiplayer-mod/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/metal_gear_solid_3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fan-Made Co-op Mod for Metal Gear Solid (1998) Showcased in New Trailer
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Metal Gear Solid Online Unveiled In Impressive New Trailer</div>
+      
+      
+      <div class="summary">The original Metal Gear Solid rightly stands as one of the greatest games of the PlayStation 1 generation, transitioning the series to a 3D format for the first time and really showing the potential of the series moving forward.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-comedy-show-mighty-boosh-bbc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/mighty-boosh-noel-fielding-julian-barratt-tundra-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The Mighty Boosh' Is a Surrealist UK Comedy Series Streaming Now
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ’The X-Files’ Meets ‘Flight of the Conchords’ in 1 of the Greatest Comedy Series Ever</div>
+      
+      
+      <div class="summary">If Salvador Dalí lived during the golden age of television, The Mighty Boosh is the show he'd have made. Swapping paint and canvas for papier-mâché and a Moog, it rejects the conventional rules of television comedy.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/xbox-game-pass-losing-witcher-3-august-31/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/xbox-showcase-logo-official-website-image.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Witcher 3: Wild Hunt - Complete Edition Leaving Xbox Game Pass on August 31
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Xbox Game Pass Is Losing A True 10/10 Open World Masterpiece On August 31</div>
+      
+      
+      <div class="summary">Games leave Xbox Game Pass all of the time as licenses expire or Xbox doesn't deem it to be worth holding onto.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/he-never-died-vampire-movie-henry-rollins-streaming-free-tubi-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/09/screenshot-2025-09-20-at-14-53-27.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            This Underrated Vampire Dark Comedy is Streaming on Tubi
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Filmmakers constantly find new and interesting ways to expand the lore around vampires, nearly 130 years after the monsters were first popularized by Bram Stoker.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/fast-furious-jordana-brewster-taylor-sheridan-inspired-spin-off/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/z-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jordana Brewster Pitches 'Fast & Furious' TV Spin-off Inspired by Taylor Sheridan
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Fast & Furious' Star Has the Perfect Plan for Taylor Sheridan-Inspired Spin-off Series</div>
+      
+      
+      <div class="summary">Despite creative struggles and behind-the-scenes production issues, The Fast and the Furious franchise has remained relevant and popular for decades.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/the-truman-show-movies-free-streaming-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/truman-show.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Truman Show, Starring Jim Carrey, Now Free on Pluto TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 28 Years Later, Jim Carrey's Most Unhinged Movie Performance of All Time Is Officially Free on Streaming</div>
+      
+      
+      <div class="summary">Peter Weir’s 1998 satirical dramedy The Truman Show, which has just been inducted into the National Film Registry, is one of those rare works of science fiction that was hailed as prophetic very shortly after its release.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jason-statham-gerard-butler-success-explained-john-wick-producer/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/jason-statham.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Producer Basil Iwanyk Explains How Jason Statham and Gerard Butler Movies Profit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: John Wick Producer Officially Decodes the Key to Jason Statham and Gerard Butler’s Success</div>
+      
+      
+      <div class="summary">On the face of it, both Jason Statham and Gerard Butler are coming off major box-office underperformers. Incidentally, their two latest films — Shelter and Greenland 2: Migration — were released in the same month and directed by the same filmmaker, R&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/mcu-nathaniel-milbury-mister-sinister-adam-driver/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/09/instar54108939-cropped.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Who Is Nathaniel Milbury? Adam Driver’s Mister Sinister, Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After months of speculation, some of the new cast of Marvel Studios' upcoming X-Men reboot have been confirmed, including Adam Driver as the enigmatic villain Nathaniel Milbury.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/wednesday-season-3-leaving-nevermore-academy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/wednesday-addams-in-front-of-spiderweb-window-from-wednesday.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Is Quietly Changing Wednesday's Format & Setting Up Its Ending
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Wednesday Season 3 might still be a distant premonition for now, but it's already shaping up to be a potentially transformative installment.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/nintendo-switch-2-no-mans-sky-port-free-demo/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/nintendo-switch-2-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            No Man's Sky Free Trial Available on Nintendo Switch and Switch 2 Until August 26
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Nintendo Switch 2's Most Impressive Game Is Free To Download For A Limited Time</div>
+      
+      
+      <div class="summary">Though it was the Nintendo Switch that initially changed the proverbial game when it first released, the Switch 2 picked up that momentum and ran with it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/crunchyroll-store-removes-physical-products-manga-anime/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/07/crunchyroll-white-logo-on-orange-background.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Crunchyroll Store Removes Tons of Physical Products After Being Locked Behind Subscription
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's been a turbulent time for Sony-owned anime streaming giant Crunchyroll, at least when it comes to its store.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/kpop-demon-hunters-game-release-available-now/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/rumi-singing-kpop-demon-hunters.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spot It! KPop Demon Hunters Edition Game Released Ahead of 2029 Netflix Sequel
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: KPop Demon Hunters Returns With New Game Ahead Of 2029 Netflix Sequel</div>
+      
+      
+      <div class="summary">KPop Demon Hunters proved to be an enormous success for both Sony and Netflix, something that anyone with even the slightest interest in K-Pop music could have seen coming a mile away.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/quentin-tarantino-django-unchained-streaming-free-pluto-tv-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/mcddjun_ec022.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Quentin Tarantino's 'Django Unchained' Is Now Streaming Free on Pluto TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Quentin Tarantino's Near-Perfect Western Masterpiece Is Officially Soaring on Streaming</div>
+      
+      
+      <div class="summary">Being such a fan of classic spaghetti Westerns, it was only a matter of time before Quentin Tarantino crafted his own take on the genre, filtered through his own indelible vision.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/2026-shows-sleeper-hits/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/patricia-iii.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Shows From 2026 That Are Officially Becoming Sleeper Hits
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are shows that arrive, and you know they're going to be big before they even premiere, like Pluribus and Game of Thrones. Then there are so-called sleeper hits that no one expected would blow up the way they did.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/beatles-four-film-cinematic-event-abbey-road-first-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/the-beatles.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Beatles Are Officially Back on Abbey Road in Incredible Biopic First Look
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Love it or hate it, the musical biopic is here to stay. Although many had dismissed the genre as tired in recent years, following an influx of films trying to piggyback off the commercial success of Bohemian Rhapsody, 2026 has undeniably proven that &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/legend-of-zelda-spring-2027-return-wilds-era-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/07/zelda-breath-of-the-wild-link-looking-back-over-his-shoulder-while-standing-on-a-cliff-edge.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hasbro Releases Legend of Zelda: Tears of the Kingdom Action Figures, Pre-Orders Available
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Legend Of Zelda Spring 2027 Return Officially Confirms The Wilds Era Isn’t Over</div>
+      
+      
+      <div class="summary">Regardless of how you feel about where Nintendo should take The Legend of Zelda series next, there's no doubt that the era marked by Breath of the Wild and Tears of the Kingdom has been a special one.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/gta-6-gameplay-leaker-rockstar-demands/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/grand-theft-auto-6-leaks-rdr2-raul.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Aug 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6 Gameplay Leaker Sends Rockstar A List Of Demands, Threatens More Leaks
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With Grand Theft Auto VI mere months away from release and an official reveal coming via Netflix in mere days, you would think that the fan base could wait a little longer.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <span class="current">15</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/16.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

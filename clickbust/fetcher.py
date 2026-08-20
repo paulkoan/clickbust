@@ -114,12 +114,134 @@ def _extract_image_url(raw_html: str, base_url: str | None = None) -> str:
     return ""
 
 
-def extract_content(url: str, timeout: float = 30) -> tuple[str, str, str]:
-    """Fetch article URL and extract readable content + summary + thumbnail.
+def _parse_img_width(el) -> int:
+    """Extract the display width of an <img> element from attributes and style.
+
+    Checks (in order): width attribute, style='width: ...', style='max-width: ...'.
+    Returns 0 if no numeric pixel width can be determined.
+    """
+    # width attribute (e.g. <img width="800">)
+    w_attr = el.get("width", "").strip()
+    if w_attr and w_attr.isdigit():
+        return int(w_attr)
+
+    # style attribute — scan for width: or max-width:
+    style = (el.get("style", "") or "").lower()
+    for prop in ("width:", "max-width:"):
+        idx = style.find(prop)
+        if idx < 0:
+            continue
+        val = style[idx + len(prop):]
+        # Extract value up to next ';' or end-of-string
+        val = val.split(";")[0].strip()
+        if val.endswith("px"):
+            num = val[:-2].strip()
+            if num.isdigit():
+                return int(num)
+    return 0
+
+
+def getBestImage(readability_html: str, fallback_url: str = "") -> str:
+    """Return the URL of the largest body image (width >= 400px), or fallback.
+
+    Scans the Readability-processed article body HTML for <img> tags with
+    a display width of 400px or more.  Returns the URL of the widest such
+    image.  If no suitable body image is found, returns ``fallback_url``
+    (which should be the og:image URL).
+
+    No new HTTP requests or LLM calls are made — purely parses the already-
+    fetched HTML.
+    """
+    import lxml.html
+
+    try:
+        tree = lxml.html.fromstring(readability_html)
+    except Exception:
+        return fallback_url
+
+    best_url = ""
+    best_width = 0
+
+    for el in tree.xpath("//img[@src]"):
+        src = el.get("src", "").strip()
+        if not src or src.startswith("data:"):
+            continue
+
+        width = _parse_img_width(el)
+        if width >= 400 and width > best_width:
+            best_url = src
+            best_width = width
+
+    return best_url if best_url else fallback_url
+
+
+def _extract_body_images(article_html: str, base_url: str | None = None) -> list[dict]:
+    """Extract all image URLs + alt text from a readable article body HTML.
+
+    Returns list of {"url": "...", "alt": "..."} dicts, skipping:
+      - data: URIs (inline images)
+      - SVG data URIs
+      - Tracking pixels / tiny images (width < 100px)
+      - Images without http(s) src
+
+    These are used as fallback candidates when og:image is misleading
+    (common in 'reference bait' articles where the meta image shows the
+    reference franchise instead of the actual subject).
+
+    Toggle: set CLICKBUST_IMAGE_SELECTION=0 to skip LLM-based fallback
+    entirely (keeps body-images extraction for future use).
+    """
+    import lxml.html
+    try:
+        tree = lxml.html.fromstring(article_html)
+    except Exception:
+        return []
+
+    images: list[dict] = []
+    seen_urls: set[str] = set()
+
+    for el in tree.xpath("//img[@src]"):
+        src = el.get("src", "").strip()
+        if not src or src.startswith("data:"):
+            continue
+
+        # Make relative URLs absolute
+        if src.startswith("/") and base_url:
+            src = base_url.rstrip("/") + src
+        elif src.startswith("//"):
+            src = "https:" + src
+
+        if not src.startswith("http"):
+            continue
+
+        # Skip known-tiny images (tracking pixels, icons, etc.)
+        width = el.get("width")
+        if width and width.isdigit() and int(width) < 100:
+            continue
+        # Some sites use CSS classes on the parent to hint at size
+        parent = el.getparent()
+        if parent is not None and parent.tag == "figure":
+            pass  # figure-wrapped images are usually content
+
+        if src in seen_urls:
+            continue
+        seen_urls.add(src)
+
+        alt = el.get("alt", "").strip()
+        images.append({"url": src, "alt": alt})
+
+    return images
+
+
+def extract_content(url: str, timeout: float = 30, default_banner_url: str = "") -> tuple[str, str, str, list[dict]]:
+    """Fetch article URL and extract readable content + summary + thumbnail + body images.
 
     Returns:
-        (full_text, summary, image_url) where summary is the first ~300 chars
-        of clean text and image_url is the article thumbnail.
+        (full_text, summary, image_url, body_images) where summary is the first ~300 chars
+        of clean text, image_url is the best body image (or og:image fallback, or
+        default_banner_url if neither was found), and
+        body_images is a list of {"url", "alt"} dicts from the readable article body
+        for LLM-based fallback when the selected image still doesn't match the subject.
     """
     log.info("Extracting content: %s", url)
     with httpx.Client(timeout=timeout, follow_redirects=True) as client:
@@ -136,11 +258,22 @@ def extract_content(url: str, timeout: float = 30) -> tuple[str, str, str]:
 
     raw_html = resp.text
 
-    # Extract image from raw HTML before readability strips it
-    image_url = _extract_image_url(raw_html)
+    # 1. Extract og:image / meta-tag image from raw HTML
+    og_image_url = _extract_image_url(raw_html)
 
     doc = Document(raw_html)
     html = doc.summary()
+
+    # 2. Try article body images — prefer large ones over og:image
+    image_url = getBestImage(html, fallback_url=og_image_url)
+
+    # 3. If nothing found in body or meta tags, use the configured default banner
+    if not image_url and default_banner_url:
+        image_url = default_banner_url
+
+    # 4. Extract ALL body images for LLM-based fallback (used when the best
+    #    image still doesn't match the rewritten subject — e.g. reference bait)
+    body_images = _extract_body_images(html, base_url=url)
 
     # Clean up the HTML
     cleaned = _cleaner.clean_html(html)
@@ -165,7 +298,7 @@ def extract_content(url: str, timeout: float = 30) -> tuple[str, str, str]:
         if last_period > 100:
             summary = summary[: last_period + 1]
 
-    return full_text, summary, image_url
+    return full_text, summary, image_url, body_images
 
 
 def fetch_all_sites(sites: list[SiteConfig], max_per_site: int = 20) -> list[Article]:
