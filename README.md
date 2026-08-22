@@ -4,6 +4,8 @@
 
 Clickbust is a CLI tool that replaces misleading clickbait headlines with informative ones.
 
+**👉 [clickbust.cybr.fi](https://clickbust.cybr.fi) — see the live site**
+
 It fetches articles from your favourite sites via RSS, uses an LLM to detect clickbait and rewrite headlines, then publishes a Google Discover-compatible static site with clean titles and redirects to the original articles.
 
 ## How it works
