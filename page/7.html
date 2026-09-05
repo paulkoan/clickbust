@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-05 21:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>5 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>120 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>17 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://movieweb.com/by-any-means-mark-wahlberg-gregory-scarpa-jr/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/mark-wahlberg-and-yahya-abdul-mateen-ii-in-by-any-means.jpg?q=49&fit=crop&w=480&h=400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mark Wahlberg's By Any Means Movie Moves Real-Life Mobster's Son to Tears
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Mark Wahlberg's Crime Thriller Sparks Reaction From Real-Life Mobster's Son</div>
+      
+      
+      <div class="summary">Coming off his triumphant debut, The Inspection, director Elegance Bratton chose the Civil Rights era's flashpoint as the setting for his sophomore venture.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hbo-welcome-to-derry-season-2-prequel/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/pennywise.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO's Welcome to Derry Format Change Breaks Stephen King's Pennywise Rules
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With the confirmation that It: Welcome to Derry will get a second season, fans are eager to see how the explosive Pennywise reveal from the season finale will influence the plot moving forward.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/quentin-tarantino-movies-perfect-no-notes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/christoph-waltz-in-inglourious-basterds.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Quentin Tarantino Movies That Are 10/10, No Notes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Quentin Tarantino is a unique filmmaker, and his films are greatly lauded and applauded. He's often considered influential, especially to newer generations of directors, and he himself has been claiming influence from global cinema.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-gentlemen-guy-ritchie-netflix-streaming-hit-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/the-gentlemen-kaya-scodelario-theo-james.jpg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Guy Ritchie's The Gentlemen Is Officially a Netflix Streaming Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Guy Ritchie’s Greatest Crime Series Is Officially a Netflix Streaming Hit</div>
+      
+      
+      <div class="summary">The box office may not have been too kind to director Guy Ritchie in the last few years, but he has conveniently pivoted to the streaming industry and more than made up for any theatrical shortcomings.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2246124/action-camera-brands-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-popular-action-camera-brands-ranked/l-intro-1787631326.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Popular Action Camera Brands, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Popular Action Camera Brands, Ranked Onfokus/Getty Images Action cameras gained popularity in the early 2000s when GoPro introduced the Hero as a simple, small, and rugged 35mm film camera that could be taken along on outdoor adventures to capture &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/apple-tv-mayday-ryan-reynolds-kenneth-branagh-surprise-hit/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/mcdmayd_g2001-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mayday Starring Ryan Reynolds and Kenneth Branagh Is Apple TV's New Spy Thriller
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: James Bond Becomes Deadpool in Apple TV's Newest Spy Thriller</div>
+      
+      
+      <div class="summary">Whenever somebody brings up Ryan Reynolds, chances are that the first thing that pops into their mind is Deadpool. Reynolds' long-running sarcastic streak is perfect for the Merc with a Mouth, fueling a trilogy of critically and commercially successf&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/crime-shows-best-plot-twists-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/breaking-bad-season-5-episode-14-skylar-anna-gunn-1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Crime TV Shows With Brilliant Plot Twists, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Everybody loves a good plot twist, and crime television has proven itself at being adept at delivering some of the very best that the medium has ever seen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/fortnite-chapter-7-season-4-mastery-monday-time-what-when/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/jlee_260827_1001_fn_masterymonday.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            What time does Mastery Monday start in Fortnite Chapter 7 Season 4?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Mastery Monday is coming back to Fortnite Chapter 7 Season 4, and it's the perfect day to play if you're looking to level up your sprites or collect new ones. For 24 hours, it'll be easier to level up your sprites and collect new ones.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/video/by-any-means-yahya-abdul-mateen-ii-mark-wahlberg-elegance-bratton-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/mark-wahlberg-handing-a-gun-to-yahya-abdul-mateen-ii-in-by-any-means.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            By Any Means Interviews with Yahya Abdul-Mateen II, Mark Wahlberg & Elegance Bratton
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">By Any Means stars Yahya Abdul-Mateen II, Mark Wahlberg, and director Elegance Bratton explain how they blended the stranger-than-fiction truth of Greg Scarpa’s work with the FBI and created their new action drama.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/bucking-the-tiger-bruce-olds-opening-line/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2023/06/doc-holliday-playing-poker-in-tombstone.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bucking the Tiger: 25 Years Later, Bruce Olds' Doc Holliday Novel Has One of the Greatest Opening Lines
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 25 Years Later, This Forgotten Western Has One Of The Greatest Opening Lines Ever Written</div>
+      
+      
+      <div class="summary">Doc Holliday is one of the most enigmatic historical figures of the Wild West, and there's been no shortage of tales about the notorious dentist-turned-gambler and gunfighter over the years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-squirrel-girl-moments-will-murray/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/squirrel-girl-from-marvel-comics-image.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Greatest Squirrel Girl Moments in Marvel History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Will Murray’s passing on August 24, 2026, at age 73 marks the loss of one of the writers who helped shape Marvel’s strangest and most enduring cult characters. Murray co-created Squirrel Girl with artist Steve Ditko, and Doreen Green made her debut i&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/timewasters-tv-show-deserved-more-seasons/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-jazz-quarter-staring-at-something-in-timewasters.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Timewasters Review: The 12-Episode ITV2 Time Travel Series That Deserved More Seasons
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Back To The Future Meets Schitt's Creek In The 12-Episode Time Travel Series That Deserved More Seasons</div>
+      
+      
+      <div class="summary">A little-known time travel series is sort of like if Back to the Future met Schitt's Creek, and it deserved more than its two, six-episode seasons.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/nintendo-n64-donkey-kong-pc-unofficial-port/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2019/01/Donkey-Kong-64-Header.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Donkey Kong 64: Recompiled — Unofficial PC Port of the N64 Classic Now Available
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 27 Years Later, A 10/10 N64 Classic Has Landed On PC</div>
+      
+      
+      <div class="summary">A Nintendo 64 classic is available on PC today thanks to the efforts of a dedicated fan community. First released in 1996, the N64 was Nintendo's first home console capable of rendering 3D graphics, and played host to numerous masterpieces of its gen&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/onimusha-way-of-the-sword-best-parry/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/onimusha-way-of-the-sword-parry.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Onimusha: Way of the Sword Has the Best Parry in Video Games
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">I’ll be honest: I’m sick of parrying in video games. What once was a unique combat mechanic has become as standard as jumping in action games. Even James Bond can parry in 007 First Light, as if he’s a Tarnished warrior taking down Radahn.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/paramount-superhero-clash-of-the-thundermans-streaming-success-sept-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/mcdthud_i8013.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Paramount+'s 'Clash of the Thundermans' Quickly Hits #2 on Streaming Charts
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Paramount+'s New Streaming Hit Is a 'Wild Ride' 71-Minute Superhero Film</div>
+      
+      
+      <div class="summary">Paramount+'s new superhero film has quickly climbed up the charts just one day after dropping on the streaming platform. Clash of the Thundermans is proving there's room for more than just Marvel and DC — at least when it comes to family-friendly act&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-wars-legends-character-spinoff-movies-list-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2016/11/darth-bane.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Star Wars Legends Characters That Deserve Their Own Movie
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's a new day for Star Wars. As the galaxy far, far away prepares to celebrate its fiftieth anniversary, its future remains uncertain. With Dave Filoni and Lynwen Brennan now leading Lucasfilm, it's anyone's guess as to what movies and shows the fra&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/robert-pattinson-primetime-first-reactions/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/robert-pattinson-as-chris-hansen-with-his-face-appearing-on-four-different-tvs-in-primetime.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Primetime: Early Reactions to Robert Pattinson's Chris Hansen Movie from Venice Film Festival
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Robert Pattinson's Primetime First Reactions Are In</div>
+      
+      
+      <div class="summary">Published Sep 5, 2026, 8:58 AM EDT Rianna is the Movie News Editor for ScreenRant. After earning her BA in Film Studies, she began her career as an entertainment writer, contributing to several publications before joining ScreenRant.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/mcu-doctor-doom-thanos-avengers-infinity-war-doomsday-thor-hulk-defeat-repeat/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/hnrskgmxmaauuvu-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The MCU Just Gave Doctor Doom The Perfect Excuse To Repeat Thanos’ Infinity War Intro Scene
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The MCU has given Doctor Doom the perfect excuse to replicate the Avengers: Infinity War opening scene with Thanos that made the latter villain such an imposing presence in both the 2018 film and in Avengers: Endgame.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/gilded-age-hbo-better-than-downton-abbey/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/12/the-gilded-age-strike-1.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘The Gilded Age’ Outshines ‘Downton Abbey’ in Historical Accuracy
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget 'Downton Abbey,' HBO's 10/10 Replacement Has Already Surpassed It in the One Way That Matters</div>
+      
+      
+      <div class="summary">The Gilded Age and Downton Abbey might share the same creator in Julian Fellowes, but the former series has actually been a bit more successful when it comes to living up to the full title of "historical drama.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2249351/why-60-fps-for-gaming-not-movies/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/why-60fps-works-for-gaming-but-not-for-movies/l-intro-1788351981.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why 60FPS Works For Gaming, But Not For Movies
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Why 60FPS Works For Gaming, But Not For Movies Image Source/Getty Images When it comes to frames per second (FPS), most would agree that more means better. Higher FPS means smoother, more realistic visuals and more visual information each second—both&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/star-trek-new-frontier-novels-peter-david-deserves-tv-adapatation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/star-trek-new-frontier.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Star Trek: New Frontier’ Novel Series Deserves a TV Adaptation
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek’s Forgotten Spin-Off Should Have Been a TV Series</div>
+      
+      
+      <div class="summary">For 60 years, Star Trek has built a universe of interconnected shows and movies and introduced a rich cast of characters. Most of these shows follow the same formula: a spaceship crew travels to distant planets and encounters all manner of alien life&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/m-night-shyamalan-the-village-streaming-peacock-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/02/thevillage.jpg?q=49&fit=contain&w=2500&h=1250&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            M. Night Shyamalan’s ‘The Village’ Gets Second Chance on Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: M. Night Shyamalan’s “Colossal Miscalculation” Is Officially Getting a Second Chance on Streaming</div>
+      
+      
+      <div class="summary">After the success of The Sixth Sense, M. Night Shyamalan was quickly hailed as Hollywood's next big thing.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/near-perfect-netflix-miniseries-nobody-remembers/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/bill-skarsgard-in-netflix-s-clark.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Near-Perfect Netflix Miniseries That Nobody Remembers Today
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix has produced many great TV shows and miniseries, and in the latter group, it has some near-perfect shows that have become forgotten for different reasons. Although there’s now a lot of competition in the world of streaming, Netflix is still o&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-tcg-card-games-like-pokemon-magic/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/booster-packs-for-lorcana-yugioh-and-pokemon.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Best TCGs To Collect And Play (That Aren't Pokémon Or Magic)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When most people think of trading card games (TCGs), generally what comes to mind first is Magic: The Gathering and the Pokémon TCG. However, the trading card game market isn't limited to just those two behemoths.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/batman-knightfall-david-dastmalchian-movie-dc-villain-trend/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-riddler-in-batman-knightfall.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Batman: Knightfall – Part 1 Continues DC's Trend of Animated Villain Stories Started by The Dark Knight
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: DC's New Near-Perfect Rated Batman Movie Secretly Continues a Villain Trend Started By The Dark Knight</div>
+      
+      
+      <div class="summary">When DC announced another animated Batman feature, long-time fans could have been forgiven for rolling their eyes.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-sci-fi-movies-since-2020-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/poor-things-emma-stone.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 5 Greatest Sci-Fi Movies Since 2020, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Science fiction is one of cinema's most enduring genres, producing countless gems from the earliest days of the medium.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/dylan-obrien-love-and-monsters-streaming-paramount-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/08/718nnyxyqubqcgwt9sdela1zc3h.jpg?q=70&fit=contain&w=480&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Love and Monsters’ Is a Fun Post-Apocalyptic Adventure Now on Paramount+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Zombieland’ Meets ‘A Quiet Place’ in This Near-Perfect Adventure Officially Streaming Now</div>
+      
+      
+      <div class="summary">The end of the world doesn't need to be a sad occasion, folks. Find hope. While, sure, the genre of "post-apocalypse" tends to lean on the side of everything-is-awful, this particular film decided it was going to take a more colorful approach to thin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dexter-resurrection-season-2-cast/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/james-remar-and-michael-c-hall-bathed-in-red-light-from-dexter-resurrection.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dexter: Resurrection's New Format Turns Season 2 Into a Major Crime TV Event
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Once Dexter: Resurrection began filming its second season in New York, the reveals started coming fast and furious. Following Season 1’s massive success, both critically and in viewership, Season 2 has big shoes to fill.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-sci-fi-movie-opening-shots-ever-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/neo-with-his-hand-out-in-the-matrix.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Greatest Sci-fi Movie Opening Shots Ever, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Movies only get one shot to make a first impression, so the opening shot must be perfect. It can do a myriad of things from setting the tone, to introducing characters, to debuting an iconic movie setting.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/funniest-gary-larson-far-side-comics-about-scientists/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/the-far-side-early-microscope.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gary Larson’s 5 Funniest ‘Far Side’ Comics About Scientists, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Far Side is easily one of the best comic strips of all time, and it’s iconic enough that it probably doesn’t need much of an introduction.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <span class="current">7</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/8.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

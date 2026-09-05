@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-05 21:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>5 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>120 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>17 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/chuck-nbc-spy-series-big-bang-theory-meets-alias/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/01/chuck-yvonne-strahovski-zachary-levi-1.jpeg?q=70&fit=contain&w=750&h=422&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            NBC's ‘Chuck’ Combines Spy Action with Comedy, Now Streaming on Apple TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Big Bang Theory’ Meets ‘Alias’ in NBC’s Action-Packed 5-Part Spy Series</div>
+      
+      
+      <div class="summary">One of the best and most underrated shows of its era is suddenly shooting its way up the Apple TV Store charts. NBC's Chuck was an amazing series that blended comedy, romance, and spy-thriller drama.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-wars-rise-of-skywalker-general-armitage-hux-death-domhnall-gleeson/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/daisy-ridley-john-boyega-and-oscar-isaac-hugging-on-the-rise-of-skywalker-set.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Wars Actor Domhnall Gleeson Reveals True Feelings About General Hux's Death in Rise of Skywalker
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Wars Actor Shares His True Feelings About His Controversial Fate In Rise Of Skywalker</div>
+      
+      
+      <div class="summary">The actor behind a controversial Star Wars death finally reveals his true feelings about his demise. The Star Wars sequel trilogy continues to inspire strong opinions years after it came to a close.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-testaments-season-2-charlie-carrick-casting-series-regular-upgrade/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-testaments_jfbtch-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Handmaid's Tale Spinoff Officially Upgrades 1 Gilead Role For The Testaments Season 2
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of The Testaments’ actors has been upgraded to the main cast for season 2. The spinoff of The Handmaid’s Tale premiered on Hulu back in April, and like its predecessor, it earned positive critical reception.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/most-overpowered-anime-weapons-officially-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2018/06/Anime-Attacks-Gurren-Lagaan-Giga-Drill-Break.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Overpowered Anime Weapons, Officially Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anime weapons can do far more than cut through armor or deliver devastating attacks. Some can judge a person's criminal potential, cancel supernatural techniques, manipulate energy, or unleash forces capable of affecting reality itself.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-books-read-weekend-september-5-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/hayden-panettiere-nashville-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Greatest Books to Read This Weekend (Sep 5-6)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">September is here, and every dedicated book-lover knows what that means: it’s time for peak reading season.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/house-of-the-dragon-rhaenyra-arc-fixes-game-of-thrones-daenerys/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/gayle-rankin-ewan-mitchell_0-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            House of the Dragon Season 3 Parallels Daenerys' Fall, Fixing Game of Thrones' Infamous Ending
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO Officially Fixes Daenerys' Ending With Game Of Thrones Spinoff</div>
+      
+      
+      <div class="summary">Daenerys Targaryen's ending in Game of Thrones is infamous, but HBO's House of the Dragon is doing all it can to make up for it. This spinoff series is set about two centuries before George R.R. Martin's central story, when the Targaryens still have &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-crunchyroll-anime-finish-one-weekend/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/courier-from-akudama-drive-victorique-from-gosick-and-simon-from-gurren-lagann.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Best Crunchyroll Anime You Can Finish In One Weekend
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anime adaptations often serve as a promotional vehicle for the manga or novels on which they are based, making it a herculean task to find a series that concludes its story within just a few episodes.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ridley-scott-alien-earth-season-2-filming-start-update-first-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2025/09/alien-earth_gcpuwn-cropped.jpg?q=49&fit=crop&w=480&h=240&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Alien: Earth’ Season 2 Officially in Production, Confirmed by Disney+ Canada
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ridley Scott’s 10/10 Sci-Fi Series Officially Returns for Season 2</div>
+      
+      
+      <div class="summary">2026 hasn’t exactly been a banner year for Ridley Scott, who finally returned to the world of sci-fi with his latest film, The Dog Stars. The film came into theaters carrying a $70 million budget, which seemed risky, especially considering the box of&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-deep-space-nine-sci-fi-success-pvod-apple-tv-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/star-trek-deep-space-nine.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: Deep Space Nine surges on Apple TV streaming 27 years later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek’s 91% RT Series That Broke the Franchise Formula Surges on Streaming 27 Years Later</div>
+      
+      
+      <div class="summary">Star Trek's darkest television show has returned to the premium video-on-demand streaming charts. Star Trek: Deep Space Nine has climbed to the No. 9 spot on the Apple TV Store chart, according to data from FlixPatrol.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/jason-bourne-spy-movies-smartest-action-franchise/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/matt-damon-as-jason-bourne-in-the-bourne-supremacy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Bourne Movies Are Hollywood's Smartest Action Franchise
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Matt Damon might be returning to one of the most successful spy thriller franchises in action movie history, which cemented his legacy as a formidable action star 24 years ago.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/open-world-games-escapism-live-another-life/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/two-cowboys-riding-horses-in-red-dead-redemption-2.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 open-world games including Red Dead Redemption 2 that offer immersive life simulation
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 5 Open-World Games That Let You Live Another Life</div>
+      
+      
+      <div class="summary">Open-world games can offer unique worlds for players to explore and escape the toil of everyday life. These worlds can also give players the chance to live out alternative lives across a wide range of fictional settings.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/callum-turner-neuromancer-apple-tv-sci-fi-premiere-date-january-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/08/neuromancer-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV's ‘Neuromancer’ Adaptation Premieres January 22, 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV's Next Sci-Fi Obsession Officially Debuts in 2027</div>
+      
+      
+      <div class="summary">If it's not broken, don't fix it. Apple TV has become the de facto home for sci-fi over the last few years, and the streamer shows no signs of slowing down.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/ride-or-die-prime-video-streaming-milestone-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/hannah-waddingham-riding-a-motorcycle-in-prime-video-series-ride-or-die.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video Spy Series 'Ride or Die' Spends 50 Days on U.S. Top 10 TV List
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video’s New 8-Part Spy Series Crosses Vital Streaming Milestone</div>
+      
+      
+      <div class="summary">Prime Video's new spy series is lighting up streaming charts, and it has just crossed a vital milestone as it awaits an update of its future. Espionage TV shows make up some of the most popular streaming releases in recent years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/pokemon-go-fest-2026-mega-finale-habitat-schedule-bonuses/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/jlee_260901_1001_pogo_gofest2026finale.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Go Fest 2026 Mega Finale habitat schedule and event guide
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pokémon Go's end-of-summer wrap-up event, "Pokémon Go Fest 2026: Mega Finale," runs on Saturday, Sept. 5 and Sunday, Sept. 6 from 10 a.m. until 6 p.m. in your local time on both days. This finale brings back the one and only Armored Mewtwo, which has&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/marble-hall-murders-pbs-magpie-murders-like-poirot-murder-she-wrote/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/lesley-manville-as-susan-ryeland-tim-mcmullan-as-atticus-p-nd-in-marble-hall-murders.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Marble Hall Murders' Is the Third Installment of the 'Magpie Murders' Franchise on PBS
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Agatha Christie’s Poirot Meets Murder, She Wrote In An 18-Part Mystery Masterpiece</div>
+      
+      
+      <div class="summary">There are plenty of hidden TV gems to be discovered on PBS, but none is more deserving of the attention it isn’t getting than an ongoing 18-part murder mystery series indirectly inspired by the works of Agatha Christie.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/mandalorian-meets-last-of-us-intergalactic/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/intergalactic-the-heretic-prophet-gameplay.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Intergalactic: The Heretic Prophet' Combines Bounty Hunting With Survival in Naughty Dog's New Sci-Fi Game
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Mandalorian Meets The Last of Us In Upcoming Sci-Fi Epic</div>
+      
+      
+      <div class="summary">There, rather astoundingly, have been few great games like The Last of Us released since Naughty Dog's magnum opus first came out.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/wheel-of-time-meets-how-to-train-your-dragon-rpg/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/dragontwin-game-flight.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Dragontwin' Is an Upcoming Open-World RPG Where You Bond With a Dragon
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Wheel Of Time Meets How To Train Your Dragon In New Fantasy RPG</div>
+      
+      
+      <div class="summary">Right now, there isn't a lot for Wheel of Time or How to Train Your Dragon fans to cling to. Wheel of Time is kind of in flux in general right now, with a ton of different projects being thrown around, and while How to Train Your Dragon has another l&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-wayans-brothers-movies-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/white-chicks-wayans-brothers.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            15 Best Wayans Brothers' Films, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Emerging as kings of comedy during the 1990s, the Wayans Brothers gave moviegoers cultural touchstones like the Scary Movie franchise. Over two decades since their last outing in the horror spoof franchise, they recently introduced audiences to their&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hbo-max-lanterns-streaming-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/lanterns-damon-lindelof-tom-king-1.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO's 'Lanterns' DC Series Earns 10M Views in 3 Days, Largest Growth of Season
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO’s Sci-Fi Spin on ‘True Detective’ Officially Adds 10M Views in 3 Days</div>
+      
+      
+      <div class="summary">HBO Max may not have the same subscriber numbers as some of its biggest competitors like Netflix or Prime Video, but the streamer certainly isn’t lacking in high-quality original content.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/daredevil-born-again-season-3-luke-cage-return-mike-colter-explains/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/luke-cage-mike-colter-netflix-1.jpeg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mike Colter Discusses Luke Cage Return in 'Daredevil: Born Again' [Exclusive Interview]
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Mike Colter Officially Breaks Silence on Luke Cage's ‘Daredevil: Born Again’ Return [Exclusive]</div>
+      
+      
+      <div class="summary">2026 has been a huge year for Marvel Studios on the small screen, with the gargantuan superhero studio releasing new seasons of both Daredevil: Born Again and X-Men ‘97.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/conan-obrien-must-go-season-3-episode-3-morocco-sona-movsesian-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/collider-signature-conan-o-brien-must-go-sona-movsesian.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sona Movsesian Knows Exactly Why Her Comedy With Conan O’Brien Works
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are probably easier ways to get Argan oil than flying all the way to Morocco with Conan O'Brien.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/ncis-season-24-official-trailer-tony-dinozzo-status/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/a-close-up-of-michael-weatherly-as-anthony-tony-dinozzo-in-the-bullpen-in-ncis-season-24.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            CBS Is Giving NCIS a Long-Overdue Tony Upgrade in Season 24
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">CBS is upgrading a fan-favorite character as Michael Weatherly returns in NCIS Season 24, possibly landing the “Very Special non-Agent Anthony DiNozzo” in the NCIS director’s chair.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/lego-star-wars-the-mandalorian-sci-fi-success-disney-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/lego-the-mandalorian.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            LEGO Star Wars: The Mandalorian Special Hits No. 2 on Disney+ After One Day
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Wars’ New 45-Minute Disney+ Special Is an Instant Streaming Hit After 1 Day</div>
+      
+      
+      <div class="summary">A new Star Wars special is climbing the Disney+ chart. LEGO Star Wars: The Mandalorian is a streaming hit, ranking at No. 2 on the Disney+ movie chart in the United States and No. 6 worldwide. The Star Wars special's success follows strong reviews fr&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/ryan-gosling-blade-runner-2049-streaming-success-hbo-max-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/9380925/gosling_br2049.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Blade Runner 2049 Starring Ryan Gosling Becomes No. 1 Movie on HBO Max
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ryan Gosling’s Near-Perfect Sci-fi Movie Officially Becomes an HBO Max Streaming Hit</div>
+      
+      
+      <div class="summary">Ryan Gosling has built one of Hollywood’s strangest little sub-specialties with some of his most recent movies: being a sad, handsome man in space. At some point, you have to imagine Gosling told his agent, “Get me more doomed sci-fi.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/backrooms-streaming-hbo-max-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/a24-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Horror Film 'Backrooms' by Kane Parsons Hits HBO Max Streaming on September 25
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget ‘Obsession,’ 2026’s Viral Horror Sensation Hits Streaming This Month</div>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.This year, the horror genre has belonged to the YouTubers.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/marvel-new-iron-man-riri-williams/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/riri-williams-aka-ironheart-and-moon-knight-appear-in-the-marvel-mangaverse-iron-knight-1.jpg?q=49&fit=contain&w=2063&h=3132&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Announces 'Iron Knight' #1, Where Riri Williams Is the Sole Iron Man in the Mangaverse
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel's New Iron Man Replacement Officially Announced</div>
+      
+      
+      <div class="summary">Marvel reveals the hero who will carry Iron Man's legacy following Tony Stark's definitive death. In every Marvel timeline, Tony Stark constantly faces a barrage of intellectual rivals and corporate sabotage from brilliant minds who try to reverse-en&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/near-perfect-animated-short-films-last-5-years/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/ghost-in-front-of-grave-tree.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Near-Perfect Animated Short Films From the Last 5 Years, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Short films already don't nearly get the attention they deserve, but it goes even a step further when it comes to animated shorts.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dragon-ball-super-officially-ready-for-next-chapter/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/10/it-s-the-end-of-an-era-for-the-dragon-ball-super-manga.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            After 2 Years, Dragon Ball Super Is Officially Ready for Its Next Chapter
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There's still been new Dragon Ball to appreciate in the past two years, whether it's been Dragon Ball DAIMA or new video games, but everyone has spent this time waiting for the Dragon Ball Super manga to return.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/blood-of-dawnwalker-kill-or-spare-xanthe-guide/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-blood-of-dawnwalker-xanthe-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Blood Of Dawnwalker: Should You Kill Or Spare Xanthe?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Blood of Dawnwalker players will have the opportunity to take on three different members of Brencis' Court during the course of the campaign.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/damon-lindelof-lanterns-lost-true-detective-replacement/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/lanterns-kyle-chandler-aaron-pierre.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Damon Lindelof's DC Series 'Lanterns' Blends 'Lost' Mystery with 'True Detective' Detective Stories
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Damon Lindelof's New Sci-Fi Series Blends 'Lost' and 'True Detective'</div>
+      
+      
+      <div class="summary">Since the conclusion of the iconic sci-fi series, Lost, fans have been waiting for something that could measure up to Damon Lindelof’s magnum opus. The island mystery was one of the most talked-about shows of the golden age of television.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <span class="current">11</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/12.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

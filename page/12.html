@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-05 21:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>5 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>120 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>17 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/10-biggest-takeaways-rewatching-mandalorian-grogu/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/pedro-pascal-as-the-mandalorian-and-grogu.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Biggest Takeaways Rewatching The Mandalorian & Grogu On Disney+
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! This post contains SPOILERS for The Mandalorian & Grogu Now that everyone can watch and rewatch The Mandalorian & Grogu to their heart's content, the latest Star Wars movie is well worth revisiting, with some of the biggest takeaways as the &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/smallville-best-line-lana-lang/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2022/12/kristin-kreuk-as-lana-lang-in-smallville-pic.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            25 Years Later, Smallville's Greatest Line from Lana Lang About Growing Up Still Resonates
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 25 Years Later, Smallville's Greatest Line Just Gets Better</div>
+      
+      
+      <div class="summary">Smallville was the perfect coming-of-age superhero story, exploring the complexity of growing up and balancing power with responsibility, and early in its run, it managed to sum things up in a surprisingly elegant way.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-venture-bros-spin-off-cancelled-jackson-publick/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/img_2008.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cancelled 'Venture Bros.' Spin-Off 'Order of the Triad' Confirmed by Creator Jackson Publick
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Adult Swim’s Cancelled ‘Venture Bros.’ Spin-Off Officially Debuts Online</div>
+      
+      
+      <div class="summary">The Venture Bros. has been one of those animated shows that has existed for over two decades and quietly built itself a heavy, dedicated cult audience. Part of why it never established itself in mainstream, widespread conversation is because of the 2&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/strongest-bosses-rpg-history-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/final-fantasy-7-remake-sephiroth.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Strongest Bosses in RPG History, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One thing that players can always count on in RPGs are numerous boss battles. Typically, these battles start off easy, but get progressively harder as the game goes on. And, occasionally, a boss battle will come around that is just too much.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hianime-return-major-warning/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/08/japan-shuts-down-84-anime-piracy-streaming-sites-with-government-supported-hackers.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            World's Biggest Anime Streaming Site Returns (But HiAnime Issues Major Warning)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">HiAnime, previously the world’s largest pirate anime streaming platform, has reportedly just made its comeback following its shutdown in May 2026. However, this return appears to be in name only, as a major warning -- also from HiAnime itself -- has &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ryan-murphy-monster-season-4-netflix-release-date-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/monster-the-lizzie-borden-story-ella-beatty.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'Monster' Anthology Season 4 on Lizzie Borden Premieres September 17
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s Biggest Crime-Horror Series Is Officially Back in Less Than 2 Weeks</div>
+      
+      
+      <div class="summary">A new month brings a new slate of releases from the world's largest streamer as it beefs up its library to keep subscribers entertained. This month is no different, as Netflix has new and returning shows worth getting excited about.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/anime-hero-becomes-final-villain/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/lelouch-plays-chess-in-code-geass-season-1-episode-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Anime Series Where a Hero Becomes the Final Villain
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In most anime series, the main character consistently stays the hero. They might grow as people and falter along the way due to complex emotions. They usually have mentors who have taught them to always do the right thing. Izuku Midoriya from My Hero&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2251627/ecovacs-deebot-x12s-omnicyclone-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/ecovacs-deebot-x12s-omnicyclone-review-leveled-up-cleaning-for-hard-floors-and-carpets/l-intro-1788566853.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ecovacs Deebot X12S OmniCyclone Review: Leveled-Up Cleaning For Hard Floors And Carpets
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Ecovacs Deebot X12S OmniCyclone retains a very similar design to the previous-generation model, the X12. In fact, the only notable difference to the design is the finish on the vacuum and the docking station itself, which is a little lighter and &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jackson-rathbone-starmother-disco-punk-is-dead-album-release-music-video/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/copy-of-collider-template-2026-09-03t132920-803.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jackson Rathbone Goes Full Serial Killer in STARMOTHER’s First Official Music Video [Exclusive]
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Jackson Rathbone has spent the last five years writing what might be his most personal music yet, but he isn't the one stepping up to the microphone. For his first musical project in six years, Rathbone has finally convinced his wife, Sheila Rathbone&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/classic-thriller-books-perfect-first-page-to-last/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/the-silence-of-the-lambs.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Classic Thriller Books That Are Perfect From the First Page to the Last
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Modern thrillers are always finding new ways to keep readers hooked, but there's still something special about the classics. Keeping people on the edge of their seats isn't exactly a new trick, but it takes great skill to build that kind of anxiety w&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-witcher-replacements-magic-the-gathering-narnia/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/the-chronicles-of-narnia-the-lion-the-witch-and-the-wardrobe_wkez9m.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Next Fantasy Franchises After 'The Witcher' Are 'Chronicles of Narnia' and 'Magic: The Gathering'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Has 2 Fantasy Franchises Replacing The Witcher, And They're Both Perfect</div>
+      
+      
+      <div class="summary">As The Witcher nears its end on Netflix, the streamer's next wave of fantasy shows and movies is already in development. While fantasy remains one of the most popular genres on the small screen, getting these projects off the ground — and more import&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/pokmon-renaissance-unveiled-in-new-trailer/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/screenshot-2026-07-12-at-11-57-09-full-battle-shinji-vs-satoshi-part-two-2010-1.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Renaissance Unveiled in New Trailer
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Project Renaissance, a fan-made Pokémon project, has recently announced that its long-awaited first chapter will finally be getting an official release. On September 26, fans will get a chance to head into the all-new world of Aldiris.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/robert-de-niro-the-whisper-man-thriller-netflix-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/robert-de-niro-adam-scott-michelle-monaghan-in-the-whisper-man.png?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Robert De Niro's The Whisper Man Becomes Top Movie on Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Robert De Niro's New 114-Minute Crime Thriller Crowned One of the Biggest Movies on Streaming</div>
+      
+      
+      <div class="summary">Robert De Niro is a legend in the acting world, and his movies demand to be seen. His latest film, 2026's The Whisper Man, is no different. After releasing this past week on Netflix, the film has already flown to the top of the streaming platform's c&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/games-for-god-of-war-fans/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/kratos-screaming-from-god-of-war.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Games to Play If You Love God of War
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">God of War has become one of the most legendary franchises in gaming. What started as a solid hack-and-slash trilogy quickly transformed into an emotionally-moving and massively cathartic duo of new-generation action masterpieces.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/chris-pratt-the-super-mario-galaxy-movie-fandango-streaming-milestone-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/04/mario-and-luigi-wearing-ponchos-and-standing-in-power-poses-in-the-super-mario-galaxy-movie.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Chris Pratt's 'The Super Mario Galaxy Movie' Reaches a Streaming Milestone on Peacock
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Chris Pratt's $1 Billion Fantasy Hit Soars Past Huge Streaming Milestone At The Perfect Time</div>
+      
+      
+      <div class="summary">Chris Pratt's new fantasy movie continues to soar on streaming, and it has just passed an impressive milestone, doing so at the perfect time for the actor. Pratt is an actor who has become a huge part of many major franchises.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/nova-guardians-of-the-galaxy-spin-off-movie-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/10/img_2025-10-18-143625.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Guardians of the Galaxy' Spin-Off Officially Happening With Main Character Confirmed
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">For the better part of a decade, the Guardians of the Galaxy reigned as one of Marvel's most popular franchises through their MCU solo movies and appearances in team-up films. Led by director/writer James Gunn, their three movies combined to gross ne&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/onslaught-movie-post-credits-scene-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/adria-arjona-as-celeste-wearing-an-eyepatch-holding-a-gun-and-protecting-a-child-in-onslaught.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Onslaught Doesn't Have A Post-Credits Scene, But You'll Regret Leaving Early (It Sets Up A Sequel)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: This article contains spoilers for OnslaughtOnslaught, Adam Wingard’s unofficial sequel to The Guest, is in theaters now. While the A24 thriller does not have a traditional post-credits scene, audiences should stick around through the credit&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-revenant-tom-hardy-action-stream-hbo-sept-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/01/revenant-leonardo-dicaprio.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Revenant Returns as a Top Streaming Hit on HBO Max
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Hardy's $533 Million Action Epic Is Officially Making a Comeback on Streaming</div>
+      
+      
+      <div class="summary">11 years after it was first released, Tom Hardy's intense and nearly three-hour-long action epic is one of the biggest movies in the world on streaming. It might not be his go-to genre, but Tom Hardy is still a bona fide action star.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/onslaught-dan-stevens-the-guest-connection/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/onsalught-movie-2026.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dan Stevens Confirms 'Onslaught's Deep Connection to Cult-Classic Action Thriller
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Dan Stevens is an actor with quite an interesting filmography. Having starred in films both big and small that spanned a variety of genres, the actor also has a new big project lined up.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/playstation-ps1-classic-dino-crisis-ps-plus/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/08/dino-crisis-2-regina-and-dylan-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dino Crisis 2 Joins PS Plus Premium Catalog in 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 26 Years Later, A Near-Perfect PlayStation 1 Classic Is Returning On PS5</div>
+      
+      
+      <div class="summary">A beloved and near-perfect PlayStation 1 classic is officially returning with a release on PlayStation 5, 26 years after its original release in 2000. A lot of older games are making their way onto the PS5 ecosystem as of late.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/blakes-7-bbc-space-opera-like-star-wars-firefly/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/09/the-central-cast-of-blake-s-7.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            BBC's Blake's 7: 1978 Sci-Fi Series with 100% RT Score
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Wars Meets Firefly In The BBC’s 52-Episode Space Opera With 100% On Rotten Tomatoes</div>
+      
+      
+      <div class="summary">When most people think of classic BBC sci-fi shows, Doctor Who is naturally the name that comes to mind. The adventures of the Doctor and his TARDIS helped establish British science fiction globally and remains one of the country’s most celebrated cu&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/every-major-one-piece-mystery-needs-solve/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/luffy-with-ohara-library-behind-him.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Major Mystery One Piece Needs to Explain Before It Ends
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Over the course of nearly three decades, One Piece has evolved greatly. What started out as one silly, stretchy boy's adventure to find a treasure that may not even be real has turned into an all-out battle against the powers that govern the world at&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/dragon-prince-netflix-tolkien-avatar-last-airbender-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2024/12/the-dragon-prince-18.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Dragon Prince: Netflix's Fantasy Series Blending Tolkien and Avatar
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: "Tolkien Meets Avatar: The Last Airbender" in Netflix's 100% RT Fantasy Series Nobody Talks About</div>
+      
+      
+      <div class="summary">Great fantasy stories like The Lord of the Rings and Avatar: The Last Airbender appeal to diehard genre fans and mainstream audiences alike. And there's one Netflix show that combines elements of both — but sadly, not many people talk about it anymor&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/star-trek-reboot-trilogy-streaming-peacock-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/04/star-trek-2009-movie-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            JJ Abrams' Star Trek Reboot Trilogy Begins Streaming on Peacock for 60th Anniversary
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Star Trek’ Officially Soars Onto Streaming for 60th Anniversary</div>
+      
+      
+      <div class="summary">Pop culture, by definition, consists of popular ideas and trends, fashion, entertainment, including music, movies and TV shows that are ingratiated and shared by the public at a certain period of time. Very few science fiction franchises have impacte&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/civilization-free-steam-first-class-trouble/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/02/civilization-viireview-featured-image.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Steam Officially Makes Civilization VII Free to Play Until September 10, Plus an Additional Freebie
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">For the next week, Civilization VII is free to play on Steam. It's the latest addition to the Sid Meier's Civilization franchise, and everyone can get a chance to create their own civilization at no cost for the next few days.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-strange-new-worlds-success-paramount-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/trelane-rhys-darby-star-trek-strange-new-worlds.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: Strange New Worlds Returns to Streaming Charts After Soap Opera Episode
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek’s Canceled 92% RT Series Returns to Streaming Charts After Changing Genre</div>
+      
+      
+      <div class="summary">Star Trek: Strange New Worlds is back on the streaming charts following an episode that took the series out of its genre comfort zone. The typically sci-fi series is back in Paramount+'s top 10 after releasing a new episode, titled "Like Chronitons T&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-time-travel-books-of-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/10/james-franco-11-22-63.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Greatest Time Travel Books of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The idea of time travel has always been a foundational concept in sci-fi since the genre was born. It's a flexible storytelling technique that authors can tackle from various perspectives. Through each story, the rules rarely stay the same.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/taylor-sheridan-lioness-cia-yellowstone/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/zoe-saldana-in-lioness.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan's 'Lioness' Is a CIA Spy Thriller in the Yellowstone Universe
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan's Hit 3-Part Spy Series Is CIA Yellowstone (& It's Perfect)</div>
+      
+      
+      <div class="summary">Paramount+ extends Taylor Sheridan’s neo-Western television universe to Washington, D.C., in his crime thriller, Lioness. The series captures the best elements of his shows while delivering the biggest display of action, espionage, and thrilling spy &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-mousetrap-show-streaming-charts-viewership-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/mousetrap-d-1.jpg?q=49&fit=contain&w=1920&h=1081&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix K-Drama Mousetrap Debuts with 2 Million Views
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's New R-Rated Adaptation Of Thriller Comics Series Officially Storms Streaming With 2M Viewership Debut</div>
+      
+      
+      <div class="summary">With Netflix dominating streaming with a varied collection of true-crime series and thrillers, one of its specialties in the last few years has been K-dramas. The streamer has released plenty of slow-burn romantic Korean series, including Queen of Te&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-fun-action-movies-1990s-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/promotional-image-of-agent-k-tommy-lee-jones-agent-j-will-smith-with-big-weapons-and-ney-york-skyline-behind.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 8 Most Fun Action Movies of the 1990s, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Every decade has its own unique brand of action movie. The 70s were gritty and cynical, the 80s were bombastic and musclebound. The 2000s started with martial arts and bullet time and ended with a more grounded realism that led directly into the brut&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <span class="current">12</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/13.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-05 21:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>5 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>120 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>17 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.bgr.com/2248663/android-phone-green-robot-logo-meaning-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/why-is-the-android-symbol-a-green-robot/l-intro-1788278928.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why Is The Android Symbol A Green Robot?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Why Is The Android Symbol A Green Robot? quietbits/Shutterstock Every good company needs a mascot, a way to anthropomorphize its spirit and services. Nintendo has Mario, Michelin has the Michelin Man, and Android has a small green robot.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/movies-different-genres-same-stories/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/01/the-holdovers-_the-classroom_-official-clip-in-select-theaters-this-friday-0-45-screenshot.png?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Movie Pairs That Share the Same Plot Despite Different Genres
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 10 Pairs Of Movies You'd Never Guess Were Basically The Same Film</div>
+      
+      
+      <div class="summary">Movies can share surprisingly similar, if not identical, DNA without feeling remotely alike. Two filmmakers can start with essentially the same premise, place their characters in remarkably similar circumstances, or even construct parallel journeys f&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/zach-cregger-resident-evil-reboot-box-office-opening-weekend-record/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/resident-evil-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Resident Evil’ Is Officially Coming Back Bigger Than Ever at the Box Office
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The upcoming Resident Evil movie is poised to deliver a franchise-record debut at the domestic box office, according to early projections. In fact, higher estimates peg the film's opening weekend haul to be around thrice that of the franchise's curre&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/wild-horse-nine-rotten-tomatoes-score-debut/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/09/instar53397701.jpg?q=70&fit=contain&w=280&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sam Rockwell's Wild Horse Nine Breaks His 8-Year Rotten Tomatoes Record with 90% Score
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Sam Rockwell Action Thriller Breaks 8-Year Rotten Tomatoes Record</div>
+      
+      
+      <div class="summary">Sam Rockwell's latest movie has just broken an eight-year Rotten Tomatoes record. On September 3, Rockwell's latest movie, Wild Horse Nine, premiered at the Venice Film Festival.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-runner-gal-gadot-movie-rotten-tomatoes-audience-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/gal-gadot-s-maia-hugging-her-son-and-looking-worried-in-the-runner.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Runner on Prime Video Gets Gal Gadot's Worst Rotten Tomatoes Ratings with 31% Audience Score
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Gal Gadot’s New 84-Minute Prime Video Thriller Gets Audience Verdict On Rotten Tomatoes After All-Time Record</div>
+      
+      
+      <div class="summary">Gal Gadot's new thriller movie on Prime Video, The Runner, is making its way to streaming success, but its audience verdict has not yielded the same results. Gadot is a major star, having taken part in some of the biggest movie franchises of all time&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2248979/phone-carriers-that-are-owned-by-t-mobile/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-phone-carriers-you-might-not-realize-are-owned-by-t-mobile/l-intro-1788291124.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Phone Carriers You Might Not Realize Are Owned By T-Mobile
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Phone Carriers You Might Not Realize Are Owned By T-Mobile Al Drago/Getty Images The telecom industry has gone through many phases of change in the United States from growth, monopoly, a mandated break-up, re-consolidation, and then a new Wild West&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/cate-blanchett-alpha-gang-sci-fi-movie-new-image/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/cate-blanchett-posing-at-82nd-venice-international-film-festival-2025-la-grazia-opening-night-gala-premiere.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cate Blanchett Is An Alien In New Image From Wild Sci-Fi Movie Alpha Gang
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Cate Blanchett trades The Lord of the Rings' fantasy for science-fiction in Alpha Gang. The new science-fiction comedy film features Blanchett as the leader of aliens disguised as a biker gang in 1950s Eastern Europe.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/adults-hulu-comedy-series-how-i-met-your-mother-new-girl/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/adults-s2-crop-tops.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            FX's Adults on Hulu Blends How I Met Your Mother and New Girl in 17 Episodes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: How I Met Your Mother Meets New Girl In Hulu's 17-Part Comedy Masterpiece</div>
+      
+      
+      <div class="summary">One of the best sitcoms in modern television is quietly taking over Hulu. While the genre has been a pillar of pop culture since the 1950s, most sitcoms of the 2020s have failed to meet the standard set by legendary titles like Seinfeld, Friends, and&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/x-files-meets-stranger-things-control-resonant/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/ss_422f3eed36d3033c4b0f4fde485c29b980e49454-1920x1080.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Control Resonant: A Supernatural Gaming Thriller Inspired by The X-Files and Stranger Things
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The X-Files Meets Stranger Things In New Supernatural Gaming Thriller</div>
+      
+      
+      <div class="summary">If you are a fan of all things supernatural and miss episodes of Stranger Things and The X-Files on a daily basis, look no further than one of 2026's most anticipated video game releases, which launches later this month.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/chad-powers-johnny-depp-season-2-cameo/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/09/glen-powell-in-chad-powers-1-1.jpg?q=49&fit=crop&w=480&h=400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Glen Powell Emailed Johnny Depp for Edward Scissorhands Cameo in Chad Powers Season 2 Finale
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Glen Powell Personally Emailed Johnny Depp for Surprise Finale Cameo in His New Series</div>
+      
+      
+      <div class="summary">Almost everything about Glen Powell's new sports comedy is meta, from the protagonist's in-universe backstory to the show's concept and premise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dark-horse-comics-horror-kingdom-of-earth-3-preview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/kingdom-of-earth-3-cover.jpg?q=70&fit=crop&w=600&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Kingdom of Earth: David Dastmalchian's New Horror Comic Series Depicts a Dark Future for Chicago
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New Masterpiece Horror Series Puts Chicago’s Dark Future on Display</div>
+      
+      
+      <div class="summary">There's trouble on the horizon for the city of Chicago in David Datmalchian's new series Kingdom of Earth. The Suicide Squad and Murderbot star has penned the terrifying new dystopian series for Dark Horse Comics. The first preview of Kingdom of Eart&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/movies-to-watch-if-you-loved-widows-bay/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/widows-bay-stephen-root-1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Movies To Watch If You Loved Widow's Bay
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Widow's Bay has become one of the year's biggest smashing streaming hits. Set on a cursed New England island, it is a horror comedy project that earned a 98% Rotten Tomatoes score and nineteen Emmy nominations for its blend of small town characters a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/overwatch-unvaulted-passes-delay/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/overwatch-season-4-battle-pass.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Overwatch's Unvaulted Battle Pass Feature Delayed to Season 5 Start on Oct. 6
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Overwatch' Won't Get Its Most Exciting New Feature In Years Until Next Season</div>
+      
+      
+      <div class="summary">If you were anticipating the imminent addition of Unvaulted battle passes to Overwatch, you'll need to wait a little bit longer. Previously slated to arrive as part of Season 4's midcycle update, they now won't come to the hero shooter until the star&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2247833/youtube-music-recommending-unwanted-songs-fix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/youtube-music-keeps-recommending-songs-you-dont-want-try-this/intro-1788103149.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fix Unwanted YouTube Music Recommendations by Creating a Separate Profile
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: YouTube Music Keeps Recommending Songs You Don't Want? Try This</div>
+      
+      
+      <div class="summary">YouTube Music Keeps Recommending Songs You Don't Want? Try This Stockinq/Shutterstock You're jamming out to YouTube Music, whether a curated playlist or one of your own, and suddenly, an artist or track pops up that you're not fond of.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-complete-anime-series-all-time/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/filters_quality-95-format-webp-1-8.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Complete Anime Series of All Time, Officially Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anime storytelling reached new heights over the past three decades. Studios pushed narrative boundaries by blending comedy with tragedy, mystery with philosophy and quiet character study with large-scale action.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/james-bond-actors-best-quotes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/untitled-design-2026-06-26t144019-597.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every James Bond Actor's Greatest Quote, Ranked (#1 Isn't Said By Sean Connery Or Daniel Craig)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Few movie characters can boast such a prestigious, longstanding legacy quite like James Bond. Audiences were introduced to 007 in 1962 with Dr. No.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ready-or-not-hbo-max-thriller-streaming-hit/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/08/ready-or-not.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ready or Not Is One of the Biggest Streaming Hits in the World
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO Max's 96-Minute Thriller Is One of the Biggest Streaming Hits in the World</div>
+      
+      
+      <div class="summary">When Ready or Not released in 2019, it was an immediate success. From thriving at the box office to launching Samara Weaving into the spotlight, this horror comedy was a hit. Seven years later, the film is finding new life on streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2249292/desk-gadgets-under-100-dollars-worth-having-home-office/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/10-desk-gadgets-under-100-that-deserve-a-spot-in-your-home-office/l-intro-1788338247.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Desk Gadgets Under $100 That Deserve A Spot In Your Home Office
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">10 Desk Gadgets Under $100 That Deserve A Spot In Your Home Office Pixel-Shot/Shutterstock We may receive a commission on purchases made from links. If you're spending several hours per day in your home office, you should invest in making the space m&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/cbs-fire-country-sheriff-country-crossover-season-5/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/fire-country-season-4-max-thieriot-matt-lauria.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            CBS' Fire Country Is Firing Up the Sheriff Country Crossover After Cast Shakeup
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fire Country is coming in hot with its upcoming season, once again joined by spinoff Sheriff Country. And CBS has released a new look at the upcoming crossover. Since Sheriff Country launched last fall, the spinoff has had a handful of mini-crossover&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/after-playing-a-q-on-star-trek-rhys-darby-thinks-hes-ready-to-be-q-in-james-bond/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/trelane-rhys-darby-speaks-with-captain-pike-anson-mount-in-star-trek-strange-new-worlds.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rhys Darby Reveals Trelane's Role in Star Trek: Strange New Worlds Season 4 Episode
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek Actor Reveals His Plan for a Perfect James Bond Crossover</div>
+      
+      
+      <div class="summary">Our Flag Means Death star Rhys Darby made a guest appearance in Star Trek: Strange New Worlds season 3 as Trelane, a juvenile alien with godlike powers.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/fightland-beating-jason-statham-shelter-action-streaming-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/howard-charles-fightland.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fightland Beats Jason Statham's Action Thriller to Become Streaming's #1 Show
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Guy Ritchie Meets 'Rocky' in New Series Dominating Jason Statham's Hit Action Thriller on Streaming</div>
+      
+      
+      <div class="summary">A new eight-episode series has come out of nowhere to rise to the top of the heap on steaming, even beating back the likes of a Jason Statham-hit action thriller in the rankings.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-runner-audience-rt-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/gal-gadot-in-the-thriller-suspense-action-the-runner.jpg?q=49&fit=crop&w=480&h=400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gal Gadot's Prime Video Thriller The Runner Gets 9% Critic Score and 31% Audience Score
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Gal Gadot's New High-Stakes Prime Video Action Thriller Unites Audiences and Critics</div>
+      
+      
+      <div class="summary">In her pulse-pounding new chase thriller, Gal Gadot brings the intensity and athletic physicality of a Tom Cruise or Jason Statham.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/mayday-ryan-reynolds-apple-tv-streaming-hit-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/mcdmayd_g2001-1.jpg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mayday Starring Ryan Reynolds and Kenneth Branagh Is Apple TV's Newest Blockbuster
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ryan Reynolds’ ‘Rush Hour’ in Russia Is Officially Apple TV’s Newest Blockbuster</div>
+      
+      
+      <div class="summary">Apple TV has delivered a new hit movie that will likely retain its streaming crown for the next several weeks. The streamer doesn't release as many new films and shows as many of its competitors, which gives them time to breathe and find an audience.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-gentlemen-season-2-kaya-scodelario-benedetta-porcaroli-susie-bella/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/the-gentlemen-kaya-scodelario-benedetta-porcaroli.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The Gentlemen's Kaya Scodelario and Benedetta Porcaroli React to Season 2's Most Tragic Death
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's Note: The following contains spoilers for the finale of Season 2 of The Gentlemen. The Gentlemen is back for Season 2, and Guy Ritchie's sophomore season of his gangster series has turned everything up to ten. The action, the betrayals, and &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/transformers-rise-of-the-beasts-mirage-yolopark-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/yolopark-amk-transformers-rise-of-the-beasts-mirage.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Transformers Brings Back Mirage's Latest Movie Design With a More Accurate New Look
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Mirage has been a staple of the Transformers franchise since it debuted, with his most recent major appearancein the brand's latest live-action movie. Three years after release, this film is still inspiring new collectibles, including a model kit tha&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/karl-urban-dredd-remake-better-than-stallone-original/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/sylvester-stallone-in-costume-from-judge-dredd.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Karl Urban's Dredd Remake Beats the Sylvester Stallone Original in Every Way
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Most of the time, remaking a classic '80s or '90s action movie is a fool's errand in modern Hollywood. Failed attempts like Total Recall, Robocop, and Point Break have proven that it's nearly impossible to improve on classics.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-accessories-2-horror-comic-book-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/renfield-leaning-against-dracula-s-coffin-in-the-accessories-2.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dracula's Familiar Renfield Stars in Rocketship's The Accessories #2, Out Mid-Sept. 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Dracula’s Familiar Renfield Enters a Bloody Nightmare in The Accessories #2</div>
+      
+      
+      <div class="summary">For as long as the concept of the vampire has existed in horror lore, creatures of the night have called upon the assistance of a human servant known as a familiar. Yet, the thankless tasks they have performed in service of their undead masters have &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2249355/new-solar-farm-design-cool-down-crops-workers/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/new-solar-farm-designs-arent-just-for-crops-theyre-helping-workers-too/l-intro-1788352355.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Solar Farm Designs Aren't Just For Crops, They're Helping Workers Too
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">New Solar Farm Designs Aren't Just For Crops, They're Helping Workers Too Conny Pokorny/Shutterstock Farm work is hard work. Much of it has to happen during the day because of visibility and safety concerns, and because some crops are best picked aft&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/spider-noir-canceled/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/02/nore_still_4.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Amazon Cancels Spider-Noir After One Season on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Amazon Just Canceled The Most Subversive Spider-Man Show Ever Made</div>
+      
+      
+      <div class="summary">A new report has confirmed that Spider-Noir will not be getting a second season on Prime Video. While it is not continuing, another Marvel television show produced by Sony might see the light of day on the streaming platform. Deadline revealed the ca&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-sopranos-season-5-episodes-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/the-sopranos-season-5-promo-image-2004.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every 'The Sopranos' Season 5 Episode, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Technically, The Sopranos is a crime/drama series, yet that’s underselling it to just call it that and leave things there.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <span class="current">6</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/7.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

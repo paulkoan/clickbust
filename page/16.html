@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-05 21:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>5 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>120 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>17 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/confession-of-murder-american-remake-glen-powell-universal-development/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/glen-powell-at-the-london-premiere-of-the-running-man.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Glen Powell to Produce American Remake of Korean Thriller 'Confession of Murder'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Glen Powell & Universal Sets First American Remake Of 14-Year-Old Action Thriller</div>
+      
+      
+      <div class="summary">Glen Powell and Universal are teaming up for the first American remake of a 14-year-old action thriller. Following his big breakout in Top Gun: Maverick (2022), Powell has quickly become one of today's biggest action stars, starring in Twisters (2024&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/far-side-weirdest-month-may-1981/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/cropped-far-side-monster-running-out-of-the-ocean-while-a-surfer-runs-in.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            45 Years Ago, The Far Side’s Weirdest Month Was A Turning Point For Gary Larson’s Career
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">What's the weirdest Far Side comic ever? That's a tough call. There are thousands of Far Sides to choose from, all of which are pretty weird compared to any other cartoon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ryan-reynolds-green-lantern-return-lanterns-cameo-potential/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/img_7475-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ryan Reynolds Open to Reprising Green Lantern Role in HBO's 'Lanterns' Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 15 Years Later, Ryan Reynolds Is Officially Ready to Reprise His Most Infamous Role</div>
+      
+      
+      <div class="summary">Could Ryan Reynolds be jumping ship? Before he became Deadpool, the Marvel star played Hal Jordan in the 2011 feature Green Lantern. Unfortunately, the feature was poorly received and has since been widely regarded as one of the worst superhero films&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2249214/hollywood-not-make-sci-fi-epics-like-the-empire-strikes-back-today/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/hollywood-not-make-sci-fi-epics-like-the-empire-strikes-back-today/intro-1788365829.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why 'The Empire Strikes Back' Remains Unmatched Among Modern Sci-Fi Epics
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Hollywood Doesn't Make Sci-Fi Epics Like This '80s Movie Today</div>
+      
+      
+      <div class="summary">Hollywood Doesn't Make Sci-Fi Epics Like This '80s Movie Today Static Media We are living through another golden age of sci-fi movies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2248295/disadvantages-using-mechanical-keyboard/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-disadvantages-of-using-a-mechanical-keyboard/l-intro-1788235505.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Disadvantages Of Using A Mechanical Keyboard
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Disadvantages Of Using A Mechanical Keyboard Jorge Luis/BGR We may receive a commission on purchases made from links. Mechanical keyboards have become essentially the default for those looking to build or upgrade a computer.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/mobland-season-3-tom-hardy-end-speculations/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/9f8df57d-cc00-4592-b4c8-72b1b31f8f20.jpeg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Hardy Confirmed to Return for MobLand Season 3, Ending Firing Rumors
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It's Officially The End Of An Era For MobLand</div>
+      
+      
+      <div class="summary">The era of uncertainty surrounding MobLand is finally coming to an end, and Tom Hardy's hit crime series is better off for it. MobLand is easily one of the best shows on Paramount+, and it has the accolades to prove it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/pokemon-officially-changed-forever/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/videoframe_29916.png?q=49&fit=crop&w=528&h=374&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            First Pokémon movie without Ash Ketchum, 'Pokémon: Wild Card', coming in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It's Official, Pokémon Is Over As We Know It</div>
+      
+      
+      <div class="summary">Ash Ketchum left the Pokémon anime three years ago, bringing an end to one of the longest-running protagonists on television. Yet, it has taken until now for his absence to truly reshape Pokémon movies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dtf-st-louis-hbo-emmy-nominations-weekend-watch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/jason-bateman-in-dtf-st-louis.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DTF St. Louis: HBO's 7-Part Thriller With 13 Emmy Nominations Is A Perfect Weekend Binge
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">HBO's 7-part thriller/dark comedy series earned 13 nominations at the 2026 Emmy Awards and is one of the best shows to binge-watch in just one weekend.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/fortnite-chapter-7-season-4-match-overrides-console-locations-c7s4/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/override-console_fn.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All match overrides and console locations in Fortnite Chapter 7 Season 4
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Match overrides allow you to change how Fortnite Chapter 7 Season 4 is played, but only if you interact with the override console first. Luckily, override consoles will spawn in the same locations every game and they can be activated every game.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/xbox-exclusive-scalebound-still-possible-hopes-hideki-kamiya/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/3945830/scalebound-gamescom-2015-comrades.0.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Resident Evil 2 Director Thinks There’s a Chance His Canceled Xbox-Exclusive Will Still Happen
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">If there's anybody in the game industry who knows good things come to those who wait, it's Hideki Kamiya. The director of games like Resident Evil 2 and co-founder of PlatinumGames had to wait nearly two decades to announce an Okami sequel.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/silo-season-4-apple-tv-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/juliette-rebecca-ferguson-looks-concerned-in-silo-season-3-episode-8.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Silo' final season to premiere on Apple TV+ on July 9, 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV's Greatest Sci-Fi Show Ever Finally Has a Release Date for Its Final Season</div>
+      
+      
+      <div class="summary">It will soon be time for fans to say farewell to Silo, the acclaimed sci-fi series on Apple TV. The series will end with its upcoming fourth season, which has just gotten its official release date. Apple TV has announced that Silo Season 4 will debut&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/clash-of-the-thundermans-chloe-powers-new" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/chloethunderman.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Chloe's New Power In 'Clash of the Thundermans' Movie Is One of the Rarest, Most Dangerous Abilities in the Thundermans Universe
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Chloe's new power in Clash of the Thundermans has major repercussions across the Thundermans franchise due to its danger and the consequences it introduces within the family.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-miami-dade-rockstar-marketing-proposal-where-is-located/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/jason_and_lucia_04.jpg?q=49&fit=crop&w=220&h=124&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Miami-Dade Officials Proposed GTA 6 Marketing Partnership, But Sheriff Opposes It
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Miami Wants To Turn The City Into 'GTA 6' And Cops Aren't Happy About It</div>
+      
+      
+      <div class="summary">Though Grand Theft Auto 6 takes place in a fictional American state called Leonida, Rockstar's massive map recreates some areas of Florida. For Florida's tourism sector, then, the immediate popularity of GTA 6 is a dream come true.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/furious-hulu-finale-alice-danny-romance-scoot-mcnairy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/furious-hulu-scoot-mcnairy.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Scoot McNairy Talks 'Furious' Most Shocking Finale Moment
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's note: The below interview contains spoilers for the Furious Season 1 finale. Hulu's new crime thriller Furious from creator Liz Meriwether is certainly rooted in darkness based on its very premise, but there have been welcome elements of lev&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/apple-tv-nine-episode-ww2-series-masters-of-the-air-streaming-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/masters-of-the-air.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Masters of the Air: Apple TV's WWII Series Blends Band of Brothers and Top Gun: Maverick
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Band of Brothers’ Meets ‘Top Gun: Maverick’ in Apple TV’s 9-Part WWII Sleeper Hit</div>
+      
+      
+      <div class="summary">Apple TV is dishing out hit after hit in 2026 so far, and it only takes one look at the streamer’s top 10 chart to realize it holds up as one of the best value platforms in the world.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/jon-bernthal-accountant-action-streaming-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/sharedimages/2025/01/instar51446010.jpg?q=70&fit=contain&w=280&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jon Bernthal's 'The Accountant' climbs Apple TV streaming charts
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jon Bernthal's 128-Minute "John Wick Meets Reacher" Action Thriller Returns To Dominate Streaming</div>
+      
+      
+      <div class="summary">The Punisher star Jon Bernthal is currently amid the greatest year of his career so far, with the popular actor starring in not one, but two billion-dollar blockbusters with the MCU sequel Spider-Man: Brand New Day, in which he reprises the role of M&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/far-side-best-comic-strips-90s/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/copy-of-feature-images-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Best Comic Strips From the '90s (Including The Far Side)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 1990s marked a transitional period for comic strips. The orange cat lost his commercial grip and became the nostalgic figure we still celebrate today, and three of the greatest comic strips, including The Far Side, ended their run.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-wars-the-mandalorian-and-grogu-success-disney-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/the-mandalorian-and-grogu-bar.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Wars: The Mandalorian and Grogu Becomes Most-Streamed Film on Disney+ After Box Office Struggles
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Wars’ First Movie in 7 Years Is the Most-Streamed Film in the World After Box Office Struggles</div>
+      
+      
+      <div class="summary">Star Wars is back on streaming, and it has instantly taken the top spot on Disney+ worldwide. Star Wars: The Mandalorian and Grogu debuted on Disney+ on Sept. 2 and shot straight to the top of the charts, becoming the most-watched movie on Disney+ wo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/blade-runner-tokyo-nexus-die-with-honor-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/img_2792.jpeg?q=70&fit=crop&w=720&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Blade Runner: Tokyo Nexus – Die With Honor Comic Miniseries Announced for Fall 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Blade Runner Heads Back to Tokyo in New Cyberpunk Series</div>
+      
+      
+      <div class="summary">Blade Runner 2099, the live-action television show set to be released on Amazon Prime Video, was given a release date of November 25, 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-last-of-us-franchise-future-neil-druckmann/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/tcdlaof_ho140-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Neil Druckmann Teases More 'The Last of Us' Projects After HBO Series Ends
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'The Last of Us' Creator Officially Confirms New Sequels Following HBO Exit</div>
+      
+      
+      <div class="summary">It's no secret that the HBO series The Last of Us is ending after Season 3, as showrunner Craig Mazin sets his sights on another video game to adapt for television.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/why-dollhouse-failed.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/WhyItFailed-Dollhouse1-g.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Most Canceled Man In Sci-Fi’s Forgotten Series Deserves Another Chance
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">By Joshua Tyler | Published 37 seconds ago When people talk about Joss Whedon, they used to be quick to bring up Firefly, his canceled and highly acclaimed Fox television show.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/silo-season-4-release-date-trailer/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/07/silo_photo_030110-2.jpg?q=49&fit=crop&w=220&h=124&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Silo Season 4 Trailer Released; Final Season Premieres July 9, 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Silo Season 4 Gets First Trailer and Surprise Release Date Announcement</div>
+      
+      
+      <div class="summary">In a TV landscape where series often take multiple years between seasons (Severance, *cough, cough*), Silo fans are in for some great news.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-secret-of-secrets-robert-langdon-first-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/sharedimages/2026/09/the-secret-of-secrets-dan-brown-book-cover-image.jpeg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Morgan Spector Cast as Robert Langdon in Netflix's The Secret of Secrets Adaptation
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Hanks' Replacement Debuts in Netflix's Da Vinci Code Follow-Up First Look</div>
+      
+      
+      <div class="summary">There's a new Robert Langdon in Hollywood, and his name is Morgan Spector. Netflix unveiled the first look at the actor as the famous Harvard professor of symbology, previously played by Tom Hanks, to announce the start of production on The Secret of&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/ridley-scott-the-dog-stars-buddy-box-office/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/buddy.jpg?q=49&fit=crop&w=480&h=400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Horror comedy 'Buddy' out-earns 'The Dog Stars' day-to-day at box office
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Surprise Indie Smash With 88% RT Score Set To Dethrone Ridley Scott’s Post-Apocalyptic Thriller</div>
+      
+      
+      <div class="summary">Ridley Scott’s new movie is not off to the start many were hoping for. The Dog Stars arrived over the final weekend of August as an adaptation of Peter Heller's 2012 survival novel, with Jacob Elordi playing a pilot after a flu pandemic wipes out mos&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/frasier-greatest-episode-the-matchmaker-season-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/08/dr-frasier-crane-frasier-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Frasier's 'The Matchmaker' Episode Changed Sitcom Comedy
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 30 Years Ago, ‘Frasier’s Greatest Episode Rewrote the Sitcom’s Formula</div>
+      
+      
+      <div class="summary">Frasier is often regarded as one of the best sitcoms ever made, thanks to the wit of Kelsey Grammer's titular radio host and its accurate depiction of life in Seattle. For a show that started as a Cheers spin-off, that's not a bad deal.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ridley-scott-world-war-2-sci-fi-influence-the-dog-stars-blade-runner/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/05/Ridley-Scott-Blood-Meridian.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            88 Years Later, Ridley Scott Still Remembers the WWII Images That Shaped His Sci-Fi
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There aren't too many filmmakers working right now who can claim to have witnessed World War II and the advent of artificial intelligence, but Ridley Scott certainly can.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/lea-seydoux-the-unknown-teaser-trailer/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/the-unknown.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The Unknown' trailer: Léa Seydoux stars in body-swap sci-fi thriller
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New Psychological Sci-Fi Thriller Starring Léa Seydoux Rivals Scarlett Johansson's R-Rated Cult Classic</div>
+      
+      
+      <div class="summary">Léa Seydoux stars in the enthralling first trailer for a new sci-fi film that hails from an Oscar-winning screenwriter. With shades of Scarlett Johansson's Under the Skin, this new psychological thriller has the chance to rival the 2013 cult classic.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/yu-gi-oh-30th-anniversary-konami-interview-dom-galizia/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/yu-gi-oh-tcg-world-championship-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Konami Officially Talks Plans For Yu-Gi-Oh!s Future On Its 30th Anniversary
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There’s no bigger event in the Yu-Gi-Oh! Trading Card Game calendar than the Yu-Gi-Oh! WORLD CHAMPIONSHIP SERIES (WCS), as the top Duelists from around the globe are brought together to compete for the title of Champion.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hbo-harry-potter-reboot-hogwarts-design-problem-meaning/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/harry-potter-2-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO’s ‘Harry Potter’ Series Just Revealed a Problem It Can’t Avoid
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">HBO is ramping up the promotion for its upcoming reboot of Harry Potter, including dropping the first trailer for the series this week. On paper, it looks like a solid adaptation of J.K. Rowling​​​​​'s novels.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/blood-of-dawnwalker-in-the-name-of-the-father-quest-walkthrough/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/the-blood-of-dawnwalker-in-the-name-of-the-father-quest-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 04 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'In the Name of the Father' quest walkthrough in The Blood of Dawnwalker
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The "In the Name of the Father" quest in The Blood of Dawnwalker presents you with a tough choice: side with Father Florin, a problematic priest to say the least, or refuse to help him and his brethren.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <span class="current">16</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/17.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

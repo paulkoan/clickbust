@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-05 21:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>5 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>120 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>17 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.polygon.com/guy-richie-the-gentlemen-season-3-release-date-plot/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/bobby-glass-ray-winstone-sits-with-a-drink-outside-with-a-lake-behind-him-in-the-gentlemen-season-2.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Gentlemen Season 3 Confirmed: Everything We Know So Far
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'The Gentlemen' Season 3 Confirmed? Potential Release Date, and Everything You Need to Know</div>
+      
+      
+      <div class="summary">Season 2 of Guy Ritchie’s stylish crime drama The Gentlemen was released on Netflix on Sept. 3. It’s easy to binge the eight episodes, which are packed with chase scenes, bloody shootouts, gorgeous sets, and convoluted schemes.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/walton-goggins-best-tv-shows/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/walton-goggins-in-the-righteous-gemstones.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Walton Goggins TV Shows, Ranked From Solid to Masterpiece
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Walton Goggins brings a unique quality to each performance. His appearance offers a distinct look, yet he is a chameleon who fits whatever the role calls for. He thrilled audiences in Quentin Tarantino's The Hateful Eight and Django Unchained.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tom-cruise-top-gun-maverick-streaming-hit-paramount-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/top-gun_-maverick-2022.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Top Gun: Maverick' Enters Paramount+ Top 10 Most-Watched Movies
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Cruise’s $1.5B Action Phenomenon Is Officially Back on Streaming Charts</div>
+      
+      
+      <div class="summary">We're now less than a month away from the return of Tom Cruise to the big screen, following his final mission as Ethan Hunt in Mission: Impossible — The Final Reckoning in the summer of 2025.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-gentlemen-season-2-netflix-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/the-gentlemen-season-2-teaser-theo-james.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Gentlemen Season 2 Becomes Netflix's Most-Watched Show in 2 Days
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's 'Bigger & Bloodier' Gangster Series Is the Most-Watched Show on Streaming In Just 2 Days</div>
+      
+      
+      <div class="summary">Netflix's returning gangster series The Gentlemen is an instant streaming hit. This bodes well for the series, which, aside from an improved Rotten Tomatoes score, it has already scored a Season 3 renewal.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/sekiro-no-defeat-anime-us-premiere/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/sekiro-no-defeat-1-1.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sekiro: Shadows Die Twice Anime Gets U.S. Premiere Date at SCAD AnimationFest 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Crunchyroll’s Next Action Anime Hit Finally Sets 1-Night-Only U.S. Premiere</div>
+      
+      
+      <div class="summary">One year after its official unveiling, Sekiro: Shadows Die Twice finally has an official U.S. release date. However, fans will have to act fast to get an early glimpse of Crunchyroll's upcoming action anime hit ahead of its 2026 streaming debut.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-romantic-thrillers-watch-after-the-drama-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/03/joel-and-clementine-in-bed-in-eternal-sunshine-of-the-spotless-mind-1.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Romantic Thrillers Similar to 'The Drama' Starring Robert Pattinson and Zendaya
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 8 Greatest Romantic Thrillers To Watch After The Drama</div>
+      
+      
+      <div class="summary">Starring Robert Pattinson and Zendaya, The Drama has become one of cinema's best romantic thrillers, and it makes us want to watch these other gripping movies in the same vein.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/darkest-garfield-comic-strips-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/07/10-darkest-garfield-comic-strips-ranked-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Darkest Garfield Comic Strips of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Garfield is known for being a lighthearted, witty comic strip series about the fat feline Garfield and his family. Chock-full of sarcasm and silly moments, fans often have a great time immersing themselves in Garfield's antics.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/zelda-ocarina-of-time-remake-changes-leak-direct/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/b02c287b-5305-4dd8-922a-da0eafce2be1.JPEG?q=49&fit=contain&w=2048&h=1152&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zelda: Ocarina of Time Switch 2 Remake Will Not Be a 1:1 Recreation, Insider Says
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Zelda: Ocarina of Time Isn't a 1:1 Remake According to Nintendo Insiders</div>
+      
+      
+      <div class="summary">The biggest debate among Zelda fans regarding Nintendo's new Ocarina of Time Switch 2 remake has been whether it’ll be a reimagining or a 1:1 recreation. Most of the clues have seemed to point to something more like a reimagining so far, and now that&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2248542/tech-brands-owned-by-netgear/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-tech-brands-owned-by-netgear/l-intro-1788273205.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Tech Brands Owned By Netgear
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Tech Brands Owned By Netgear T. Schneider/Shutterstock We may receive a commission on purchases made from links. Many major tech brands have multiple subsidiaries or sub-brands to help differentiate their products.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/ryan-reynolds-mayday-rotten-tomatoes-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/kenneth-branagh-and-ryan-reynolds-in-the-snow-in-mayday.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ryan Reynolds' 'Mayday' Gets 81% RT Score, Praised as One of His Best
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ryan Reynolds' 111-Minute Action Movie Hail as One of His "Best" Gets Solid RT Score</div>
+      
+      
+      <div class="summary">Ryan Reynolds' fast-talking screen persona has made him a durable box office presence without consistently translating into critical success.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/apple-tv-sci-fi-shows-every-episode-masterpiece/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/copy-of-collider-template-10.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Apple TV Sci-Fi Shows Where Every Episode Is a Masterpiece
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Science fiction has always been built on ambition, but a great idea can only carry a show so far. Alternate realities, dystopias, and space travel are exciting, but the real challenge is to find enough depth in the spectacle to tell a story that actu&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/silo-season-4-reaction-jessica-henwick-ashley-zukerman-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/copy-of-collider-template-5.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Silo' Stars Tease More Tragedy in Season 4, But Promise a Very Satisfying Series Ending
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">[Editor's Note: The following contains spoilers for Silo Season 3.] Summary Collider's Steven Weintraub talks with Silo stars Ashley Zukerman and Jessica Henwick. The pair discuss Season 3's explosive finale and their experiences since joining the hi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2248442/why-lg-tv-disconnecting-from-wifi/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/if-your-lg-tv-keeps-disconnecting-from-the-internet-try-this/l-intro-1788267352.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            If Your LG TV Keeps Disconnecting From The Internet, Try This
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">If Your LG TV Keeps Disconnecting From The Internet, Try This An internet connection is integral to smart TVs. Without one, you lose access to most of what the TV offers.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/video/alien-ridley-scott-is-going-back-to-his-biggest-loose-end/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/clip-2.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alien: Ridley Scott Is Going Back to His Biggest Loose End
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ridley Scott isn’t finished with the Alien universe, and his return could finally resolve one of the franchise’s darkest cliffhangers.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/nintendo-nes-perfect-turn-based-rpgs/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/nes-with-games.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Perfect Turn-Based NES RPGs
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The NES, for some, served as the golden era of RPGs. It played host to some of the architects of the genre, titles that would go on to inspire several generations of excellent RPGs (and even other genres), and laid the groundwork for the current crop&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-gentlemen-season-2-streaming-success-netflix-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/guy-ritchie-the-gentlemen-tom-hardy-mobland-the-gentlemen-season-2-streaming-success-netflixsuccess-netflix-crime-thriller.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Gentlemen Season 2 Is Now One of Netflix's Biggest Shows
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget 'MobLand,' Guy Ritchie's Best 2-Part Crime Thriller Is Officially One of the Biggest Shows on Streaming</div>
+      
+      
+      <div class="summary">MobLand Season 2 might be Guy Ritchie's most anticipated new release of 2026, but the writer and director's best crime thriller in years is already a global hit on streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/denzel-washington-man-on-fire-action-thriller-remake/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/scott-glenn-in-man-on-fire.jpg?q=49&fit=crop&w=528&h=374&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Man on Fire (2004), Denzel Washington's Thriller, Was Actually a Remake of a 1987 Film
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Denzel Washington's Action Thriller From 22 Years Ago Was So Good, No One Realized It Was a Remake</div>
+      
+      
+      <div class="summary">Denzel Washington delivers thrilling action and emotional depth in equal measure. His career has proven him a capable action star, with The Equalizer franchise highlighting his prowess in recent years. One of his best thrillers is Man on Fire.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/wildest-things-apocalypse-now-controversial/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2024/04/untitled-design-5-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Reasons Why 'Apocalypse Now' Is So Controversial
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While Francis Ford Coppola's Vietnam War epic Apocalypse Now (1979) is widely regarded as one of the greatest films of all time, in the years leading up to its release in the late '70s, it was known as the biggest disaster in Hollywood history.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/r-rated-action-movies-perfect-no-notes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/heat_screencap_010_webp-1.webp?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 R-Rated Action Movies That Are 10/10, No Notes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There’s more to an R-rated action flick than intense violence or brutal fight choreography. Although most R-rated genre films indulge in graphic violence, this rating primarily accommodates a mature story with nuanced characters.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ben-affleck-gone-baby-gone-streaming-paramount-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/06/gone-baby-gone-poster-casey-affleck.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gone Baby Gone, Ben Affleck's Directorial Debut, Now Streaming on Paramount+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ben Affleck’s Near-Perfect Crime Thriller Is Officially Streaming Now on Paramount+</div>
+      
+      
+      <div class="summary">It's often said that the best thrillers take you beyond finding the person who's responsible for committing a crime, and finding something darker along the way.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-reboot-biggest-sci-fi-event-21st-century/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/elder-spock-in-a-winter-coat-in-the-snow-looking-up-concerned-from-star-trek-2009.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Star Trek Reboot Is Still the Sci-Fi Event of the Century
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some of the greatest sci-fi franchises have been born in the 21st century, and one of the most thrilling events of the last 26 years can be seen in full on Peacock.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-shows-binge-watch-prime-video-fall-2025/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/ella-bright-and-belmont-carmeli-watch-a-laptop-together-in-off-campus.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Best Shows to Binge Watch on Prime Video This Fall
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Amazon Prime has gradually become a must-have streaming service, offering a diverse mix of original programming, foreign-language content, and a vast catalog of video rentals.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/clint-eastwood-mystic-river-greatest-mystery-still-hits/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/12/mystic-river.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mystic River, Clint Eastwood's Masterful Mystery, Still Gripping Today
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Clint Eastwood’s Greatest Mystery Still Hits Just As Hard as It Did on Day 1</div>
+      
+      
+      <div class="summary">Clint Eastwood was confirmed to have retired in 2026, making Juror #2 (2024) his final effort as a director. As for his last moment in front of the camera, it came in 2021’s Cry Macho… which he also directed, in typical Eastwood fashion.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/visionquest-costume-paul-bettany-costume-message-marvel-decode" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/visionquest-bettany.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Paul Bettany's New VisionQuest Costume Has A Secret Message That's Been Decoded By Marvel Fans
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Paul Bettany’s new VisionQuest costume is littered with complex hidden messages, but Marvel fans have managed to unravel the secrets behind them. Bettany reprises his role as Vision in the third chapter of the WandaVision trilogy.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/robert-pattinson-primetime-rotten-tomatoes-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/robert-pattinson-83rd-venice-international-film-festival2.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Robert Pattinson's 'Primetime' Debuts with 93% RT Score, Continuing His Streak
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Robert Pattinson's New A24 Crime Thriller Continues a 7-Year-Old Rotten Tomatoes Trend</div>
+      
+      
+      <div class="summary">Robert Pattinson has had two releases already this year, and he's getting ready for his next one. After two fictional stories, his new A24 crime thriller Primetime has a real-life inspiration.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/guy-ritchie-the-gentlemen-netflix-last-forever/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/theo-james-eddie-looking-angry-while-someone-pours-him-wine-in-the-gentlemen-season-2.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Gentlemen Season 3 Renewal Confirms Franchise Potential
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Guy Ritchie's 'Boardwalk Empire Meets Downton Abbey' Series Can Officially Last Forever</div>
+      
+      
+      <div class="summary">Guy Ritchie's recently returned crime drama series can officially last forever. Ritchie's small-screen streaming journey has been an incredible success so far.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dexter-resurrection-season-2-set-photos-david-zayas-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/09/christian-camargo-as-brian-moser-in-dexter-resurrection-episode-10-season-1.jpg?q=49&fit=crop&w=480&h=240&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dexter: Resurrection Season 2 Set Photos Reveal Familiar Character Return
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Dexter Morgan Is Haunted By A Familiar Face In Resurrection Season 2 Set Photos</div>
+      
+      
+      <div class="summary">Warning: Spoilers ahead for Dexter: Resurrection season 1.Dexter: Resurrection is resurrecting even more familiar faces. The Dexter franchise spans 20 years, with many faces passing through the flagship series and the spinoffs. One constant has been &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-simpsons-season-37-disney-exclusive-yellow-mirror-anthology/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/santa-s-little-helper-bart-simpson-lisa-simpson-maggie-simpson-marge-simpson-homer-simpson-in-the-simpsons.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The Simpsons' Is Officially Changing Its Formula for the First Time in 36 Years
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Simpsons features an unusual special in its 37th season. "Yellow Mirror" marks the third and final special of Season 37, released exclusively on Disney+.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/firefly-best-quote-nathan-fillion-greatest-space-western/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/mal-in-his-pretty-floral-bonnet-in-firefly.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nathan Fillion's Best Firefly Quote: 'I Swear By My Pretty Floral Bonnet, I Will End You'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 24 Years Later, Nathan Fillion’s Best Firefly Quote Is Still The Greatest In Any Space Western</div>
+      
+      
+      <div class="summary">Space westerns are one of TV’s most intriguing genres. The blend of frontier lawlessness and grit with interstellar adventure works far better than it rightly should, combining the isolation and danger of the Old West with the limitless possibilities&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/game-of-thrones-mad-king-2027-debut/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/02/img_2026-02-18-203448.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stage Play 'Game of Thrones: The Mad King' Gets London Transfer in 2027 After Strong Reviews
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New 'Game of Thrones' Prequel Officially Confirms 2027 Debut After Rave Reviews</div>
+      
+      
+      <div class="summary">One of the most intriguing Game of Thrones prequels may still have a future on the screen after all. Author George R.R.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <span class="current">2</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/3.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

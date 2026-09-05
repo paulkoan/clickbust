@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-05 21:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>5 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>120 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>17 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/pierce-brosnan-the-november-man-streaming-paramount-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/11/01409974_poster_w780.jpg?q=70&fit=contain&w=480&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pierce Brosnan's The November Man Now Streaming on Paramount+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Pierce Brosnan's 108-Minute James Bond Replacement Officially Hits Streaming</div>
+      
+      
+      <div class="summary">Sometimes, former James Bond stars get to return to the spy genre and do a little remix; they get to return to familiar territory and flex their muscles in a different direction.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-zero-point-2-release-date-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/star-trek-zero-point-2-cover-a-full.jpg?q=70&fit=crop&w=702&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: Zero Point Comic Puts Starfleet at Risk of Annihilation
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek’s Starfleet Could Be Annihilated in a Doomed New Adventure</div>
+      
+      
+      <div class="summary">IDW Publishing's next Star Trek series is promising to be one of the most explosive of all time, and it may not end well for Starfleet.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-batman-comics-to-adapt-after-batman-knightfall-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/batman-knightfall-animated-cover-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Masterpiece Batman Comics to Adapt After Batman: Knightfall
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With the smash success of the latest DC Studios animated movie, Batman: Knightfall Part 1: Knightfall, fans are more excited than ever to see what DC has in store for animated adaptations of their favorite Batman stories down the line.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/standalone-fantasy-books-no-series-commitment/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/piranesi.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Standalone Fantasy Books That Don’t Require a Series Commitment
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fantasy readers know the feeling of picking up a new book because the premise sounds incredible, only to discover that you’ve just signed yourself up for six more installments, three prequels, and an encyclopedia’s worth of lore.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2248591/why-usb-c-cables-so-expensive-airport/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/why-are-usb-c-cables-at-the-airport-so-expensive/l-intro-1788275708.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why Are USB-C Cables At The Airport So Expensive?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Why Are USB-C Cables At The Airport So Expensive? Yalcinsonat1/Getty Images If you've ever forgotten your phone's USB-C charging cable before flying and gone to buy a new one, then you've noticed that airport prices are significantly higher than what&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/taylor-sheridan-sicario-2-day-of-soldado-streaming-free-tubi-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/sicario-day-of-the-soldado-benicio-del-toro.jpg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wind River Sequel Sicario: Day of the Soldado Arrives on Tubi for Free Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan's Only Sequel Is Officially Taking Over Free Streaming</div>
+      
+      
+      <div class="summary">A sequel to Taylor Sheridan's critically acclaimed neo-Western thriller Wind River has been in the works for quite some time now, without a firm release date in sight. Sheridan has no involvement with the movie, which features several actors who've w&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tom-hardy-ww2-dunkirk-streaming-paramount-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/05/dunkirk-2017-christopher-nolan-film-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Christopher Nolan's Dunkirk Streams on Paramount+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Hardy and Christopher Nolan Officially Reunite on the WWII Epic Taking Over Streaming</div>
+      
+      
+      <div class="summary">Christopher Nolan has tackled everything from superhero epics to science fiction, but they say all great directors have to make a great war movie at some point, don't they? Nolan must have felt the weight of expectation because in 2017, he followed i&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/last-of-us-part-3-main-character-hopes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/the-last-of-us-ps3.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Last of Us Fans Debate Protagonist for Possible Part III
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Last Of Us Part 3 Protagonist Has Gamers Split</div>
+      
+      
+      <div class="summary">Since the launch of The Last of Us way back in 2013, the post-apocalyptic franchise has gone on to become one of the best of all time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/anne-hathaway-horror-mother-mary-streaming-hit-hbo-max-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/anne-hathaway_mother-mary_a24.png?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Anne Hathaway's Mother Mary Surges on HBO Max After Box Office Flop
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Anne Hathaway's Wild New Horror Movie Officially Surges on Streaming</div>
+      
+      
+      <div class="summary">Anne Hathaway is having the busiest year of her career. Not only is she and her husband, Adam Shulman, expecting their third child, but she has already starred in a selection of big box office hits.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2248373/simple-use-smart-home-costco-gadagets/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-simple-to-use-smart-home-gadgets-you-can-buy-at-costco/l-intro-1788258470.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Simple-To-Use Smart Home Gadgets You Can Buy At Costco
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Simple-To-Use Smart Home Gadgets You Can Buy At Costco FotoField/Shutterstock We may receive a commission on purchases made from links. If you're shopping for smart home products, don't skip out on Costco.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/walking-dead-romance-maggie-negan-controversy-au/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/negan-wearing-glasses-and-smiling-in-the-walking-dead-dead-city-season-3-episode-6.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Years Later, The Walking Dead's Cruelest Death Leads To Controversial Maggie-Negan Romance In Dead City AU Episode
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 10 Years Later, The Walking Dead’s Cruelest Death Has Led To A Controversial AU Romance</div>
+      
+      
+      <div class="summary">AMC’s The Walking Dead probably fell off a cliff after Glenn’s death for some fans of the show, while others might be of the opinion that its decline began once Negan was defeated and Rick refused to kill him.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/samara-weaving-ready-or-not-netflix-streaming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/ready-or-not.webp?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Samara Weaving's Horror Comedy Ready Or Not Is Now Streaming On Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Samara Weaving's Gritty Action Sleeper Hit Officially Finds a New Home on Streaming</div>
+      
+      
+      <div class="summary">Samara Weaving is the perfect casting for Emma Frost, adding intense anticipation for Marvel’s X-Men reboot. Weaving has already established a knack for playing memorable female leads, thanks to her reputation as a talented scream queen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/star-trek-ships-best-spaceships/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/enterprise.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Star Trek Ships That Changed the Legendary Sci-Fi Franchise Forever
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Great science-fiction ships are never just transportation. Over time, they become characters in their own right. The best ships develop personalities, accumulate history, and become inseparable from the people who command them.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/quentin-tarantino-western-the-hateful-eight-streaming-free-fawesome-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/the-hateful-eight-quentin-tarantino.jpg?q=49&fit=contain&w=2400&h=1200&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Quentin Tarantino's The Hateful Eight Is Now Free To Stream
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Quentin Tarantino’s Near-Perfect 3-Hour Western Is Officially Free to Stream</div>
+      
+      
+      <div class="summary">The last few years have been eerily quiet for Quentin Tarantino, who hasn’t directed a feature film since 2019’s Once Upon a Time… in Hollywood.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tim-curry-stephen-kings-it-streaming-hit-hbo-max-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/tim-curry.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tim Curry's Iconic Stephen King Performance Officially Floats Up Streaming Charts
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Last week, the world lost a true acting legend as Tim Curry passed away aged 80. The star of The Rocky Horror Picture Show, The Hunt for Red October, Home Alone 2: Lost in New York, Clue, and Muppet Treasure Island was one of Hollywood's recognizable&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/ridley-scott-napoleon-apple-tv-top-movies/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/25090240/Napoleon_Photo_0103.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ridley Scott's Napoleon Becomes Global Streaming Hit On Apple TV+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ridley Scott's 158-Minute War Action Epic Is Officially a Global Streaming Sensation</div>
+      
+      
+      <div class="summary">Director Ridley Scott is not known for making small-scale films. His sci-fi films, like Blade Runner and the Alien franchise, remain staples within the genre, along with being some of his most well-known works.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/zelda-tears-of-the-kingdom-secrets-of-the-zonai-book-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2025/06/tears-of-the-kingdom-breath-of-the-wild-switch-2-upgrade.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zelda: Tears of the Kingdom Returns in October With a New Deluxe Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While fans wait for Nintendo's highly anticipated remake of The Legend of Zelda: Ocarina of Time for Switch 2, devotees of The Legend of Zelda: Tears of the Kingdom will be eating good come fall.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/val-kilmer-the-ghost-and-the-darkness-streaming-paramount-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/val-kilmer.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            30 Years Later, Val Kilmer's Forgotten Survival Thriller Is Officially on Streaming
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Everyone loves a creature feature and sadly, we don't see as many of them these days as we'd like. But they've long been the source of turning the natural world into something terrifying, like the ocean in Jaws, the ocean in The Meg, the ocean in... &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dnd-arcana-unleashed-backgrounds-dungeons-dragons/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/sheltering-hands-d-d.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 10 New D&D Backgrounds In Arcana Unleashed
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Backgrounds are more important in Dungeons & Dragons 5.5e than ever, and luckily, new books are rapidly expanding the list of official options. The latest additions come from the new sourcebook Arcana Unleashed, which offers up eight new backgrounds &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/mark-wahlberg-action-thriller-shooter-streaming-success-paramount-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/12/shooter-poster-1.jpg?q=70&fit=contain&w=750&h=422&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mark Wahlberg's Action Movie Shooter Scores Big On Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Mark Wahlberg's 'Reacher'-Style Action Hit Officially Scores Big on Streaming</div>
+      
+      
+      <div class="summary">Mark Wahlberg is now closer to 60 than 50, but that hasn’t stopped him from keeping in great shape and starring in some of the best action movies in theaters and on streaming. Last year, Wahlberg teamed up with LaKeith Stanfield for the Robert Downey&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/onimusha-way-of-the-sword-hidden-treasure-all-locations/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/onimusha_guide_hiddentreasures_header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All hidden treasure locations in Onimusha Way of the Sword
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The hidden treasures in Onimusha: Way of the Sword are a series of side quests that start once you reach the "To Live is to Suffer" main quest. When you accept one of these missions, a green circle appears on the map, indicating where you must look f&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/onimusha-way-of-the-sword-ace-archer-kyoto-imperial-palace-walkthrough-kubi-akari-location/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/onimusha_guides_acearcherkyoto_lead.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Ace Archer Kyoto Imperial Palace' walkthrough in Onimusha Way of the Sword
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">"Ace Archer: Kyoto Imperial Palace" is one of the secondary missions in Onimusha: Way of the Sword where you must put Musashi's bow skills into action to hunt down Kubi Akaris. Similar to the "Ace Archer: Nijo-jo Castle" story, you must find all five&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/onimusha-way-of-the-sword-ace-archer-nijo-jo-castle-walkthrough-kubi-akari-location/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/onimusha_guides_acearchernijo_header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Ace Archer Nijo-jo Castle' walkthrough in Onimusha Way of the Sword
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Your goal in Onimusha: Way of the Sword's "Ace Archer: Nijo-jo Castle" is to hunt Kubi Akari. In this secondary story, you are asked by a man near the Gojo Street - West Spirit Mirror to kill some flying monsters that have appeared in Nijo-jo Castle.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/onimusha-way-of-the-sword-mask-puzzle-solution-what-lurks-in-the-shadow/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/onimusha_guide_maskpuzzle_header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How to solve the mask puzzle in Onimusha Way of the Sword
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Solving the mask puzzle in Onimusha: Way of the Sword is required to continue your exploration of Nijo-jo Castle in the "What Lurks in the Shadows" quest. With the help of Okuni, Musashi finds a way to the gates of the castle, where he is trying to f&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/onimusha-way-of-the-sword-all-sword-skins-how-to-unlock-lion-dog-location/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/onimusha_guide_allswords_header2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All swords and how to unlock them in Onimusha Way of the Sword
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Musashi's swords are the samurai's main weapons in Onimusha: Way of the Sword to fight the legions of genma escaping from hell. Although he is capable of throwing explosive barrels at enemies and using special Oni weapons, these are circumstantial.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/metro-2039-february-2027-fallout-5-replacement/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/metro-2039-key-art.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Metro 2039 Set For February 2027 Release, Offers Similar Gameplay To Fallout 5
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Fallout 5's Replacement Officially Lands In February 2027</div>
+      
+      
+      <div class="summary">An informal replacement for Fallout 5 is officially arriving in February 2027, so fans of Bethesda’s post-apocalyptic series may not have to wait too long before throwing themselves into a dark new setting with similar gameplay elements.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/legend-of-zelda-decayed-master-sword-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/decayed.webp?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Life-Size Decayed Master Sword Replica from Tears of the Kingdom Pre-Order Available December 2026 for $624
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Zelda Officially Returns December 2026 With New $624 Release You Can Pre-Order Now</div>
+      
+      
+      <div class="summary">It's an incredibly exciting time to be a fan of The Legend of Zelda. Nintendo is finally kicking off the series' 40th anniversary with a brand-new Zelda-themed Nintendo Direct next week.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dungeon-crawler-carl-allies-enemies-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/dungeon-crawler-carl-book-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dungeon Crawler Carl: Allies & Enemies Officially Releases November 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of the biggest breakout sensations of the last few years is Dungeon Crawler Carl. While Matt Dinniman's fantasy series started life as a self-published affair in 2019, it was picked up by Amazon and really started to blow up in 2024.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/fortnite-sonic-the-hedgehog-android-sega-epic-games/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/hqbxow4aaaah5gq.jpg?q=49&fit=crop&w=220&h=124&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sega Adds Android Version of Sonic the Hedgehog to Fortnite via Workaround
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Sega Found a Clever Workaround to Officially Bring Sonic to Fortnite</div>
+      
+      
+      <div class="summary">See that Sonic the Hedgehog on the first page of the current Fortnite Battle Pass? That's not actually Sonic the Hedgehog.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-deep-space-9-returns-in-fluxx/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/star-trek-fluxx-game.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 05 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: Deep Space Nine Fluxx Card Game Gets Limited Reprint October 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek: Deep Space 9 Officially Returns October 2026</div>
+      
+      
+      <div class="summary">It has been more than 33 years since Star Trek: Deep Space Nine first took the franchise in a bold new direction, and it's still one of the most beloved eras among lifelong fans to this day.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <span class="current">9</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/10.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>
