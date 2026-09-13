@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-13 09:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>134 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>9 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/denzel-washington-mark-wahlberg-2-guns-action-thriller-leave-netflix-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/wm/2024/05/denzel-washington-and-mark-wahlberg-in-2-guns-with-money.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Denzel Washington and Mark Wahlberg's '2 Guns' to Leave Netflix Soon
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Denzel Washington & Mark Wahlberg's R-Rated Action Thriller Is Being Removed From Netflix</div>
+      
+      
+      <div class="summary">Denzel Washington and Mark Wahlberg star in an exciting R-rated action thriller, but Netflix subscribers do not have long left to watch it on the streaming service. There have been many action movie stars over the years, and both Washington and Wahlb&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/bleach-tybw-final-episodes-delay/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/ichigo-looks-stunned-in-his-horn-of-salvation-form-in-bleach-tybw-season-4-episode-6.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bleach Reverses Course on Final 2 Episodes Just Before Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.Bleach: Thousand-Year Blood War Episode 49 will no longer air on its originally scheduled date of Saturday, Sept. 19,&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2252527/try-using-old-ps4-controller-with-steam-deck-for-trackpad/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/pairing-your-old-ps4-controllers-with-a-steam-deck-unlocks-a-clever-feature/l-intro-1788872402.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pairing Your Old PS4 Controllers With A Steam Deck Unlocks A Clever Feature
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pairing Your Old PS4 Controllers With A Steam Deck Unlocks A Clever Feature Vitaliy Potapov1/Shutterstock The Steam Deck is an excellent and robust handheld gaming platform. Granted, the ROG Ally is cheaper, but the Steam Deck offers a better user ex&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-jetsons-best-quote-working-hoursprediction-opposite/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-jetsons_3cefyp-1.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Jetsons' Line About a 3-Hour Workday Still Unrealized 64 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 64 Years Later, The Jetsons’ Best Line Is Still A Long Way From Reality</div>
+      
+      
+      <div class="summary">64 years after George Jetson uttered it on The Jetsons, the best line in the series feels even further divorced from reality.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/netflixs-canceled-warrior-nun-revival/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/warrior-nun-olivia-delcan.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'Warrior Nun' Finally Being Revived as Film and TV Universe
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's Canceled 2-Part Fantasy Action Adaptation Finally Being Revived</div>
+      
+      
+      <div class="summary">Netflix has become notorious for canceling shows before they have the chance to find their footing, with many gaining passionate cult followings only after their official departure. Santa Clarita Diet, 1899, and GLOW are among the favorites that have&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/snl-uk-saturday-night-live-head-writer-jonno-johnson-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/snl-uk-jonno-johnson-feature2-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Saturday Night Live UK’ Is Officially Mastering the Most Important ‘SNL’ Formula
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">“I think of the show each week as a heist,” says Saturday Night Live UK’s Jonno Johnson. “But those heist movies very rarely end with everybody sat there with the haul and then going, 'Oh, I've just remembered I booked us in for another seven heists.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-rookie-nathan-fillion-abc-two-guys-a-girl-and-a-pizza-place/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/03/nathan-fillion-in-two-guys-and-a-girl-series-3.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nathan Fillion's 'Two Guys, a Girl and a Pizza Place' Is His Most Overlooked Role
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget ‘The Rookie,' Nathan Fillion's 4-Season Sitcom Is His Most Overlooked Role</div>
+      
+      
+      <div class="summary">Nathan Fillion has built a dedicated fanbase thanks to his long-running procedurals, cult classic sci-fi roles, and appearances in comic book adaptations. But the 55-year-old actually got his start in a largely forgotten sitcom.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/28-years-later-the-bone-temple-box-office-deserved-better/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/09/28-years-later_-the-bone-temple-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            28 Years Later: The Bone Temple's $58M Box Office Disappointment Compared to Predecessor
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 8 Months Later, 28 Years Later: The Bone Temple's Box Office Tragedy Is Clearer Than Ever</div>
+      
+      
+      <div class="summary">8 months after its debut, 2026's biggest box office tragedy is even clearer now, as a result of the 28 Years Later series' overall results and the wider scope of box office results achieved in this year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2256252/dennis-quaid-80s-cult-classic-sci-fi-movie-streaming-free-dreamscape/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/critics-praised-this-80s-dennis-quaid-cult-classic-sci-fi-movie-now-streaming-for-free/intro-1789150042.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dreamscape: Dennis Quaid's 1980s Sci-Fi Cult Classic Now Streaming Free
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Critics Praised This '80s Dennis Quaid Cult Classic Sci-Fi Movie, Now Streaming For Free</div>
+      
+      
+      <div class="summary">Critics Praised This '80s Dennis Quaid Cult Classic Sci-Fi Movie, Now Streaming For Free 20th Century Studios The '80s produced a slew of underappreciated sci-fi movies that deserve more fans, but not everything can be as big as "Ghostbusters" and "B&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/band-of-brothers-legacy-documentary-streaming-charts-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/band-of-brothers-damian-lewis-2.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Steven Spielberg's 'Band of Brothers' Is Bigger Than Ever on Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Steven Spielberg’s 10/10 WWII Series Is Officially Bigger Than Ever on Streaming</div>
+      
+      
+      <div class="summary">The year just keeps getting better for fans of World War II-era storytelling. Perhaps the greatest WWII series of all time is celebrating its 25th anniversary this year, and it marked the occasion with a new special that fans are flocking toward in l&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/video/golden-axe-how-the-actors-found-their-character-voices/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/matthew-rhys-liam-mcintyre.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Golden Axe: How the Actors Found Their Character Voices
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Golden Axe star Matthew Rhys knows exactly what it feels like to become an internet meme — and he’s embracing the absurdity. Rhys and Liam McIntyre also break down bringing Sega’s fantasy world into animation for a new generation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/complete-shonen-anime-series-that-are-masterpieces/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/the-cast-of-attack-on-titan.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Complete Shonen Anime Series That Are 10/10 Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">As the most popular demographic in anime, shonen undeniably possesses universal appeal, most commonly praised for its high-energy, inspiring storytelling filled with imaginative plots, striking action, and relatable, stirring themes.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/blizzcon-2026-schedule-when-live-stream-start-time/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/25055924/blizzcon_logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How to Watch BlizzCon 2026 and What to Expect
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This weekend, Blizzard will host BlizzCon 2026, where fans can expect a plethora of announcements for franchises like World of Warcraft, StarCraft, Overwatch, and Diablo.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/hope-director-interview-na-hong-jin/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/hope-still-03.jpg?q=70&fit=crop&w=1300&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hope: Na Hong-jin's Breakneck Monster Movie Ditches Slow-Burn Horror
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Why Na Hong-jin Ditched Slow-Burn Horror for a Breakneck Monster Movie</div>
+      
+      
+      <div class="summary">After nearly a decade, Na Hong-jin is finally back in the director’s chair with a new movie that challenges the very concept of a traditional action flick.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/liam-neeson-the-fix-rotten-tomatoes-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/sharedimages/2026/07/the-fix-poster.jpg?q=70&fit=contain&w=480&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Liam Neeson's 'The Fix' Debuts with 19% Rotten Tomatoes Score
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Liam Neeson's Latest Action Thriller Unites Critics with Official Rotten Tomatoes Score</div>
+      
+      
+      <div class="summary">Critics rarely land in full agreement on anything, and Liam Neeson movies are no exception. For much of the past two decades, his thrillers have tended to divide reviewers, with even lesser-regarded entries like The Marksman and Retribution finding t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/unstoppable-denzel-washington-tony-scott-action-thriller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/03/unstoppable-9.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Denzel Washington's 'Unstoppable' (2010) Is Tony Scott's Final Action Thriller
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Denzel Washington's Best Action Thriller of the Century Was a Legendary Director's Final Film</div>
+      
+      
+      <div class="summary">As one of Hollywood’s greatest actors, Denzel Washington has worked with several talented filmmakers. Some have cast him again and again, including Spike Lee and Antoine Fuqua. Washington has made five movies with each of these directors, but he also&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/white-house-down-streaming-free-tubi-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/channing-tatum-and-jamie-foxx-in-white-house-down.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jamie Foxx's 'White House Down' Now Streaming for Free
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jamie Foxx's 131-Minute 'Die Hard' Substitute Action Thriller Lands New Free Streaming Release</div>
+      
+      
+      <div class="summary">Academy Award winner Jamie Foxx is best known for his roles in movies like Django Unchained, Ray, and Any Given Sunday. And although some of his roles have required a display of his action chops, he's not famous for his work in the genre.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/amazing-spider-man-symbie-1-cute-ally-origin-story/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/spider-man-shooting-web.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Symbie, Spider-Man's Cutest Ally, Is Finally Getting An Origin Story
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In the decades since his Marvel Comics debut, Spider-Man has acquired an expansive circle of trusted allies. Members of the Spider-Family include Madame Web, several characters who go by Spider-Girl or Spider-Woman, and even Venom himself, Eddie Broc&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/studio-ghibli-kikis-delivery-service-sandwich-maker-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/studio-ghibli-s-kiki-s-delivery-service-sandwich-maker-returns-as-purrfect-kitchen-collectible-after-3-years.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Studio Ghibli's Kiki's Delivery Service Sandwich Maker Returns as Purrfect Kitchen Collectible After 3 Years
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Three years ago, Studio Ghibli brought the magic of Kiki's Delivery Service to the breakfast table with its first-ever Kiki-themed sandwich maker. Now, Ghibli fans have another chance to get their hands on this unique piece of kitchenware.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2256712/airpods-pro-vs-airpods-5-new-pick-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/ive-always-bought-airpods-pro-but-airpods-5-might-be-my-new-pick/l-intro-1789223798.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            I've Always Bought AirPods Pro, But AirPods 5 Might Be My New Pick
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">I've Always Bought AirPods Pro, But AirPods 5 Might Be My New Pick Apple For as long as they've been available, I've always bought AirPods Pro, and I'm currently using AirPods Pro 3.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2252877/nvidia-shield-owners-avoid-developer-mode-setting/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/nvidia-shield-owners-dont-recommend-changing-this-setting/intro-1788885454.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nvidia Shield Owners Warn Against Enabling 'Don't Keep Activities' Setting
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Nvidia Shield Owners Don't Recommend Changing This Setting</div>
+      
+      
+      <div class="summary">Nvidia Shield Owners Don't Recommend Changing This Setting Taner Muhlis Karaguzel/Shutterstock The Nvidia Shield TV is Consumer Reports' top-rated streaming device, but the platform is not perfect.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jodie-comer-harry-melling-stuffed-musical-movie-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/stuffed.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jodie Comer's 'Stuffed' Is Officially the Strangest Movie You'll Love This Year | TIFF Review
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The expectations saddled on a movie musical are difficult to meet. There has to be spectacle, impeccable performances, and amazing music to carry the story until the credits roll.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2252627/tech-products-that-defined-a-generation-but-are-no-longer-safe/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-tech-products-that-defined-a-generation-but-are-no-longer-safe/l-intro-1788878029.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Tech Products That Defined A Generation But Are No Longer Safe
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Tech Products That Defined A Generation But Are No Longer Safe MisterWedding/Shutterstock New tech comes and goes every year. As someone who has attended CES in Las Vegas for over a decade, I've seen the industry's whims and consumers' reactions.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/homestead-paramount-plus-walking-dead-replacement-streaming-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/mcdhome_ec130-1.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Neal McDonough's Post-Apocalyptic Thriller Is a Sleeper Hit on Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget ‘The Walking Dead,’ This 111-Minute Thriller Is a Paramount+ Sleeper Hit</div>
+      
+      
+      <div class="summary">The evolution of A24 from an indie outfit to a thriving studio that releases mid-budget genre movies has been well-documented. A24 is now gearing up to release its biggest movie yet, an adaptation of the Elden Ring video game, produced on a reported &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/succession-best-line-greatest-quote-logan-roy-drama-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/12/succession-brian-cox.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Succession's Best Line Is Still One of the Greatest Quotes in Drama History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Season 4 of Succession, which concluded the acclaimed series in 2023, was one for the ages. Consisting of 39 episodes in total, the dramedy created by Jesse Armstrong stands as one of the crowning achievements of the Peak TV era.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2252588/texas-seventh-grader-builds-underwater-robot-study-water-health/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/a-7th-grader-from-texas-built-an-underwater-robot-to-study-local-water-health/l-intro-1788874071.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            A 7th-Grader From Texas Built An Underwater Robot To Study Local Water Health
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A 7th-Grader From Texas Built An Underwater Robot To Study Local Water Health topimages/Shutterstock In coastal Texas communities, retention ponds are some of the state's most important (and required) means for managing floods.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/guns-of-eschaton-preview-gamescom-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/guns-of-eschaton-gamescom-preview-7-1.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Guns of Eschaton: A Brutally Fun Soulslike FPS Set in the Apocalypse
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The ‘World’s First Soulslike FPS’ Is a Brutally Fun Take On the Apocalypse</div>
+      
+      
+      <div class="summary">Announced back in June, Guns of Eschaton is touting itself as the "world's first Soulslike FPS," according to its Steam page. Designed by the late Viktor Antonov, who was a director on both Half-Life 2 and Dishonored, it's set during an apocalypse, b&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/new-justice-league-villain-team-four-horsemen/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/batman-fights-superman-in-dc-comics-art-by-sideshow-collectibles.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DC Introduces New Justice League Villain Team, All Members And Powers Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">DC's new supervillain team is the evolution of Justice League antitheses like the Legion of Doom and the Injustice League, with a more apocalyptic tint.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/watchmen-hbo-series-makes-movie-look-small/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/sharedimages/2026/02/03142204_poster_w780.jpg?q=70&fit=contain&w=480&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO's Watchmen Miniseries Is So Good It Makes the Movie Look Small
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO's Ambitious 9-Hour Superhero Series Is So Good, It Makes The Movie Version Look Small</div>
+      
+      
+      <div class="summary">HBO's nine-episode superhero TV show is one of the best things on the streaming service, and it ends up making the movie adaptation of the same story feel small. While the DCEU is available on HBO thanks to the partnership between HBO and Warner Bros&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/calvin-and-hobbes-meets-it-takes-two-co-op-game/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/out-of-words-liz-in-clouds.png?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Out of Words: A Handcrafted Co-Op Adventure Blending Calvin and Hobbes and It Takes Two
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Calvin and Hobbes Meets It Takes Two In This Handcrafted Co-Op Adventure</div>
+      
+      
+      <div class="summary">It Takes Two and Orbitals have become two of the most prominent co-op games of the past five years. While the former comes from Hazelight Studios (the same developer behind A Way Out and Split Fiction), the latter comes from Shapefarm, proving that a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <span class="current">10</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/11.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

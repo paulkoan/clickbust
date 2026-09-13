@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-13 09:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>134 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>9 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.cbr.com/disney-experimental-era-masterpiece-movies-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2020/03/Jim-Hawkins-from-Treasure-Planet.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Masterpiece Movies From Disney's Experimental Era
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">For nearly a century, Disney has dominated the realm of animated feature films. The studio's history can be divided into a few distinct eras, such as the lauded Disney Renaissance of the 1990s or the transition to 3D animation in the 2010s.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2256421/android-users-share-passkeys-in-few-steps/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/android-users-can-now-share-their-passkeys-in-just-a-few-steps/l-intro-1789156061.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Android Users Can Now Share Their Passkeys In Just A Few Steps
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Android Users Can Now Share Their Passkeys In Just A Few Steps Linaimages/Shutterstock Passkeys are the new security authentication measure to beat. They're convenient, easy to use, incredibly secure and don't require you to remember passphrases, cod&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/taylor-sheridan-western-miniseries-lawmen-bass-reeves-streaming-success-paramount-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/lawmen-bass-reeves-barry-pepper.jpg?q=49&fit=contain&w=2700&h=1350&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lawmen: Bass Reeves: Taylor Sheridan's 8-Part Western Dominating Paramount+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Bosch’ Meets ‘Yellowstone’ in Taylor Sheridan’s 8-Part American Western Officially Dominating Paramount+</div>
+      
+      
+      <div class="summary">Few writers and producers have been as busy this year as Taylor Sheridan, but that doesn’t come as much of a surprise considering he’s balancing so many projects.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/fallout-5-leaving-players-behind-next-gen-only/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/fallout-76-helmet.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fallout 5 Development Years Away, Likely Skipping Current-Gen Consoles
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Fallout 5 Will Officially Leave Millions Of Players Behind</div>
+      
+      
+      <div class="summary">The Fallout single-player series has essentially been on ice since the release of Fallout 4, all the way back in 2015. Since then, much of the focus has been on MMO Fallout 76, as well as wider releases tied to the franchise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/denzel-washington-robert-zemeckis-flight-streaming-free-pluto-tv-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/10/flight-denzel-washington-1.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Flight: Denzel Washington's Oscar-Nominated Thriller Now Streaming for Free
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Denzel Washington’s “Triumphant and Provocative” Thriller Is Officially Streaming for Free</div>
+      
+      
+      <div class="summary">Based on the material we've seen so far, John Goodman could be a dark horse in the Best Supporting Actor race at next year's Oscars for his performance in Digger.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-rockstar-games-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/red-dead-redemption.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Best Rockstar Video Games of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Modern video games are better than ever, with titles such as Elden Ring and Baldur's Gate 3 advancing the medium to new heights. However, the world will stand still when the most anticipated video game of all time comes out: Grand Theft Auto VI.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2256266/apple-watch-audio-intelligence-new-features/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/apple-watch-audio-intelligence-4-new-features-available-on-the-series-12-and-ultra-4/l-intro-1789150716.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple Watch Audio Intelligence: 4 New Features Available On The Series 12 And Ultra 4
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Apple Watch Audio Intelligence: 4 New Features Available On The Series 12 And Ultra 4 Wongsakorn 2468/Shutterstock Apple recently unveiled its two newest smartwatches, the Apple Watch Series 12 and Ultra 4.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/final-fantasy-9-denoument-puzzle-set-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/final-fantasy-9-denouement-puzzle.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Final Fantasy IX Jigsaw Puzzle 'Denouement' Releases This Month
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Final Fantasy 9: Denouement Officially Releases This Month</div>
+      
+      
+      <div class="summary">First launching on the PlayStation back in 2000 and marking the ninth installment in the Final Fantasy franchise by Square Enix, Final Fantasy IX is still remembered fondly.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/shaun-the-sheep-beast-of-mossy-bottom-preview-image/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/shaun-the-sheep-image-watermarked.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Shaun the Sheep's Next Movie 'The Beast of Mossy Bottom' Goes Spooky
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Wallace & Gromit's Overlooked Spinoff Is Officially Switching Genres With Its Next Movie</div>
+      
+      
+      <div class="summary">Beloved British stop-motion studio Aardman is best known as the home of Wallace and Gromit, but if you've been sleeping on the equally delightful Shaun the Sheep, you're sorely missing out.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ridley-scott-sci-fi-sequel-alien-covenant-streaming-peacock-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/04/alien-covenant-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alien: Covenant Now Streaming on Peacock
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ridley Scott's Most Divisive Sci-Fi Sequel Officially Conquers a New Streamer</div>
+      
+      
+      <div class="summary">Alien is a franchise that has constantly reinvented itself, much like the creator of the series, Ridley Scott. Scott himself first created a claustrophobic haunted house in space with the 1979 original before James Cameron transformed its sequel into&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-the-original-motion-picture-collection-library-case-steelbook/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/10/star-trek.jpg?q=70&fit=contain&w=280&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: The Original Motion Picture Collection Gets Steelbook Set in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek Movies Officially Return With New 2027 Release</div>
+      
+      
+      <div class="summary">Star Trek Day brought good news for fans of both Star Trek and physical media. On Star Trek Day, Paramount Home Entertainment unveiled the Star Trek: The Original Motion Picture Collection Library Case, featuring the first six Star Trek movies in ind&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/russell-crowe-western-quick-and-the-dead-streaming-free-pluto-tv-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/11/the-quick-and-the-dead-1995.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Quick and the Dead Now Streaming for Free
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Russell Crowe's Star Studded Western Officially Hits a Bullseye on Free Streaming</div>
+      
+      
+      <div class="summary">The Western genre was running on fumes by the 1990s, following a heyday that lasted several decades. That said, the '90s produced a handful of classics that are remembered to this day.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/star-trek-reboot-trilogy-franchise-future/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/5359343/stb.0.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            J.J. Abrams' Star Trek Trilogy Now Streaming on Peacock
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Paramount's Near-Perfect 3-Part Sci-Fi Series Officially Finds a New Streaming Home</div>
+      
+      
+      <div class="summary">The secret to Star Trek’s longevity isn't that it has stayed the same for 60 years. In fact, it’s quite the opposite. Every era has reimagined Gene Roddenberry's universe for a new audience, from The Next Generation to the Kelvin Timeline to today's &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/chris-pratt-sci-fi-the-tomorrow-war-streaming-success-prime-video-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/jk-simmons-the-tomorrow-war.jpg?q=49&fit=contain&w=2100&h=1050&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Tomorrow War Remains a Prime Video Hit Ahead of Sequel
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Chris Pratt’s $200M Sci-Fi Epic Is Officially a Prime Video Hit Ahead of Its Sequel</div>
+      
+      
+      <div class="summary">2026 has been a roller-coaster of a year for Chris Pratt, who starred in one of the first big box office bombs of the year with Mercy.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/steps-netflix-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/lilith-holds-a-frog-and-looks-over-fairy-gondmother-s-shoulders-along-with-cinderella-in-steps.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Animated Movie 'Steps' Reimagines Cinderella from the Stepsister's Perspective
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s 'Kpop Demon Hunters' Replacement Reimagines a Classic Disney Princess</div>
+      
+      
+      <div class="summary">Alyce Tzue always loved fairy tales, but growing up as the only Asian kid in a homogeneous community in New Jersey, she worried she would never find her happily ever after. Instead of seeing herself in Cinderella, Tzue wondered why her stepsisters di&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-amateur-streaming-hit-prime-video-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/the-amateur-1.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Amateur, Starring Jon Bernthal, Becomes Prime Video's Sleeper Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jon Bernthal’s 2025 Spy Thriller Is Officially Prime Video’s Biggest Sleeper Hit</div>
+      
+      
+      <div class="summary">Although the likes of Tom Holland and Anne Hathaway are stealing the headlines, Jon Bernthal is quietly having the most impressive year of his career.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/star-treks-weirdest-recurring-character.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/star-trek-traveler-console-1.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Eric Menyuk: The Man Who Almost Played Data Became Star Trek's Traveler
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Man Who Almost Played Data Became Star Trek’s Weirdest Recurring Character</div>
+      
+      
+      <div class="summary">By Chris Snellgrove | Published 4 seconds ago There are few Star Trek performers quite as prolific as Brent Spiner. He shot to fame by playing the android Data on The Next Generation. In that same show, he ended up playing Data’s evil brother, his bi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-nintendo-nes-games/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/6823649/nes-classic-trailer-screencap_1920.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 NES Games That Are Still Worth Playing From Start to Finish
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">On October 18, 1985, the Nintendo Entertainment System launched in North America with a limited selection of games like Super Mario Bros. and Excitebike.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/forgotten-episode-star-trek-history.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/ishara-yar-star-trek-1-385x200.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            TNG Episode 'Legacy' Quietly Made Star Trek History by Surpassing TOS
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Forgotten Episode That Quietly Made Star Trek History</div>
+      
+      
+      <div class="summary">By Chris Snellgrove | Published 2 seconds ago Star Trek is celebrating its 60th anniversary this year. Accordingly, the franchise has had several major milestones over the years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/reason-trek-brought-back-villain.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/star-trek-lore-stare-1.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why Lore Returned in Star Trek: The Next Generation's 'Brothers'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Shocking Reason Star Trek Brought Back Its Most Forgotten Villain</div>
+      
+      
+      <div class="summary">By Chris Snellgrove | Published 4 seconds ago Recently, Star Trek: Strange New Worlds gave us yet another silly episode: “Like Chronitons Through the Hourglass,” in which Trelane forced the crew to act out a crappy soap opera.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-quotes-in-supergirl-dcu/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/milly-alcock-as-supergirl-in-the-first-official-poster.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            12 Best Quotes In Supergirl
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! This post contains SPOILERS for Supergirl (2026) James Gunn's DC Universe has just released its latest adventure with Supergirl, now playing in theaters.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-enterprise-online-december-2026-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-enterprise-a-bridge.png?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek Online's 'Rediscovered' Event Brings Enterprise Ships on September 22
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek: Enterprise Officially Returns December 2026 In Rediscovered</div>
+      
+      
+      <div class="summary">Not every Star Trek quadrantis represented equally. For instance, The Next Generation gets a lot of love. Picard has appeared in multiple Star Trek movies, and he returned for Star Trek: Picard, playing the character again decades later.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/severance-kafka-christopher-nolan-apple-tv-sci-fi/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/severance-appletv-poster.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Severance: How Apple TV's Sci-Fi Masterpiece Combines Kafka and Christopher Nolan
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Kafka Meets Christopher Nolan In Apple TV’s Returning 95% RT Sci-Fi Masterpiece</div>
+      
+      
+      <div class="summary">Franz Kafka remains one of the greatest literary figures to popularize surreal and absurdist stories about horrifying bureaucratic systems.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/zelda-nes-40th-anniversary-fan-remake/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-legend-of-zelda-nes-key-art.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            This Legend Of Zelda NES Remake Is The Perfect 40th Anniversary Celebration
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Legend of Zelda is having a rather historic moment as it begins its 40th anniversary celebrations in earnest.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/stephen-king-talisman-3-trilogy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/the-talisman-1st-printing-hardcover.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stephen King's 'Other Worlds Than These' Concludes The Talisman Trilogy After 42 Years
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Stephen King's Next Book is the Long-Awaited Conclusion To A 42-Year-Old Trilogy</div>
+      
+      
+      <div class="summary">There aren't many parts of Stephen King's bibliography that you can realistically call "obscure." As one of the most famous novelists on Earth, and perhaps the single most famous living horror novelist, even King's lesser-known works are usually best&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/fallout-new-vegas-dlss-5-remastered/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/screenshot-2026-09-07-at-19-45-12.png?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fan-Made Fallout: New Vegas DLSS 5 Mod Creates Uncanny Valley Horror
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Fallout: New Vegas Next-Gen Remaster Is Quietly Horrifying</div>
+      
+      
+      <div class="summary">Whether we like it or not, DLSS 5 is here to stay and if you had to ask me, I wish that it was not. I am all for photorealism in video games, but there is a line, and the arrival of Nvidia's DLSS 5 has passed that line quite a lot, making some of our&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/calvin-and-hobbes-best-quote-meaning-of-life/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/19964119/calvin_hobbes_final_comic_strip.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Calvin and Hobbes' Most Profound Quotes on the Meaning of Life Endure 34 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 34 Years Later, the Best 'Calvin and Hobbes’ Quote About the Meaning of Life Is Still Second to None</div>
+      
+      
+      <div class="summary">As a lifelong reader of Calvin and Hobbes, there have been many times where Bill Watterson’s words and drawings struck a deep chord with me. When I was a kid, there were times I’d see Calvin traipsing through the forest, and it would prompt me to go &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/mtg-official-statement-ending-alchemy-format/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/magic-the-gathering-urza.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            MTG Arena's Alchemy Format to Be Removed on February 2, 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Magic: The Gathering Format Will Disappear Forever February 2</div>
+      
+      
+      <div class="summary">MTG Arena players have officially lost the format that could have defined the entire platform in a shocking update from Wizards of the Coast.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/red-dead-redemption-2-free-rewards-online-48-hours/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/90ed5456724770eee1556fec24500e0f2f19b267.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Red Dead Online September Event: Free Outfit and Moonshiner Rewards
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Red Dead Redemption 2 Free Download Officially Yours For 48 Hours</div>
+      
+      
+      <div class="summary">Despite the fact that it almost came out 10 years ago, there are still plenty of players who log in all the time to enjoy the wonders of Red Dead Redemption 2. As big as the single-player is, it would be no surprise if you've experienced everything i&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/james-gunn-dcu-superman-green-lantern-lead-character-next" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/photos/bride_1024.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DCU Reveals Bride as Lead of Creature Commandos Season 2
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: James Gunn's DCU Reveals Its Next Lead Character After Superman & Green Lantern</div>
+      
+      
+      <div class="summary">DC Studios revealed who will follow John Stewart as the next main character of the DCU, specifically when it comes to the franchise's television shows. All eyes are on Lanterns right now concerning the DCU, as the TV-MA HBO series is currently debuti&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <span class="current">14</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/15.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-13 09:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>134 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>9 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.polygon.com/croak-video-game-2026-preview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/06-frog-tonguegifpetit-anim.gif?q=70&fit=crop&w=625&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Croak: A New Platforming Hero for Mario Fans This Fall
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Mario Fans Have A New Platforming Hero To Watch This Fall</div>
+      
+      
+      <div class="summary">As another Nintendo Direct passes by without a mention of Mario, there is room in this hyper-AAA fall season for a platforming hero to emerge. Good news: That hero is the Prince Frog from Croak, who’s expected to step out before the year’s end.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/jason-statham-hobbs-and-shaw-action-stream-hulu-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/05/jason-statham-in-hobbs-and-shaw.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fast & Furious Presents: Hobbs & Shaw Arrives on New Streaming Home This Month
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jason Statham's 137-Minute Action Thriller Crashes Onto New Streaming Home This Month</div>
+      
+      
+      <div class="summary">Jason Statham's latest action thriller, Mutiny, might have recently reached a major box office milestone, but even with its impressive domestic haul, it never came close to matching the success of The Stath's explosive 2019 hit that served as a spino&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/alan-ritchson-ghosts-of-war-streaming-prime-video-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/07/ghosts-of-war-06.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ghosts of War Starring Alan Ritchson Now on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget ‘Reacher,’ Alan Ritchson’s Wild WWII Horror Movie Is Officially on Prime Video</div>
+      
+      
+      <div class="summary">2026 has been the year of Alan Ritchson so far, and not just because he returned to his signature role of Jack Reacher in the fourth season of Prime Video’s Reacher series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/jason-bourne-spy-thriller-james-bond-replacement/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/the-bourne-identity-matt-damon.jpg?&fit=crop&w=1600&h=900" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jason Bourne Franchise: Matt Damon's Spy Thriller Masterpiece for Bond Fans
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Matt Damon's 5-Part Spy Thriller Masterpiece Is a Must-Watch for James Bond Fans</div>
+      
+      
+      <div class="summary">Matt Damon is the perfect James Bond replacement in his iconic twenty-four-year-old spy-thriller franchise. Since its inception, the Jason Bourne franchise has stood out as the pinnacle of what the spy genre could be.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/batman-superman-weird-al-worlds-weirdest-1-embarrassing-costume/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/batman-superman-weird-al-world-s-weirdest-1-special.avif?q=49&fit=crop&w=749&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Batman Gets a Lame Pajama Costume in Batman/Superman/Weird Al: World's Weirdest #1
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Batman's Worst Costume Has Debuted, And It's Embarrassing</div>
+      
+      
+      <div class="summary">The following article contains spoilers for Batman/Superman/Weird Al: World's Weirdest #1. There are few comic book heroes who look better when fighting crime than Batman, who has endured a vast rotation of striking costume designs over the past seve&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/anime-series-strongest-character-villain/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/ryomen-sukuna-sits-smugly-on-a-throne-in-jujutsu-kaisen.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Anime Where the Strongest Character is the Villain
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Most action anime eventually allow their heroes to become the strongest people in the story. Training, new techniques and increasingly ridiculous transformations gradually close the power gap between protagonist and antagonist until the final battle &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/every-lord-and-miller-directed-film-ranked-according-to-rotten-tomatoes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/project-hail-mary-phil-lord-christopher-miller-interview.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Lord and Miller Directed Movie, Ranked By Rotten Tomato Score
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Phil Lord and Christopher Miller. They've quietly built one of the most eccentrically successful filmography's and staggering track records in modern Hollywood. And with Project Hail Mary's recent arrival on Prime Video only reinforces just how rare &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/deadloch-prime-video-crime-comedy-widows-bay-meets-twin-peaks/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/deadloch-madeleine-sami-eddie-redcliffe.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Deadloch: Prime Video's Crime Comedy Series Now Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Widow's Bay' Meets 'Twin Peaks' in Prime Video's Overlooked 2-Part Crime Comedy</div>
+      
+      
+      <div class="summary">The Widow's Bay withdrawal is setting in. Katie Dippold's comedy-horror hybrid wrapped its 10-episode first season on Apple TV+ back in June and picked up 19 Emmy nominations in July. (Because a 95% on Rotten Tomatoes and a cultural chokehold apparen&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2252458/tablet-market-in-trouble-brand-exception/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/the-tablet-market-might-be-in-trouble-but-this-brand-is-the-exception/where-lenovo-is-standing-out-1788864211.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lenovo Tablet Sales Grow 27% While Overall Market Declines
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Tablet Market Might Be In Trouble, But This Brand Is The Exception</div>
+      
+      
+      <div class="summary">The Tablet Market Might Be In Trouble, But This Brand Is The Exception fizkes/Shutterstock There is a crisis plaguing the technology industry, and it all has to do with artificial intelligence (AI) data centers needing vast amounts of RAM.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2256484/gerard-butler-forgotten-dystopian-sci-fi-movie-gamer-streaming-free/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/gerard-butlers-forgotten-dystopian-sci-fi-movie-is-streaming-for-free/intro-1789157611.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gerard Butler's 'Gamer' Is Streaming Free on Plex, Fawesome, Kanopy
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Gerard Butler's Forgotten Dystopian Sci-Fi Movie Is Streaming For Free</div>
+      
+      
+      <div class="summary">Gerard Butler's Forgotten Dystopian Sci-Fi Movie Is Streaming For Free Lionsgate It's not uncommon to find Gerard Butler sci-fi movies storming the streaming charts. However, some of his best genre flicks remain criminally overlooked, which brings us&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/last-of-us-part-3-ellie-replacement-speculation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/joel-and-ellie-looking-around-in-the-last-of-us-season-2-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fans Speculate on The Last of Us Part III's Protagonist: Ellie, Abby, or Someone New
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Last Of Us Part 3 Ellie Replacement Leaves Fans Torn</div>
+      
+      
+      <div class="summary">Since it began back in 2013, The Last of Us franchise has gone on to become a cultural phenomenon. Not only has it welcomed an equally successful sequel, The Last of Us Part II, too many remasters, and even an award-winning live-action television ada&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/edward-norton-primal-fear-streaming-free-pluto-tv-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/primal-fear-edward-norton.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Primal Fear, the 1996 Thriller with a Famous Twist, Is Free to Stream
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: One of the Greatest Twist Endings in Thriller History Is Officially Free To Stream</div>
+      
+      
+      <div class="summary">Audiences are already floating theories about M. Night Shyamalan's new movie, Remain, which will be released theatrically next year. It's Shyamalan's first new film since 2024's Trap, marking his longest gap between movies in more than four decades. &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/weirdest-the-far-side-comics-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/08/10-weirdest-the-far-side-comics-ranked.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Weirdest The Far Side Comics of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Far Side by Gary Larson has long been home to some of the most mind-bending absurdist humor in newspaper comics. Whether it be keen observations on the absurdity of life or simply strips so fantastical they hardly made sense, Larson consistently &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/being-heumann-movie-review-tiff/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/ruth-madeley-as-judy-heumann-protesting-in-the-street-in-being-heumann.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Being Heumann Review: Ruth Madeley Shines In A Conventional But Important True-Story Drama [TIFF]
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Among the major film studios and streaming services, Apple has quietly built one of the more ambitious slates.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/heaviest-tv-episodes-last-30-years-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/img_9862-1-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Heaviest TV Episodes of the Last 30 Years, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Spoiler Alert: This list contains spoilers for multiple TV shows.The last 30 years of television have seen the airing of several of the heaviest episodes, not just of the last three decades, but arguably of all time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2252183/how-to-make-android-auto-less-distracting/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/you-should-make-android-auto-less-distracting-while-driving-heres-how/l-intro-1788797077.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            You Should Make Android Auto Less Distracting While Driving - Here's How
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">You Should Make Android Auto Less Distracting While Driving - Here's How Topuria Design/Shutterstock Without sounding like an old Public Service Announcement (PSA) you would see during a driver's education class, distracted driving can make someone a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2252442/what-to-do-if-tablet-is-overheating/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/if-your-tablet-is-overheating-try-this/intro-1788857703.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How to Cool an Overheating Tablet: Close Background Apps and Adjust Settings
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: If Your Tablet Is Overheating, Try This</div>
+      
+      
+      <div class="summary">If Your Tablet Is Overheating, Try This Stokkete/Shutterstock Whether it's an M5 iPad Pro that you use as your main work computer or a cheap Android tablet that fits in your palm, all devices are prone to overheating if not treated the right way.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/steam-free-game-9-rated-spellbound/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/screenshot-2026-09-10-at-02-51-23.png?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Free Steam Game Spellbound & Shelved Earns 9/10 Rating
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Steam Drops New 9/10 Free Game You Can Keep Forever</div>
+      
+      
+      <div class="summary">Steam is no stranger to a free game that completely blows our expectations out of the water. Usually, when you see a free game, it comes with some sort of catch, but in the case of this latest Steam addition, it is available to anybody to download.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/backrooms-streaming-hit-amazon-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/img_2137.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Backrooms, 2026 Horror Hit, Is Most-Watched Movie on Amazon Prime
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 2026's Viral Record-Breaking Horror Is Officially Undefeated on Streaming</div>
+      
+      
+      <div class="summary">In early summer 2026, the horror headlines were dominated by Focus Features' Obsession. Former YouTuber Curry Barker made his filmmaking debut with this breakout masterpiece, as scary as it is poignant.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-non-disney-animated-movies-last-five-years/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/zoey-mira-and-rumi-performing-in-kpop-demon-hunters.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Greatest Non-Disney Animated Movies Of The Last 5 Years
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Summary Non-Disney studios and auteurs delivered many of animation's boldest, award-winning films recently. Innovative visual styles, from CG multiverses to painterly and stop-motion, reshaped mainstream animation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2256091/tv-shows-like-the-gentlemen/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/5-tv-shows-to-watch-if-you-like-the-gentlemen/l-intro-1789079839.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 TV Shows To Watch If You Like The Gentlemen
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 TV Shows To Watch If You Like The Gentlemen Static Media Ever since 2024, "The Gentlemen" has been keeping fans entertained on Netflix thanks to its absolutely wild premise, excellent cast, and action-packed episodes that make you want to press pla&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2256490/android-auto-wavy-audio-line-users-conflicted/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/android-autos-wavy-audio-line-is-leaving-users-conflicted/l-intro-1789158674.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Android Auto's Wavy Audio Line Is Leaving Users Conflicted
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Android Auto's Wavy Audio Line Is Leaving Users Conflicted TY Lim/Shutterstock Android Auto users can't catch a break. Not only are they dealing with an annoying Google Maps bug that kills traffic info, but Google is also changing how a pivotal part &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-thriller-movies-last-20-years-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/11/no-other-choice-feature.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Perfect Thriller Movies of the Last 20 Years, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There can never be too many thrillers in Hollywood. The industry has more than one way to keep audiences on the edge of their seats. For decades, staples like The Silence of the Lambs, Fargo, and Pulp Fiction have differed in style, but they all deli&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/interstellar-project-hail-mary-the-godfather-streaming-prime-video-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/interstellar-matt-damon.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Interstellar: Christopher Nolan's Sci-Fi Epic Now Streaming on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Project Hail Mary' Meets 'The Godfather' in Prime Video's Sci-Fi Epic</div>
+      
+      
+      <div class="summary">Over the 12 years since its release, adoration for Interstellar has soared to extraordinary heights. Though it received relatively lukewarm reviews upon release in 2014—at least, lukewarm for a Christopher Nolan film—this sci-fi epic about the fate o&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/addictive-hbo-shows-impossible-to-stop-watching/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/01/sarah-snook-in-succession.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Addictive HBO Shows That Are Impossible To Stop Watching
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">HBO has been a central power in television drama for almost 30 years now, over which time it has produced a tremendous array of series that have specialized in capturing the audience’s attention from the outset.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/super-mario-64-co-op-ray-tracing/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/screenshot-2026-09-07-at-22-20-00.png?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Super Mario 64 PC Port Mods Add Co-Op and Ray Tracing
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Super Mario 64 Returns With Co-Op And Overhauled Visuals</div>
+      
+      
+      <div class="summary">Celebrating its 30th anniversary this year, Super Mario 64 is a platform title developed for the Nintendo 64 and marking the first Super Mario entry to feature 3D graphics.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/zelda-ocarina-of-time-horror-game/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/ns2_thelegendofzeldaocarinaoftime_scrn_07.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Legend of Zelda: Ocarina of Time is Actually A Horror Game
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Legend of Zelda: Ocarina of Time is a fairy tale, more so even than most other Zelda games. Recognizing this is key to understanding (if not necessarily liking) the visual approach Nintendo has taken for the remake of the 1998 classic, as I wrote&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tom-hanks-news-of-the-world-streaming-peacock-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/04/news-of-the-world-movie-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            News of the World: Tom Hanks' 88% RT Western Now Streaming on Netflix and Peacock
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Hanks’ 88% Rotten Tomatoes Western Is Officially a Must-Watch on Streaming</div>
+      
+      
+      <div class="summary">Westerns remain something of an endangered species on the big screen these days, and even more so when they're based on characters rather than shootouts and robberies, stagecoaches and steam trains.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/chicago-pd-jesse-lee-soffer-season-14-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/jay-halstead-jesse-lee-soffer-sits-in-his-vehicle-in-chicago-p-d.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jesse Lee Soffer's Chicago P.D. Return Makes Season 14 Required Viewing
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Jesse Lee Soffer’s role in the One Chicago franchise saw him transition from an undercover cop in Chicago Fire to an intelligence agent in his mainstay, Chicago P.D.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-wars-insider-rebellion-from-rogue-one-to-andor-release-date-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/02/diego-luna-as-cassian-andor-alan-tudyk-k2so-in-rogue-one-a-star-wars-story.avif?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Wars Brings Andor and Rogue One Back With Exclusive Bonus Content
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of the greatest sci-fi fantasy franchises of all time endures. When Rogue One: A Star Wars Story hit theaters a decade ago, it filled in the backstory and revealed how Princess Leia came to be in possession of the critical schematics to the Empir&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <span class="current">13</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/14.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

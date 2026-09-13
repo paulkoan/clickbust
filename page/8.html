@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-13 09:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>134 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>9 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/crimson-moth-series-adaptation-development/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/fourth-wing-book-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Crimson Moth Fantasy Series in Development for TV Adaptation
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Popular Fourth Wing Meets Throne Of Glass Is Getting Adapted Into A TV Series</div>
+      
+      
+      <div class="summary">A popular novel that's similar to titles such as Fourth Wing is getting an adaptation. It was recently revealed that Amazon MGM Studios will be adapting the best-selling fantasy book series Fourth Wing, written by Rebecca Yarros.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-office-documentary-fan-level-midnight-peacock-streaming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/06/Jim-Dwight-Pam-and-Kevin-reading-Michaels-script-in-The-Office.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fan Documentary 'Fan Level Midnight' Explores 'The Office' Legacy 20 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 20 Years Later, ‘The Office’ Is Getting Its Story Rewritten</div>
+      
+      
+      <div class="summary">Beloved mockumentary sitcom, The Office, is getting a fan-focused documentary over 20 years after it first aired on NBC.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/love-death-and-robots-netflix-terminator-neuromancer/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/untitled-design-9.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Love, Death + Robots: Netflix's Sci-Fi Anthology Blends Terminator and Neuromancer Themes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 4-Part Sci-Fi Masterpiece On Netflix Is Like The Terminator & Neuromancer In One</div>
+      
+      
+      <div class="summary">Netflix's experimental sci-fi masterpiece is a perfect cross between Terminator and Neuromancer. Cyberpunk has been a popular sci-fi sub-genre since the New Wave science fiction movement of the 1960s and 1970s. During that era, authors such as Philip&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/star-wars-eclipse-knights-of-the-old-republic-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/12/star-wars-knights-of-the-old-republic-video-game-cover.jpg?q=70&fit=contain&w=480&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lucasfilm Confirms Star Wars: KOTOR Remake and Eclipse Are Still in Development
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 2 Star Wars Prequels Are Officially Back From the Dead</div>
+      
+      
+      <div class="summary">2026 has been a pretty "wizard" year for Star Wars as far as gaming goes. Just a few weeks ago, EA and Lucasfilm Games released Star Wars: Zero Company, the new XCOM-inspired strategy game that takes place in the closing days of the Clone Wars, to wi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-fall-of-the-house-of-usher-mike-flanagan-edgar-allan-poe/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/10/the-fall-of-the-house-of-usher-cast-promo.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'The Fall of the House of Usher' Is Near Perfect When It Goes Beyond Poe's Story
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's 8-Part Gothic Horror Is Near Perfect When It Goes Beyond the Book It's Based On</div>
+      
+      
+      <div class="summary">There are way more adaptations of Edgar Allan Poe's work in visual media than most people can count. If well-made, they are pretty much guaranteed to draw interest, because the source material is just that good.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-diablo-series-confirmed-overwatch-world-of-warcraft/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/12/diablo-in-game-screenshot-1.jpg?q=49&fit=crop&w=450&h=225&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix and Blizzard Developing Diablo Animated Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Officially Finds Its ‘Arcane’ Successor With New Dark Fantasy Series</div>
+      
+      
+      <div class="summary">Netflix is going to Hell, and this time, that is excellent news. After turning League of Legends into an animated phenomenon with Arcane, the streamer has found another massive gaming universe filled with complicated heroes, terrifying monsters, and &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/hearthstone-update-monk-class-blizzcon-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/37_blackempire_keyart_16x9_final.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hearthstone's Next Expansion and New Class Officially Revealed at BlizzCon
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">During the opening ceremony for BlizzCon 2026, Blizzard Entertainment detailed what’s next for its long-lasting collectible card game Hearthstone. Its next expansion, Reign of the Black Empire, will put a greater emphasis on narrative than ever befor&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/hearthstone-blizzcon-2026-monk-class-journey-details/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/monk-reveal-blizzcon.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            BlizzCon 2026: Hearthstone's Next Update Is Massive, New Class Confirmed
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's hard to believe, but Hearthstone has been around for a long while. It first launched in early 2014 on PC, before coming to mobile devices a year later.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/near-perfect-war-shows-nobody-remembers-today/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/1864_o96ihs-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Near-Perfect War Shows That Nobody Remembers Today
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">War often makes for captivating television, and there are more than a few that have been made in the last couple of decades. There are so many that you may have missed out on some, such as these 10 shows, which deserve far more attention.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-punisher-show-jean-grey-spider-man-brand-new-day-setup-movie-theory/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/jon-bernthal-as-frank-castle-holding-an-unconscious-man-by-the-shirt-in-the-punisher.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Punisher’s Show Set Up A Major Jean Grey MCU Scene According To Convincing Movie Theory
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Punisher set up one of Jean Grey's final acts in Spider-Man: Brand New Day years before its release, according to a fascinating theory about the MCU movie.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-accountant-2-jon-bernthal-action-stream-hulu-sept-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/the-accountant-2.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Accountant 2, Starring Jon Bernthal, Becomes One of the Biggest Movies on Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jon Bernthal's 132-Minute Action Thriller Sequel Is Officially One of the Biggest Movies on Streaming</div>
+      
+      
+      <div class="summary">Give Jon Bernthal a gun, and you've got yourself a hit movie. Marvel Studios recently found that out when he reprized his role as The Punisher in Spider-Man: Brand New Day. Meanwhile, Bernthal's other action hits, like Baby Driver, Sicario, and Fury &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/last-seen-apple-stream-crime-thriller-sept-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/last-seen.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV+'s Australian Crime Thriller 'Last Seen' Becomes a Streaming Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: "Taken Meets Harlan Coben" In Apple TV's New 9/10 Crime Thriller That's Officially a Streaming Hit</div>
+      
+      
+      <div class="summary">Apple TV has never chased volume the way Netflix does, so the same handful of returning shows tend to circulate at the top whenever a new season lands.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/gears-of-war-netflix-fallout-competitor/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/02/mwvuydm42p7mvzrg9akfjf.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Gears of War Movie and Animated Series Aim to Rival Fallout
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's Answer to 'Fallout' Is a "John Wick Meets Halo" Military Sci-Fi Series</div>
+      
+      
+      <div class="summary">Prime Video's Fallout is widely considered a success, with the series proving what modern video game adaptations are capable of. In its first season alone, Fallout earned 17 Primetime Emmy nominations and two wins, along with a variety of other nomin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/outer-banks-season-5-streaming-hit-netflix-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/outer-banks-madelyn-cline-drew-starkey.jpg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Outer Banks Season 5 Ranks Among Netflix's Most-Watched Shows
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s 5-Part Adventure Gem Is Officially One of the Biggest Shows on Streaming</div>
+      
+      
+      <div class="summary">The current Netflix charts are dominated by the long-awaited return of a global hit crime series. A follow-up to the hugely popular 2019 movie of the same name, The Gentlemen has retaken its crown as the most-watched show on Netflix, following its hu&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/top-merchandise-ranking-amiami-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/02/10-things-about-goku-you-d-only-know-if-you-read-the-dragon-ball-manga.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dragon Ball Figure Ranks 5th in AmiAmi's August Rankings, Fate/Grand Order Takes Top Spot
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Dragon Ball Officially Loses Out to 1 of the Biggest Fantasy RPGs in New Top 20 Ranking</div>
+      
+      
+      <div class="summary">Dragon Ball is undeniably one of the most popular anime franchises across the globe. However, that widespread appeal has not helped the series grab a top spot in the latest top 20 rankings.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-fun-r-rated-sci-fi-movies-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/05/total-recall-1990-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 8 Most Fun R-Rated Sci-Fi Movies, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Sometimes you want science fiction to behave itself. Other nights, you want somebody to pull a spine out, drive through a sandstorm with half the wasteland chasing them, discover that reality is fake, or casually announce that they will be back befor&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/bloodaxe-prime-video-war-epic-perfect-vikings-replacement/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2021/06/Valhalla-Vikings.jpeg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's New Viking Series 'Bloodaxe' Is a Perfect 'Vikings' Replacement
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video's New 2-Part War Epic Is Officially the Perfect 'Vikings' Replacement</div>
+      
+      
+      <div class="summary">War epics are among the most thrilling shows on TV, with the most enduring examples ranging from Shogun to Band of Brothers, but Prime Video's upcoming series promises to be an exciting addition to the list.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/diablo-4-amazon-class-season-hell-legacy-blizzcon-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2024/11/diablo-4-lilith-silhouette.jpeg?q=49&fit=crop&w=292&h=384&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Diablo 4 Officially Bringing Back Amazon Class, Blizzard Confirms
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Diablo 4 Is Officially Bringing Back a Fan-Favorite Class, Blizzard Confirms</div>
+      
+      
+      <div class="summary">While Diablo 5’s announcement was the most shocking reveal of BlizzCon 2026, it’s not an indication that support for Diablo 4 is ending anytime soon. In fact, Blizzard's action RPG is being ported to a new platform, and a fan-favorite class from Diab&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/diablo-5-first-details-blizzcon-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/diablo_v_logo_jpg-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Diablo 5 Is Officially A Massive Shift For The Franchise
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Diablo has been one of Blizzard's most consistent franchises since 1997. From the first game, Diablo's grimdark universe has drawn fans in, leading directly to Diablo 2, widely regarded as one of the best dungeon crawlers of all time (if not the best&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/diablo-5-announced-release-date-blizzcon-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/diablo-v-teaser-_-the-return-0-33-screenshot-1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Blizzard Officially Announces Diablo 5 at BlizzCon 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's official: The next Diablo game is coming. At BlizzCon 2026's opening ceremony on Saturday, Blizzard Entertainment confirmed that it's currently developing Diablo 5, the next mainline entry in the nearly 30-year-old Diablo franchise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2253381/tv-shows-like-stuart-saves-the-universe/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/5-tv-shows-to-watch-if-you-like-stuart-fails-to-save-the-universe/l-intro-1788297635.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 TV Shows To Watch If You Like Stuart Fails To Save The Universe
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 TV Shows To Watch If You Like Stuart Fails To Save The Universe Static Media "The Big Bang Theory" was a pretty grounded sitcom.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2252651/users-prefer-amazfit-alternative-galaxy-watch-battery-life/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-affordable-galaxy-watch-alternative-offers-surprisingly-great-battery-life/what-users-like-about-the-amazfit-watch-1788878989.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Amazfit Smartwatches Offer Great Battery Life as Galaxy Watch Alternative
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Affordable Galaxy Watch Alternative Offers Surprisingly Great Battery Life</div>
+      
+      
+      <div class="summary">This Affordable Galaxy Watch Alternative Offers Surprisingly Great Battery Life Goodboy Picture Company/Getty Images Samsung makes a wide range of products, including smartphones, tablets, TVs, and even smartwatches.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/todays-wordle-answer-hints-1911-september-12-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/image-psd-17.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Today's Wordle Hints & Answer - September 12, 2026 (Puzzle #1911)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are multiple ways to reach today's Wordle answer, but there are just as many ways to get the solution wrong. There is an almost balanced mixture of pieces that create the puzzle, meaning it's hard to stumble upon the word you're looking for.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/video/golden-axe-the-cast-on-memes-and-voice-acting/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/carl-tart-danny-pudi.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Golden Axe: The Cast on Memes and Voice Acting
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Golden Axe brings Danny Pudi and Carl Tart into a world with decades of fan nostalgia behind it. The actors explain how they approached the 2026 animated series without losing sight of what the games mean to longtime players.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/strongest-martial-artists-in-anime-history-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2019/10/Eight-Gates-Might-Guy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Strongest Martial Artists in Anime History, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Martial arts anime blend intense physical mastery and deep philosophical combat systems developed over decades. Fighters earn recognition through immense discipline, raw power and refined technique gained during grueling training arcs.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/overwatch-new-hero-54-doctrine-blizzcon-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/_ow_s05_key-art_final.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Overwatch's Next Hero, Doctrine, Officially Revealed at BlizzCon 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Blizzard detailed what players can expect from Overwatch’s next season during the franchise’s BlizzCon 2026 opening ceremony segment. A new vampiric hero named Doctrine is coming to the game, as is the Grímsvötn map and the return of Dokiwatch cosmet&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/overwatch-hero-reworks-roadhog-sombra-blizzcon-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/6533761/roadhog.0.jpg?q=70&fit=crop&w=800&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Overwatch's Roadhog and Sombra Getting Game-Changing Reworks
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Overwatch's Most Divisive Heroes Are Getting Game-Changing Reworks</div>
+      
+      
+      <div class="summary">Over the past decade, only a handful of Overwatch heroes have divided the player base as much as Roadhog and Sombra. Roadhog's Chain Hook has been a massive source of frustration for players on the receiving end of it, as squishier Overwatch heroes f&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/overwatch-act-3-doctrine-blizzcon-2026-new-hero-details/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/doctrine-overwatch.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            BlizzCon 2026: The New Age Of Overwatch Is Here, Complete With Hero Reworks
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Like several other Blizzard games, Overwatch has gone through a few different iterations to get to where it is now. It originally launched in mid-2016 as one of the first new Blizzard IPs in ages, and saw a large degree of success through both casual&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/never-after-dark-the-years-best-haunted-house-movie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/never-after-dark_still1_copyright-signal181.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Horror Movie Never After Dark Does What The Conjuring Never Could
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Never After Dark is what I want out of a Conjuring movie then fail to ever get out of a Conjuring movie. Moeka Hoshi stars as Airi, a clairvoyant tasked with exorcising spirits who "haunt" homes and just need a nudge to the other side.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/underrated-hard-sci-fi-books-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/15.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Most Underrated Hard Sci-Fi Books, Ranked from Must-Read to Absolute Masterpiece
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Hard sci-fi movies are fun to watch, but there is only so much science that you can squeeze into two hours.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <span class="current">8</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/9.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

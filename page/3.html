@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-13 09:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>134 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>9 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/netflix-fall-of-house-usher-edgar-allan-poe-greatest-horror/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/402310e1-50c6-4a1a-b2fc-69874f838f86.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix’s 8-Part Edgar Allan Poe Show Is 1 Of The Greatest Horror Adaptations Of The Century
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix is the streaming home of an incredible Edgar Allan Poe adaptation. Unlike most other direct horror adaptations, though, the one in question does not merely present its take on one singular story or book.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/fantasy-anime-no-weak-arcs-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/laios-and-his-party-escape-the-red-dragon-in-delicious-in-dungeon.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Fantasy Anime With No Weak Arcs
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are plenty of fantasy anime that are perfect from start to end, but many of them are episodic in nature, like Mushishi, and can’t be taken into consideration while discussing strong arcs.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-fun-fantasy-shows-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/12/nadja.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Most Fun Fantasy Shows of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fantasy television has been one of the most popular genres in the world for a long time, but it really hit its peak in the '90s and 2000s, with high-concept supernatural fantasies and elaborate world-building, covering every subgenre from heartwarmin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2253285/china-air-conditioning-vest-during-heatwave/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/say-goodbye-to-neckfans-china-rolls-out-air-conditioning-vests-for-workers-during-heatwave/l-intro-1788898792.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Say Goodbye To Neckfans: China Rolls Out Air Conditioning Vests For Workers During Heatwave
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Say Goodbye To Neckfans: China Rolls Out Air Conditioning Vests For Workers During Heatwave Stella_e/Getty Images Being outside, let alone working outside, in intense heat can lead to heat stroke and heat exhaustion.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/long-action-rpgs-to-invest-in/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/path-of-exile-return-of-the-ancients-key-art-no-logo-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Long Action RPGs You Can Play for Months
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Action role-playing games (RPGs) make up some of the most popular video games on the market. Games like Bloodborne, Elden Ring, The Witcher 3: Wild Hunt, and many Final Fantasy installments all fall into this genre, just to name a few. One trait that&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/raunchy-adult-comedy-streaming-free-date-night.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/Secretary-Maggie-Gyllenhaal.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dandadan Creator Yukinobu Tatsu Draws New Art for Martial Arts Manga Bouryoku Banzai
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Raunchy R-Rated Adult Comedy Perfect For Date Night Is Streaming For Free</div>
+      
+      
+      <div class="summary">By Jonathan Klotz | Published 20 seconds ago When 50 Shades Of Grey hit eReaders nationwide, it was pointed out that the BDSM-themed romance was Twilight fan fiction.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2253165/budget-phone-cases-equivalent-to-otterbox/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/are-there-any-budget-phone-case-brands-equivalent-to-otterbox/l-intro-1788893825.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Are There Any Budget Phone Case Brands Equivalent To OtterBox?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Are There Any Budget Phone Case Brands Equivalent To OtterBox? II.studio/Shutterstock We may receive a commission on purchases made from links. OtterBox is one of the most durable phone case brands on the market.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/stranger-things-new-episodes-season-2-tales-from-85-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2025/11/talesfrom85-firslook_001-final.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stranger Things: Tales from '85 Season 2 Returns Next Week with 10 Episodes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Stranger Things Officially Returns Next Week With 10 New Episodes</div>
+      
+      
+      <div class="summary">Netflix's Stranger Things spinoff Stranger Things: Tales from ’85 will return much sooner than many fans may have guessed. The show’s second season drops on Sept. 17, just a few months after the first season, which aired on April 23.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/diablo-4-nintendo-switch-2-port-impressions/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/diablo-4-switch-2-gameplay.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Diablo 4 On Switch 2: A Very Impressive Port That Supports Mouse Controls
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While Diablo 5 is still on the far-off horizon, a Nintendo Switch 2 port of Diablo 4 is arriving much more imminently. Titled the Diablo 4: Age of Hatred Collection, it bundles the base game with its expansions Vessel of Hatred and Lord of Hatred for&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-k-dramas-every-episode-masterpiece/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/teach-you-a-lesson-netflix-k-drama-1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Netflix K-Dramas Where Every Episode Is a Masterpiece
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With Netflix rolling out K-dramas left and right, the list of their best original works is expanding. Netflix has already released over a dozen K-dramas just this year, including other stellar original content in the Korean language, from the spy act&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/brandon-sanderson-book-recommendations/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/dragonsbane-the-name-of-the-wind-the-black-prism-3-books-7d18ud.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Near-Perfect Fantasy Books Recommended by Brandon Sanderson
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Brandon Sanderson is such a prolific author that just getting through his bibliography could keep a reader busy for years. But Sanderson also teaches creative writing and has lectured on the works of J.R.R. Tolkien, often sharing his thoughts on the &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/district-9-sci-fi-classic-streaming-free-pluto-tv-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/district-9.jpg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            District 9 Is Streaming for Free on Tubi in the US
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: One of the 21st Century’s Most Stunning Sci-Fi Movies Is Officially Streaming for Free</div>
+      
+      
+      <div class="summary">It has been a solid summer for original sci-fi, although no movie has truly broken out at the box office.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/gal-gadot-the-runner-loses-no-1-drawn-together-prime-video-global-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/08/gal-gadot.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gal Gadot's 'The Runner' Loses Prime Video No. 1 Spot to 'Drawn Together'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Gal Gadot’s New 84-Minute Action Movie Gets Dethroned as the No. 1 Movie on Streaming</div>
+      
+      
+      <div class="summary">September kicked off with Gal Gadot's The Runner, which turned into an instant streaming hit. However, it didn't spend too much time as the No. 1 film on Prime Video.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-wars-revenge-of-the-sith-best-space-battle-in-sci-fi/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/anakin-obi-wan-ships.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Wars: Episode III - Revenge of the Sith's Battle of Coruscant Is Sci-Fi's Greatest Space Battle
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 21 Years Later, Disney+'s 140-Minute Space Opera Still Has Sci-Fi’s Greatest Space Battle</div>
+      
+      
+      <div class="summary">The Star Wars franchise has included a long list of iconic space battles. The example that will immediately jump to mind for most fans is the Battle of Yavin from Star Wars: Episode IV - A New Hope, in which Luke Skywalker destroyed the first Death S&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2253096/best-mini-gadgets-belkin/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-mini-gadgets-from-belkin-that-are-small-enough-to-take-anywhere/l-intro-1788892191.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Mini Gadgets From Belkin That Are Small Enough To Take Anywhere
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Mini Gadgets From Belkin That Are Small Enough To Take Anywhere Hansonl/Shutterstock We may receive a commission on purchases made from links.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/every-spider-man-girlfriend-love-interest-comics/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/spider-man-gwen-stacy-and-mary-jane-watson.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spider-Man: All 25 Peter Parker Love Interests In The Comics
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There's no doubt that Spider-Man is one of Marvel's most beloved superheroes, but some of his defining traits have nothing to do with his heroism, since he has terrible luck and a chaotic love life.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-forbidden-love-k-dramas/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/ju-ji-hoon-jung-yu-mi-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best K-Dramas About Forbidden Love
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Forbidden love has always been one of the most compelling forces in storytelling, and K-dramas take that particular trope to another level.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/broadchurch-david-tennant-olivia-colman-best-detective-duo/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/10/broadchurch-1.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            David Tennant and Olivia Colman's 'Broadchurch' Remains a Top Detective Duo Thriller
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 9 Years Later, David Tennant's Thriller Masterpiece Still Has the Greatest Detective Duo</div>
+      
+      
+      <div class="summary">The greatest modern thriller series tend to strike a careful balance, leaning into the formulaic nature of the category while also infusing details that help them stand out.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/daniel-day-lewis-anemone-streaming-hit-hbo-max-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/10/thumb_acc9a728-f7bf-41cf-a56d-1b497828a1a1.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Daniel Day-Lewis' 'Anemone' Becomes One of HBO Max's Most-Streamed Movies
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Daniel Day-Lewis’ First Movie in 8 Years Officially Gets a Second Chance on HBO Max</div>
+      
+      
+      <div class="summary">Daniel Day-Lewis is undeniably one of the greatest actors to ever grace the screen. The only male actor in Academy Awards history to win three Best Actor Oscars — My Left Foot (1989), There Will Be Blood (2007), and Lincoln (2012) — Day-Lewis has a l&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/most-universally-loved-anime-series-ever-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/unova-hat-ash-pikachu-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Universally Loved Anime Series of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anime is such an exciting storytelling medium because it often feels like it can tackle stories and themes that would be impossible anywhere else. It's an incredible feeling when a niche property connects viscerally with an audience and prompts a per&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/bruce-willis-sci-fi-cult-classic-the-fifth-element-leaves-streaming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/10/adobe-express-file-2025-10-30t165216-190.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Fifth Element Leaves Netflix on Sept. 30, Available for Rental on Other Platforms
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Bruce Willis' $263M Sci-Fi Cult Classic Leaves Streaming Next Month</div>
+      
+      
+      <div class="summary">For the more youthful viewers in the back, what if I told you Bruce Willis made a fantasy sci-fi film thirty years ago that also featured a list of Hollywood talent that included Gary Oldman, Milla Jovovich, Ian Holm and Chris Tucker ...</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/fire-country-season-5-gabriela-replacement-angel-no-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/stephanie-arcila-as-gabriela-perez-in-fire-country-season-3-episode-15.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Snoopy's 1972 Peanuts Strip Has Him Reading War and Peace One Word a Day, Finishing in 3581
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Fire Country Shatters Hopes For Gabriela’s Return In Season 5</div>
+      
+      
+      <div class="summary">Fire Country season 5’s trailer introduces a development that makes it extremely unlikely for Gabriela to return.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/peanuts-snoopy-war-peace-running-joke/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/snoopy-reads-a-comic-on-top-of-his-dog-house-in-peanuts-art.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Peanuts Fans Have A Genius Gag Waiting For Them In 1555 Years
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fifty-four years ago, Snoopy started his most ambitious Peanuts adventure, which will take him a millennium and a half to finish. Snoopy’s most celebrated persona, the World War I Flying Ace, takes flight atop his red doghouse to engage the villainou&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/will-smith-charlize-theron-superhero-hancock-streaming-free-pluto-tv-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/08/hancock.jpeg?q=70&fit=contain&w=750&h=422&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Hancock' With Will Smith Added to Pluto TV's Free Streaming Library
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Breaking Bad' Creator's Cult Classic Superhero Epic Officially Soars Onto Free Streaming</div>
+      
+      
+      <div class="summary">The year 2008 is important in the history of superhero movies because it produced two industry-altering hits — Marvel's Iron Man and Christopher Nolan's The Dark Knight. Both movies changed the way Hollywood makes tentpoles, and their influence can b&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/zelda-ocarina-time-remake-new-dialogue-hyrule-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/zelda-ocarina-of-time-remake-child-link-2.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zelda: Ocarina of Time’s New Dialogue Could Finally Explain Hyrule’s Dark History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of the noted changes in the remake of The Legend of Zelda: Ocarina of Time is the addition of new dialogue.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2252854/amd-gpu-equivalent-to-playstation-5/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/which-amd-gpu-is-equivalent-to-the-playstation-5/l-intro-1788884909.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Which AMD GPU Is Equivalent To The PlayStation 5?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Which AMD GPU Is Equivalent To The PlayStation 5? lilgrapher/Shutterstock We may receive a commission on purchases made from links. Consoles get a bad rep for being underpowered.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/ted-lasso-jamie-tartt-ending-rewrite-season-4/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/ted-lasso-coaches.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ted Lasso Just Rewrote A Beloved Character's Ending
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ted Lasso season 4 features enough returning characters that it almost feels like its old self. The show returned despite its planned season 3 ending, and the characters Beard, Rebecca, Keeley, Roy, Higgins, Michelle, and, of course, Ted, returned al&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/game-of-thrones-streaming-success-hbo-max-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/game-of-thrones-kit-harington-1.jpg?q=49&fit=contain&w=2500&h=1250&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Game of Thrones' Remains One of HBO's Most-Watched Shows in 25+ Countries
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Biggest Fantasy Series Ever Made Is Officially Still a #1 Global Streaming Smash</div>
+      
+      
+      <div class="summary">2026 has been a great year for fans of fantasy TV shows, with HBO dropping two big-budget series that dominated watchlists for months.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/strongest-armor-sets-in-anime-history-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/izuku-midoriya-3840x2160-25013-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Strongest Armor Sets in Anime History, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Considering just how much effort goes into shaping an anime's power system, it's not surprising that armor sets can be as effective as lethal weaponry.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/practical-magic-2-movie-book-changes-differences/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/sally-and-gillian-making-margaritas-in-practical-magic-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pierce Brosnan Comments on James Bond Casting Search, Says He's 'Just a Member of the Audience'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Practical Magic 2's 8 Biggest Changes To The Book</div>
+      
+      
+      <div class="summary">Warning! This Post Contains SPOILERS for Practical Magic 2Practical Magic 2 makes some major changes to Alice Hoffman's The Book of Magic, reshaping the novel's sprawling family story into a continuation of the 1998 movie.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <span class="current">3</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/4.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

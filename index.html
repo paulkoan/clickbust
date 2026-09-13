@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-13 09:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>134 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>9 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/halo-2-project-cartogropher-available-now/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/halo-2-promotional-cover-art.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Halo 2: Project Cartographer Is Available Right Now
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There's no doubt that the Halo franchise has been rejuvenated by the release of Campaign Evolved, which brought the first game back in an entirely new light. That was restricted to single-player, and a lot of those who picked it up at launch have now&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/last-seen-apple-tv-streaming-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/last-seen-patrick-brammall.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV's 'Last Seen' Becomes Streaming Hit with 86% RT Score
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV's New Hit Thriller Is Officially Taking Over the World</div>
+      
+      
+      <div class="summary">Fall is when television gets good, as broadcast networks finally bring back fan-favorite shows and debut new ones. And while broadcast might not be what it used to be, streaming has stepped in to fill that gap.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tim-burton-beetlejuice-streaming-hit-hbo-max-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/09/beetlejuice.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Beetlejuice Becomes One of Most-Streamed Movies on HBO Max
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tim Burton's Fantasy Masterpiece Is Officially a Monster Hit on Streaming</div>
+      
+      
+      <div class="summary">Legacy sequels have been more popular than ever in the past few years, like the cinema-saving Top Gun: Maverick, headlined by Tom Cruise. Two years ago, one of the most hotly anticipated legacy sequels made its box office debut, haunting up a frighte&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-action-shows-free-online-streaming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/860689-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Near-Perfect Action Shows That Are Streaming Online for Free
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A good action show can turn anyone’s day around. Kinetic choreography in a series like Reacher or Daredevil informs the motivations of its characters while injecting excitement between quieter moments.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-hunting-wives-season-2-netflix-november-2026-premiere-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/the-hunting-wives.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'The Hunting Wives' Season 2 Premieres November 26
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Officially Locks in Return for Its Spicy Crime Thriller</div>
+      
+      
+      <div class="summary">November might be several weeks away, but Netflix has already started building its release schedule for the month.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/reacher-fans-wont-have-to-wait-long-for-his-next-adventure/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/lee-child-chain-reaction.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Jack Reacher Novel 'Chain Reaction' Releases Next Month
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video's Reacher Is Officially Returning Next Month After a Stellar Season 4</div>
+      
+      
+      <div class="summary">If there’s one thing Reacher fans can count on, it’s that Jack Reacher is never gone for very long. The Prime Video series has turned Lee Child’s wandering ex-military cop into one of TV’s most reliably entertaining action heroes.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/billy-bob-thornton-a-simple-plan-streaming-free-pluto-tv-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/05/brent-briscoe-bill-paxton-and-billy-bob-thornton-in-a-simple-plan-1.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Billy Bob Thornton's 'A Simple Plan' Is Streaming for Free
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Landman’ Star Billy Bob Thornton’s Twisted Crime Thriller Is Officially Streaming for Free</div>
+      
+      
+      <div class="summary">If you thought that you'd seen Billy Bob Thornton wreaking havoc in Minnesota with a funky hairdo in the first season of Fargo, you're overlooking his performance in a cult classic movie that's currently streaming for free.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-wars-zero-company-jedi-prequel-second-sister/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/cameron-monaghan-as-cal-kestis-in-star-wars-jedi-survivor.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Wars Jedi: Fallen Order Just Got An Official Prequel
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Star Wars Jedi: Fallen Order has earned its status as one of the best Star Wars games of all time. It’s a beautiful cocktail of gameplay genres, mixing Soulslike, action-adventure-platformer, and Metroidvania flavors, and it regales Star Wars fans wi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-expanse-season-1-different-genre-book/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/miller-avasarala-and-holden-on-a-ship-in-the-expanse.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Expanse Season 1 Is A Different Genre To The Book It's Based On
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Expanse's debut season has previously been described as 'Game of Thrones in space,' and while you'll be disappointed if you're expecting dragons and scenes you wouldn't want to watch with your parents in the room, there's logic behind the compari&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/a-knight-of-the-seven-kingdoms-winter-2026-tcg-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/sharedimages/2026/02/a-knight-of-the-seven-kingdoms-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            A Knight of the Seven Kingdoms Trading Card Set Arrives in Winter 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: A Knight Of The Seven Kingdoms Officially Returns In Winter 2026 With New Set</div>
+      
+      
+      <div class="summary">Earlier this year, it was confirmed that A Knight of the Seven Kingdoms officially wrapped up filming its second season, putting Dunk and Egg's highly anticipated return firmly on track for 2027.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/star-wars-movie-next-setting" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_thumbnail/star-wars-movie-setting.jpg?imgeng=/w_auto,280 280w" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Wars: Starfighter Confirms Historic Setting with No Government or Order
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Wars Confirms Historic Setting for Its Next Movie</div>
+      
+      
+      <div class="summary">Star Wars confirmed the historic setting for its next movie, and the story will unfold on a time and place never before seen in any Star Wars media. Star Wars has defined itself as much by its worlds as by its characters.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-dark-time-travel-kudos-for-respecting-audience/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/7095bd4a-af92-4c9b-a796-cd0b9226c617.jpeg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Dark: A 26-Episode Time Travel Masterpiece That Respects Viewers' Intelligence
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s 26-Episode Time Travel Masterpiece Deserves Kudos For Respecting Viewers’ Intelligence</div>
+      
+      
+      <div class="summary">Most sci-fi shows, especially the ones that dabble with time travel, often dumb their plots down. Instead of embracing the scintillating complexities and embracing the paradoxes of the subgenre, many time travel sci-fi shows shy away from being layer&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-online-know-thy-enemy-tfo/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/mixcollage-01-sep-2026-04-17-pm-72.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek Online: Know Thy Enemy Operation Officially Announced
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek: Know Thy Enemy Officially Announced</div>
+      
+      
+      <div class="summary">Star Trek's 60th anniversary has been full of surprises so far, with several incredible announcements to celebrate the occasion. Star Trek Day was particularly eventful, with fans getting an unexpected Spock crossover thanks to the new Rediscovered u&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-stealing-cars/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/jason_and_lucia_11-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6 Adds Tiered Car Security System That Changes Vehicle Theft
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: GTA 6 Is About to Totally Reinvent One of the Best Experiences in Video Games</div>
+      
+      
+      <div class="summary">It’s quite literally the name of the game: Rockstar’s Grand Theft Auto series is all about stealing cars. And the latest installment of the franchise, GTA 6, seems like it’s about to revolutionize one of the most thrilling experiences players can hav&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/twin-peaks-streaming-free-pluto-tv/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/23935756/46__1247_.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Twin Peaks Is Now Streaming Free on Pluto TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 35 Years Later, the Greatest Detective Thriller Series of All Time Is Officially Free on Streaming</div>
+      
+      
+      <div class="summary">Fall makes for a great setting. There’s something special about the thick foliage and heavy clouds as the backdrop for a mercurial town, especially when a story is set within the framework of genre.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/strange-things-tales-85-season-2-release-date-1-week/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/16386103/ST3_Production_Still_4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stranger Things: Tales from '85 Season 2 Premieres on Netflix Sept. 17
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Strange Things' Officially Returns to Netflix This Week with 10 New Episodes</div>
+      
+      
+      <div class="summary">When Stranger Things premiered in 2016, it wasn't the Demogorgan we stuck around for (even though it was an original, unique-looking monster). Nor was it the story (even if it was superbly crafted).</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-studios-she-hulk-plot-hole" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/she-hulk-plot.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            She-Hulk's Smart Hulk Plot Hole Explained by Bruce Banner's Return in Spider-Man: Brand New Day
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Studios Just Introduced She-Hulk's First Big Plot Hole</div>
+      
+      
+      <div class="summary">She-Hulk: Attorney at Law brought Mark Ruffalo's Bruce Banner back into action on Disney+ for the first time and established a rule that has now become the show's first big plot hole.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/dc-studios-superman-dcu-hero-faster" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/photos/haldcu1.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DC Studios' Lanterns Reveals Hal Jordan Can Fly Nearly as Fast as Superman
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: DC Studios Unleashes New DCU Hero Who's Nearly Faster Than Superman</div>
+      
+      
+      <div class="summary">Superman's speed impressed comic book movie fans when he debuted in his 2025 solo film; the son of Krypton quickly established himself as the fastest hero in James Gunn's DC Universe. However, DC Studios unveiled another hero who can almost keep pace&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/troy-brad-pitt-odyssey-apple-tv-streaming-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/06/Troy-(2004).jpg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brad Pitt's 2004 Film Troy Is a Worthy Companion to Christopher Nolan's The Odyssey
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brad Pitt’s Ancient Greek Epic Is the Perfect ‘Odyssey’ Replacement</div>
+      
+      
+      <div class="summary">Following the massive success of Christopher Nolan's blockbuster epic The Odyssey, audience interest in the myths and legends of ancient Greece has skyrocketed.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/diablo-4-free-twitch-drops-blizzcon-48-hours/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/sharedimages/2025/09/diablo-4-press-image-1.jpg?q=49&fit=crop&w=480&h=270&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Diablo 4 BlizzCon Twitch Drops Available Until September 15
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Diablo 4 Free Download Officially Available Until September 15</div>
+      
+      
+      <div class="summary">Blizzcon 2026 is now well underway, and all sorts of exciting announcements are going on around some of the developer's biggest and most successful titles.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/sally-brown-best-line-peanuts/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/sally-brown-a-charlie-brown-thanksgiving-1973.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            63 Years Later, the Best 'Peanuts' Sally Quote Is Still an Iconic Comic Strip Line
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Charlie Brown is one of the most consistently unlucky characters in Western fiction. The degree to which life and the universe contort to dump misfortune directly on his head is the beating heart at the core of Charles Schulz's Peanuts.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/crunchyroll-new-shonen-anime-psyren-masterpiece/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/psyren-anime-visual-featuring-ageha-yoshina.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Psyren Anime Adaptation Joins Crunchyroll's Fall 2026 Lineup
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Crunchyroll’s Next Anime Could Give Shonen Fans a New Masterpiece</div>
+      
+      
+      <div class="summary">In an industry currently dominated by generic isekai titles and long-running series in decline, shonen lovers are clamoring for a new flagship series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hope-rotten-tomatoes-audience-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/jon-bernthal-as-braxton-looking-at-his-reflection-in-the-accountant-2.jpg?q=49&fit=crop&w=292&h=384&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Na Hong-jin's Sci-Fi Thriller Hope Earns 79% Rotten Tomatoes Score and 80% Audience Rating
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Unhinged' Sci-Fi Creature Feature Debuts to High Praise from Both Critics and Audiences</div>
+      
+      
+      <div class="summary">One of the year's wildest new releases has arrived in U.S. theaters, and it has the critics and audiences in agreement. While some viewers just aren't sure what to make of it, the reception has been more positive, with some reviews giving the movie p&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2252655/what-to-try-if-google-drive-upload-is-slow/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/if-your-google-drive-upload-is-too-slow-try-this/l-intro-1788876015.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            If Your Google Drive Upload Is Too Slow, Try This
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">If Your Google Drive Upload Is Too Slow, Try This Stockinq/Shutterstock When it comes to the best free cloud storage services, Google Drive is easily one of the top options, and for good reason. It provides more free storage space than many competito&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/forgotten-sci-fi-anime-aged-well-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/katsumi-in-a-battlefield-from-the-silent-mobius-anime.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Forgotten Sci-Fi Anime That Have Aged Like Fine Wine
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">From artificial intelligence and the decline of civilization to the psychological cost of technological warfare, these forgotten gems prove that great science fiction can only get better with age. These anime may not be as widely remembered as the ge&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/alan-ritchson-runner-movie-rotten-tomatoes-audience-score-record/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/alan-ritchson-looks-emotional-as-he-looks-out-the-sea-in-runner.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Runner Sets Alan Ritchson's Third-Best Rotten Tomatoes Audience Score at 90%
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Alan Ritchson's New Action-Packed Thriller Officially Sets All-Time Rotten Tomatoes Audience Record</div>
+      
+      
+      <div class="summary">Alan Ritchson's new action thriller proves to be one of his career best. The Reacher icon recently teamed up with Owen Wilson in the new movie, Runner. The unlikely duo must deliver a liver that would save a sick girl, only for the cartel to go after&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-best-sci-fi-performance-bodies-kyle-soller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/bodies-netflix.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Kyle Soller's Performance in Netflix's Bodies Showcases His Range Beyond Star Trek: Strange New Worlds
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s 8-Part Sci-Fi Sleeper Hit Is Anchored by a Masterclass Performance</div>
+      
+      
+      <div class="summary">Andor may be over, but Kyle Soller's performance as Syril Karn remains one of the show's strangest and most memorable.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/hearthstone-battlegrounds-blizzcon-2026-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/37_blackempire_keyart_16x9_final-1-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            BlizzCon 2026: What's Next For Hearthstone Battlegrounds
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">If you haven't been following along with BlizzCon this year, Hearthstone is about to enter uncharted territory.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-strange-new-worlds-captain-kirk-twist/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/sharedimages/2026/07/star-trek-strange-new-worlds-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Paul Wesley Teases Shocking Captain Kirk Twist in Star Trek: Strange New Worlds Final Season
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek: Strange New Worlds Star Addresses Final Season's Major Captain Kirk Twist</div>
+      
+      
+      <div class="summary">The current era of Star Trek will end with the upcoming fifth and final season of the Paramount+ series Strange New Worlds. Ahead of the Season 4 finale, series star Paul Wesley hinted that the next season will be much more "serious," including a maj&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/where-was-sugar-show-filmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/05/colin-farrell-as-john-sugar-in-a-scene-from-sugar-episode-6.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Where Was Sugar Filmed? All L.A. Shooting Locations Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Apple TV+ series Sugar uses real Los Angeles, California, filming locations to create the fictionalized version of Los Angeles in the genre-bending detective series.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    <span class="disabled">&laquo; Newer</span>
+  
+
+  
+    
+      <span class="current">1</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/2.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

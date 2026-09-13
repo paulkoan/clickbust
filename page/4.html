@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-13 09:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>134 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>9 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/star-trek-strange-new-worlds-season-4-cancel-paramount-akiva-goldsman/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/captain-pike-somber.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek EP Confirms Paramount+ Wanted To Cancel Strange New Worlds After Season 4
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Star Trek: Strange New Worlds executive producer and co-showrunner Akiva Goldsman confirms that Paramount+ nearly canceled the prequel series after season 4.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/scrubs-season-10-revival-prove-critics-wrong/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/ava-bunn-in-scrubs-2026.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ABC's Unicorn Series Proved Skeptics Wrong In Just 9 Episodes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Although skeptics were certain that one iconic ‘00s sitcom couldn’t pull off a 2026 revival, it took just nine episodes for the ABC show to prove them wrong. South Park’s 2026 name change proves that TV comedy shows can last decades provided they are&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/james-bond-movie-shortlist-casting-report-pierce-brosnan-prediction/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/pierce-brosnan-as-james-bond-as-he-holds-the-gun-and-observes.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pierce Brosnan Speculates On The James Bond Amid Reported 6-Actor Shortlist
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The hunt to certify the next James Bond has caught the attention of veteran actor Pierce Brosnan. After a five-year hiatus since Daniel Craig retired from the role, the casting selection for his successor is finally underway and has reached a turning&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/batman-set-photo-comics-easter-egg-motorcycle/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/batman-robert-pattinson.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Batman: Part II Set Photo Teases Big DC Comics Easter Egg
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It’s rather alarming how little we actually know about The Batman: Part II right now. For instance, even with its main cast confirmed by director Matt Reeves via GIFs on social media, it apparently hasn’t been officially confirmed what characters new&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-3ds-games-underrated/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/8467297/00000.00_00_39_05.Still001.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Near-Perfect Nintendo 3DS Games Nobody Played
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With the 3DS eShop closed, the system’s software library has already begun to feel like a relic. That’s a sad fate, considering how many hours of enjoyment it provided before Switch became the only Nintendo platform anyone wanted to talk about.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/slow-horses-new-james-bond-apple-stream-sept-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/jack-lowden-and-gary-oldman-in-slow-horses.jpg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Slow Horses Climbs Apple TV+ Charts Ahead of Season 6 Premiere
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: James Bond Favorite's 10/10 Spy Thriller Is Officially a Global Sensation Ahead of Its New Season</div>
+      
+      
+      <div class="summary">It’s not surprising that James Bond news tends to dominate the wider spy conversation, and this week was no different. Steven Knight, the Peaky Blinders creator hired to script Denis Villeneuve's 007 reboot for Amazon MGM, recently confirmed that a d&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/ridley-scott-kingdom-of-heaven-masterpiece-directors-cut/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/sharedimages/2024/05/kingdom-of-heaven-film-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ridley Scott's Kingdom of Heaven Director's Cut Improves Rotten Tomatoes Score to 72%
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ridley Scott's 39% RT War Movie Became a Hidden Gem Masterpiece With Its 189-Minute Director's Cut</div>
+      
+      
+      <div class="summary">Ridley Scott was on a critically acclaimed run in the early 2000s, releasing Gladiator (2000), Black Hawk Down (2001), and Matchstick Men (2003) in quick succession. The Alien director's streak ended with Kingdom of Heaven (2005). The historical acti&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/guy-ritchie-fountain-of-youth-streaming-success-apple-tv-250-days/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/01/mcdfoof_g2007-1.jpg?q=70&fit=contain&w=750&h=422&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Guy Ritchie's 'Fountain of Youth' Ranks in Apple TV+ Top 10 Most-Watched Movies
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Guy Ritchie’s ‘Indiana Jones’-Style Adventure Is Officially a 250-Day Streaming Megahit</div>
+      
+      
+      <div class="summary">Guy Ritchie has released several new projects in 2026, some successful and some underwhelming, but one of his most recent movies is finally getting its due on streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/mike-flanagan-carrie-prom-scene-change/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/carrie-series-prom.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mike Flanagan's Carrie TV Adaptation Will Change the Prom Scene
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video Is Completely Changing Stephen King's Most Famous Horror Scene 50 Years Later</div>
+      
+      
+      <div class="summary">Mike Flanagan's upcoming TV adaptation of Stephen King's Carrie is creating substantial buzz following the release of its latest trailer, and fans already know one major part of the story won't play out as expected.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/jon-bernthal-ben-affleck-accountant-action-sequel-returns-as-streaming-hit/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/04/the-accountant-2-320792-h-2025.jpeg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Accountant 2 Returns to Hulu's Top 10, Starring Jon Bernthal and Ben Affleck
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jon Bernthal's John Wick Meets Reacher Action Sequel Returns as a Streaming Hit</div>
+      
+      
+      <div class="summary">Jon Bernthal is back for more, on streaming, that is. This has been a banner year for the talented actor who made a name for himself as one of the key characters (Deputy Sheriff Shane Walsh) in the early days of The Walking Dead, and that momentum ha&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/slow-horses-apple-tv-spy-thriller-jack-lowden-james-bond/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/09/sh1-cropped.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jack Lowden's 'Slow Horses' Role Shows He'd Be a Great James Bond
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV's 97% RT Spy Thriller Officially Proves Its Star Never Needed James Bond</div>
+      
+      
+      <div class="summary">Recently, rumors have been swirling about who will be cast as the next James Bond. The iconic spy has been played by everyone from Sean Connery to Pierce Brosnan, and now that Daniel Craig has set aside his martini after 2021's No Time to Die, a repl&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/raunchy-90s-crime-thriller-streaming-free.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/Bound-1996-Jennifer-Tilly.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bound (1996) Now Streaming Free on Pluto TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Raunchy 90s Crime Thriller Streaming For Free Is The Type Of Movie They'll Never Make Again</div>
+      
+      
+      <div class="summary">By Jonathan Klotz | Published 7 seconds ago I don’t think I ever returned the Bound DVD to Blockbuster. My girlfriend and I rented it on a whim, one of those “we recognize the cast” pickups you made after 10 PM on a Friday.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2252717/hayden-christensen-jessica-alba-forgotten-movie-terrifying-concept/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/hayden-christensen-and-jessica-albas-forgotten-medical-thriller-has-a-truly-terrifying-concept/awake-was-both-wild-and-preposterous-but-it-did-manage-to-capture-moviegoers-attention-and-turn-a-profit-1788881060.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Awake (2007): Hayden Christensen and Jessica Alba Star in a Medical Thriller About a Man Paralyzed During Surgery
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Hayden Christensen And Jessica Alba's Forgotten Medical Thriller Has A Truly Terrifying Concept</div>
+      
+      
+      <div class="summary">Hayden Christensen And Jessica Alba's Forgotten Medical Thriller Has A Truly Terrifying Concept MGM Some movies make it their mission to make viewers (including Stephen King) physically uncomfortable.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/bruce-willis-time-travel-looper-streaming-starz-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/looper-2012-1.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rian Johnson's 'Looper' With Bruce Willis Added to Starz Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Bruce Willis' "Bravely Original" Sci-Fi Masterpiece Is Officially on Streaming</div>
+      
+      
+      <div class="summary">Even before he sent shockwaves across the Star Wars fandom with Star Wars: Episode VIII — The Last Jedi, director Rian Johnson had been deconstructing popular genres with uncommon intelligence. His first movie, the small-budget gem Brick, transported&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/classic-2000s-anime-series-aged-like-milk/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/kotonoha-stares.jpg?q=49&fit=contain&w=1800&h=900&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            School Days' Infamous 'Nice Boat' Meme Explained: 2007 Finale Pulled After Real-Life Murder
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 10 Classic 2000s Anime Series That Aged Like Milk</div>
+      
+      
+      <div class="summary">The 2000s anime boom produced as many genuine classics as it did shows chasing whatever trend happened to be selling that season, so harem tropes, shock-value endings and excessive fan service dominated far too much of that era's output.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-undoing-hbo-nicole-kidman-hugh-grant-psychological-thriller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/06/merlin_178844520_224b318e-9c92-4976-8097-91f614c78c21-superJumbo-(1)-1.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Susanne Bier's HBO Thriller 'The Undoing' With Nicole Kidman Still Holds Up
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO's 6-Part Psychological Thriller Is Aging Like a Fine Wine</div>
+      
+      
+      <div class="summary">Often, a project's success has a lot to do with who's at the helm. Director Susanne Bier, who hails from Denmark, is someone who never disappoints with her movies and television shows. She has brought some of the most exciting productions to our scre&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/warlord-chronicle-game-of-thrones-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/1920x1080-image-format-74.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bernard Cornwell's Warlord Chronicles Ranked Among Greatest Fantasy Book Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: King Arthur Meets 'Game of Thrones' in the "3rd Greatest" Fantasy Book Series Ever Written</div>
+      
+      
+      <div class="summary">A long, long time ago, I laid down A Dance with Dragons for the first time and thought, "I can't wait for the next book!" Since then, I've lost count of the number of fantasy books I've read to scratch that itch, and fantasy TV shows I've tried to re&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tom-hardy-sci-fi-movie-venom-streaming-success-disney-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/venom-tom-hardy-1.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Hardy's 'Venom' Becomes a Streaming Hit on Netflix in 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Hardy’s $856 Million Bonkers Sci-Fi Movie Is Officially the Streaming Sleeper Hit of 2026</div>
+      
+      
+      <div class="summary">Tom Hardy has only earned one Oscar nomination in his career for his work in The Revenant, but he’s carved out a name for himself as one of the most bankable action and sci-fi stars in Hollywood.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2253258/zbtlink-routers-backdoor-chinese-server-control/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/code-hidden-in-white-labeled-routers-gives-chinese-servers-full-control/l-intro-1788897437.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Code Hidden In 'White-Labeled' Routers Gives Chinese Servers Full Control
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Code Hidden In 'White-Labeled' Routers Gives Chinese Servers Full Control T. Schneider/Shutterstock The last few years have seen Western legislators repeatedly push back against Chinese apps and devices, citing national security concerns.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-fantasy-anime-like-mushoku-tensei/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/01/ryoma-in-by-the-grace-of-the-gods.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            By the Grace of the Gods: A Gentler Isekai for Mushoku Tensei Fans
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 10 Best Fantasy Anime Like Mushoku Tensei</div>
+      
+      
+      <div class="summary">One of the more popular anime that still flies under the radar is Mushoku Tensei. People have fallen in love with the series for its incredible world building, and its willingness to showcase a flawed protagonist.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/brendan-fraser-mummy-sequel-character-first-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/sharedimages/2026/06/yhisvvcum7qxzlft6hw2wlf5ajy.jpg?q=70&fit=contain&w=480&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Oded Fehr Confirms Ardeth Bay Return in The Mummy 4 (2027)
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brendan Fraser’s Mummy Sequel Reveals First Look at Returning Hero</div>
+      
+      
+      <div class="summary">Audiences have been given yet another taste of Brendan Fraser's upcoming sequel to The Mummy. The latest entry into the long-running adventure movie franchise has been scant on details since its original reveal; however, fans can rest easy knowing th&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/cbs-cupertino-evil-reunion/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/mike-colter-as-david-acosta-katja-herbers-as-kristen-bouchard-and-aasif-mandvi-as-ben-shakir-on-evil.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mike Colter Reunites with Evil Creators in New CBS Legal Drama Cupertino
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: CBS' New Legal Drama Sets a Major Reunion After Canceled Paramount+ Supernatural Drama With 96% RT</div>
+      
+      
+      <div class="summary">CBS is setting the scene for a reunion on its newest legal drama. After Paramount+ canceled Evil, a reunion is coming to Cupertino. Evil creators Robert and Michelle King have a new series coming to the Eye network this fall, Cupertino.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/vermilion-mask-anime-director-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/the-vermilion-mask-_-official-trailer-2-_-crunchyroll-0-8-screenshot.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Mini Belkin Gadgets for On-the-Go Use: Power Banks, Mics, and More
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Blue Lock Director Reveals Why Crunchyroll’s New Action Series Goes Old-School</div>
+      
+      
+      <div class="summary">The Mask of the War God. The Spider Mask. The Chameleon Mask. The Cat Mask. The Warrior Mask. Each grants its wearer a different supernatural ability. Sometimes, they function like playful Mario-style power-ups. Other times, the overwhelming power in&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/practical-magic-fantasy-streaming-hit-hbo-sept-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/practical-magic-streaming-success-disney.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Practical Magic Tops HBO Max Charts as Sequel Opens in Theaters
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Cult Classic 104-Minute Dark Fantasy Becomes Streaming Hit as Long-Awaited Sequel Hits Theaters</div>
+      
+      
+      <div class="summary">While plenty of genres have their share of overlooked gems, dark fantasy, in particular, has had an uneasy relationship with the box office.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/best-peanuts-comic-strip-quotes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/peanuts-charlie-brown-snoopy-lucy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Perfect 'Peanuts' Quotes That Prove It’s the Greatest Comic Strip in History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are a handful of comic strips that could be considered the greatest in history. Maybe you're a big fan of Calvin and Hobbes or The Far Side, two iconic series that continue to resonate years later.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/kevin-costner-western-horizon-an-american-saga-chapter-1-streaming-hbo-max-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/06/horizon-1-poster.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Kevin Costner's 'Horizon: An American Saga - Chapter 1' Now Streaming on HBO Max
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Kevin Costner's 'Yellowstone' Replacement Officially Rides Onto HBO Max</div>
+      
+      
+      <div class="summary">Kevin Costner is an Oscar-winning filmmaker, but in recent years, it’s his role as John Dutton in Taylor Sheridan’s Yellowstone that has defined his career.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/westworld-brandon-sanderson-grimdark-dystopian-masterpiece/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/westworld_ecuhxv.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brandon Sanderson Meets Grimdark In Westworld: A 4-Season Dystopian Masterpiece
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One masterpiece dystopian TV show feels like the perfect combination of Brandon Sanderson's narrative style and grimdark elements. Sanderson is one of the biggest-name modern writers. The Cosmere is such a popular book universe that Apple TV picked u&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2253011/should-you-enable-fast-startup-windows-pc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/is-it-better-to-enable-or-disable-fast-startup-on-your-pc/l-intro-1788888919.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Is It Better To Enable Or Disable Fast Startup On Your PC?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Is It Better To Enable Or Disable Fast Startup On Your PC? Ham patipak/Shutterstock When someone mentions fast startup, they sometimes mix it up with fast boot, which shares a similar name but does completely different things.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/supergirl-movie-2026-easter-eggs-dc-references/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/03/supergirl-movie-poster-dc-studios.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Supergirl: Over 50 Easter Eggs And DC References
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! This post contains SPOILERS for Supergirl (2026)James Gunn's DC Universe continues to expand with Supergirl, the second movie in the brand-new cinematic universe starring Milly Alcock as Kara Zor-El and Eve Ridley as young Ruthye Marye Knoll&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-furious-streaming-starz-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/the-furious-xie-miao.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Kenji Tanigaki's Martial Arts Movie 'The Shadow' (2026) with 98% RT Score Moves to New Streaming Platform
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Best-Reviewed Action Movie of 2026 Officially Moves to a New Streaming Platform</div>
+      
+      
+      <div class="summary">One of the most acclaimed action movies of the year; in fact, one of the most acclaimed movies of the year, period, is about to get easier to access.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <span class="current">4</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/5.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

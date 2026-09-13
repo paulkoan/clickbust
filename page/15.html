@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-13 09:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>134 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>9 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/kyle-chandler-lanterns-super-8-sci-fi-streaming-free-pluto-tv-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/preston-zack-mills-holds-up-super-8-reel-to-show-deputy-jack-lamb-kyle-chandler-super-8.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Kyle Chandler's 'Super 8' Is Now Streaming Free on Pluto TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Kyle Chandler's 'E.T.' Replacement Sci-Fi Hit Is Officially Streaming Free</div>
+      
+      
+      <div class="summary">Kyle Chandler, who first rose to fame with the 1996 CBS series Early Edition, is capturing viewer attention again with his unconventional turn as Hal Jordan in Lanterns.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-studios-threequel-movie-announce" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_thumbnail/marvel-studios-threequel.jpg?imgeng=/w_auto,280 280w" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Studios Announces Black Panther 3 as 9th Threequel Movie
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Studios Officially Announces Its 9th Threequel Movie</div>
+      
+      
+      <div class="summary">The MCU's ninth threequel movie has been added to the Phase 7 slate for release after Avengers: Secret Wars, but what others could follow in its footsteps? While various rumors and theories have set expectations for a full MCU reboot after December 2&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hbo-sopranos-season-6-cristin-milioti-episode-steve-buscemi/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/11/cristin-milioti-the-sopranos-1.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cristin Milioti Appeared in 'The Sopranos' Episode 'Mr. & Mrs. John Sacrimoni Request...' 20 Years Ago
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO's Underrated 'Sopranos' Episode Officially Put This 'Penguin' Star on the Map 20 Years Ago</div>
+      
+      
+      <div class="summary">The big takeaway from The Penguin series was not the titular protagonist, but instead the character's criminal arch-rival, Sofia Falcone, played by Cristin Milioti. While she has been consistently exceptional, Milioti finally got the praise she deser&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/george-rr-martin-favorite-sci-fi-show-returning/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/the-expanse-osiris-reborn-characters.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Expanse: Osiris Reborn Video Game Announced for Spring 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: George R.R. Martin's Favorite Cancelled Sc-Fi Series Is Officially Returning As A Video Game</div>
+      
+      
+      <div class="summary">When it comes to the incredible high fantasy world that George R.R. Martin created with the publication of the A Song of Ice and Fire franchise, it is no wonder that many of us are interested in the types of things that may have inspired his work.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/a-fistful-of-dollars-clint-eastwood-free-to-stream/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/screen-shot-2026-09-11-at-10-20-44-am.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Clint Eastwood's 'A Fistful of Dollars' Now Free to Stream on YouTube
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 62 Years Later, Clint Eastwood's Genre-Redefining Western Is Officially Free on Streaming</div>
+      
+      
+      <div class="summary">There was a time when Westerns were fairly straightforward movies. The white-hat-wearing good guys did battle with the black-hat-wearing bad guys and the white hats won in the end.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/superman-new-kryptonite-rules/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/superman-kryptonite-infection.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DC Explains Rules For Brand New Kryptonite Introduced To Superman Lore
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Since the start of the Kingdom of Zod storyline, Superman's band of friends and allies have found themselves literally plagued with a new variant of Kryptonite threatening Earth.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ted-lasso-season-4-episode-6-rewrites-michelle-controversial-storyline/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/ted-lasso-season-4-03.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Ted Lasso' Season 4 Officially Rewrites the Show's Most Controversial Storyline
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's note: The below contains spoilers for Ted Lasso Season 4 Episode 6. Ted Lasso Season 4 is taking the beloved Apple TV series in a different direction with a focus on the journey of AFC Richmond's women's team.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/why-robin-quit-batman-lore/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/batman-from-identity-crisis-next-to-jason-todd-and-tim-drake.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why Each Version Of Robin Quit Working With Batman In DC Lore
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Batman has arguably the most famous hero sidekick in comic book history, Robin. Their dynamic, encompassing both a mentor-student relationship and an adoptive father-son bond, has developed some of the fans' favorite stories over the years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/x-men-most-underrated-heroes-powers/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/marrow-and-rockslide-from-x-men-featured-image.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Underrated X-Men Who'd Be the Most Powerful Member of Any Other Team
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The X-Men have introduced countless memorable mutants who are capable of overwhelming their opponents thanks to the power they possess.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hbo-watchmen-miniseries-broke-formula/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/08/regina-king-watchmen-poster.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO's 'Watchmen' Miniseries Became a Critics' Favorite by Breaking the Formula
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO’s Near-Perfect 9-Episode Miniseries Became the Critics' Favorite When It Broke From the Formula</div>
+      
+      
+      <div class="summary">There are certain IPs that you should only tackle if you're absolutely confident that what you deliver will be nothing less than a masterpiece. Watchmen is one of those.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/dont-move-killer-spider-movie-brings-a-gigantic-arachnid-to-the-big-screen-to-terrorize-churchgoers" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/Move_4.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Don't Move' Killer Spider Movie Brings a Gigantic Arachnid to the Big Screen to Terrorize Churchgoers, and Its Producers Wanted It to Be Authentic and Unsettling
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">If there's one thing that a majority of the world can agree on, it's that spiders are unsettling, and in some cases, quite terrifying. That's a fear that the 2026 horror movie Don't Move plays off of perfectly, with a man-sized, vicious, killer spide&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/underrated-fantasy-shows-based-on-books-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/02/james-mcavoy-as-lord-asriel-from-his-dark-materials.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Underrated Fantasy Shows Based on Books
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Book-to-screen adaptations have long been popular, especially in fantasy, with movies like The Lord of the Rings and Harry Potter dominating globally. But television has caught up with this book-to-screen trend, with hit fantasy shows like Game of Th&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/gary-larson-far-side-controversial-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/09/why-gary-larson-s-the-far-side-garnered-so-much-controversy-explained.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why Gary Larson’s The Far Side Caused So Much Controversy, Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Gary Larson's The Far Side is known for absurd premises, ridiculous characters, and Larson's refusal to see many repeated characters. In his surreal and bizarre world, animals act like people, and people sometimes act like animals.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/10-biggest-takeaways-rewatching-supergirl-hbo-max/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/supergirl-milly-alcock-as-supergirl-2026-c-warner-bros.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Biggest Takeaways Rewatching Supergirl On HBO Max
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! This post contains SPOILERS for Supergirl Supergirl is now streaming on HBO Max, giving the DCU's most recent movie a new chance to make an impression after its theatrical run.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/disney-plus-star-wars-movie-collection-release" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/photos/mandogrogu_Hw9kgAZ.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Disney+ Adds 'The Mandalorian & Grogu' Collection to Star Wars Hub
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney+ Releases Its 5th New Star Wars Movie Collection</div>
+      
+      
+      <div class="summary">Disney+ just added a brand-new collection to its Star Wars hub, and considering the new collection has a Star Wars movie in it, it marks the fifth collection on the streaming platform to include at least one film.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2255519/audio-partnership-bluetooth-speakers-recalled/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/these-audio-partnership-bluetooth-speakers-are-being-recalled-heres-why/intro-1789076189.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cambridge Audio Yoyo (M) Bluetooth Speakers Recalled Due to Fire Hazard
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: These Audio Partnership Bluetooth Speakers Are Being Recalled – Here's Why</div>
+      
+      
+      <div class="summary">These Audio Partnership Bluetooth Speakers Are Being Recalled – Here's Why Audio Partnership, the parent company for Cambridge Audio, has recalled a series of portable Bluetooth speakers because they pose a fire hazard.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-80s-rpgs-officially-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2022/01/image-asset-2.jpeg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest '80s RPGs, Officially Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 80s were when video games were just starting to become mainstream thanks to the popularity of home consoles. As developers began experimenting with new gameplay elements, RPGs were becoming very popular amongst the hardcore gaming crowd.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/straight-outta-compton-music-biopic-streaming-netflix-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/01/straight-outta-comptoon-studio-scene-copy.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Straight Outta Compton' Remains One of the Biggest Streaming Hits on Netflix 10 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 10 Years Later, This Gritty Music Biopic Is One of the Biggest Streaming Hits in the World</div>
+      
+      
+      <div class="summary">Everyone bemoans the music biopic and its hackneyed tropes, but there's a reason why studios keep churning them out: As seen with Michael, which became the rare non-franchise/IP movie to gross over $1 billion, these films routinely print money.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/keanu-reeves-good-fortune-prime-video-streaming-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/09/good-fortune-keanu-reeves-seth-rogen-aziz-ansari.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Keanu Reeves' 'Good Fortune' Finds Streaming Success on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Keanu Reeves' Bonkers 79% RT Fantasy Finds Redemption on Streaming</div>
+      
+      
+      <div class="summary">Keanu Reeves is one of those actors who's effectively beloved by everybody. In addition to being well-liked throughout his career and developing a reputation for being a down-to-earth person—as well as the source of the most wholesome meme of all tim&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dragon-ball-goku-rare-winter-design/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/06/split-images-of-goku.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dragon Ball Unearths Akira Toriyama's Rare Winter Goku Design After 39 Years
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Dragon Ball fans just got a look at a classic winterized Goku design that's unlike almost anything they have seen before. In a recent edition of the official Dragon Ball website's Toriyama Archives feature, fans were treated to an illustration of a y&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/game-of-thrones-legends-scattered-banners-dunk-egg-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/02/dunk-and-egg-in-knight-of-the-seven-kingdoms.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dunk & Egg Officially Return In Game Of Thrones: The Scattered Banners
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While Game of Thrones fans still don't have an official release date for Season 2 of A Knight of the Seven Kingdoms, it's very likely to arrive sometime next year. AKOTSK's first season was a breath of fresh air for longtime fans of George R.R.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/stephen-king-the-institute-season-2-continue-dead-zone/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/joe-freeman-as-luke-ellis-being-experimented-on-in-the-institute.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Institute Season 2 Continues Stephen King's The Dead Zone Story
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Returning 16-Episode Stephen King Show Quietly Continues His 47-Year-Old Story</div>
+      
+      
+      <div class="summary">A Stephen King show is all set to return soon in 2026. Interestingly, a closer look at its story reveals how it perfectly continues the author's story from almost 47 years ago. The show in question, MGM+'s The Institute, was renewed for season 2 soon&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-shonen-anime-series-since-2016/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/jujutsu-kaisen-full-cast-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Shonen Anime Series Since 2016
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Since 2016, shonen anime has expanded far beyond straightforward power contests, bringing sharper character writing, ambitious world-building, darker themes and increasingly distinctive visual direction to the genre.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/reacher-replacement-series-jack-ryan-prime-video-action-genre/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/02/jack-ryan-2.JPG?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            After Reacher's Season 4 Finale, Binge Tom Clancy's Jack Ryan on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: After ‘Reacher’s Season 4 Finale, Start Binging Prime Video’s Stellar 4-Part Action Thriller</div>
+      
+      
+      <div class="summary">Reacher is considered to be one of Prime Video's top TV shows, thanks to the brutal fight scenes that protagonist Jack Reacher (Alan Ritchson) finds himself embroiled in and the simple yet compelling idea of Reacher wandering the United States while &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/ah-girl-movie-review-tiff/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/ah-girl_stills_02.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ah Girl Review: A Beautiful, Devastating Story Of Coming Of Age Too Soon [TIFF]
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">People who have spent sustained time being and speaking with children will know that they understand far more than the average adult realizes.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dc-version-gambit-x-men-catman/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/03/catman-screams-while-jumping-betwee-the-secret-six.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Catman Is DC's Underrated Equivalent to X-Men's Gambit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: DC's Answer to Gambit Might Be the Most Underrated Superhero of All Time</div>
+      
+      
+      <div class="summary">Marvel and DC have taken inspiration from one another for decades, creating parallel characters that often grow and develop in ways that make them far more than mere counterparts to the originals.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/babylon-5-for-the-expanse-fans/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/65fc3c74-5bec-490f-b8ee-4443426f288f.jpeg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Babylon 5 Is The Complete Sci-Fi Series For Expanse Fans
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: If You Miss The Expanse, Watch This 5-Season Sci-Fi Series That Actually Has An Ending</div>
+      
+      
+      <div class="summary">The Expanse easily ranks among some of the greatest sci-fi shows of our time. It has an incredibly high rewatch value and deserves every bit of praise and acclaim it has earned over the years. However, even after all these years, there is one nagging&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/lego-skylines-gamescom/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/lego-skylines-official-screenshot-showing-a-farm.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Sky Is The Limit With The City-Building Potential Of LEGO Skylines
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">LEGO Skylines is an ambitious take on the city-building genre that will surprise longtime fans of the toys and the genre. LEGO lends itself naturally to the city-builder genre, given that countless imaginary cityscapes have been built in the real wor&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/open-world-rpgs-with-perfect-worlds/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/arthur-morgan-riding-a-horse-in-red-dead-redemption-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Open-World RPGs With 10/10 Worlds
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Open-world RPGs are arguably more popular than ever. The past decade has been filled with some of the most exciting open-worlds in gaming, with more than a few titles creating vivid, enticing universes just waiting to be explored.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-strange-new-worlds-paul-wesley-final-season-serious-tease/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/captain-kirk-paul-wesley-on-uss-enterprise-bridge.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Paul Wesley Teases “Very Serious” Final Season Of Star Trek: Strange New Worlds & Big Twist For Kirk: “People Are Going To Be Shocked”
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: SPOILERS for Star Trek: Strange New Worlds Season 4 Paul Wesley hints that James T. Kirk and Star Trek: Strange New Worlds will take a serious turn in the prequel's fifth and final season, which premieres on Paramount+ in 2027.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <span class="current">15</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/16.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

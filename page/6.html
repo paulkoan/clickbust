@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-13 09:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>134 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>9 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.bgr.com/2253221/how-long-will-google-pixel-phone-get-software-updates/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-long-will-your-google-pixel-phone-get-software-updates/l-intro-1788895901.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Long Will Your Google Pixel Phone Get Software Updates?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How Long Will Your Google Pixel Phone Get Software Updates? Karlis Dambrans/Shutterstock Despite some models having problems with battery swelling (looking at you, Pixel 7), Google Pixel phones are generally robust. In fact, plenty of Pixel users rep&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/strongest-demon-slayer-characters-not-hashira-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/filters_quality-95-format-webp-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Strongest Demon Slayer Characters Who Aren’t Hashira, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Hashira sit at the top of the Demon Slayer Corps for good reason, but they are hardly the only characters in Demon Slayer capable of extraordinary feats. The anime is filled with fighters who can overwhelm regular Demon Slayers and, in some cases&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-legend-of-zelda-ocarina-of-time-40th-anniversary-detailed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/ns2_thelegendofzeldaocarinaoftime_scrn_08-1.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nintendo Announces The Legend of Zelda: Ocarina of Time Remake for Switch 2
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Nintendo Just Made Major Changes to the Most Iconic 'Legend of Zelda' Game in History</div>
+      
+      
+      <div class="summary">The Legend of Zelda 40th Anniversary Direct has premiered, and there is a lot to unpack. The headliner was The Legend of Zelda: Ocarina of Time remake for the Nintendo Switch 2, which finally offered the first look at gameplay after a small teaser ba&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/lioness-trending-paramount-6-months/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/lioness-season-3.jpg?q=49&fit=crop&w=100&h=67&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lioness Season 3 Breaks Six-Month Streaming Milestone on Paramount+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan's 3-Part Action Thriller Sensation Breaks Major Milestone Ahead of Finale</div>
+      
+      
+      <div class="summary">Taylor Sheridan's most explosive series to date just passed a major streaming milestone. It's no secret that Sheridan has found a bit of success when it comes to creating original TV series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/ted-lass-nbc-origin-changes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/lzpjtzyfsxhvfvgtgxyhiw.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            NBC's 2013 'Ted Lasso' Stealth Pilot Showcases a Very Different Version of the Character
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ted Lasso's main character, as we all know and love him, made his on-screen debut in 2020 when his Apple TV series premiered. However, his true first outing was much earlier than that. Jason Sudeikis brought the character to life in 2013 for NBC in w&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/genshin-impact-free-5-star-characters-6th-anniversary/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/genshin_7-1_key-art_en_edit.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            For the First Time Ever, Genshin Impact Is Giving Away 2 Free 5-Star Characters
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Genshin Impact is officially giving away two free 5-Star characters ahead of its sixth anniversary on September 28. Before then, players can experience the latest chapter of the Snezhnaya story arc and much more when Version 7.1 launches on September&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/callum-turner-one-night-only-sci-fi-rom-com-pvod-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/one-night-only-callum-turner.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Callum Turner's 'One Night Only' Flops in Theaters but Rises on PVOD Charts
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: James Bond Frontrunner's New Sci-Fi Drama Flop Explodes on Streaming</div>
+      
+      
+      <div class="summary">One of the buzziest films of the year starring the next potential James Bond has hit PVOD. One Night Only, starring Callum Turner and Monica Barbaro, may have flopped in theaters, but it has seen a quick resurgence on Apple TV's PVOD charts.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/witcher-author-andrzej-sapkowski-favorite-fantasy-movies-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/henry-cavill-the-witcher-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Witcher's Author Revealed His 4 Favorite Fantasy Movies
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In the past couple of decades, The Witcher has expanded from a series of fantasy novels by Polish author Andrzej Sapkowski into a major multimedia franchise. CD Projekt Red's trilogy of video games and Netflix's live-action series introduced the worl&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-fun-family-movies-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/01/ben-stiller-night-at-the-museum.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 8 Most Fun Family Movies of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Family movie night is a tougher assignment than people admit. One person wants adventure, somebody else wants jokes, the youngest viewer cannot sit through anything too slow, and the adults would rather not spend two hours pretending they are enterta&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/x-men-reboot-professor-x-advice-james-mcavoy-christopher-abbott/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/x-men-first-class-james-mcavoy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            James McAvoy Has a Message for the MCU's New Professor Xavier [Exclusive]
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Professor X is becoming one of the rare superhero characters to be defined by three acclaimed actors across three distinct generations of X-Men movies, which comes with an enormous amount of pressure.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2253104/amd-x3d-processors-disadvantages-you-should-know/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-disadvantages-of-amd-x3d-processors-you-should-know-about/l-intro-1788892729.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Disadvantages Of AMD X3D Processors You Should Know About
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Disadvantages Of AMD X3D Processors You Should Know About RSplaneta/Shutterstock AMD's X3D processors are among the best CPUs for anyone looking to build a gaming desktop. A lot of this is due to the 3D V-Cache design which gives it more L3 cache t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/moon-movie-project-hail-mary-meets-2001-deserved-better/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/02/sam-rockwell-holds-his-astronaut-helmet-in-moon.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Moon: The Hard Sci-Fi Movie That Combines Project Hail Mary and 2001
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Project Hail Mary Meets 2001: A Space Odyssey In A Near-Perfect Hard Sci-Fi Movie That Deserved Better</div>
+      
+      
+      <div class="summary">One of the best follow-ups to Project Hail Mary is a near-perfect science-fiction movie that blends the survivalist ingenuity of Ryan Gosling's blockbuster with the artificial-intelligence themes of 2001: A Space Odyssey.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/taylor-sheridan-landman-streaming-hit-paramount-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/copy-of-collider-template-26.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan's Landman Surges on Streaming After Season 3 Delay
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan's Best Crime Thriller Surges on Streaming After Season 3 Delay</div>
+      
+      
+      <div class="summary">Just two episodes remain in Taylor Sheridan's current most-watched series, as the third season of Lioness powers towards a pulse-racing climax.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-walking-dead-collection-steam-leak/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/telltale-walking-dead-clementine-twd.png?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Telltale's The Walking Dead Collection Leaked via Steam Achievements
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Dawn Of A New Walking Dead Era Appears In Leak</div>
+      
+      
+      <div class="summary">The Walking Dead persists today, 23 years after Image Comics’ eponymous comic book series was first published, and its legacy is undeniable.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dean-martin-show-false-piano-prank/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/dean-martin-on-the-dean-martin-show.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dean Martin's Piano Fall Prank on The Dean Martin Show Still Hilarious 58 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 58 Years Later, This Prank On A TV Icon Is Still The Greatest Gag Ever Pulled</div>
+      
+      
+      <div class="summary">The "King of Cool" is one of the most recognizable talents from Hollywood's old guard. Dean Martin turned being a bon vivant into an expansive career, garnering 12 Emmy wins out of 18 total nominations.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/doctor-strange-new-god-gulgol/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/gulgol-unveils-his-whole-body-in-doctor-strange-endless-nightmare.webp?q=49&fit=contain&w=3819&h=4944&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Doctor Strange: Endless Nightmare Brings Back Gulgol to Overshadow Galactus
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 62 Years Later, Marvel Finally Tops Galactus</div>
+      
+      
+      <div class="summary">Marvel's Galactus is once again overshadowed by a cosmic character more powerful, more grandiose, and more terrifying than the Devourer of Worlds.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/every-jason-statham-action-movie-2000s-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/04/crank.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Jason Statham Action Movie of the 2000s, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Before becoming a one-man action-movie institution behind recent hits like Shelter and Mutiny, Jason Statham cut his teeth on several B-grade and A-list genre outings early in his career.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sean-bean-percy-jackson-and-the-olympians-the-lightning-thief-leaving-netflix-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/percy-jackson-the-olympians-the-lightning-thief-pierce-brosnan.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Percy Jackson & the Olympians: The Lightning Thief Leaves Netflix on Sept 30
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It’s Officially the End of an Era for ‘Game of Thrones’ Star’s $226M Fantasy Epic on Netflix</div>
+      
+      
+      <div class="summary">2025 was a busy year for Sean Bean, who starred in one of the most underrated TV shows of the year, Robin Hood on MGM+.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/smartest-detective-shows-vs-sherlock-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/benedict-cumberbatch-and-martin-freeman-as-sherlock-holmes-and-john-watson-in-bbc-s-sherlock.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Detective Shows Smarter Than Sherlock
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Throughout the 2010s, Benedict Cumberbatch's performance as a modernized Sherlock Holmes gave the BBC one of its biggest and smartest detective thriller mystery shows of all time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-american-movie-masterpieces-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/08/wall-e.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Greatest American Movie Masterpieces of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Cinema knows no borders. Many of the greatest films ever made have come from the furthest corners of the world, but there's no denying the massive impact the American film industry has had.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2256738/xbox-series-x-new-features-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-new-features-available-on-your-xbox-series-x-in-september-2026/l-intro-1789241800.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 New Features Available On Your Xbox Series X In September 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 New Features Available On Your Xbox Series X In September 2026 vfhnb12/Shutterstock Xbox Insiders are getting yet another batch of new features to try out this month.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/emmys-2026-outstanding-drama-series-winner-prediction/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/emmys-2026-outstanding-drama-series.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Emmys 2026 Prediction: Which Show Will Win Outstanding Drama Series
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 78th Primetime Emmy Awards will be live on Monday, September 14th, with one of the hottest categories being the Outstanding Drama Series, where eight shows are in the running.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-anime-last-25-years-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/attack-on-titan-characters-1.webp?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Anime Series of the Last 25 Years, Ranked Worst to Best
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anime has changed dramatically over the past 25 years. What was once a niche interest for many Western fans has become a global entertainment powerhouse, with series reaching millions of viewers through streaming, theatrical releases and social media&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-below-dredge-lovecraftian-horror-rivals/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/06/charcater-with-a-treasure-map-from-dredge.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Upcoming Dredge Movie Has Lovecraftian Rival in Netflix's Below
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Upcoming Lovecraft Movie Already Has The Perfect Netflix Rival Releasing In 1 Month</div>
+      
+      
+      <div class="summary">An exciting Lovecraftian horror movie project has been in the works for quite some time. However, while viewers wait for the movie's release, they can now watch an upcoming Netflix show that seems to heavily incline towards cosmic horror.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/reacher-action-nielsen-success-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/reacher-season-4-alan-ritchson-holding-cat.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Reacher Season 4 Becomes Most-Watched Streaming Show with 1.5 Billion Minutes Viewed
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Best Action Series on TV Is the Most-Watched Show on Streaming After Audience Score Record</div>
+      
+      
+      <div class="summary">The best action series didn't need much to top the charts. Reacher returned for Season 4 on Aug. 12. The show was an instant smash hit, according to the Nielsen charts. For the week between Aug. 10-16, Reacher obliterated the competition with 1.5 bil&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pokemon-kanto-return-fan-game-gold-silver-sequel/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/pokemon-best-final-battle-series-history-lyra-eusine-legendary-beasts.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Fan Game Ghost Grey Set in Kanto 50 Years After Gold and Silver
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Pokémon Returns To Kanto For New Game Set 50 Years After Gold And Silver</div>
+      
+      
+      <div class="summary">Inarguably, some of the greatest Pokémon games of all time are HeartGold and SoulSilver. These two remakes completely revamped the original Gold and Silver experience, delivering a series high with stunning visuals, enhanced gameplay, and a bevy of o&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/12-angry-men-movie-streaming-free-youtube/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/12/mv5bmtg1otg1odi3nf5bml5banbnxkftztcwntg4ndc3mw-_v1_.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            12 Angry Men Is Now Streaming Free on YouTube
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: After 69 Years, One of the "Greatest Movies Ever Made" Is Officially Streaming Free on YouTube</div>
+      
+      
+      <div class="summary">It's no hyperbole to say Sidney Lumet was among the finest American directors in cinematic history. With an understated filmmaking style that never called attention to himself, Lumet had the ability to let the story dictate how a movie is shot is sec&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/rj-decker-nbc-september-15-premiere-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/rj-decker-feature.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            R.J. Decker, ABC's High Potential Replacement, Returns This Week
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ABC's 'High Potential' Replacement Officially Returns This Week</div>
+      
+      
+      <div class="summary">For two seasons, High Potential has done great for ABC. The Kaitlin Olson-led procedural dramedy was an immediate hit, becoming the leading scripted ABC show for its debut season.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-classic-ps2-games-aged-poorly-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/playstation-2-with-games-and-crt-tv.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Classic PS2 Games That Aren't As Good As You Remember
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">No console can compete with the legacy of the PlayStation 2. With more than 160 million units sold and a library packed with all-time classics, the PS2 helped define an entire generation of gaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/total-judge-dredd-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/judge-dredd-total-sic-full.jpg?q=49&fit=contain&w=1201&h=1920&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Total Judge Dredd: New Project from Jay Measures and David Haller Coming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Absolute Judge Dredd Is Coming, And It May Already Have A Title</div>
+      
+      
+      <div class="summary">Judge Dredd is about to be reimagined for an exciting new project, and it won't be found in the pages of 2000 AD. Per Bleeding Cool, fans can get their first look at the next iteration of Judge Dredd from Jay Measures and David Haller.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <span class="current">6</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/7.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

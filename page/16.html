@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-13 09:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>35 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>134 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>9 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/silo-season-4-apple-tv-book-juliette-lukas/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/05/silo-rebecca-ferguson-01.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Silo’ Season 4 Has One Major Book Story Left to Get Right
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The final season of Apple TV's Silo has a lot to explain, but the apocalyptic drama has quite a bit of story to tell as well.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/chicago-med-shake-ups-season-12/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/mixcollage-10-jun-2026-11-11-pm-4035.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Chicago Med Confirms Major Shake-Ups Ahead of the New Season
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: This article contains spoilers for Chicago Med season 12Chicago Med's showrunner has confirmed major shake-ups for the hit medical drama's 12th season. When Chicago Med season 11 was ending, the popular series' characters were undergoing a l&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dc-absolute-green-arrow-spider-redesign/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/absolute-green-arrow-hector-hammond-and-tom-the-spider-hallaway.png?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spider Gets Horrific Redesign in DC's Absolute Green Arrow
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: DC Unveils Monstrous Redesign Of Classic Hero, And It's Absolutely Twisted</div>
+      
+      
+      <div class="summary">DC's Absolute Universe is often the furthest point from subtle in how it reimagines characters from 80 or more years ago, in many cases. It's turned Bruce Wayne from a billionaire playboy to a working-class civil engineer, with a significantly bulkie&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/greatest-nintendo-n64-rpgs-nobody-talks-about/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/nintendo-64-console-red-and-green-background.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Greatest N64 RPGs Nobody Ever Talks About
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When you think of the Nintendo 64 experience, RPGs don't tend to be the genre that comes to mind. For most of us, it’s 3D platformers, racing games, and action adventures, to say nothing of some of the most unforgettable first-person shooters and fig&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/meghann-fahy-the-good-daughter-release-date-peacock-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/05/the-good-daughter-official-still-placeholder-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Meghann Fahy's 'The Good Daughter' Crime Thriller Sets 2026 Release Date on Peacock
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘The White Lotus’ Star’s New Crime Thriller Officially Sets 2026 Release Date</div>
+      
+      
+      <div class="summary">A Karin Slaughter’s 2017 bestselling novel is all set to arrive on Peacock in November and its story is a vivid combination of Sharp Objects as well as Mare of Easttown’s community-crime side.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/band-of-brothers-legacy-war-drama-hbo-max-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/band-of-brothers-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Band of Brothers: Legacy Documentary Becomes Instant Hit on HBO Max
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The 62-Minute Follow-Up to the Best World War II Miniseries of All Time Is an Instant Hit</div>
+      
+      
+      <div class="summary">World War II movies and miniseries deliver some of the best and most memorable stories. And HBO's Band of Brothers remains the best WWII miniseries of all time. Now, the feature-length documentary follow-up is an instant hit on streaming. Per FlixPat&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/most-overrated-classic-anime-underrated-anime-to-watch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/09/natsu-looks-confused-in-a-world-of-clouds.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Most Overrated Classic Anime (& Underrated Anime to Watch Instead)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Most popular anime lose their edge over time and eventually end up as overrated classics. Yet, these classics overshadow the hundreds of underrated anime that ended up below the radar despite having flawless storylines.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/psychological-thrillers-that-rival-zodiac-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/jake-gyllenhaal-s-robert-graysmith-stands-in-a-storage-room-in-zodiac.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Psychological Thrillers That Rival Zodiac
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Many people consider David Fincher's Zodiac to be the gold standard when it comes to the psychological thriller genre. The movie shifts away from the typical whodunit approach of the genre and instead focuses on the mental toll such an investigation &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-dead-zone-stephen-king-streaming-free-tubi/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/the-dead-zone-anthony-michael-hall.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stephen King's 'The Dead Zone' Series Is Now Streaming for Free
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Stephen King's Overlooked 6-Part Series Is Officially Streaming for Free</div>
+      
+      
+      <div class="summary">Stephen King might have brought prestige TV with IT: Welcome to Derry and Castle Rock, but his underrated yet deservedly acclaimed six-season series, The Dead Zone, is arguably his television masterpiece.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-blood-of-dawnwalker-best-selling-game-steam/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/assets_2026_08_1787686003_the-blood-of-dawnwalker-10-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Blood of Dawnwalker Becomes No. 1 Best-Selling Steam Game
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ultra-Violent Open-World RPG Shoots to No. 1 Best-Selling Steam Game</div>
+      
+      
+      <div class="summary">Rebel Wolves and Bandai Namco Entertainment's newest release has become an instant hit for gamers. For its first week of release, it quickly rose as the best-selling game on Steam, promptly leading to development already starting on a sequel.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/black-clover-season-2-biggest-anime-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/asta-and-yuno-s-bonding-moment-from-black-clover-season-2-trailer.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Black Clover's 2026 Return Can Fix Its Filler Problem
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Crunchyroll’s Biggest Anime of 2026 Can Finally Fix the Problem That Ended Its Original Run</div>
+      
+      
+      <div class="summary">Black Clover's anime made its debut in 2017 and ran for four years and 170 episodes before dipping out with an unofficial "hiatus." Some of the anime's best episodes are from later on in its run and the anime's popularity never dwindled.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-8-most-fun-kids-movies-of-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/10/Paddington-with-Knuckles-in-Paddington-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 8 Most Fun Kids Movies of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some kids movies survive because parents keep introducing them. Others survive because kids would find them again anyway. The really special ones have enough mischief, speed, heart, and personality that nobody in the room feels like they are sitting &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/colin-farrell-miami-vice-streaming-prime-video-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/03/miami-vice-colin-farrell.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Colin Farrell's 2006 'Miami Vice' Movie Returns to Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Colin Farrell’s Forgotten Crime Thriller Officially Returns on Prime Video</div>
+      
+      
+      <div class="summary">Miami has been an iconic location in movies and TV shows for the better part of the last 50 years, and even video games like Grand Theft Auto have taken to using it as a location for multiple series entries.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/mgm-plus-gangster-the-westies-streaming-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/the-westies-season-1-first-look2.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Westies Returns as No. 1 on MGM+ Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Titus Welliver's Gritty New Gangster Series Returns as No. 1 on Streaming</div>
+      
+      
+      <div class="summary">MGM+'s newest crime drama, The Westies, is back in the streaming charts, more than a month after the Season 1 finale. The Westies is currently the No. 1 most-watched show in the United States on MGM+, and No. 2 in the world, per FlixPatrol. The first&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/zelda-ocarina-of-time-remake-character-design-changes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/zelda-ocarina-of-time-remake-link-riding-epona.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every New Zelda: Ocarina of Time Character Design in the Remake
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After 28 years, The Legend of Zelda: Ocarina of Time is getting a major visual redesign in a remake for the Nintendo Switch 2. Among the changes coming in the Ocarina remake, a thorough reimagining of the classic game's art style is the most transfor&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/thriller-books-page-turners-start-to-finish/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/gone-south-1992-book-cover-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Thriller Books That Are Page-Turners From Start to Finish
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The thriller genre might well be most represented on the big screen, versus the world of literature, but that doesn’t mean thrillers that remain on the page are lacking.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/dutton-ranch-season-2-storyline-taylor-sheridan-fix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/dutton-ranch-feature.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan to Be More Involved in 'Dutton Ranch' Season 2
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan Is Officially Fixing ‘Yellowstone’s Biggest Sequel</div>
+      
+      
+      <div class="summary">Dutton Ranch has proven that it can carry on the Taylor Sheridan tradition across the small screen, even with a cross-country move from Montana to the great state of Texas.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/new-fallout-games-remasters-bethesda-softworks/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/4245507/Fallout-4-400-hours.0.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fallout 5 and Classic Fallout Remasters Coming from Bethesda and Obsidian
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Xbox wants more Fallout, and after a yearslong drought of new games, Bethesda Softworks is making it happen. Bethesda plans to release remasters of both Fallout 3 and Fallout: New Vegas for modern platforms, the company said in July in a massive road&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/pokemon-go-gible-community-day-classic-shiny-garchomp-moveset/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/jlee_260911_1001_pogo_gible_cd.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Go Gible Community Day Classic event guide
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pokémon Go is having a Gible Community Day Classic event on Saturday, Sept. 12 from 2-5 p.m. in your local time. If you don't already have an army of Garchomp at your disposal, this Community Day isn't one you'll want to miss.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-diplomat-deserve-emmy-nominations/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/keri-russell-as-kate-wyler-and-rufus-sewell-as-hal-wyler-sitting-beside-each-other-in-the-diplomat-season-3.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's The Diplomat Earns 10 Emmy Nominations for Blending Homeland and West Wing
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's 'Homeland Meets The West Wing' Political Series Deserves All 10 Of Its Emmy Nominations</div>
+      
+      
+      <div class="summary">When it premiered in 1999, NBC's The West Wing was offering a new kind of political drama. As creator Aaron Sorkin has frequently acknowledged, most political dramas on television had long been saturated with series that painted politicians as either&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/zack-snyder-justice-league-superman-statue-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/superman-knightmare-model.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zack Snyder's Justice League Returns as $1,778 Superman Knightmare Statue
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Zack Snyder’s Justice League Officially Returns In $1,778 New Release</div>
+      
+      
+      <div class="summary">Zack Snyder's Justice League proved to be far more controversial than one would have ever likely expected.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/judge-dredd-death-villain-quote/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/judge-death-extends-his-clawed-hand-in-judge-dredd-comic-art.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Judge Death's 'The crime is life, the sentence is death' Remains Judge Dredd's Best Villain Quote
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 46 Years Later, Judge Dredd's Best Villain Quote Has Never Been Beaten</div>
+      
+      
+      <div class="summary">The best quote in the Judge Dredd franchise wasn't uttered by the titular anti-hero. Created in the late 1970s against a backdrop of economic stagnation, 2000 AD abandoned the idealistic futures of traditional American science fiction to deliver a hy&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/black-mirror-season-8-filming-production-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/06/black-mirror-season-6-josh-harnett.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Black Mirror’ Season 8 Gets Official Filming Update [Exclusive]
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Black Mirror has spent well over a decade making audiences suspicious of every screen, subscription, and seemingly helpful piece of technology in their lives.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/gerard-butler-machine-gun-preacher-streaming-success-paramount-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/01/sam-childers-gerard-butler-holding-a-gun-in-machine-gun-preacher.jpg?q=49&fit=contain&w=1920&h=960&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gerard Butler's 'Machine Gun Preacher' Becomes Streaming Sleeper Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Gerard Butler’s Forgotten War Thriller Officially Returns as a Streaming Sleeper Hit</div>
+      
+      
+      <div class="summary">2026 hasn’t exactly been a benchmark start to the year for Gerard Butler, who headlined one of the biggest box office bombs back in January, Greenland 2: Migration.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/nbc-fantasy-grimm-streaming-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/06/krampus-grimm.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Grimm Climbs to No. 6 on Apple TV Store Streaming Charts 9 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: NBC's 6-Season Fantasy Masterpiece Is 1 of the World's Most Popular Shows 9 Years Later</div>
+      
+      
+      <div class="summary">Nearly a decade after the series ended, Grimm is making its way up the streaming charts. The fantasy police procedural horror series is currently the No. 6 most-watched show in the United States and Canada on the Apple TV Store, per FlixPatrol.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/blade-runner-2099-michelle-yeoh-standalone-limited-series-ridley-scott/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/blade-runner-2099-michelle-yeoh-1.avif?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Michelle Yeoh Says You Can Skip Ridley Scott's 'Blade Runner' Before the Prime Video Sequel [Exclusive]
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This October will mark nine years since Denis Villeneuve brought theatergoers back to the cyberpunk future of Ridley Scott's Blade Runner universe with his sequel, Blade Runner 2049. Fortunately, the gap between the 1982 sci-fi classic and that film &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-fun-movies-1990s-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/10/the-big-lebowski-1998-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 8 Most Fun Movies of the 1990s, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While the 80s were certainly radical, the 90s were admittedly pretty dang fun. Pop culture bloomed eternal, as music, TV, film, and all art mediums exploded in a cornucopia of diverse directions.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-anime-series-since-2006/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/screenshot-2026-07-09-at-17-10-41-kusonime-_gurren_lagann_movie_2_720p-mkv_003675088-webp-webp-image-1280-x-720-pixels-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Anime Series Since 2006
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Since 2006, anime has expanded its creative range through ambitious storytelling, distinctive visual styles and characters capable of carrying emotionally demanding narratives.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/fire-country-greatest-character-vince-leone-billy-burke/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/01/fire-country-max-thieriot.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            After 72 Episodes, 'Fire Country's Greatest Character Definitely Isn't Bode
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">CBS' hit series Fire Country has had a strong run over its last four seasons, but with Season 5 set to premiere next month, it's time to go back and take a look at one of the best characters on the show.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/supergirl-hbo-max-streaming-date-announced/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/06/mcdsupe_wb089.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 12 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Supergirl Lands Official Streaming Date on HBO Max
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">DC Studios and Warner Bros. released Supergirl earlier this year in theaters as the second film in James Gunn's nascent cinematic DC Universe.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <span class="current">16</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/17.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>
