@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-16 01:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>118 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/netflix-removing-shameless-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/05/shamelessiantrevor3.jpg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Shameless Leaves Netflix on October 11 After 10 Years of Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s 11-Season Streaming Favorite Is Officially Leaving</div>
+      
+      
+      <div class="summary">Netflix has had a huge year when it comes to original programming, both with movies and TV shows. The biggest feature film of the year for the streamer so far has been War Machine, the big-budget sci-fi thriller starring Alan Ritchson from Prime Vide&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/lioness-season-3-episode-7-kiss-the-girls-timeline/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/lioness-nicole-kidman.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan Ends Lioness Season 3's Dual-Timeline Format in Episode 7
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan Pulls the Plug on Lioness Season 3’s New Episode Format at the Perfect Time</div>
+      
+      
+      <div class="summary">The following contains spoilers for Lioness Season 3, Episode 7, “Kiss the Girls,” which premiered on Paramount+ on Sunday, September 13, 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-garfield-comics-featuring-liz-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/10/10-best-garfield-comics-featuring-liz-ranked.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Garfield Comic Strip: Liz Wilson Kills a Spider and Wins Garfield's Affection
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 10 Best Garfield Comics Featuring Liz Wilson, Ranked</div>
+      
+      
+      <div class="summary">Garfield has what many consider one of the best casts of characters comic strip fans have seen in a long time. Every character has unique and hilarious characteristics, making the comic strip fun and exciting to read, no matter who is center stage at&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2255556/is-it-safe-live-near-wind-turbines/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/bgr-is-it-safe-to-live-near-wind-turbines/l-intro-1788879645.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Is It Safe To Live Near Wind Turbines?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Is It Safe To Live Near Wind Turbines? Alexander Farnsworth/Getty Images Not in my backyard! It's the rally cry of anti-wind turbine activists who want to stop the clean energy source from popping up near their backyard.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/paul-mccartney-here-today-john-lennon/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/12/the-beatles-2.jpg?q=49&fit=crop&w=220&h=124&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Paul McCartney's Reaction to John Lennon's Death Was Misinterpreted as Indifference
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Emotional Paul McCartney Track That Was His Last Conversation With John Lennon</div>
+      
+      
+      <div class="summary">When John Lennon was murdered outside his home in New York City in 1980, the shock and grief was felt worldwide. Sometimes, when a public figure is so large and universal, it's hard to remember that he was also a person with loved ones who mourned hi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-jrpgs-all-time-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/chrono-trigger-key-art-with-lucca-robo-ayla-chrono-marle-and-frog.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest JRPGs of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">RPGs are one of gaming’s most beloved genres, and JRPGs have played a major role in shaping what players expect from them.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-bear-emmys-2026-end-of-an-era/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-bear.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            It's Officially The End Of An Era For The Bear
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">By the time its final season premiered this year, The Bear had already won 21 Emmys, a feat it quickly became known for when it took home 10 awards at the 2023 ceremony and 11 more the following year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-paper-season-2-duane-shepard-barry-series-regular/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/sharedimages/2026/09/the-paper-poster.jpg?q=70&fit=contain&w=1300&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Paper Star Barry Shepard on Becoming a Series Regular in Season 2
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Paper Star Confirms the Season 2 Change That Affected His ‘Whole Life’</div>
+      
+      
+      <div class="summary">Barry and Travis were the underdogs of The Paper Season 1, but they're the top dogs in Season 2. Or at least, Duane Shepard Sr. feels that way about his character. "I don't think in Season 2 Barry is very underestimated," he told CBR's Katie Doll. "H&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/gundam-00-kyrios-metallic-gloss-injection-gunpla/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/mg-1-100-gundam-kyrios-trans-am-mode-metallic-gloss-injection-1-1.jpeg?q=49&fit=contain&w=528&h=374&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gundam Base-Exclusive MG 1/100 Gundam Kyrios TRANS-AM Mode Model Kit Announced
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Gundam 00 Brings Back Its Transforming Mecha With a Major New Power-Up</div>
+      
+      
+      <div class="summary">The many Gundam Base stores around the world are the merchandising hub of the Mobile Suit Gundam franchise, home to numerous exclusive model kits and other collectibles. Now, the latest of these is headed to these stores this month, allowing fans to &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/emmys-2026-snubs-surprises/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/pluribus_lwwg4s.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            20 Upbeat Songs to Lift Your Mood, From Dance Hits to Feel-Good Classics
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Emmys 2026 Snubs & Surprises: Apple TV Dominates With Widow's Bay Sweep</div>
+      
+      
+      <div class="summary">It's officially a wrap on the 2026 Emmys. Though several predicted favorites won their categories, the night wasn't without a few thrilling surprises and shocking snubs.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/silo-legacy-program-it-secret-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/12/what-the-legacy-is-in-silo-why-it-s-kept-secret-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            What The Legacy Is In Silo & Why It's Kept Secret
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Spoilers ahead for Silo season 3.Bernard finally gives Lukas access to the Legacy in Silo season 2's episode 7, which, to Lukas' surprise, turns out to be far more fascinating than he had imagined.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/young-sheldon-big-bang-theory-characters-actors-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/young-sheldon_mhxwbx.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Big Bang Theory Character & Actor In Young Sheldon
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The events of Young Sheldon may have taken place before The Big Bang Theory, but some characters and actors eventually made their way to the spin-off in varying ways. Debuting in 2017, the beginning of Young Sheldon takes place around two decades bef&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-meets-game-of-thrones-falling-frontier/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/screenshot-2026-09-14-092416.png?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Falling Frontier Is a New Sci-Fi RTS for Star Trek Fans
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek Meets Game Of Thrones In Massive New Space Opera</div>
+      
+      
+      <div class="summary">It's an exciting time to be a Star Trek enthusiast, with the franchise's 60th anniversary being absolutely stacked with huge announcements in the gaming space in particular.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jack-quaid-action-thriller-novocaine-streaming-success-netflix-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/02/novocaine-jack-quaid-1.jpg?q=70&fit=contain&w=750&h=422&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jack Quaid's Action Thriller 'Novocaine' Climbs Netflix International Top 10
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jack Quaid's Best Action Movie Is Officially Dominating Streaming Right Now</div>
+      
+      
+      <div class="summary">Netflix has released dozens of successful originals already in 2026, but where the streamer continues to excel is its eye for older movies and TV shows from other studios that have been discarded, just waiting to find a new audience.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/ncis-season-24-tony-dinozzo-return-michael-weatherly-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/michael-weatherly-as-tony-dinozzo-in-ncis.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            NCIS Star Michael Weatherly Explains Franchise Return After Tony & Ziva Cancellation
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">NCIS veteran Michael Weatherly has opened up about why he’s returning to the procedural franchise following NCIS: Tony & Ziva being canceled. In 2016, Weatherly departed the flagship NCIS after 13 seasons on the main cast.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/widows-bay-emmys-2026-comedy-series-winner/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/widow-s-bay-matthew-rhys.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV's 'Widow's Bay' Wins Emmy for Outstanding Comedy Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Widow's Bay’ Officially Crowned Outstanding Comedy Series at the Emmy Awards</div>
+      
+      
+      <div class="summary">When it came to comedy shows this year, no platform did as well as Apple TV, and the streamer was just rewarded for its hard work at the Emmys.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/gravity-falls-best-episodes-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/gravity-falls_xy6147.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Episode Of Gravity Falls, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The best episodes of Gravity Falls exhibit the best of its comedy and world-building seamlessly entwined with character development.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/american-martial-arts-movies-no-one-remembers-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/no-retreat-no-surrender.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 American Martial Arts Movies Nobody Talks About Anymore
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The '80s and '90s were a golden age for a very specific, very disreputable genre: the direct-to-video (or barely theatrical) American martial arts vehicle. These weren't Hong Kong imports, and they weren't studio tentpoles either.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-detectives-in-anime-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/02/conan-edogawa-being-cornered-near-a-bookshelf-in-case-closed.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Detectives in Anime History, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anime offers fans of mystery and thriller fiction no shortage of excellent stories to choose from. However, no mystery narrative can be compelling without someone competent and intelligent enough to solve it alongside the viewers, which is where anim&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/buffy-david-boreanaz-sarah-michelle-gellar-reunion/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/tom-loftis-in-his-office-on-mushrooms-in-widow-s-bay.jpg?q=49&fit=crop&w=292&h=384&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Matthew Rhys Makes Emmy History With Wins for The Beast in Me and Widow's Bay
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Buffy Stars Sarah Michelle Gellar & David Boreanaz Go Viral With TV Reunion 23 Years Later</div>
+      
+      
+      <div class="summary">It might be hard for some fans of Buffy the Vampire Slayer to realize that the classic TV show is almost 30 years old. Because the series is just as beloved as ever, Sarah Michelle Gellar and David Boreanaz went viral after reuniting at this year's E&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-pitt-emmys-2026-drama-series-winner/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/the-pitt-season-2-patrick-ball-noah-wyle.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Matthew Rhys Wins Two Emmys for Lead Actor in Comedy and Drama Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘The Pitt’ Officially Crowned Outstanding Drama Series at the Emmy Awards</div>
+      
+      
+      <div class="summary">2026 has been a stellar year for TV, especially drama shows, and the most prestigious of them all was officially awarded tonight with the honor of a lifetime.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/its-officially-spooky-season-time-to-re-watch-this-scary-classic-on-disney.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2023/08/coraline-movie-4.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Celebrate Halloween With These Spooky Streaming Picks, Including Coraline and The Passenger
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It's Officially Spooky Season! Time to Re-Watch This Scary Classic On Disney+</div>
+      
+      
+      <div class="summary">By Jonathan Klotz | Published 28 seconds ago I don’t make the rules, but I do live in Florida, and once Universal’s Halloween Horror Nights start up, it’s Spooky Season.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/space-opera-tv-shows-good-as-andor/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/andor_dfticl.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Matthew Rhys Wins Second Emmy for Widow's Bay, Making History
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 6 Space Opera TV Shows As Good As Andor</div>
+      
+      
+      <div class="summary">Andor's premiere in 2022 quickly established the series as far more than a Star Wars show, cementing itself as a space opera for the ages.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/open-world-expansions-outclass-base-game/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/08/elden-ring-messmer-shadow-of-the-erdtree.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Open-World Expansions That Outclassed Their Base Game, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Open-world games already offer a ton of content for players to sink their teeth into. But developers are always looking to make these games even bigger, and they do so by pumping out expansions. New areas to explore, new characters to interact with, &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2255362/amd-gpu-common-problems/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-common-problems-with-amd-graphics-cards/l-intro-1789070365.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Common Problems With AMD Graphics Cards
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Common Problems With AMD Graphics Cards tinhkhuong/Shutterstock Buying an AMD graphics card is usually a good option for anyone looking to save money on their GPU without giving up great gaming performance.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/dtf-st-louis-emmys-2026-limited-series-anthology-winner/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/dtf-st-louis-david-harbour-02.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV+ Sci-Fi Series 'Silo' Surges in Streaming Rankings
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘DTF St. Louis’ Officially Crowned Outstanding Limited Series at the Emmy Awards</div>
+      
+      
+      <div class="summary">Every year when the Emmys come around, the categories most fans seem to focus on are Outstanding Drama Series and Outstanding Comedy Series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/matthew-rhys-two-emmy-wins-widows-bay-beast-in-me/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/widows-bay-matthew-rhys.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Matthew Rhys Officially Makes TV History With Double Lead Actor Emmy Wins
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Matthew Rhys has made history at the 78th Emmy Awards. The actor, who won only 1 Emmy previously for his work in the FX series The Americans as Philip Jennings, took home two different Lead Actor wins — one for his work in the Apple TV comedy series &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/house-of-the-dragon-not-top-10-hbo-streaming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/emma-d-arcy_3.jpg?q=49&fit=crop&w=120&h=80&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            House of the Dragon Drops Out of HBO Max Top 10 Within a Month of Season 3 Finale
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It's Officially the End of an Era for Game of Thrones on HBO</div>
+      
+      
+      <div class="summary">HBO has been home to some of the biggest shows on television. After shows like Sex and the City and The Sopranos put the premium station on the map, it has continued to bring audiences the best that television has to offer. And that has only continue&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/anime-main-character-no-happy-ending/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/madoka-greets-homura-in-puella-magi-madoka-magica-rebellion-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Anime Series Where the Main Character Never Gets a Happy Ending
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Plenty of people resort to anime to escape from the tragic reality of life, so when the same anime spits back in the face with a protagonist who never gets a happy ending, the scar stays.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/stephen-colbert-era-end-victory-emmy-win/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/stephen-colbert-speaking-during-the-late-show.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stephen Colbert Ends Late Night Era With Another Epic Win
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Stephen Colbert has ended his late-night TV era with a major win at the Primetime Emmy Awards. Even though fans ranked The Late Show with Stephen Colbert higher than other late-night shows, CBS canceled the show in July 2025.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <span class="current">14</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/15.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

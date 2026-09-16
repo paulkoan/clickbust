@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-16 01:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>118 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.polygon.com/blood-of-dawnwalker-the-lunar-game-quest-walkthrough-odd-riddle/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/the-blood-of-dawnwalker-the-lunar-game-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The Lunar Game' quest walkthrough in The Blood of Dawnwalker
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">"The Lunar Game" quest in The Blood of Dawnwalker tells Boyar Bakir's story. Having joined forces with Farkas the jester, Coen enters the Lunar Tournament for a chance to meet Bakir alone. Whether he finds allies among the contestants, sabotages the &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-studios-first-look-wizard-evil-fantastic-four" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/photos/wiz4.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fantastic Four: First Foes – The Wizard #1 Spotlights Wizard and Frightful Four in MCU Tie-In
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Studios Reveals First Look At The Wizard & Confirms Evil Fantastic Four</div>
+      
+      
+      <div class="summary">Marvel Studios has officially unveiled the first look at the Fantastic Four as they take on one of their greatest foes from the comics. Marvel's First Family made their official MCU debut in The Fantastic Four: First Steps, where they defeated the De&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2255560/amd-gpu-equivalent-to-xbox-series-s/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/which-amd-gpu-is-equivalent-to-the-xbox-series-s/l-intro-1788979891.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Which AMD GPU Is Equivalent To The Xbox Series S?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Which AMD GPU Is Equivalent To The Xbox Series S? m.andrei/Shutterstock Many people view gaming consoles as weak from a pure performance standpoint, but that's not always quite true.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2258908/sinestro-power-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/how-powerful-is-sinestro-really/l-intro-1789479598.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Powerful Is Sinestro Really?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How Powerful Is Sinestro Really? VIDEO Thaal Sinestro is an immensely powerful villain within the DC universe.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/new-batman-villain-rhetoric/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/detective-comics-1113-jim-lee.avif?q=70&fit=crop&w=600&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DC's Building Bad Sweepstakes Winner Rhetoric Debuts in Detective Comics #1113
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brand New Batman Villain Makes History Ahead Of Their Debut</div>
+      
+      
+      <div class="summary">Published Sep 15, 2026, 9:42 AM EDT Jason is an award-winning journalist whose writing career dates back to when he developed the ability to use a crayon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/animals-trailer-ben-affleck-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/ben-affleck-in-animals-1.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ben Affleck's Netflix Thriller Animals Gets October Release Date
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ben Affleck's New Netflix Thriller Officially Releases on Streaming Next Month</div>
+      
+      
+      <div class="summary">Ben Affleck is no stranger to high-stakes crime thrillers on streaming platforms. Earlier this year, he reunited with long-time collaborator Matt Damon for the gritty Netflix crime thriller The Rip, which became a massive viewership sensation and ear&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/playstation-blackout-protest-failure/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2025/11/playstation-5.jpg?q=49&fit=crop&w=220&h=124&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sony's Digital-Only Push Fails to Impact Player Counts, Data Shows
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The PlayStation Blackout Protest Didn't Move the Needle</div>
+      
+      
+      <div class="summary">It's no secret that many PlayStation owners are unhappy with Sony's exclusive focus on digital media. Some even went as far as organizing a digital boycott. For a week, participants pledged to steer clear of anything digital on their PlayStations, wh&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/pokemon-red-blue-returns-3d-game-remake-free/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/pokemon-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Red and Blue Get Free 3D Fan Remake via Dramatic Shape Voxel Mod
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Pokémon Red & Blue Returns As a 3D Game 30 Years Later</div>
+      
+      
+      <div class="summary">Pokémon Red and Blue are some of the most important video games ever made. Now, 30 years after their initial release, the original Pokémon games are back with a new 3D fan remake that's completely free to play. Over the years, Pokémon Red and Blue ha&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2255803/most-popular-green-energy-source-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/solar-wind-or-water-which-renewable-energy-is-the-most-popular/l-intro-1789132659.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Solar, Wind, Or Water: Which Renewable Energy Is The Most Popular?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Solar, Wind, Or Water: Which Renewable Energy Is The Most Popular? iknowartworks/Shutterstock Transitioning from fossil fuels to renewable energy sources is an essential part of combating man-made climate change.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/most-rewatchable-anime-arcs-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2019/01/Webp.net-resizeimage-5-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Rewatchable Anime Arcs, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some anime arcs are so entertaining that knowing exactly how they end does not stop one from wanting to watch them again.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/neagley-season-1-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/mixcollage-30-jun-2026-12-33-pm-3427-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Neagley Review: Prime Video's Reacher Spinoff Improves on the Original's Formula
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Neagley Review: Prime Video's First Reacher Spinoff Perfects Its Winning Formula</div>
+      
+      
+      <div class="summary">The Reacher franchise is officially established, with Neagley improving on Alan Ritchson's popular series' formula. After its successful debut in 2022, Prime Video didn't waste time taking advantage of the action-adventure's popularity, bringing it b&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/new-x-men-team-roster-cyclops-wolverine-nova/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/x-men-s-cyclops-with-a-crosshairs-logo-over-jean-grey.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cyclops Debuts New Anti-Telepath X-Men Team, All Members and Powers
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There's no couple in X-Men lore more dedicated than Cyclops and Jean Grey, and yet Scott Summers is now leading a dedicated anti-telepath team assembled to take down the love of his life.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/diablo-netflix-adaptation-game-of-thrones-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/diablo-video-game-official-art.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Diablo Animated Series Could Rival Game of Thrones in Dark Fantasy
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s “The Witcher Meets Arcane“ Dark Fantasy Series Can Finally Beat ‘Game of Thrones’ At Its Own Game</div>
+      
+      
+      <div class="summary">When it comes to announcing new video game adaptations, Netflix has been on a roll recently. Between the upcoming Assassin's Creed, Gears of War, and BioShock adaptations, those who enjoy action-packed and story-heavy video games have plenty to look &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/slow-horses-season-6-gaby-chiappe-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/slow_horses_photo_060101.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Slow Horses' Head Writer Promises Not to Kill Your Favorite Character, Unless Mick Herron Does First
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Since premiering on Apple TV in 2022, Slow Horses has been one of the most consistently excellent shows on streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/neagley-season-1-review-prime-video-reacher-spinoff/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/neagley-episode-8-maria-sten-greyston-holt.jpg?q=70&fit=contain&w=750&h=422&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's 'Neagley' Review: A 'Reacher' Spin-Off That's Worth Your Time
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video's 'Neagley' Is a 'Reacher'-Lite Spin-Off That's Officially Worth Your Time | Review</div>
+      
+      
+      <div class="summary">Reacher is one of Prime Video's best and most popular shows, currently wrapping up its brutal fourth season and already confirmed to return for a fifth. The flagship series reintroduced audiences to Jack Reacher, played by Alan Ritchson, a self-descr&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-comic-strips-still-running-today/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/08/three-way-split-of-hagar-the-horrible-dick-tracy-and-beetle-bailey-comic-strips.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Neagley Review: Reacher Spinoff Lets Frances Neagley Shine
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 20 Greatest Comic Strips Still Running Today, Ranked</div>
+      
+      
+      <div class="summary">Comic strips have been popular for centuries, traditionally printed in newspapers and magazines, featuring some now widely known characters that hold a dear place in contemporary society and culture.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-cozy-fantasy-movies-of-last-30-years-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/shrek-5-donkey-shrek.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Cozy Fantasy Movies Of the Last 30 Years, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When we think of cozy movies, we usually think of stories free of stress, but fantasy fans apparently have different standards. Give them an adventure, a castle, witches and wizards, a dark forest and enough whimsy to make the danger strangely comfor&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/neagley-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/rspi_s1_ut_101_250310_lansab_00659rc_3000-cropped.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jumanji: Welcome to the Jungle Leaves Tubi, Heads to Netflix in October
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Neagley Review: Reacher’s First Spinoff Lets Its Fan-Favorite Lead Shine</div>
+      
+      
+      <div class="summary">Reacher has been one of Prime Video's biggest TV franchises for a number of years, and it's finally gotten its first spinoff. Neagley takes fans to a different yet familiar corner of the Reacher universe and puts the spotlight on Maria Sten's Frances&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pokemon-30th-celebration-cards-full-set-list-leak/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/pokemon-s-pikachu.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All Pokémon 30th Celebration Cards Have Leaked Online
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's been a long wait for the release of Pokemon's 30th Celebration TCG set, but the day is nearly upon us as the highly anticipated new line officially launches tomorrow, September 16, 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/final-fantasy-10-anniversary-plush-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/final-fantasy-10-yuna-plush.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Final Fantasy 10 25th Anniversary Yuna Plush Available for Preorder in October 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Final Fantasy 10 Officially Returns October 2026 With New Anniversary Release</div>
+      
+      
+      <div class="summary">This year marks the 25th anniversary of Final Fantasy 10, one of the most beloved entries in the long-running JRPG series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2255792/ditch-computer-mouse-charging-port-for-charging-pad/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/ditch-the-charging-port-on-your-computer-mouse-and-use-this-instead/are-there-any-downsides-to-using-a-wireless-charging-mousepad-1789132264.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wireless Charging Mousepads Eliminate the Need to Plug In Your Computer Mouse
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ditch The Charging Port On Your Computer Mouse And Use This Instead</div>
+      
+      
+      <div class="summary">Ditch The Charging Port On Your Computer Mouse And Use This Instead Liudmila Chernetska/Getty Images We may receive a commission on purchases made from links. Back in the day, your computer mouse and keyboard plugged directly into their own dedicated&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-sci-fi-series-pantheon-westworld-replacement/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/11/westworld.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'Pantheon' Fixes 'Westworld's Biggest Mistake
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s 2-Season Sci-Fi Masterpiece Fixes 'Westworld's Biggest Mistake</div>
+      
+      
+      <div class="summary">When it comes to TV, it's not exactly uncommon for a show's first season to be its best. Especially when it comes to sci-fi series, the first season is where the characters and settings are introduced, and where the mechanisms and plot points begin t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/blood-of-dawnwalker-sequel-setting-reveal/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-blood-of-dawnwalker-coen-drinking-font-of-life.jpg?q=49&fit=crop&w=528&h=374&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Blood of Dawnwalker Sequel Setting Revealed in Post-Credits Scene
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Blood Of Dawnwalker Sequel Setting Officially Revealed</div>
+      
+      
+      <div class="summary">The Blood of Dawnwalker has proven to be this year's biggest surprise hit, winning over fans and critics alike with its unique vampire-based gameplay, amazing story and characters, and original world.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/mcu-xmen-reboot-angel-recasting-ben-foster-mistake/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/x-men-the-last-stand.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            MCU X-Men Reboot Can Redeem Fox's Mistreatment of Gambit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The MCU's X-Men Reboot Can Finally Make Up For Fox's Biggest Casting Insult</div>
+      
+      
+      <div class="summary">Even with Avengers: Doomsday and Secret Wars on the horizon, the most daunting upcoming MCU project is something entirely different.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/emmys-in-memoriam-excludes-chuck-norris-and-more/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/chuck-norris-in-walker-texas-ranger.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Chuck Norris, Nicholas Brendon & More Excluded From Emmys In Memoriam
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 78th Primetime Emmy Awards delivered a night of television history, stunning surprises, and deeply felt nostalgia.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/video/cosmic-comics-sci-fi-romance-and-superheroes-in-space/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/cosmic-comics-sci-fi-romance-and-superheroes-in-space.jpeg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cosmic Comics: Polygon Explores Sci-Fi, Romance, and Superheroes in Space
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: COSMIC COMICS: Sci-Fi, Romance, and Superheroes in Space!</div>
+      
+      
+      <div class="summary">What do Star Wars, Doctor Who, and superheroes all have in common? And why are so many comic book movies heading to space? Susana Polo answers these questions and more on today's episode when she explains the history of the cosmic in comics.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/playstation-plus-october-2026-free-games-lineup-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/ps-plus-image-with-purple-streak-and-waves-in-background.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            PlayStation Plus Free Games Lineup For October 2026 Officially Updated
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">PlayStation Plus has given us an early glimpse at what to expect for October 2026, even though it's only been a couple of weeks since September's Essential games arrived.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2251359/most-historically-accurate-adventure-movies-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/5-most-historically-accurate-adventure-movies-ranked/l-intro-1788545615.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Most Historically Accurate Adventure Movies, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Most Historically Accurate Adventure Movies, Ranked 20th Century Studios/Static Media Some of our favorite adventure movies have no basis in reality.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/video/justice-league-movie-what-can-we-expect/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/justice-league-movie-what-can-we-expect.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Justice League MOVIE: What Can We Expect?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The first full trailer for Justice League dropped recently, so Polygon's resident comic expert Susana Polo is diving into what it may have revealed about the movie's plot and character appearances.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/charlie-brown-lil-folks-not-peanuts-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/peanuts-characters-with-charlie-brown-lucy-and-more.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Charlie Brown's First Appearance Wasn't In Peanuts, And 78 Years Later, He's Unrecognizable
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When it comes to comic strips, there is perhaps no face more recognizable than Peanuts’ Charlie Brown. While Charles M.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <span class="current">10</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/11.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-16 01:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>118 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.cbr.com/mark-harmon-gibbs-return-ncis-origins-season-3-breaks-format/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/mark-harmon-as-leroy-jethro-gibbs-in-ncis-origins-seson-3-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mark Harmon's CBS Return Breaks NCIS: Origins' Show Format (& It's for the Best)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Mark Harmon’s return to the NCIS franchise as his flagship character, Leroy Jethro Gibbs, in NCIS: Origins Season 3 will break the prequel show’s format, but in the best possible way.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/bad-lieutenant-tokyo-takashi-miike-trilogy-complete/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/bad-lieutenant_still_hero.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bad Lieutenant: Port of Call New Orleans Sequel 'Bad Lieutenant: Tokyo' Announced
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 17 Years Later, Nicolas Cage’s Divisive Cult Thriller Is Officially Getting A Sequel</div>
+      
+      
+      <div class="summary">While it has been some 17 years since one of Nicolas Cage’s most divisive cult movies arrived, the belated and barely related sequel to Bad Lieutenant is now on its way soon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/perfect-gilmore-girls-episodes-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/gilmore-girls.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Most Perfect ‘Gilmore Girls’ Episodes, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It is officially fall now, which means it's the perfect time of year to rewatch classic series that fit the aesthetic of the season: Supernatural, Over the Garden Wall, and, of course, Gilmore Girls.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2256138/the-odyssey-imax-filming-upgrades/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/these-two-upgrades-made-filming-the-odyssey-entirely-in-imax-possible/l-intro-1789144850.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            These Two Upgrades Made Filming The Odyssey Entirely In IMAX Possible
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">These Two Upgrades Made Filming The Odyssey Entirely In IMAX Possible Tim P. Whitby/Getty Images The gods might've been against Odysseus on his mission home, but one person they weren't going to stop was the filmmaker daring to bring the journey to l&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/9-1-1-season-10-promo/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/03/911-eddie-and-buck.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            '9-1-1' Officially Unveils L.A.'s New Disaster Premise in First Look at Season 10
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Sep 15, 2026, 8:45 PM EDT Richard is a writer/journalist from Oregon (by way of California) with a love of Marvel, Star Wars, DC, and all kinds of entertainment. He joined MovieWeb in January 2026 as a Movie & TV Writer/Editor.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-nes-games-flawless-no-notes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/super-mario-bros-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 NES Games That Are 10/10, No Notes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The NES was Nintendo's first major video game console and, in the eyes of some, its best. Truthfully, no matter what people think of the SNES, N64, GameCube, Wii, Wii U, Switch, or Switch 2, none of these other consoles can compare to the NES's sheer&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-neo-noir-movies-film-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/12/mystic-river.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Neo-Noir Movies, Ranked
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The 10 Best Neo-Noir Movies in Film History</div>
+      
+      
+      <div class="summary">The classic film noir genre was born in the shadows of post-World War II disillusionment, defined by rain-slicked pavement, cynical detectives, and doomed antiheroes who try to navigate their way through a world stripped of moral clarity.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/marvel-kill-off-thor-tyr/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/tyr-dies-in-queen-in-black-defenders-of-light-and-dark-3-preview.png?q=70&fit=crop&w=750&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel's 'Immortal Thor' #15 Kills Off Tyr in Battle with Thor
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: After 64 Years, Marvel Officially Kills Off Thor-Level Character</div>
+      
+      
+      <div class="summary">Two major Asgard figures fight to the death, and Marvel reveals which of them doesn't make it out alive. Thor is so powerful in Marvel's Norse mythos that he often overshadows many other legendary figures who protect the Ten Realms alongside or compl&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/fantasy-miniseries-perfect-from-start-to-finish/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/untitled-design-2026-09-15t175612-643.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Fantasy Miniseries That Are Perfect From Start To Finish
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ever since J. R. R. Tolkien's The Lord of the Rings, the fantasy genre has been associated with sprawling tales that take place over years. The large scale of many great fantasy TV shows can be impressive, but their success should not count out a sta&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/coen-brothers-fargo-leaving-netflix-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/img_2252-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fargo TV Series and 1996 Film Leaving Netflix in 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It’s Officially the End of an Era for the Best Crime Thriller Ever Made</div>
+      
+      
+      <div class="summary">The Coen Brothers are known for their eccentric filmmaking that has a very meticulous, deeply planned approach and this dark deadpan humor themes.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/must-read-boys-love-manhua-bl-fans/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/11/split-images-of-boys-love-manhua.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Demon Slayer Crossover Event in Seven Knights Re:BIRTH Runs Oct. 1-29, 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 35 Must-Read Boys' Love Manhua For BL Fans</div>
+      
+      
+      <div class="summary">Manhua are comics published in China, Taiwan, and Hong Kong. Although similar in origin to the Japanese manga, each of these comics has a unique approach, art style, and theme.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/irobot-isaac-asimov-meets-steven-spielberg-apple-tv-streaming-milestone-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/01/1-95.jpg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            I, Robot (2004) Now Streaming on Apple TV+ After Asimov-Spielberg Influence
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Isaac Asimov Meets Steven Spielberg In One Of Apple TV's Biggest Sci-Fi Streaming Hits</div>
+      
+      
+      <div class="summary">Isaac Asimov helped shape the genre of science fiction with his Foundation books, a sweeping tale of a galactic empire on the brink of collapse, which was later adapted into Apple TV's hit series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/demon-slayer-seven-knights-rebirth-collaboration/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/01/tanjiro-on-hashira-training-arc.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Demon Slayer Returns October 1 With Tanjiro, Shinobu and More
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Demon Slayer officially returns this October ahead of Infinity Castle Part 2. Tanjiro, Zenitsu, Giyu and Shinobu will be featured in a major new crossover event, but only for a limited time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/zack-snyder-the-dark-knight-returns-movie-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/zack-snyder-on-justice-league-set.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zack Snyder Says There's 1 More DC Story He Needs to Tell & Now's the Perfect Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">As the founder of the DCEU, also known as the SnyderVerse, Zack Snyder released some major movies for DC Studios before moving on from the superhero genre. His focus has since been on other kinds of projects, but Snyder says he'd return to DC if he c&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2252145/common-problems-owners-have-with-google-nest/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-common-problems-owners-have-with-google-nest-and-how-to-fix-them/l-intro-1788793599.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Common Problems Owners Have With Google Nest (And How To Fix Them)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Common Problems Owners Have With Google Nest (And How To Fix Them) CC Photo Labs/Shutterstock Google Nest is one of the most popular smart-home ecosystems around. But that doesn't mean things can't go wrong with a user's smart home setup, mine incl&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/black-clover-weakest-magic-knights-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/mixcollage-15-sep-2026-06-52-pm-5269.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Weakest Magic Knight Captains in Black Clover, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The very title of Magic Knight Captain implies great power in Black Clover, featuring apex warriors like Yami Sukehiro and William Vangeance. That said, the difference between the strongest and weakest leaders only becomes obvious as the story escala&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-horror-shows-every-episode-masterpiece/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/the-haunting-of-hill-house-lulu-wilson-1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Best Netflix Horror Shows, Ranked
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 7 Netflix Horror Shows Where Every Episode Is a Masterpiece</div>
+      
+      
+      <div class="summary">With spooky season right around the corner, many of us are already getting in the mood as the weather begins to chill and hot tea begins to brew. With a cozy blanket on the couch, it's never too early to prepare for the season with a scary movie or a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/stargirl-hbo-max-sci-fi-watchmen-meets-the-flash/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/luke-wilson-as-pat-dugan-in-stargirl.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stargirl (2021) Blends Watchmen's Plot with The Flash's Tone in 39 Episodes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 39-Episode Sci-Fi Series On HBO Max Is Like Watchmen And The Flash In One</div>
+      
+      
+      <div class="summary">One HBO Max series took the lofty ambition of mixing The Flash and Watchmen and somehow managed to make this weird mix work. There is no shortage of superhero shows in the 2020s, so it takes a lot for a new entry into the genre to stand out in this d&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/frisco-king-tulsa-king-spin-off-samuel-l-jackson-images/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/05/samuel-l-jackson-in-tulsa-king.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tulsa King Spin-off Frisco King: New Photos Show Samuel L. Jackson in Frisco, Texas
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Samuel L. Jackson Officially Takes Over 'Tulsa King' Universe in New Taylor Sheridan Spin-Off Images</div>
+      
+      
+      <div class="summary">Amid Taylor Sheridan's takeover of the TV universe, the Yellowstone creator delivered yet another exciting new universe through the Tulsa King series on Paramount+.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/why-roy-batty-killed-jf-sebastian-offscreen-blade-runner-movie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/harrison-ford-s-deckard-pursues-a-replicant-in-ridely-scott-s-blade-runner.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Blade Runner: Why Roy Batty Killed Sebastian & Why It Only Happened Off-Screen
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ridley Scott's Blade Runner was released in 1982, and many fans would declare it a timeless sci-fi masterpiece. Harrison Ford stars as Deckard. He's a Blade Runner, working for a special police unit that hunts Replicants.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/matt-damon-bourne-trilogy-streaming-success-starz-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/img_0947.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Matt Damon's Bourne Franchise Tops Streaming Charts
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Matt Damon’s 10/10 Spy Thriller Trilogy Officially Takes Over Streaming Charts</div>
+      
+      
+      <div class="summary">Matt Damon is having a good year with the success of The Odyssey. Though Christopher Nolan and Damon have collaborated on several projects, this was the first time the latter played a leading man, and it was all worth it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-further-misadventures-cliff-booth-wrong-main-character/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/brad-pitt-as-cliff-booth-in-once-upon-a-time-in-hollywood-image.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Once Upon a Time in Hollywood Sequel 'The Further Mis-Adventures of Cliff Booth' Missteps
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s Further Mis-Adventures of Cliff Booth is Using the Wrong Character</div>
+      
+      
+      <div class="summary">Seven years on, Netflix's upcoming sequel to Quentin Tarantino's Once Upon a Time in Hollywood is making a mistake by following the wrong main character.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-witcher-compact-edition-bear-butterfly-ballad-two-wolves-release-date-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/04/en-us_thewitchers3_main_vertical_rgb_pre.jpg?q=70&fit=contain&w=280&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dark Horse Comics to Release The Witcher: The Bear and the Butterfly and The Ballad of Two Wolves in Compact Edition
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Witcher’s Bloodiest Stories Return as Fans Await The Witcher 4</div>
+      
+      
+      <div class="summary">For those longing for Henry Cavill's return to The Witcher on Netflix while waiting for CD Projekt Red's The Witcher IV, Dark Horse Comics may have the perfect fix to hold over growing impatience.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/your-friends-and-neighbors-best-cast-apple-tv-streaming-milestone-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/your-friends-and-neighbors_mhfxz7.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Your Friends & Neighbors Season 2 Passes 300 Days in Apple TV+ Top 10
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV's 2-Part Crime Series With One Of The Best Casts Passes A Rare Streaming Milestone</div>
+      
+      
+      <div class="summary">Apple TV's hit crime series recently returned with a new season, and the show has just hit a rare streaming milestone that is fitting for its impressive cast.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2256295/what-is-bluetooth-tethering-when-to-use/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/what-exactly-is-bluetooth-tethering-and-when-should-you-use-it/l-intro-1789123667.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            What Exactly Is Bluetooth Tethering And When Should You Use It?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">What Exactly Is Bluetooth Tethering And When Should You Use It? sdx15/Shutterstock Almost every smartphone can share its data connection, transforming it into a portable internet gateway for your other gadgets.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-sopranos-carmela-cringe-scene/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-sopranos_outysj-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            It's Been 22 Years, And I Have Only One Explanation For The Sopranos' Cringiest Scene
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's been 22 years since the cringiest scene in The Sopranos aired, and I've managed only one explanation for it. The Sopranos is a pretty unassailable show.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/david-boreanaz-seal-seal-team-netflix-new-era/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/seal-team-publicity-still.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            SEAL Team Debuts on Netflix, Reaching Top 10 After 114 Episodes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It's Officially The Start Of An Era For David Boreanaz's 114-Episode War Series</div>
+      
+      
+      <div class="summary">A 114-episode war series led by David Boreanaz is getting a new lease on life nearly two years after it ended. David Boreanaz is arguably the most bankable actor on television these days, and he has been for decades now.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/mcu-new-villain-team-fantastic-four/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/mcu-fantastic-four-with-frightful-four-comic-covers-behind-them.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            It's Official: Marvel Announces A Classic Supervillain Team Is Joining MCU Lore
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Movie(s) Iron Man, The Incredible Hulk, Iron Man 2, Thor, Captain America: The First Avenger, ​The Avengers, Iron Man 3, Thor: The Dark World, Captain America: The Winter Soldier, Guardians of the Galaxy, Avengers: Age of Ultron, Ant-Man, Captain Ame&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/rebecca-ferguson-fantasy-epic-hercules-streaming-success-netflix-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/rebecca-ferguson-hercules.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rebecca Ferguson's Fantasy Epic Hercules Rises on Streaming Charts
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Rebecca Ferguson's Forgotten Fantasy Epic Officially Fights Its Way Up Streaming Charts</div>
+      
+      
+      <div class="summary">Dwayne Johnson is one of the stars whose work brings a broad smile to your face. Be it his voice work in Disney’s animated Moana franchise, or the franchise-saving role in Fast Five, or his effortless comedic take on Dr.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/james-bond-king-zero-solves-reboot-timeline-problem/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/james-bond-no-time-to-die-daniel-craig.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Charlie Higson's James Bond Novel King Zero Resets the Franchise Timeline
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: James Bond King Zero Officially Solves the Reboot's Timeline Problem</div>
+      
+      
+      <div class="summary">The name James Bond means a lot of different things to a lot of different people. To some, the iconic secret agent conjures images of classic actors like Sean Connery and Timothy Dalton, while for others, they see more modern iterations of the charac&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    <span class="disabled">&laquo; Newer</span>
+  
+
+  
+    
+      <span class="current">1</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/2.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

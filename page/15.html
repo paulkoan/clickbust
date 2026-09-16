@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-16 01:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>118 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.cbr.com/matthew-rhys-two-emmy-wins/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/tom-loftis-in-his-office-on-mushrooms-in-widow-s-bay.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Matthew Rhys Makes History as First Actor to Win 2 Lead Acting Emmys in 1 Night
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Acclaimed actor Matthew Rhys is the man of the hour. Following highly praised performances in multiple shows, he's now made history with two major Emmy wins on the same night. At the Emmy Awards on Sept.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/apple-tv-silo-best-reviewed-show-on-streaming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/silo-season-2-01.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Prime Video Shows to Binge This Week: 'Reacher', 'Gilmore Girls', and More
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Best-Reviewed Apple TV Sci-Fi Series of 2026 Is Officially Surging Through Streaming</div>
+      
+      
+      <div class="summary">Apple TV+ has raised the bar for what viewers can expect from streaming television. No more middle-of-the-road content meant to play in the background. The platform has elevated its programming and provided the go-to destination for compelling sci-fi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2255555/oneplus-pad-go-2-worth-buying/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/is-the-oneplus-pad-go-2-still-worth-buying-in-2026/l-intro-1788870628.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Is The OnePlus Pad Go 2 Still Worth Buying In 2026?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Is The OnePlus Pad Go 2 Still Worth Buying In 2026? Shopping for a tablet? Maybe you've come across the OnePlus Pad Go 2 in your searches — and what a time to find it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-legend-of-zelda-rom-hack-moonrise-regalia/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/game-boy-color.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Legend of Zelda Returns to the Game Boy Color Era in New Game You Can Play Now
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's hard to deny that The Legend of Zelda is one of the biggest, most popular, and most influential video game series ever created. Dating all the way back to 1986, Zelda has been dominating the video game world for 40 solid years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2251220/brazil-wind-turbines-unregulated-data-centers/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/brazils-wind-turbines-are-drawing-in-unregulated-data-centers-heres-how/l-intro-1788538787.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brazil's Wind Turbines Are Drawing In Unregulated Data Centers - Here's How
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Brazil's Wind Turbines Are Drawing In Unregulated Data Centers - Here's How Thiago Santos/Getty Images Brazil's top three natural resources are currently petroleum, hydropower, and minerals (such as gold and bauxite), but wind power is growing rapidl&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/sai-improved-naruto-team-7/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/sai.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Ways Sai Improved Naruto's Team 7
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Sai had an almost impossible job when he joined Team 7 in Naruto: Shippuden. He was introduced as Sasuke Uchiha's replacement, entering a group whose remaining members were still deeply affected by their former teammate's departure. His personality d&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/rhea-seehorn-first-emmy-win-pluribus/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/rhea-seehorn-in-pluribus.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rhea Seehorn Chokes Up After First Emmy Win Following Years of Better Call Saul Snubs
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Emmys made history on Monday night with Rhea Seehorn finally claiming her first win for her acting. It's been a long time coming for the actress, who was consistently snubbed year after year during the entire run of Better Call Saul.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/widows-bay-matthew-rhys-emmy-history-multiple-male-award-wins/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/matthew-rhys-in-widow-s-bay.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Widow’s Bay Star Officially Sets Awards History With Massive Second Win
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Matthew Rhys has just set a historic first for the Primetime Emmy Awards with his big Widow's Bay victory.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/matthew-rhys-widows-bay-emmys-2026-lead-actor-comedy-winner/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/widows-bay-matthew-rhys.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Matthew Rhys Officially Wins Outstanding Actor in a Comedy Series for 'Widow's Bay'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ahead of the 2026 Primetime Emmys, it was clear that, despite a crowded field of acclaimed series, two were going to rise above the rest — Hacks and Widow's Bay.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2255235/are-liquid-cooled-gaming-tablets-worth-it/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/liquid-cooled-gaming-tablets-are-here-but-are-they-worth-the-price-tag/l-intro-1789065048.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Liquid Cooled Gaming Tablets Are Here - But Are They Worth The Price Tag?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Liquid Cooled Gaming Tablets Are Here - But Are They Worth The Price Tag? Tablets have long-occupied a strange middle-ground in the gaming world. Despite having larger screens than smartphones, they typically don't offer much increase in processing p&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sally-field-remarkably-bright-creatures-emmys-2026-lead-actress-limited-anthology-series-winner/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/remarkably-bright-creatures-sally-field-lewis-pullman.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sally Field Officially Wins Outstanding Lead Actress in a Limited or Anthology Series or Movie for ‘Remarkably Bright Creatures’
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Golden statuettes are being handed out tonight to the best and brightest of the small screen, as the 78th Primetime Emmy Awards air on NBC and Peacock.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/prime-video-shows-binge-september-14-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/11/gilmore-girls-rory-lorelai.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Series You Officially Need to Binge on Prime Video This Week (Sep 14-18)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Another week has rolled by, and Nick Santora’s hit crime show Reacher is still the number one series on Prime Video.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-fun-movies-20th-century-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/lorraine-marty-back-to-the-future-2-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 8 Most Fun Movies of the 20th Century, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some movies do not really age because they never relied on novelty in the first place. You hear the opening music, see the first shot, recognize the first stupidly perfect line, and your brain is already there. No warming up. No convincing yourself i&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/supergirl-hbo-max-flopped-obvious-reason.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/06/supergirl-laser-sights-1.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Supergirl's HBO Max Success Shows Theatrical Release Window Hurt Its Box Office
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Supergirl Is #1 On HBO Max Proving It Flopped For The Most Obvious Reason</div>
+      
+      
+      <div class="summary">By Jonathan Klotz | Published 18 seconds ago Supergirl has been the #1 movie on HBO Max since it landed on the service. This has caused fans to wonder why it flopped in theaters if so many people are watching it, and enjoying it, now.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/hacks-jean-smart-emmy-2026-win-record/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/hacks-jean.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jean Smart Officially Makes Emmys History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Hacks was HBO's breakout hit of 2021, and the show's popularity only grew over its five-season run. Stars Jean Smart and Hannah Einbinder were both Emmy-nominated for Outstanding Lead Actress and Outstanding Supporting Actress in a Comedy Series, res&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/acotar-secretly-retelling-greek-myth-hades-persephone-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/elin-melaas-39ly5jvpw-g-unsplash.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ACOTAR Is Secretly A Retelling Of Greek Myth, Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A Court of Thorns and Roses series by Sarah J. Maas has become a defining piece of the romantasy genre in the modern publishing era, and the heart of the story is secretly a retelling of a heart-wrenching Greek myth.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/sci-fi-fantasy-shows-brandon-sanderson-recommends/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/brandon-sanderson-tv-recs.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            9 Great Sci-Fi & Fantasy Shows Recommended by Brandon Sanderson
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Brandon Sanderson is an icon in sci-fi and fantasy spaces, as the author has a number of beloved books in both categories under his belt, including those in his best-selling Mistborn series and The Stormlight Archive.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/most-underrated-xbox-360-games/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/24855988/78853045.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lost Odyssey Is One of the Xbox 360's Best Hidden Gems
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 10 Near-Perfect Xbox 360 Games Nobody Played</div>
+      
+      
+      <div class="summary">The Xbox brand kicked off in 2001 with an enormous black box that proved Microsoft could hang with the major console players just fine. However, the Xbox 360 was the hardware that revealed Xbox had the potential to dominate the space, thanks in part &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/ncis-mark-harmon-leroy-jethro-gibbs-return-to-washington-bullpen/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/mark-harmon-as-leroy-jethro-gibbs-in-ncis-2.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Years Later, CBS Finally Confirms Mark Harmon's NCIS Return as Gibbs
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">CBS is finally delivering something NCIS fans have anticipated for five long years, confirming that Mark Harmon’s leading character, Leroy Jethro Gibbs, will be back in the bullpen in the coming months.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hulu-furious-climbs-the-charts-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/furious-show-alice-and-nora.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hulu's Furious Rises to No. 2 Most-Watched Show on Disney+ After Season 1 Finale
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Hulu's Gritty New Serial Killer Thriller Climbs the Charts Again 2 Weeks After Season Finale</div>
+      
+      
+      <div class="summary">Hulu's hit serial killer show, Furious, is climbing the charts once again, two weeks after the Season 1 finale. Furious is currently the No. 2 most-watched TV show in the world on Disney+, per FlixPatrol. In the United States, the series has climbed &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/noah-wyle-the-pitt-emmys-2026-lead-actor-drama-winner/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/the-pitt-season-3-noah-wyle-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Noah Wyle Officially Wins Outstanding Lead Actor in a Drama Series for ‘The Pitt’
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">At some point, a comeback turns into a procession, and then it turns into a victory lap. That's exactly how this year's Primetime Emmy Awards feel, as the award for Outstanding Lead Actor in a Drama Series at the 78th Primetime Emmy Awards went to th&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/rhea-seehorn-emmy-win-2026-breaks-better-call-saul-curse/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/rhea-seehorn-in-pluribus-2.jpg?q=49&fit=crop&w=100&h=67&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rhea Seehorn Wins 2026 Emmy for Lead Actress in Apple TV+'s Pluribus
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Better Call Saul Star Rhea Seehorn Officially Breaks Emmy Curse With 2026 Win</div>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.Better Call Saul star, Rhea Seehorn, has repeatedly been snubbed at the Emmys, but she finally broke the curse with h&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/apple-tv-the-real-ghostbusters-iconic-fantasy-series-topping-charts/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/01/the-real-ghostbusters-featured.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            40 Years Later, The Real Ghostbusters Animated Series Is a Hit on Apple TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 40 Years Later, This Iconic Fantasy Series Is Officially a Hit on Apple TV</div>
+      
+      
+      <div class="summary">In 1984, Ghostbusters took the world of cinema by storm thanks to its high-concept premise, biting humor, and star-studded cast.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2258346/jodie-foster-dave-bautista-violent-sci-fi-movie-streaming-free-hotel-artemis/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/jodie-foster-and-dave-bautistas-violent-sci-fi-action-movie-is-streaming-for-free/l-intro-1789419979.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hotel Artemis, Starring Jodie Foster and Dave Bautista, Is Streaming for Free
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jodie Foster And Dave Bautista's Violent Sci-Fi Action Movie Is Streaming For Free</div>
+      
+      
+      <div class="summary">Jodie Foster And Dave Bautista's Violent Sci-Fi Action Movie Is Streaming For Free Lionsgate Sometimes, movies are simply too cool for school. Slick characters, cool set designs, and sharp lines of dialogue can set films apart and help them stand the&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/most-valuable-gen-1-pokemon-cards/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/screenshot-2026-09-12-at-9-12-10-pm-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            After (2019) Leaves Netflix on Oct. 8; Sequels Remain Available
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 10 Most Valuable Pokémon Cards From the Original 151, Ranked by Price</div>
+      
+      
+      <div class="summary">To this day, Pokémon's original generation is the most popular generation of Pokémon ever created. This should really come as no surprise. As the generation that brought the world Charizard, Eevee, Gengar, Mew, and even Pikachu, Pokémon's mascot, it'&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/stephen-root-widows-bay-emmys-2026-supporting-actor-comedy-winner/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/widows-bay-episode-9-stephen-root.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stephen Root Officially Wins Outstanding Supporting Actor in a Comedy Series for ‘Widow's Bay’
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The small-screen stars are out tonight for the Primetime Emmy Awards on NBC and Peacock. Law & Order: Special Victims Unit's Mariska Hargitay is on the case as tonight's host, and the awards are being handed out as we speak.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-universally-loved-video-games-since-2020-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/hades-video-game-zagreus.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 6 Most Universally Loved Games Released Since 2020, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Video games are one of the most popular mediums in the world nowadays, and because of that, there are plenty of beloved classics such as The Legend of Zelda: Ocarina of Time and Red Dead Redemption 2 that almost everyone loves.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pluribus-rhea-seehorn-emmy-win-redemption/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/carol-sturka-looks-at-medications-in-a-hospital-in-pluribus.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pluribus’ Rhea Seehorn Finally Gets Her Emmy Redemption After Disappointing 4-Year Streak
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Sep 14, 2026, 8:39 PM EDT Adam has been writing in the entertainment news space for over a decade. Beginning his career of covering film and TV at CinemaBlend, he has also appeared on The Flash Podcast and done several radio spots. This art&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/rhea-seehorn-pluribus-emmys-2026-lead-actress-drama-winner/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/12/pluribus-finale-rhea-seehorn-interview.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Allison Janney Wins Outstanding Supporting Actress in a Drama Series for 'The Diplomat'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Rhea Seehorn Officially Wins Outstanding Lead Actress in a Drama Series for ‘Pluribus’</div>
+      
+      
+      <div class="summary">Finally. Justice has shone upon the most worthy and righteous. Few Emmy snubs frustrated television fans quite as consistently as Rhea Seehorn consistently being overlooked for Better Call Saul.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/a-knight-of-the-seven-kingdoms-hbo-kudos-not-game-of-thrones/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/04/a-knight-of-the-seven-kingdoms.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO's A Knight of the Seven Kingdoms Stands Out by Avoiding Game of Thrones Tropes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO's 10/10 High Fantasy Masterpiece Deserves Kudos For Not Trying To Be Like Game Of Thrones</div>
+      
+      
+      <div class="summary">Every fantasy TV show these days wants to be the next Game of Thrones, but an absolute hit from HBO deserves a medal for heading in a different direction.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <span class="current">15</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/16.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-16 01:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>118 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.polygon.com/jason-momoa-overlooked-sci-fi-adventure-is-now-streaming-for-free/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/tcdstat_ec088-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Walton Goggins Shines in HBO's The Righteous Gemstones
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 22 Years Later, Jason Momoa's Overlooked Sc-Fi Series Is Officially Free on YouTube</div>
+      
+      
+      <div class="summary">In 1994, director Roland Emmerich released Stargate, a sci-fi adventure meant to be the first in a planned trilogy. Although these plans fell through (don't worry, Emmerich followed that up with Independence Day), it wasn't the end of the story.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/walton-goggins-righteous-gemstones-overlooked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/screenshot-2026-09-14-at-2-19-25-pm.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Walton Goggins's Performance is a Standout in HBO's Overlooked, Near-Perfect Comedy
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Walton Goggins is an actor's actor, slipping from one genre to the next. There seems to be no shortage of his range. From Fallout to The White Lotus, Goggins easily disappears into each role, despite being recognizable.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/avatar-living-typhoon-realms-collide-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/kelsang-hero-sheet.png?q=70&fit=crop&w=784&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avatar: Realms Collide Adds Kelsang, the Living Typhoon, as a Legendary Hero on September 16
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Avatar The Last Airbender: The Living Typhoon Officially Announced</div>
+      
+      
+      <div class="summary">The Avatar: The Last Airbender franchise is entering a brand-new era, with Netflix's live-action adaptation recently releasing its second season and its third and final chapter already finished filming ahead of a 2027 release.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/threshing-day-empyrean-series-comes-out-2-weeks/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/fourth-wing-book-one.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fourth Wing Officially Returns in 2 Weeks — But There's a Catch
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Rebecca Yarros is one of the biggest names in publishing. As the author of The Empyrean Series, Yarros is a part of a pop culture phenomenon that’s akin to Harry Potter and the Twilight Saga when it comes to its sales and reach.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/treks-worst-character-final-episode.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/star-trek-final-mission-wesley-disheveled-1.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Shocking Reason Star Trek’s Worst Character Got A Perfect Final Episode
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">By Chris Snellgrove | Published 19 seconds ago Even though he’s played by a fairly talented actor, many fans still consider Wesley Crusher the most annoying Star Trek character ever created. So annoying, in fact, that many of them cheered when he fin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/playstation-ps2-2004-classic-ps-plus-free-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/mega-man-x-command-mission-key-art.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mega Man X: Command Mission Added to PlayStation Plus Classics Catalog in September
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: A 2004 PlayStation 2 Classic Is Officially Free Now With PS Plus</div>
+      
+      
+      <div class="summary">PlayStation Plus users are treated to releases from the PlayStation 2 era all the time, with several of the console's greatest titles gracing the platform every few months.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/janeway-to-be-like-picard.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/star-trek-voyager-crew-picard-edit-1.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Classic Star Trek Writer Wanted Janeway To Be More Like Picard
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">By Chris Snellgrove | Published 18 seconds ago Which Star Trek characters do you think are the hardest to write for? In most cases, it’s the captain.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/two-forgotten-star-trek-legends.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/star-trek-voyager-resistance-janeway-gun-1.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rebecca Yarros' Fourth Wing Companion Book Threshing Day Releases in Two Weeks
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Two Forgotten Star Trek Legends Once Pitched An Impossible Episode</div>
+      
+      
+      <div class="summary">By Chris Snellgrove | Published 6 seconds ago Like many fans, I was voraciously consuming Star Trek novels throughout the ‘90s. Many of these stories were excellent, and I found myself wishing that these authors could bring their talents to the vario&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/invincible-universus-2027-crossover-confirmed/invincible-universus-2027-crossover-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/invincible-key-art-from-game-informer-press-kit.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Invincible Joins UniVersus Crossover Card Game With Hellboy, Warhammer 40K, and JoJo's Bizarre Adventure
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Invincible Officially Returns In Huge New 2027 Crossover</div>
+      
+      
+      <div class="summary">Invincible proved to be a smash hit with its original comic and has found a whole new lease on life with the critically acclaimed and beloved TV series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/angel-streaming-rec-tubi/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/cordelia-charisma-carpenter-on-angel.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Angel Is Now Streaming Free on Tubi
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 27 Years Later, 1 of the Best Detective Thriller Series of All Time is Officially Free on Streaming</div>
+      
+      
+      <div class="summary">Buffy: The Vampire Slayer is widely considered to be one of the best and most influential TV shows of all time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/game-of-thrones-hand-of-king-jon-snow-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/sharedimages/2024/08/game-of-thrones-legends-tag-page-cover-art.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Game of Thrones: Legends Adds Jon Snow in Hand of the King Update on September 23
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Game Of Thrones: Hand Of The King Officially Confirms Return Of Jon Snow</div>
+      
+      
+      <div class="summary">Jon Snow has one of the most compelling and tumultuous character arcs in the entirety of Game of Thrones, and while we still don't know what's in store for him in George R.R.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jane-austen-books-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/pride-and-prejudice-2005-1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Jane Austen Book, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Jane Austen wrote six novels, which feels like a small number considering how often her work pops up in a contemporary setting. Her books have been adapted into prestige films, miniseries, loose Hollywood reimaginings, and at least one zombie mashup.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/walking-dead-dead-city-dillard-spinoff-seth-hoffman/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/sharedimages/2025/04/0544157_poster_w780.jpg?q=70&fit=contain&w=780&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Walking Dead: Dead City Showrunner Seth Hoffman Explains Why Dillard Left After One Season
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Walking Dead: Dead City Showrunner Shares His Concept for a Dillard Spinoff</div>
+      
+      
+      <div class="summary">The following contains spoilers for The Walking Dead: Dead City Season 3, Episode 8, "Tenebrae," which premiered Sunday, Sept. 13, on AMC and AMC+. Aimee Garcia isn't the only Dead City Season 3 newcomer to leave The Walking Dead spinoff after only o&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/lord-of-the-rings-return-of-the-king-best-final-quote-fantasy-film/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/06/frodo-hugging-sam-on-mount-doom-in-lord-of-the-rings-return-of-the-king.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            23 Years Later, The Lord of the Rings' Final Line Still Defines the Fantasy Trilogy
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Peter Jackson’s Lord of the Rings trilogy represents some of the finest blockbuster filmmaking of the 21st century. The director’s vision balanced the epic scale of J. R. R.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dungeon-crawler-carl-big-boi-boxers-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/sharedimages/2026/05/dungeon-crawler-carl-book-cover-image.jpg?q=70&fit=contain&w=280&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dungeon Crawler Carl RPG: Carl's Enchanted Big Boi Boxers Dice Set Available for Pre-Order Now
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Dungeon Crawler Carl: Enchanted Big Boi Boxers Officially Releases November 2026</div>
+      
+      
+      <div class="summary">Who doesn't love Dungeon Crawler Carl? The reluctant hero who turns up woefully underdressed in the apocalypse. For those who don't know who Dungeon Crawler Carl is, well let me enlighten you a little.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/marvels-wolverine-bosses-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/mw_previews_omegared_4k_2026.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All bosses in Marvel's Wolverine
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are quite a few bosses in Marvel's Wolverine, but that's hardly a surprise because you can't have a superhero game without some boss fights now, can you? Each of them takes place against a classic Marvel character, and every boss fight is a fan&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/marvels-wolverine-missions-list-length-how-long/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/marvels-wolverine-parry-fight.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel's Wolverine mission list and length, explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel's Wolverine has dozens of missions to complete, and can take a long time to finish depending on how you play.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/marvels-wolverine-whisky-bottle-locations-collectibles-where-to-find/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/marvels-wolverine-whisky-bottles-blood-and-bourbon-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All whisky bottle locations in Marvel's Wolverine
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are 20 whisky bottles in Marvel's Wolverine, spread throughout the game's many levels. Thanks to Logan's heightened sense of smell, a blue trail will appear whenever he's near one, leading him directly to a bottle of his favorite beverage, but &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/marvels-wolverine-suits-list-all-how-to-get/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/marvels-wolverine-suits-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All suits in Marvel's Wolverine and how to get them
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are a lot of suits in Marvel's Wolverine. 32 suits to be exact. These cosmetic options, along with the claws that come with different suits, are the only way to customize Logan, and while you'll unlock some just by playing through the story, ot&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/marvels-wolverine-shiros-keypad-code-closet-bad-blood/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/marvels-wolverine-shiros-keypad-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Where to find the code for Shiro's keypad in Marvel's Wolverine
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Shiro's closet keypad in Marvel's Wolverine is one place you may get stuck during the "Bad Blood" mission, because while the rest of the game is pretty much on-rails, this section requires you to investigate your surroundings.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-peanuts-quote-unrequited-love-heartbreak/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/image2.webp?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            62 Years Later, the Best 'Peanuts' Quote About Love Is Still a Quintessential Comic Strip Line
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of the most enduring themes of Charles Schulz’s Peanuts comics is young love — or, more specifically, unrequited young love. Throughout his 50 years of drawing the comic strip, Schulz almost never featured a great love story where both parties fe&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-feel-good-songs/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/spongebob-tom-kenny-plays-guitar-and-sings-to-patrick-bill-fagerbakke-squidward-rodger-bumpass-spongebob-squarepants.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 20 Best Feel-Good Songs Guaranteed to Turn That Frown Upside Down
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">What's got you down, champ? Did you wake up on the wrong side of the bed? Maybe even under it? Did your partner leave you, or – no judgment – did they decide to stay? Did you pour scalding coffee on yourself, because your mug doesn't have that "Cauti&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-pitt-season-3-shows-to-watch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/the-pitt.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Must-Watch Shows To Binge While You Wait for 'The Pitt' Season 3
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When a TV series has already won nine Primetime Emmys and is only two seasons in, you know it has to be good. The Pitt is not only good, but exemplary. The hit series starring Noah Wyle centers around a 15-hour shift at the fictional Pittsburgh Traum&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/i-play-rocky-reviews-rotten-tomatoes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/i-play-rocky.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Anthony Ippolito's Stallone Portrayal in 'Rocky' Prequel Earns Critical Praise
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New Rocky Movie Star Gets High Praise from Critics: 'Like We're Seeing Stallone Himself'</div>
+      
+      
+      <div class="summary">A full five decades ago, Sylvester Stallone's Rocky debuted in theaters, spawning one of the most beloved franchises in movie history.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/avengers-endgame-encore-captain-america-steve-rogers-sam-wilson-change/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/avengers-endgame_4vcu8w.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Bear Ends Its Emmy Era After 2025 Snub, Winning Only One Award for Rob Reiner
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Captain America May Be The Biggest Winner & Loser From Marvel Rewriting Avengers: Endgame This Month</div>
+      
+      
+      <div class="summary">Avengers: Endgame Encore is set to release in just a couple of weeks, an epic new re-release from Marvel Studios ahead of Avengers: Doomsday in December.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2254818/galaxy-watch-apps-work-with-your-car/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-galaxy-watch-apps-that-can-work-with-your-car/l-intro-1789053462.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Galaxy Watch Apps That Can Work With Your Car
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Galaxy Watch Apps That Can Work With Your Car Simonkr/Getty Images Samsung Galaxy Watches, like the Galaxy Watch 8 Classic and upcoming Galaxy Watch 9, come with plenty of features that are useful for drivers, like the ability to store digital car &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jason-statham-mutiny-amazon-number-one-streaming-hit/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/09/mutiny-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jason Statham's Mutiny Flopped in Theaters But Is Now a Streaming Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jason Statham’s $28 Million Action Flop Is Officially a Streaming Hit</div>
+      
+      
+      <div class="summary">Jason Statham is an undisputed action icon. The actor has given us some amazing high-octane thrillers, heist movies, and ensemble action franchises, including The Transporter, The Meg, Fast X, Expendables, and newer entries like The Beekeeper, A Work&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-sega-dreamcast-games-forgotten-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/dreamcast-console.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dreamcast's Forgotten Game Headhunter Had Players Harvest Organs
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 10 Untouchable Sega Dreamcast Games Nobody Remembers</div>
+      
+      
+      <div class="summary">Even though the Dreamcast was a failure, selling just 9.1 million systems and putting Sega out of the console business, it was still one of the greatest consoles ever made.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/78th-emmy-awards-2026-full-winners-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/matthew-rhys-in-widow-s-bay.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            78th Emmy Awards 2026: Full List of Winners
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Sep 14, 2026, 11:35 PM EDT Jeremy has been a freelance writer and editor since 2014, having contributed to a variety of entertainment websites. He is a self-professed expert on all things pop culture and Bob Saget's biggest fan.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/peanuts-snoopy-world-famous-author-end-era/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/snoopy-and-woostock-the-peanuts-movie.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            2026 Emmys: Widow's Bay Sweeps, The Pitt and Hacks Win Top Categories, Kate O'Flynn Wins Supporting Actress
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Peanuts Used One Last Classic Snoopy Gag To Mark The End Of An Era</div>
+      
+      
+      <div class="summary">Plenty of stories are told with an ending in mind. Characters and their arcs are conceived with their growth and development a core hook for readers.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <span class="current">13</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/14.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-16 01:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>118 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/james-bond-official-return-march-2027-first-light-delay/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/20260531191341_1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            007 First Light Nintendo Switch 2 Release Delayed to March 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: James Bond Will Officially Return March 2027 Following Delay</div>
+      
+      
+      <div class="summary">It's been five years since Daniel Craig said goodbye to one of the silver screen's most iconic characters. The wait for Bond to return has been long and shrouded in mystery. According to media sources and indeed Gary Oldman, the latest James Bond has&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2255711/phoenix-cool-pavement-unexpected-drawback/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/cooling-pavements-in-phoenix-could-come-with-an-unexpected-drawback/l-intro-1789122244.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cooling Pavements In Phoenix Could Come With An Unexpected Drawback
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Cooling Pavements In Phoenix Could Come With An Unexpected Drawback Matt Mawson/Getty Images Phoenix, Arizona is no stranger to scorching, relentless heat, and the sprawling miles of dark asphalt crisscrossing the city only makes things worse, especi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/marvels-wolverine-free-download-launch-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/marvel-s-wolverine-showing-logan-fighting-the-hand.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel's Wolverine Free Download Available Now To Celebrate Game's Launch
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Today marks the launch of Marvel's Wolverine, an action-adventure game from Insomniac Games which, as you can probably guess, centers around the exploits of the Marvel Comics character Wolverine.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/sarah-michelle-gellar-buffy-reboot-cancellation-emmys/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/sarah-michelle-gellar-in-buffy-the-vampire-slayer.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sarah Michelle Gellar Calls Out Hulu at the Emmys Over 'Buffy' Reboot
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Sarah Michelle Gellar famously cemented her place in television history by starring as the iconic, witty titular heroine in Buffy the Vampire Slayer, a groundbreaking supernatural series that ran for seven seasons from 1997 to 2003.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-sci-fi-films-2020s-so-far-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/project-hail-mary-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Best Sci-Fi Films of the 2020s So Far, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">So far, the 2020s have seen the release of several absolutely exceptional science fiction movies. This is a genre that, since the very birth of cinema as a storytelling medium, has been delivering banger after banger every single decade—and what a ti&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/cliffhanger-reboot-release-date-2027-action/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/cliffhanger_ec70yw.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Reboot of Sylvester Stallone Action Thriller Classic Finally Confirms Release Date
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The long-awaited reboot of one of Hollywood icon Sylvester Stallone’s most beloved 90s action thrillers has finally confirmed a release window after a series of major delays and all manner of behind-the-scenes drama.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/widows-bay-emmys-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/sharedimages/2026/04/widow-s-bay.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Widow's Bay Sets Record with 14 Emmy Wins, Most for a Comedy Season
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Widow's Bay Just Quietly Made Emmy History</div>
+      
+      
+      <div class="summary">There's something about spooky islands in the middle of nowhere that we just can't get enough of. We raved about the small but devout community of Crockett Island in Netflix's miniseries Midnight Mass, but now another small island town has won our he&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2255694/android-auto-apps-for-bikers-motorcycle/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/bikers-should-download-these-4-android-auto-apps-for-their-motorcycle/l-intro-1789115675.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bikers Should Download These 4 Android Auto Apps For Their Motorcycle
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Bikers Should Download These 4 Android Auto Apps For Their Motorcycle Eder Paisan/Getty Images There are both pros and cons of Android Auto, but for the most part, it's looked at as an improved in-vehicle experience over simply controlling apps with &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/reacher-neagley-spin-off-prime-video-franchise/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/08/neagley-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Reacher' Spinoff 'Neagley' Premieres on Prime Video This Week
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It’s Officially the End of an Era for 'Reacher' in 24 Hours</div>
+      
+      
+      <div class="summary">For four years, Reacher has meant Reacher. One large man, a wrecking crew on two legs, a refrigerator with limited human emotions, and a massive Prime Video franchise. Each season wipes the slate clean, sends him into another town, and lets him get o&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/my-hero-academia-tv-fights-best-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/12/deku-running-against-a-white-background.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 20 Best 'My Hero Academia' Fights, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Note: This article contains spoilers for the final season of My Hero Academia.Since the release of My Hero Academia, it's become one of the most popular anime out there. It's taken over Western culture, and a huge reason for that is because of how ab&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/south-park-america-season-29-episode-1-teaser/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/south-park.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            South Park Renamed South America in New Season Teaser, Returning to Core Characters
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: South America's First Teaser Shows South Park Is Going Back to Its Roots Despite Name Change</div>
+      
+      
+      <div class="summary">Last week, South Park announced its new name: South America. This is a jab at Trump's attempt to rename geographical locations, such as the Gulf of Mexico and Lake Ontario, to the Gulf of America and Lake America, and Google and Apple's willingness t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2252141/nvidia-shield-tv-vs-amazon-fire-tv-stick-best-streaming-device/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/nvidia-shield-vs-amazon-fire-tv-sticks-which-is-the-best-streaming-device-for-you/l-intro-1788791701.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nvidia Shield Vs. Amazon Fire TV Sticks: Which Is The Best Streaming Device For You?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Nvidia Shield Vs. Amazon Fire TV Sticks: Which Is The Best Streaming Device For You? WESLEY FOULDS/Shutterstock Nvidia's Shield TV streamers have been around for almost seven years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/solo-leveling-karma-return-new-genre/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/solo-leveling-close-up-from-press-kit-images.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Solo Leveling: Karma RPG Announced, Continuing the Story After the Manhwa
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Solo Leveling Is Officially Switching Genres When It Returns This Year</div>
+      
+      
+      <div class="summary">Beginning its life as a South Korean fantasy web novel written by Chugong, Solo Leveling has quickly become a worldwide pheomenon, thanks to the success of its anime television series adaptation which aired back in 2024. Since then, the Solo Leveling&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tom-hardy-mobland-firing-rumors-pierce-brosnan-response/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/03/abeh7n5pcuqcwyctxg6dtzvxlp1.jpg?q=70&fit=contain&w=480&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Hardy Returns in 'MobLand' Season 2 This Week
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Hardy Officially Returns to ‘MobLand’ This Week After Firing Reports</div>
+      
+      
+      <div class="summary">Crime dramas certainly have their fair share of dysfunctional families, but this lot have taken it to another level, because after a season that had enough betrayals, murders, shifting alliances, and family disagreements to make Christmas dinner some&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/samara-weaving-ready-or-not-perfect-mcu-emma-frost-audition/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/emma-frost-using-her-power-in-marvel-comics.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ready or Not Showed Samara Weaving's Suitability for Emma Frost in X-Men
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ready or Not Was Samara Weaving’s Perfect MCU Audition</div>
+      
+      
+      <div class="summary">Before she officially joins the Marvel Cinematic Universe as Emma Frost, Samara Weaving proved her salt with an iconic role in one of the greatest modern-day comedy horror masterpieces, Ready or Not.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/apple-tv-dark-matter-season-2-abandoning-the-novel/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/apple-tv-logo-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV Is Changing the Rules for 1 of Its Biggest Sci-Fi Shows & Abandoning the Novel
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The following contains spoilers for Dark Matter Season 2, Episodes 1-3, now streaming on Apple TV. After a two-year wait, Apple TV's Dark Matter finally returned for a second season, and the producers have completely abandoned the source novel.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/hogwarts-legacy-wizarding-academy-rp-mod-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/hogwarts-legacy-dark-wizard.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hogwarts Legacy: Wizarding Academy Update Is Available Now
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Hogwarts Legacy is something of an enigma, even to this day. Despite launching amidst high levels of controversy due to its links to Harry Potter author J.K. Rowling, the RPG still went on to become the best-selling game of 2023.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2255558/mars-atmosphere-unexpected-pattern-zwan-wolf-effect-like-earth/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/scientists-found-an-unexpected-pattern-in-mars-atmosphere-that-mirrors-earth/l-intro-1789063517.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Scientists Found An Unexpected Pattern In Mars' Atmosphere That Mirrors Earth
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Scientists Found An Unexpected Pattern In Mars' Atmosphere That Mirrors Earth Scientists have found an unexpected pattern in Mars' atmosphere called the Zwan-Wolf effect, which generally only occurs on planets like Earth that have strong magnetic fie&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/stranger-things-tales-from-85-season-2-netflix-september-17/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/stranger-things.jpg?q=49&fit=crop&w=100&h=67&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Stranger Things' Season 2 Premieres This Week on Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Stranger Things’ Officially Brings Eleven Back This Week</div>
+      
+      
+      <div class="summary">Stranger Things was the definition of a cultural phenomenon for a decade as it evolved from a niche Netflix hit into one of the biggest television shows of all time. And of course, that would mean that Netflix isn't just going to let the golden goose&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/legend-of-zelda-echoes-of-hyrule-may-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/04/zelda-on-a-horse-in-breath-of-the-wild.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Legend Of Zelda: Echoes Of Hyrule Arrives May 2027
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Back in February, we celebrated the 40th anniversary of The Legend of Zelda franchise, and it was hard to believe that it was this time in 1986 that Nintendo Entertainment System owners were experiencing the hit Nintendo saga for the first time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/near-perfect-90s-adventure-movies-essential-viewing/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/brenda-fraser-and-rachel-weisz-as-rick-and-evelyn-hugging-in-the-mummy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Near-Perfect ’90s Adventure Movies That Remain Essential Viewing Today
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Summary '90s adventures felt physical and real—practical stunts, locations, real danger. CGI grew but hadn't taken over—studios still backed varied, non‑franchise adventures. Range and emotional weight make these diverse '90s adventures endlessly rew&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/007-first-light-nintendo-switch-2-delayed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/05/007-first-light-review-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            007 First Light Delayed to March 2027, Still Not on Nintendo Switch 2
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 007 First Light Significantly Delayed on Nintendo Switch 2</div>
+      
+      
+      <div class="summary">007 First Light was initially set to release on all platforms simultaneously, but things did not go according to plan. Although the game has been out since late May on PlayStation 5, Xbox Series X/S, and Windows Pc, it is still not available on Ninte&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2255557/3d-printer-30-accessory-lifesaver/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-cheap-accessory-for-your-3d-printer-can-be-a-lifesaver/intro-1788984599.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Use a Smart Security Camera to Monitor Your 3D Printer Remotely
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Cheap Accessory For Your 3D Printer Can Be A Lifesaver</div>
+      
+      
+      <div class="summary">This Cheap Accessory For Your 3D Printer Can Be A Lifesaver Phynart Studio/Getty Images We may receive a commission on purchases made from links. Making items with a 3D printer isn't usually a speedy process. Large-scale prints take hours, days even,&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/fantastic-fest-2026-most-exciting-movies-tv-shows/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/austin-abrams-bryan-looking-shocked-at-a-zombie-with-a-tentacle-coming-out-of-her-cheek-in-resident-evil.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Must-See Movies at Fantastic Fest, Including Resident Evil
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fantastic Fest is an eight-day celebration of the best genre movies on the planet, including the new Resident Evil adaptation, while this year's event also features a terrifying TV series that's coming very soon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/mahershala-ali-blade-comments-your-mother-your-mother-your-mother/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/untitled-design-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mahershala Ali Officially Moves On From Marvel’s Cancelled ‘Blade’ Movie
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Two-time Oscar-winner Mahershala Ali reiterated that he has officially moved on from the Blade movie at Marvel Studios, after expressing frustration about how the project was handled.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/movies-like-spirited-away/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/howl-s-moving-castle-sophie-howl.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            15 Movies To Watch if You Love 'Spirited Away'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Hayao Miyazaki is perhaps Japan's best-known director of animated films, having made 12 so far in his legendary career. Most agree that his best film is Spirited Away, which was the first foreign film to win the Academy Award for Best Animated Featur&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/prima-facie-movie-review-tiff/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/cynthia-erivo-in-close-up-wearing-the-tradition-wig-of-a-british-lawyer-in-prima-facie.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prima Facie Review: Cynthia Erivo Delivers Powerful Rallying Call In Solid Legal Drama [TIFF]
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Cognitive dissonance refers to the mental distress or tension one feels when their behaviors do not match their values or beliefs.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/ps2-games-no-one-played/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/psi-ops-the-mindgate-conspiracy-key-art.avif?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Near-Perfect PS2 Games Nobody Played
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Few video game consoles have a game library as deep as the PlayStation 2. Sony’s console was a megahit in the early 2000s, and every developer wanted a piece of it. Over 4,000 games were made for the PS2, and nearly 2,000 of those were exclusive to t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pokemon-tcg-articuno-zapdos-moltres-30th-redesign/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/pokemon-legendary-birds-from-unite-image.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon’s Legendary Bird Trio Gets Bold New Redesigns For 30th Anniversary
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pokémon's 30th anniversary is about to hit a major high point this week with the official launch of Pokémon TCG's 30th Celebration set, one of the most anticipated releases of the year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-classic-film-noir-movies-to-watch-if-you-loved-spider-noir/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/04/nore_still_7_3000.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stargate Atlantis Is Now Free to Stream on YouTube
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 7 Best Classic Noir Movies to Watch if You Loved 'Spider-Noir'</div>
+      
+      
+      <div class="summary">Spider-Noir may have been unceremoniously canceled after a compelling first season, but Nicolas Cage's turn as the spider hero will forever remain a classic and authentic entry in the noir genre. Truly, the Prime Video series is nothing like the live&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <span class="current">12</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/13.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-16 01:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>118 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/star-trek-strange-new-worlds-end-era-season-5-genre-bending/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/paul-wesley.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Star Trek’s Best Series Is Officially Reaching the End of an Era
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Star Trek: Strange New Worlds has its most dramatic days ahead of it. The prequel series has taken fans on an unprecedented odyssey of exploration, frequently experimenting with genre and tone in the process.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/emmys-2026-winners-apple-tv-record-streaming-dominance/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/patricia-iii.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV's Widow's Bay Sets Emmys Record with 14 Wins
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV Officially Proves Its Streaming Dominance With a History-Making 2026 Emmys</div>
+      
+      
+      <div class="summary">The Emmy Awards have gone through many stages in their 78 years. Network shows were the top of the heap until they were replaced by cable. HBO, Showtime, and AMC were critical darlings that amassed tons of Emmy wins in the early 2000s.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2256325/common-accessory-case-impact-samsung-galaxy-s-pen/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-common-accessory-could-mess-with-your-samsung-galaxys-s-pen/l-intro-1789152825.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            This Common Accessory Could Mess With Your Samsung Galaxy's S-Pen
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This Common Accessory Could Mess With Your Samsung Galaxy's S-Pen Milton Rodney Buzon/Getty Images The S Pen has been a highlight feature of Samsung Galaxy phones ever since it was added to the Galaxy S22 Ultra back in 2022.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/runner-alan-ritchson-thriller-fix-reacher/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/movieweb-featured-image-template-2026-08-27t105138-873.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Runner Review: Alan Ritchson's Emotional Range in New Action Thriller Outshines Reacher
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Alan Ritchson’s New Action Thriller Fixes the Biggest ‘Reacher’ Problem</div>
+      
+      
+      <div class="summary">It's been a big month for Alan Ritchson, with Reacher Season 4 underway and his new action thriller, Runner, hitting theaters on Sept. 11.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-sci-fi-the-last-house-streaming-hit-august-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/the-last-house-emma-ho.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Sci-Fi Thriller War Machine Nears 80 Million Views
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's New Sci-Fi Epic Officially Passes 1.5 Billion Minutes Watched</div>
+      
+      
+      <div class="summary">Netflix has successfully pivoted to mid-budget genre movies this year, after spending several years and billions of dollars on mega-budget tentpoles that rarely received positive reviews. Not every new movie has been well received, but several have d&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/mike-flanagan-the-mist-script-halloween-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/04/the-mist-2007.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mike Flanagan’s Next Stephen King Movie Officially Hits a Major Milestone
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Frank Darabont’s The Mist set a punishing standard for anyone attempting another adaptation of Stephen King’s novella. Its final scene remains one of the most devastating endings in modern horror, ensuring that any new version will face immediate com&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/wednesday-netflix-stranger-things-meets-x-men-fantasy-show/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/jenna-ortega-as-wednesday-addams-in-wednesday-on-netflix.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wednesday Is a Hit Netflix Fantasy Show Blending Stranger Things and X-Men
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's 2-Part 'Stranger Things Meets X-Men' Series Is One Of Its Best Fantasy Shows</div>
+      
+      
+      <div class="summary">Although Netflix’s blend of Stranger Things and X-Men is a massive mainstream hit for the streaming service, this show’s success could spell curtains for another high-profile streaming show that’s on the way soon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2256422/when-should-airpod-owners-replace-ear-tips/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/when-should-airpods-owners-replace-their-ear-tips/l-intro-1789155901.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            When Should AirPods Owners Replace Their Ear Tips?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When Should AirPods Owners Replace Their Ear Tips? photoschmidt/Shutterstock We may receive a commission on purchases made from links. When brand new, nothing beats the convenience and sheer enjoyment of finding the perfect pair of AirPods.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/interstellar-replacement-series-the-expanse-sci-fi/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/08/the-expanse.jpg?q=70&fit=contain&w=750&h=422&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Expanse Is the Perfect Sci-Fi Series for Interstellar Fans
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Interstellar’ Fans Need To Watch One of the 21st Century’s Greatest Sci-Fi Series</div>
+      
+      
+      <div class="summary">One of the best things about Interstellar is the way Christopher Nolan blends enormous space-set spectacle with a grounded approach to physics and human emotion.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/strange-darling-stephen-king-approved-shudder-streaming-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/09/the-demon-in-strange-darling.jpg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Strange Darling, Stephen King-Approved Thriller, Climbs Shudder's Top 10
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Stephen King-Approved Thriller With Near-Perfect RT Score Is Roaring Back To Life On Streaming</div>
+      
+      
+      <div class="summary">Stephen King is not only the author behind some of the most iconic horror and thriller novels of the past five decades – including Carrie (1974), The Shining (1977), It (1986), and Misery (1987) – but also one of the biggest modern curators of movies&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/naruto-ninja-show-team-7-new-first-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/08/naruto-pre-shippuden-characters.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jason Momoa to Play Blanka in Upcoming 'Street Fighter' Movie After Supergirl's Lobo Disappointment
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Naruto's Original Team 7 Reunites in New First Look Ahead of 2027 Debut</div>
+      
+      
+      <div class="summary">Naruto fans may not be enjoying themselves as much right now as those who love One Piece or Bleach, but as still one of the most popular anime and manga franchises in the world, there's always something new to look forward to.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-whisper-man-robert-de-niro-neflix-viewership-top-10-milestone/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/robert-de-niro-at-the-netflix-the-whisper-man-red-carpet-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Whisper Man, Starring Robert De Niro, Hits 69.3M Views in 3 Weeks on Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Robert De Niro's Netflix Thriller Is So Popular, It's Cracked A Major Milestone In 3 Weeks</div>
+      
+      
+      <div class="summary">Netflix's subscribers are prone to gravitate toward the streamer's latest original movies, especially when they have a great combination of genre and on-screen talent.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dungeon-crawler-carl-next-release-comic/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/carl-and-princess-donut-in-the-dungeon-crawler-carl-webtoon.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dungeon Crawler Carl’s Next Release Is Officially Less Than One Month Away
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While Carl continues to descend through the floors in Dungeon Crawler Carl's story, the franchise keeps rising to become a full-blown transmedia phenomenon, bringing new releases for fans who just can't get enough of the book series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/new-galactus-replacement-reboot-redesign-galen/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/concept-art-for-mcu-s-galactus.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel's New Galactus Replacement Is the Great Galen in the In-Verse
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel's New Galactus Replacement Officially Announced</div>
+      
+      
+      <div class="summary">Marvel's new reboot of Galactus replaces the Fantastic Four's ultimate antagonist, with a godlike design every Marvel fan needs to see. Here's what you need to know about Marvel's latest move with the 'Devourer of Worlds.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-walking-dead-maggie-negan-romance-over/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/negan-pointing-a-gun-at-maggie-in-the-walking-dead-dead-city-season-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Walking Dead Finally, Completely Kills Its Maggie & Negan Romance
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: This article contains SPOILERS for The Walking Dead: Dead City season 3's finale. The Walking Dead has become iconic for many reasons, as its incredible characters, terrifying universe, and non-stop drama all helped cement it as one of the m&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/5-prequel-stories-the-hunger-games/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/10/the-hunger-games-jennifer-lawrence-featured.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Prequel Stories Fans Want to See From The Hunger Games
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Since the first book's release in 2008, audiences have been captivated by the world of The Hunger Games. Katniss Everdeen's fight against the tyrannical Capitol has earned the franchise a strong and expansive fanbase.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/9-1-1-season-10-trailer-volcanic-eruption/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/kenneth-choi-as-chimney-in-firefighter-gear-and-looking-up-in-911-season-9-episode-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lioness, Taylor Sheridan's Spy Thriller, Trends on Paramount+ and Netflix After Season 4
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 9-1-1 Returns With An LA Volcanic Eruption In Season 10 Trailer</div>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.9-1-1 season 10 is kicking off with a volcanic eruption in downtown Los Angeles.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-anime-villains-last-ten-years-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/makima-in-the-chainsaw-man-opening-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Anime Villains of the Last 10 Years, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anime villains have become increasingly difficult to define through simple ideas of good and evil. Recent series have produced antagonists who manipulate people, challenge moral boundaries, pursue twisted ideals and commit horrifying acts without los&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-studios-mcu-character-return-years" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_thumbnail/wolverine-ps5-characters-marvel.jpg?imgeng=/w_auto,280 280w" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel's Wolverine PS5 Release Marred by Toxic Backlash and Sony's Disc Controversy
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Studios Unveils Historic Return Of Dead MCU Character 5 Years Later</div>
+      
+      
+      <div class="summary">This summer, a beloved MCU character returned to the big screen following their demise five years earlier, joining the ranks of others Marvel Studios is preparing to bring back. As the saying goes, no one is ever truly dead in a comic book universe, &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/taylor-sheridan-lioness-spy-thriller-series-prime-video-paramount-plus-streaming-success/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/02/taylor-sheridan-in-lioness.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan's 3-Part Spy Thriller Series Becomes A Global Smash Hit In 2 Streaming Services After Season 4 Promise
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Taylor Sheridan continues his successful streaming empire with a major spy thriller series that is now trending on not one, but two streaming services. Sheridan's TV empire is well-known at this point, attracting several big-name actors and helping s&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/game-of-thrones-no-spin-offs-in-development-casey-bloys/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/01/game-of-thrones-tyrion-jon-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO Confirms No More Game of Thrones Spin-Offs in Development Beyond Current Shows
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO's Game of Thrones Universe Officially Enters Its 'Winds of Winter' Era</div>
+      
+      
+      <div class="summary">Waiting is something Game of Thrones fans have become rather good at. George R.R. Martin’s The Winds of Winter remains one of publishing’s most famously anticipated books, while HBO has spent the years since Game of Thrones ended exploring numerous p&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/resident-evil-games-before-requiem-re2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/02/grace-gun-resident-evil-requiem.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Dark Crystal: Age of Resistance Blends Star Wars and Dungeons & Dragons
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Every Resident Evil Game You Need To Play Before Requiem</div>
+      
+      
+      <div class="summary">Resident Evil Requiem is the ninth game in the mainline series (depending on what you count), but you don't need to play every preceding game to get caught up on the essentials.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/best-denzel-washington-action-thrillers/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/denzel-washington-in-man-on-fire-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Denzel Washington Action Thriller Movies, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Denzel Washington has a wonderfully eclectic career, proving he can excel in any genre. He's brought audiences to tears with heartbreaking dramas like Fences and true stories like The Hurricane.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/jason-momoa-street-fighter-blanka-replace-supergirl-lobo/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/jason-momoa-sunglasses.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jason Momoa's Street Fighter Movie Will Redeem Supergirl's Failure
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">From the Amazon Prime original Wrecking Crew to the upcoming finale of the Dune trilogy, 2026 was set to be a big year for actor Jason Momoa. Unfortunately, his most recent project severely underperformed.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/x-men-moving-on-from-krakoa-changing-status-quo/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/10/x-men-house-of-x-krakoa-era-comic-art.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            X-Men's New Status Quo After Krakoa Solves a 5-Year-Old Problem
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The X-Men's New Status Quo Finally Solves a 5-Year-Old Problem</div>
+      
+      
+      <div class="summary">Marvel Comics' most popular mutant heroes, the X-Men, have gone through many ups and downs in their long history.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-dark-crystal-age-of-resistance-netflix-movie-sequel-show/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-dark-crystal-age-of-resistance-season-1-publicity-still.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dungeons & Dragons Meets Star Wars In Netflix's 10-Episode Fantasy Series
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While there are a lot of great sci-fi shows on streaming, only one can claim to merge the epic scale of Dungeons & Dragons with the space opera storytelling of the Star Wars franchise. It is tough for any sci-fi streaming show to stand out in the 202&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/lanterns-episode-5-blackest-night-comics-storyline-meaning/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/lanterns-episode-5-kyle-chandler.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Lanterns’ Officially Sets Up a Major Part of Green Lantern’s Darkest Storyline
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's note: The following article contains spoilers for Lanterns Episode 5.The latest episode of Lanterns, "Lights Out," was a game-changer in many ways.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-fun-r-rated-action-movies-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/true-lies.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Prime Video Shows That Prove Their Masterpiece Status Within 10 Minutes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The 8 Most Fun R-Rated Action Movies, Ranked</div>
+      
+      
+      <div class="summary">Action cinema has undergone a transformation over the past decade-plus, with directors embracing longer takes and a more shameless embrace of blood and gore, after the largely bloodless, quick-cut formula that produced successful franchises like Take&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/ncis-new-york-trailer-ll-cool-j/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/ll-cool-j-as-sam-hanna-on-ncis-new-york.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            LL Cool J Returns as Sam Hanna in NCIS: New York Trailer
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Major NCIS Star Returns in Trailer for First New Spinoff Since Tony & Ziva Cancellation</div>
+      
+      
+      <div class="summary">NCIS is back with its first new spinoff since NCIS: Tony & Ziva was canceled, and it's bringing back a fan-favorite star. LL Cool J returns as Sam Hanna in the first full trailer for NCIS: New York​​​​​.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2252974/nvidia-gpu-equivalent-to-meta-quest-3/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/which-nvidia-gpu-is-equivalent-to-the-meta-quest-3/l-intro-1788888271.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Which Nvidia GPU Is Equivalent To The Meta Quest 3?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Which Nvidia GPU Is Equivalent To The Meta Quest 3? PixieMe/Shutterstock VR gaming is a tricky proposition. On one hand, VR headsets provide an immersive experience you can't get with the best gaming monitors.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <span class="current">2</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/3.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-16 01:01 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>11 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>49 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>118 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://movieweb.com/slow-horses-renewed-season-8/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/jack-lowden-and-gary-oldman-in-slow-horses.jpg?q=49&fit=crop&w=480&h=400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Slow Horses Renewed for Season 8 at Apple TV+; Season 6 Premieres Today
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV's Spy Thriller Masterpiece Officially Confirms Streaming Future After 7 Seasons</div>
+      
+      
+      <div class="summary">Few shows manage to adapt their source material beat for beat, but one near-perfect spy series has pulled it off seamlessly for five straight seasons. With Season 6 premiering today and Season 7 greenlit, Apple TV reveals the series' fate with a surp&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/prime-video-shows-masterpieces-first-10-minutes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/the-boys-jack-quaid.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            R.E.M.'s 'Automatic for the People' Was Elevated by Rock Legend's Contribution
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 8 Prime Video Shows I Knew Would Be Masterpieces After the First 10 Minutes</div>
+      
+      
+      <div class="summary">Prime Video has introduced quite a few fantastic shows, but there are some that take several episodes to find their rhythm, while others make their brilliance clear almost immediately.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/zack-snyder-300-gayest-movie-ever-made/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/06/zack-snyder-rebel-moon.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zack Snyder Calls His 2006 Film 300 'One of the Gayest Movies Ever Made' in Interview
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Zack Snyder Says His Classic Action Epic Is the "Gayest Movie Ever Made"</div>
+      
+      
+      <div class="summary">Zack Snyder is attempting to save face following the abysmal showing of his latest project, and he's doing a questionable job of it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/rem-automatic-for-the-people-john-paul-jones/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/r-e-m_1024.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Love of Your Life Review: Margaret Qualley Shines in Familiar Grief Drama
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Beautiful '90s Album Was Elevated By a Rock and Roll Legend</div>
+      
+      
+      <div class="summary">The ‘90s was a decade of immense musical innovation – genres like grunge and pop-punk were flourishing. A grittier, messier sound was emerging in reaction to the smoke and mirrors of the glam rock that had the 1970s and '80s in an unrelenting choke h&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-major-questions/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/polygon-stock-art-gta-6-cal-hampton-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Atomfall Leaves Game Pass This Month; Fallout-Like Game Worth Playing Before It's Gone
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 7 Major GTA 6 Questions the Previews Haven't Answered</div>
+      
+      
+      <div class="summary">Netflix's extended look at Grand Theft Auto 6 has come and gone, and fans the world over are sifting through all the details about the most anticipated game of 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/alan-ritchson-runner-surpasses-the-brink-of-war-box-office/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/runner.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alan Ritchson's 'Runner' Earns $6.4M in Opening Weekend, Surpassing 'The Brink of War' Theatrical Run
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Alan Ritchson's 97-Minute Action Thriller Smashes Past New 9/10 Thriller’s Entire Box-Office Run</div>
+      
+      
+      <div class="summary">Alan Ritchson has emerged as one of streaming's biggest action stars over the past four years. Reacher continues to put up huge numbers for Prime Video, and War Machine landed on Netflix's all-time most-popular list earlier this year with just under &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-action-anime-like-jjk-season-4-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/a-custom-feature-of-yuji-itadori-posing-in-front-of-various-images-from-the-jjk-manga.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jujutsu Kaisen Season 3 Key Visual Reveals Sukuna; 7 Anime to Watch While Waiting
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 10 Perfect Action Anime to Watch Before Jujutsu Kaisen Season 4</div>
+      
+      
+      <div class="summary">Jujutsu Kaisen's season 3 was one of the biggest anime of 2026, and now, fans are eagerly awaiting the arrival of The Culling Game Part 2. The fourth season of JJK doesn't have an official release date yet, but it's currently in production, and MAPPA&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/thrill/the-last-winter-2006-review.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/The-Last-Winter-2006-32.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ron Perlman's 2006 Film 'The Last Winter' Is a Tense Arctic Horror Companion to 'The Thing'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ron Perlman’s R-Rated Arctic Thriller Is The Perfect Companion To The Thing</div>
+      
+      
+      <div class="summary">By Robert Scucci | Published 21 seconds ago I’m just going to come out swinging and say that I’m not really a fan of cautionary environmental tales that spend more time preaching than entertaining.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/love-of-your-life-review-margaret-qualley/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/love-of-your-life-05.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Margaret Qualley’s Globe-Trotting Drama ‘Love of Your Life’ Is ‘Eat, Grieve, Love’ | TIFF Review
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There is something very Eat, Pray, Love about director Rachel Morrison’s newest film, Love of Your Life, which made its world premiere at the Toronto International Film Festival this past weekend.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/resident-evil-lady-dimitrescu-casting-zach-cregger/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/lady-dimetrescu.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Resident Evil Reboot Director Shares His Pick for Live-Action Lady Dimitrescu Casting
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Filmmaker Zach Cregger avoided incorporating fan-favorite characters from the video games into his upcoming Resident Evil movie, instead choosing to focus on an original protagonist who stumbles into Raccoon City's viral outbreak.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/true-crime-books-better-than-any-netflix-documentary/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/unanswered-cries.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stargate SG-1's Richard Dean Anderson Reveals Plot Details for Cancelled Prime Video Reboot
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 5 True-Crime Books Better Than Any Netflix Documentary</div>
+      
+      
+      <div class="summary">Sure, Netflix has perfected the true-crime documentary. The streamer knows how to keep us hooked: the staccato violins that never foreshadow something good, the fact that no small town is ever as sleepy as it seems, and how you can be sure anyone des&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/diablo-4-d4-season-15-hells-legacy-release-time-edt-pdt/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/d4_servicepost_season15_lead.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Diablo 4 Season 15 release time in your time zone
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With the release of Diablo 4 Season 15, you will finally be free of fighting the Death Cult and have to close all the different types of Ruptures appearing across Sanctuary.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/comedy/wnuf-halloween-special-2013-review.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/WNUF-Halloween-Special-2013-25.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Found Footage Horror 'WNUF Halloween Special' Feels Like a Real TV Broadcast
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Found Footage Gem Feels Like A TV Broadcast You Were Never Supposed To See</div>
+      
+      
+      <div class="summary">By Robert Scucci | Published 14 seconds ago One of the best parts about growing up in the 80s and 90s is how localized television was, especially when it comes to news programs.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/neagley-season-1-rotten-tomatoes-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/rspi_s1_ut_101_250310_lansab_00659rc_3000-cropped.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Neagley Debuts With 83% Rotten Tomatoes Score, Lowest in Reacher Franchise
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Reacher's Spinoff Debuts With Franchise-Record Rotten Tomatoes Score</div>
+      
+      
+      <div class="summary">Reacher will wrap Season 4 on Sept. 16, but fans will get more from the universe. The same day, the first spinoff in the franchise, Neagley, premieres with all episodes. Ahead of its debut, critics have already started weighing in on the new show.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2259555/android-auto-google-maps-feature-speedometer-speed-limit/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/android-auto-is-finally-getting-a-key-google-maps-feature-7-years-later/l-intro-1789505645.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Android Auto Is Finally Getting A Key Google Maps Feature, 7 Years Later
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Android Auto Is Finally Getting A Key Google Maps Feature, 7 Years Later Radityo Aji Pratomo/Getty Images It has taken more than seven years, but Android Auto users can finally use the live speedometer and speed limit signs on Google Maps without set&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-strategy-tactics-rpgs-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/shin-megami-tensei-devil-survivor-overlclocked.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Strategy RPGs of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The strategy RPG genre combines the best elements of two distinct playstyles, with the in-depth preparation and implementation of plans of the former, and the character building and narrative focus of the latter.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/comedy/the-to-do-list-2013.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/The-To-Do-List-2013-34.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Aubrey Plaza's Extremely R-Rated Summer Comedy Is A Crash Course In Total Debauchery
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">By Robert Scucci | Published 6 seconds ago My mileage varies when it comes to the raunchy summer sex comedy that’s geared toward younger adults. Mainly because I’m 38, and I grew up during that sweet spot when films like Road Trip, American Pie, and &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/prime-video-cancelled-stargate-reboot-plot-deails-richard-dean-anderson/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/stargate-sg-1-michael-shanks.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Stargate SG-1’ Star Officially Reveals Plot Details for Prime Video’s Cancelled Sci-Fi Reboot
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It has been three months since Prime Video canceled the Stargate reboot series, but fans, including many franchise stars, are still actively trying to save it. A dedicated campaign labelled "Save Stargate with Martin Gero!" has been running for month&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/guy-ritchie-the-gentlemen-season-2-streaming-comeback-netflix-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/the-gentlemen-theo-james.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘The Gentlemen’ Season 2 Viewership Jumps 48% in Second Week on Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Guy Ritchie's Hit Crime Series Dominates Netflix With Massive Week 2 Jump</div>
+      
+      
+      <div class="summary">Guy Ritchie’s first theatrical movie in two years may not have found success at the box office, but the second season of his hit Netflix series is defying the odds on viewership charts.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hbo-the-last-of-us-season-3-series-finale-casey-bloys/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/the-last-of-us-bella-ramsey.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            It’s Officially the End of an Era for HBO’s 'The Last of Us'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">HBO’s The Last of Us has been one of the network’s defining dramas of the last several years. The video game adaptation, led by Pedro Pascal (The Mandalorian) and Bella Ramsey (Game of Thrones), debuted in 2023 and quickly became both a ratings and a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/young-sherlock-moriarty-replaces-watson-sidekick/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/03/young-sherlock_phmgg7.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's Young Sherlock Replaces Watson with Moriarty as Holmes' Sidekick
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Sherlock Holmes Is Officially Switching Main Characters</div>
+      
+      
+      <div class="summary">The stories of Sherlock Holmes have their main characters well established, but the classic detective is now switching main characters, and it's for the better.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2259552/older-apple-tv-models-no-longer-support-updates/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/your-older-apple-tv-was-left-behind-by-apple-heres-what-that-means/l-intro-1789499445.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Your Older Apple TV Was Left Behind By Apple — Here's What That Means
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Your Older Apple TV Was Left Behind By Apple — Here's What That Means Teodor Costachioiu/Shutterstock Apple's latest software update for the living room, tvOS 27, just dropped, and it brings cool features like a refreshed Podcasts app, more text opti&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/shadow-and-bone-netflix-fantasy-show-deserved-more-episodes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-hunger-games-mockingjay-part-1_nmmwcz-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Shadow and Bone Deserved More Than 16 Episodes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's 'The Wheel Of Time Meets The Hunger Games' Deserved More Than Just 16 Episodes</div>
+      
+      
+      <div class="summary">Some of the best TV shows end far too soon, and that's exactly what happened with Netflix's fantasy series that combines the world-building of The Wheel of Time with the themes of The Hunger Games​​​​​.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-romance-crew-girl-streaming-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/crew-girl-netflix-5.jpg?q=49&fit=contain&w=3000&h=1500&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix’s ‘This Summer Will Be Different’ Rises to #1 on Global Streaming Chart
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's New Romance Series Officially Claims the #1 Spot Worldwide</div>
+      
+      
+      <div class="summary">Romance shows, especially those featuring teenagers or young adults, are in season right now. Streamers like Prime Video have cornered this genre, delivering hits like The Summer I Turned Pretty, Maxton Hall, Off Campus, and Sterling Point.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/jon-hamm-american-hostage-rotten-tomatoes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/american-hostage-3-men.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jon Hamm's MGM+ Series 'American Hostage' Earns 83% Rotten Tomatoes Score
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jon Hamm's New Streaming Thriller Series Lands Solid Score on Rotten Tomatoes</div>
+      
+      
+      <div class="summary">Fred Heckman, a local radio reporter, is thrust into chaos when kidnapper Tony Kiritsis demands to be interviewed on his popular radio news program in MGM+'s upcoming thriller.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/trash-mountain-review-zooey-deschanel-caleb-hearon/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/trash-mountain.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Guy Ritchie’s ‘In The Grey’ Hits #1 on Starz Streaming Chart
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Caleb Hearon's 'Trash Mountain' Is Officially 'The Family Stone' for a New Era  | TIFF Review</div>
+      
+      
+      <div class="summary">It's always interesting when a popular comedian gets the chance to explore a more personal story on the screen. A comedian's voice and jokes translate differently from stage to screen, and doing too much or too little can disrupt the whole thing.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-pride-and-prejudice-release-date-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/02/mr-darcy-on-a-horse-in-pride-and-prejudice.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Pride and Prejudice Series with Olivia Colman Sets December 3, 2026 Release Date
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Slow Horses Star's Netflix Adaptation Of 213-Year-Old Masterpiece Novel Officially Sets 2026 Release Date</div>
+      
+      
+      <div class="summary">Netflix's fresh take on a 213-year-old classic novel has officially set its sights on a 2026 release. The streaming service has a knack for bringing centuries-old literary classics back to life for modern audiences, from films like Guillermo Del Toro&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/yu-gi-oh-exodia-lego-set-no-minifigure/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/lego-officially-reveals-5-yu-gi-oh-set-designs.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Yu-Gi-Oh! Fans Finally Get an Official LEGO Exodia Set
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of the year's biggest official LEGO contests is finally over, and Yu-Gi-Oh! fans aren't sure how to feel about the results. The results of the LEGO Yu-Gi-Oh! Ideas Contest are in, and one of the biggest and most iconic figures from the classic se&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/walker-texas-ranger-chuck-norris-invented-neo-western-tv-shows/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/walker-texas-ranger_dhpby5.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Walker, Texas Ranger Starring Chuck Norris Laid Groundwork for Taylor Sheridan's Neo-Westerns
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Chuck Norris & Taylor Sheridan’s 9-Season Action Crime Series Officially Invented Neo-Westerns</div>
+      
+      
+      <div class="summary">Decades before Taylor Sheridan made television’s neo-Western subgenre his own with shows like Yellowstone and Landman, he appeared in a Chuck Norris crime procedural that almost single-handedly invented the small-screen contemporary Western.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/godzilla-minus-zero-ghidorah-hint-origin-change/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/screenrant-sandbox-2025-11-07t203807-650.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 15 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Godzilla Minus Zero Trailer May Tease King Ghidorah's Origin
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Godzilla Minus Zero May Have Just Teased A Brand New Origin Story For King Ghidorah</div>
+      
+      
+      <div class="summary">A line in the Godzilla Minus Zero trailer has prompted theories postulating about the origin of the movie's take on King Ghidorah.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <span class="current">3</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/4.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>
