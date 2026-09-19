@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-19 15:03 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>25 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>41 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>131 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/tom-hardy-inception-streaming-success-vod-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/12/inception-tom-hardy.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Inception, Starring Tom Hardy, Surges on Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Hardy's Bonkers Sci-Fi Thriller Officially Surges on Streaming</div>
+      
+      
+      <div class="summary">Tom Hardy has built an unshakable name for himself as one of the most formidable action stars in Hollywood, and one of his most notable thrillers is taking off on streaming yet again.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/trespasses-review-lola-petticrew-gillian-anderson/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/trespasses-lola-petticrew-gillian-anderson.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Trespasses Miniseries Review: Lola Petticrew and Gillian Anderson Star in a Harrowing Troubles Drama
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Furious' Scene-Stealer Teams Up With Gillian Anderson for an Emotional and Ambitious Miniseries | Review</div>
+      
+      
+      <div class="summary">After almost a decade of playing supporting parts in lesser-known projects, Lola Petticrew's career has picked up speed with the propulsive intensity of a rocket launched into space.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/chris-pratt-sci-fi-jurassic-world-fallen-kingdom-tubi-success-sept-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2021/05/blue-still-new.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jurassic World: Fallen Kingdom, Chris Pratt's $1.3 Billion Sci-Fi Hit, Now Free on Tubi
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Chris Pratt's $1.3 Billion Sci-Fi Flick Is a Streaming Giant 9 Years Later (& It's Free)</div>
+      
+      
+      <div class="summary">After an epic box-office haul of over $1.3 billion, Chris Pratt's sci-fi hit Jurassic World: Fallen Kingdom is now experiencing a new surge. The film is available to stream for free on Tubi.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-twilight-zone-stories-from-the-fifth-dimension-comic/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/the-twilight-zone-stories-from-the-fifth-dimension.avif?q=49&fit=crop&w=749&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New The Twilight Zone Comic Collection 'Stories from the Fifth Dimension' Released
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 67 Years Later, The Twilight Zone Returns For Its Next Major Release</div>
+      
+      
+      <div class="summary">In 1959, CBS introduced viewers to another dimension, one of sight, sound, and mind, that unlocked and challenged the darkest and most bizarre corners of their imagination. These audiences, and those from many generations since, entered The Twilight &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/avatar-fire-and-ash-best-fight-scene/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/zoe-salda-a-as-neytiri-fighting-for-pandora-in-2009-avatar.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avatar: Fire and Ash Features One of the Best Action Scenes of the Decade
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">2025's Avatar: Fire and Ash was the third installment of James Cameron's epic science fiction saga. Though it did not perform as well as its predecessors either critically or commercially, it was still a solid film with plenty of strong elements.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/matrix-cinematic-universe-better-than-marvel-dc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/the-matrix-reloaded-keanu-reeves.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Matrix Trilogy Pioneered the Cinematic Universe Before Marvel
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Best Cinematic Universe Isn't Marvel or DC</div>
+      
+      
+      <div class="summary">In 2008, the Marvel Cinematic Universe began with Iron Man, which kicked off multiple interconnected film franchises, crossover event films, and even Disney+ streaming series that introduced new characters and gave depth to returning ones.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/reacher-season-4-neagley-premiere-prime-video-action-thriller-streaming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/neagley-episode-1-alan-ritchson.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alan Ritchson’s Reacher Franchise Is Officially Taking Over the World on Prime Video
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">If you finished the Reacher Season 4 finale last week and thought, "Well, now what," Amazon already had an answer loaded in the chamber.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2257567/how-to-opt-out-netgear-router-data-collection/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/what-data-do-netgear-routers-collect-and-can-you-opt-out/l-intro-1789396740.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            What Data Do Netgear Routers Collect, And Can You Opt Out?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">What Data Do Netgear Routers Collect, And Can You Opt Out? II.studio/Shutterstock With virtually all of your internet traffic going through your router, it makes sense to be concerned about your privacy and security, especially since the FCC banned r&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2263113/google-pixel-11-pro-fold-vs-samsung-galaxy-z-fold-8/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/is-the-google-pixel-11-pro-fold-worth-buying-over-the-samsung-galaxy-z-fold-8/l-intro-1789754742.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Is The Google Pixel 11 Pro Fold Worth Buying Over The Samsung Galaxy Z Fold 8?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Is The Google Pixel 11 Pro Fold Worth Buying Over The Samsung Galaxy Z Fold 8? Connor Jewiss/BGR Google and Samsung have landed on the same price for their newest book-style foldables.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/apothecary-diaries-season-3-movie-producer-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/apothecary-diaries-movies.webp?q=70&fit=crop&w=1200&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Apothecary Diaries Season 3, Movie, and Season 4 Announced for 2026-2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Crunchyroll’s Detective Series With a 93% RT Score Is About to Have Its ‘Biggest Year Yet’</div>
+      
+      
+      <div class="summary">Since premiering in 2023, The Apothecary Diaries has become one of Crunchyroll’s most popular series. That's thanks largely to its intricate palace conspiracies and the slow-burning relationship between the rapturously curious apothecary, Maomao, and&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-dark-fantasy-mysteries-like-wednesday-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/08/wednesday-review2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Dark Fantasy Mysteries Every Wednesday Fan Should Watch
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Wednesday is, arguably, one of the best shows on Netflix. It is a phenomenal supernatural mystery-comedy series with plenty of dark-fantasy elements. It is a perfect modern love letter to the original Addams Family.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-fantasy-movies-better-than-the-lord-of-the-rings-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/10/aragorn.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Masterpiece Fantasy Movies Better Than The Lord of the Rings
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Few movie franchises conjure the kind of wonder and sense of adventure than The Lord of the Rings. The iconic fantasy trilogy adapted J. R. R.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2261203/rowdy-roddy-piper-best-movie-80s-sci-fi-classic-they-live-streaming-prime-video/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/rowdy-roddy-pipers-best-movie-is-an-80s-sci-fi-classic-thats-only-streaming-on-one-service/intro-1789656150.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            They Live: Roddy Piper's Best Movie Is Streaming Only on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Rowdy Roddy Piper's Best Movie Is An '80s Sci-Fi Classic That's Only Streaming On One Service</div>
+      
+      
+      <div class="summary">Rowdy Roddy Piper's Best Movie Is An '80s Sci-Fi Classic That's Only Streaming On One Service Universal Pictures Are you in the mood to kick a** and chew bubblegum? If so, Amazon Prime Video is streaming John Carpenter's "They Live," one of the best &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/red-dead-redemption-2-ranching-mod-farming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/ranching-mod-red-dead-redemption-2-farming.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Red Dead Redemption 2 Mod Lets You Build Your Own Farm
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Red Dead Redemption 2's New Ranching Feature Lets You Build Your Own Farm</div>
+      
+      
+      <div class="summary">Red Dead Redemption 2 is almost eight years old but still remains one of the most immersive gaming experiences to ever exist. It's an amazing open world teeming with life and glorious details forces players to slow down and drink it all in.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hannah-waddingham-ride-or-die-prime-video-streaming-success-60-days/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/ride-or-die-octavia-spencer-hannah-waddingham.jpeg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hannah Waddingham's 'Ride or Die' Prime Video Hit Spends 60 Days in Top 10
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Ted Lasso’ Star’s Prime Video Miniseries Is Officially a 60 Day Sleeper Hit</div>
+      
+      
+      <div class="summary">2026 has brought on the return of several beloved TV shows, but few have had as much anticipation behind them as the long-awaited fourth season of Ted Lasso.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/disney-new-era-karandeep-anand-generative-ai-era/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/disney-logo.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Disney Hires Karandeep Anand as First Chief Technology Officer with AI Focus
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney Officially Enters a New Era With Historic Change</div>
+      
+      
+      <div class="summary">The Walt Disney Company has taken a new step forward as the world comes to terms with generative AI. Disney has hired its first ever chief technology officer with plenty of AI experience.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/garfield-comics-unique-facts-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/05/10-things-you-didn-t-know-about-the-garfield-comic-strips.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            20 Little-Known Facts About Garfield Comic Strips
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Despite the many iterations of Garfield comics in entertainment media, many fans will be interested in checking out the classic Garfield comic strips that led to the world’s most famous cartoon cat appearing on the big screen time and time again.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-perfect-hbo-shows-last-20-years-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/house-of-the-dragon-emma-d-arcy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Most Perfect HBO Shows of the Last 20 Years, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The HBO network has been the go-to for gripping television entertainment for more than twenty years now. It has become a wildly acclaimed, endlessly enjoyed channel for those seeking the next great hits and the most marvelous new shows with a cinemat&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2262970/best-60w-fast-chargers-for-iphone-18-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-of-the-best-60w-fast-charging-adapters-for-the-iphone-18-pro-series/l-intro-1789764855.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Of The Best 60W Fast-Charging Adapters For The iPhone 18 Pro Series
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Of The Best 60W Fast-Charging Adapters For The iPhone 18 Pro Series Conner Jewiss / BGR We may receive a commission on purchases made from links. Apple gave the iPhone 18 Pro and iPhone 18 Pro Max a massive upgrade this year in terms of charging.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2262877/nvidia-gpu-costs-10-times-more-than-playstation-5-pro/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-nvidia-gpu-costs-10x-more-than-a-playstation-5-pro/intro-1789761545.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nvidia RTX 5090 GPU Costs 10x More Than A PlayStation 5 Pro
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Nvidia GPU Costs 10x More Than A PlayStation 5 Pro</div>
+      
+      
+      <div class="summary">This Nvidia GPU Costs 10x More Than A PlayStation 5 Pro If you've been wanting to upgrade your computer, you've probably been holding off on buying a graphics card because component prices are currently insane.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/legend-of-zelda-master-collection-multiple-eras/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-legend-of-zelda-large.webp?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Legend of Zelda Master Collection Trading Card Set Spans Multiple Eras
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Legend Of Zelda: The Master Collection Is Officially Combining Multiple Eras</div>
+      
+      
+      <div class="summary">With fans celebrating the 40th anniversary of The Legend of Zelda franchise this year, it is no wonder that Nintendo has been spoiling us with a myriad of epic announcements and releases.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/rebecca-ferguson-stephen-king-movie-doctor-sleep-streaming-success-vod-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/rebecca-ferguson-doctor-sleep-1.jpg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rebecca Ferguson's 'Doctor Sleep' Stephen King Sequel Finds New Life on VOD
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Rebecca Ferguson’s 152-Minute Stephen King Sleeper Hit Officially Finds New Life</div>
+      
+      
+      <div class="summary">What a year it’s been for Rebecca Ferguson, and to top it all off, one of the most underrated projects of her career is finding a second wind on streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2261967/christopher-nolan-sci-fi-movies-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/all-4-christopher-nolan-sci-fi-movies-ranked/l-intro-1789694483.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 4 Christopher Nolan Sci-Fi Movies, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">All 4 Christopher Nolan Sci-Fi Movies, Ranked Static Media Originally known as a master of the modern thriller, Christopher Nolan has expanded across genres in more recent years, with particular love for historical dramas, epics, and science fiction.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2253321/stone-domes-uk-unexpected-purpose-1920s/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/these-stone-domes-in-the-uk-used-to-serve-an-unexpected-purpose-in-the-20s/intro-1788901331.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Denge Sound Mirrors: UK Stone Domes Used as Early Warning Radar in the 1920s
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: These Stone Domes In The UK Used To Serve An Unexpected Purpose In The '20s</div>
+      
+      
+      <div class="summary">These Stone Domes In The UK Used To Serve An Unexpected Purpose In The '20s AC Manley/Shutterstock The UK is home to numerous stone-based tourist attractions. The Long Man of Wilmington, Giant's Causeway, and Stonehenge are just a few of these specta&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/gilmore-girls-episodes-aged-poorly/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/10/zanda-rice-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 'Gilmore Girls' Episodes That Don't Hold Up Today
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There is no denying that Gilmore Girls is an iconic teen drama of the 2000s and was immensely influential for its generation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sci-fi-shows-sleeper-hits-better-after-season-1/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/12/orphan-black-echoes-season-1-episode-5-krysten-ritter.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Sci-Fi Sleeper Hits That Got So Much Better After Season 1
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Throughout the years, many of history's best science fiction shows have been instant success stories, showing just how immensely popular this genre has always been on the small screen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pokemon-unveils-new-eevee-design-tcg/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/screenshot-2026-09-14-at-15-35-00.png?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon TCG Unveils Sylveon Card Design for 30th Anniversary
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Pokémon Officially Unveils Brand-New 30th Anniversary Eeveelution Design</div>
+      
+      
+      <div class="summary">It is hard to believe that this year celebrates the 30th anniversary of Pokémon. First created back in February 1996 with the release of the Pocket Monsters Red and Green video games in Japan, the franchise, conceived by Satoshi Tajiri alongside illu&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/goodfellas-crime-drama-movie-36-anniversary/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/joe-pesci-as-tommy-devito-with-ray-liotta-as-henry-hill-in-goodfellas.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Goodfellas Turns 36: Martin Scorsese's Crime Drama Classic Still Flawless
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Martin Scorsese Crime Drama Classic That Defined The Genre Turns 36 Today & It's Still Flawless</div>
+      
+      
+      <div class="summary">It's been 36 years since the 1990 Martin Scorsese movie classic that came to define the crime drama genre and its future in a major way had its theatrical debut for the general public as of today, marking a major milestone for a film that's still ser&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tim-burton-johnny-depp-charlie-and-the-chocolate-factory-leaving-netflix-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/06/WillyWonka.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tim Burton and Johnny Depp's 'Charlie and the Chocolate Factory' Leaving Netflix Soon
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tim Burton and Johnny Depp’s Bonkers Fantasy Hit Is Officially Getting Cut From Netflix</div>
+      
+      
+      <div class="summary">After several years of being an outcast in Hollywood due to his personal troubles, Johnny Depp is all set to make a grand mainstream return with this year's Ebenezer — it's a new take on A Christmas Carol, directed by Ti West.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/prime-video-fallout-best-sci-fi-silo-replacement/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/walton-goggins-as-the-ghoul-nodding-with-his-hat-in-fallout-season-2-cropped.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's 'Fallout' Is the Best Silo Replacement After Season 3
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video’s 94% RT Sci-Fi Show Is Already TV's Best Silo Replacement After Season 3</div>
+      
+      
+      <div class="summary">One Prime Video sci-fi series is perfect to rewatch as a replacement for Apple TV's Silo while we wait for its fourth and final season.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <span class="current">3</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/4.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

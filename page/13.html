@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-19 15:03 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>25 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>41 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>131 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://movieweb.com/cop-thriller-tv-shows-rookie-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/cop-thrillers-better-than-the-rookie.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Near-Perfect Cop Thrillers Better Than 'The Rookie'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">I genuinely like how The Rookie has made cop thrillers more accessible and easier to binge. Nathan Fillion is extremely charming, the storylines move fast, and ABC picked it up for a ninth season because it still pulls more than 8 million viewers a w&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/monster-lizzie-borden-review-ryan-murphy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/monster-the-lizzie-borden-story-ella-beatty-interview.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ryan Murphy's 'Monster: The Lizzie Borden Story' Is a Campy, Frustrating, Occasionally Moving Watch | Review
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's note: The below review contains a brief discussion of sexual assault. Though Lizzie Borden is one of the most famous (accused) criminals in American history, no one seems to find her especially frightening.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dc-comics-december-2026-solicitations-trinity-wonder-woman-ends-story/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/legion-of-super-heroes-04-main-cover.jpg?q=70&fit=crop&w=750&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DC's December 2026 Comic Solicitations Announced
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: A Member Of The Trinity Ends Their Story in DC's December 2026 Solicitations</div>
+      
+      
+      <div class="summary">It's time for DCs new solicitations! Here are the solicits for DC comic book products scheduled to be released in December 2026. LEGION OF SUPER-HEROES #4 Written by JOSHUA WILLIAMSON Art and cover by HAYDEN SHERMAN Variant covers by CHRIS SAMNEE, CA&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/disney-robin-hood-comic-series-release-date-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/robin-hood-1.jpg?q=49&fit=contain&w=421&h=750&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Disney's Robin Hood Returns in New Comic Series After 52 Years
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 52 Years Later, A Beloved Disney Classic Finally Returns For New Tales</div>
+      
+      
+      <div class="summary">Plenty of Disney movies have managed to make their mark on the mainstream, from Beauty and the Beast to The Lion King — but the animation studio has one other animal hero that never gets the credit he deserves. That's all about to change with the rel&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/narnia-netflix-reboot-controversial-fantasy-greta-gerwig/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/digory-kirke-from-the-chronicles-of-narnia.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Meryl Streep to Voice Aslan in Netflix's Narnia Reboot
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's Narnia Reboot Is Already the Most Controversial Fantasy Event of the Decade</div>
+      
+      
+      <div class="summary">One of the most iconic fantasy worlds of all time officially returns to the big screen next year, but it might not be what fans have been waiting for.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/mtg-jace-multiverse-architect-breach-the-multiverse-art-controversy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/breach-the-multiverse-art-march-of-the-machine-94-daf51a76-7a57-4462-ae18-a19e817e49e5-art.png?q=70&fit=contain&w=875&h=540&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Magic: The Gathering Artist Liiga Smilshkalne Alleges Copied Artwork on New Card
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Magic: The Gathering Artist Officially Responds to Artist Allegations of</div>
+      
+      
+      <div class="summary">A newly revealed Magic: The Gathering card has prompted allegations of copied artwork, but Wizards of the Coast says the resemblance was both intentional and mandated by the publisher’s art direction.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/russell-crowe-the-weight-hits-theatres-exclusive-clip/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/russell-crowe-in-the-weight-sitting-down.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Exclusive Clip: Russell Crowe's 'The Weight' Arrives in Theaters
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Russell Crowe's "Must-Watch" Survival Thriller Arrives in Theaters as Exclusive New Clip Surfaces</div>
+      
+      
+      <div class="summary">Russell Crowe has spent the last several years carving out a niche as one of the more dependable heavies in the business, whether that's the road-rage menace of Unhinged, the scenery-tasting fun of The Pope's Exorcist, or the string of authority figu&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-walking-dead-dead-city-jimmi-simpson-dillard-death-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/jimmi-simpson.webp?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jimmi Simpson on Dillard's Death in The Walking Dead: Dead City
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Dead City Star Describes Show’s Most Shocking Death as a ‘Gift of Love’</div>
+      
+      
+      <div class="summary">The following contains spoilers for The Walking Dead: Dead City Season 3, Episode 8, "Tenebrae," which premiered Sunday, Sept. 13, on AMC and AMC+. The Walking Dead: Dead City viewers only just met Jimmi Simpson's Dillard in Season 3, but they alread&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/daniel-craig-narnia-the-magicians-nephew-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/daniel-craig-narnia-the-magicians-nephew.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Reveals First Look at Daniel Craig as Uncle Andrew in Narnia: The Magician's Nephew
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Reveals First Look at Daniel Craig in Reboot of a 76-Year-Old Fantasy Classic</div>
+      
+      
+      <div class="summary">Daniel Craig is ready for his trip to Narnia. Netflix has revealed the first look at Craig as Uncle Andrew in the upcoming movie Narnia: The Magician's Nephew. The image, released via Empire, shows Craig in what appears to be the study of the so-call&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/crunchyroll-solo-leveling-replacement-series-sss-class-revival-hunter-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/sss-class-revivial-hunter-crunchyroll.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Crunchyroll Announces SSS-Class Revival Hunters Anime for 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Crunchyroll’s Next ‘Solo Leveling’ Is Officially Coming in 2027</div>
+      
+      
+      <div class="summary">Solo Leveling took over the anime fandom over the last two years, and the industry is still trying to catch up. In the meantime, Crunchyroll just announced a new series that checks many of the same boxes, and may be the next sensation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/star-trek-ruined-best-alien.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/star-trek-the-loss-troi-head-in-hand-1.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Star Trek Nearly Ruined Deanna Troi by Making Her Human
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek Nearly Ruined Its Best Alien By Making Them Human</div>
+      
+      
+      <div class="summary">By Chris Snellgrove | Published 8 seconds ago Who is the best alien in Star Trek? That’s the kind of question that starts fights (albeit the kinds of fights ended by foam weapons) among sci-fi nerds.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/quentin-tarantino-once-upon-a-time-in-hollywood-conquering-streaming-ahead-of-sequel/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/08/cliff-booth-4.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Once Upon a Time in Hollywood Dominates Streaming Ahead of Rare Sequel
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Quentin Tarantino's $394M Mega-Hit Is Conquering Streaming Ahead of Rare Sequel</div>
+      
+      
+      <div class="summary">Quentin Tarantino is moving a bit differently lately, even by his usually quirky standards. One of the main calling cards for the award-winning filmmaker is the fact he doesn't do sequels or spinoffs of his films, but that has suddenly changed when d&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/lanterns-stuart-fails-to-save-the-universe-flash-episode/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/hal-jordan-kyle-chandler-wields-is-green-lantern-ring-in-lanterns.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stuart Fails to Save the Universe Changed Plot Because of Lanterns, Used Flash Instead
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Lanterns Forced Another HBO Show to Change Its Plot, and It Was for the Best</div>
+      
+      
+      <div class="summary">The Big Bang Theory spinoff Stuart Fails to Save the Universe has been one of the most unexpected shows of the year. A side character from the original sitcom now leads a multiversal dark comedy on HBO, and it continues to go to wild places with each&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/billy-maximoff-breaks-silence-visionquest" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/photos/bill2.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Joe Locke Reacts to Tommy Maximoff's Casting in VisionQuest
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Billy Maximoff Actor Finally Breaks Silence On VisionQuest</div>
+      
+      
+      <div class="summary">As VisionQuest draws closer to its fall release on Disney+, one WandaVision trilogy actor is celebrating an in-universe family member.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/final-fantasy-7-revelation-hamaguchi-file-size/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/06/ffvii_revelation_june_screenshots_-16.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Final Fantasy 7 Revelation Director Reveals Why the Game Won't Have a Full Physical Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Naoki Hamaguchi, Final Fantasy 7 remake trilogy director, shared juicy details about Revelation's file size and why the physical version requires additional downloads. And as it turns out, Final Fantasy 7 Revelation is shaping up to be one of the big&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/raunchy-adult-hbo-series-canceled-today.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/Oz.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why HBO's 'Oz' Would Be Controversial If Released Today
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Raunchy Adult 90s HBO Series Would Get Everyone Cancelled Today</div>
+      
+      
+      <div class="summary">By Jonathan Klotz | Published 5 seconds ago The Golden Age of Television is often considered to start with HBO’s The Sopranos, which is a fair argument to make. The era was defined by “prestige television” that elevated the types of stories being tol&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/star-treks-best-supporting-character.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/star-trek-keiko-obrien-1.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why Keiko O'Brien Was Created: Writers Loved Colm Meaney
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Shocking Reason Star Trek’s Best Supporting Character Was Created</div>
+      
+      
+      <div class="summary">By Chris Snellgrove | Published 1 second ago Part of what made Deep Space Nine the best Star Trek show is that it had a deep bench of awesome characters. Not just main characters like Sisko, Kira, and Quark; even the side characters were so well-writ&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/wishlister-gamescom-september-18/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/stage-freight-monster-chasing-kid.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Upcoming Steam Games That You Should Wishlist Today
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Wishlister is a weekly newsletter bringing you a curated list of upcoming Steam games worth adding to your wishlist, sent on Tuesdays and published on the site on Fridays. You can subscribe here. We’re in the midst of a bountiful season for new games&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/how-walking-dead-zombie-virus-began-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2024/08/merle-is-a-walker-in-the-walking-dead.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How 'The Walking Dead' Zombie Virus Began & Its Timeline, Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When Robert Kirkman, the creator of The Walking Dead franchise, first developed the idea of a zombie apocalypse, he gave little thought to how and why the zombie virus was created.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/classic-mecha-anime-not-as-good-as-you-remember/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/10/mobile-suit-gundam.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Classic Mecha Anime That Aren't As Good As You Remember
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anime has its share of reliable sub-genres that have gone on to define the medium and represent some of its most popular titles.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/mahershala-ali-your-mother-your-mother-your-mother-new-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/ali-mahershala.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Exclusive: New Featurette for Mahershala Ali's 'Your Mother Your Mother Your Mother' Released
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Mahershala Ali’s Official ‘Blade’ Replacement Gets New Look 3 Weeks Before Release [Exclusive]</div>
+      
+      
+      <div class="summary">Right now is a great time to be a fan of Mahershala Ali, even if his long-gestating Blade movie at Marvel was officially canceled earlier this year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/zack-snyder-next-film-escape-from-new-york-details/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/escape-from-new-york-snake-plissken.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zack Snyder Confirms a Major Detail About His 'Escape From New York' Reboot
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Zack Snyder has finally shared the first plot details for his next movie, a remake of John Carpenter’s 1981 schlock classic Escape from New York, and it sounds like Snake Plissken fans should expect a fairly faithful adaptation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/star-trek-episode-cult-history.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/star-trek-cult-picard-1.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: Deep Space Nine Episode 'Fascination' Was Inspired by Showrunner's Cult Background
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Failed Star Trek Episode Inspired By The Showrunner’s Cult History</div>
+      
+      
+      <div class="summary">By Chris Snellgrove | Published 4 seconds ago Here’s a little-known secret: writing an episode of Star Trek is a bit like going to therapy. That’s because every writer brings their own passion and their own baggage into each script.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-monster-10-season-plan-ian-brennan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/monster__the_lizzie_borden_story_n_s1_e1_00_17_05_13r.jpg?q=49&fit=crop&w=292&h=384&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Monster Anthology Series Reveals 10-Season Plan
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's Biggest Crime Series Reveals Massive 10-Season Plan</div>
+      
+      
+      <div class="summary">Netflix's biggest true-crime series could be here to stay. Despite being divisive and extremely controversial, Ryan Murphy and Ian Brennan's crime anthology series, Monster, may be running for many seasons.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/grant-gustin-the-flash-dcu-return-james-gunn-rumor-response/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/gran-gustin-smiling-in-the-flash-season-9.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Grant Gustin Addresses The Flash Return In James Gunn’s DCU After Director’s New Comments
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Grant Gustin might end up coming back as The Flash in the new DC Universe. Gusting became famous around the world for leading nine seasons of The Flash as Barry Allen, appearing in several Arrowverse TV shows and the live-action DC TV universe's many&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/resident-evil-zach-cregger-leon-kennedy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/leon-and-claire-in-resident-evil.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Resident Evil' Including Most Iconic Character Would've Been A "Commercial Imposition"
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: This article contains spoilers for Resident Evil.Director Zach Cregger has addressed the ongoing conversation surrounding his Resident Evil reboot, a loose yet faithful adaptation of the video games that deliberately leaves out legacy charac&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-5-leak-cut-dlc-gta-6-assets/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/23287895/Grand_Theft_Auto_V___3_4_2022___Image_2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Massive GTA 5 Leak Reveals Cut DLC Plans and Early GTA 6 Assets
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Weeks after the steady stream of Grand Theft Auto 6 leaks prior to the game's big extended look on Netflix, Rockstar Games has another leak problem on its hands.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/far-cry-tv-show-fx-cast-widows-bay-hamish-linklater-brendan-gleeson/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/assets/1777973/far-cry-3-hero.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Far Cry TV Show Taps Widow’s Bay Actor and More
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While video game adaptations are nothing new in television and film, it feels like it has become the hot thing in recent years. Part of that might be due to the overwhelmingly positive reaction to HBO's The Last of Us, at least the first season.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-strange-new-worlds-carol-kane-pelia-exit-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/spock-pike-and-pelia-in-once-la-an-a-time.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Did Carol Kane Just Exit Star Trek: Strange New Worlds? Commander Pelia’s Fate Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: SPOILERS for Star Trek: Strange New Worlds Season 4, Episode 9 - "Once La'an a Time" Did Commander Pelia (Carol Kane) make a surprise exit from Star Trek: Strange New Worlds? Directed by Sydney Freeland and written by Onitra Johnson, Star Tr&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/control-resonant-review-roundup/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/ctrl_r_launch_4k_public_02.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Control Resonant Reviews Say Remedy Has Another Hit, but Not Its Best Game
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After Remedy's fantastic Alan Wake 2, expectations were sky-high in the lead up to Control Resonant. The sequel to 2019's Control looked to continue the studio's hot streak with a mind-bending open-world action RPG just in time for an awards season t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <span class="current">13</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/14.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

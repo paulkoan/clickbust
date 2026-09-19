@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-19 15:03 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>25 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>41 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>131 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.polygon.com/netflix-weekend-binge-september-2026-shows/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/images-3.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Netflix Shows You Need to Binge This Weekend (Sept. 18-20)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It’s September, and depending on where you live, still hot. Summer is almost over, but a heat wave in New York has us cranking the AC and binging Netflix inside. Apple picking or whatver can wait until next week. Fall isn't going anywhere... yet.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/long-anime-every-arc-masterpiece/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/characters-prepare-for-battle-in-fullmetal-alchemist-brotherhood.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Anime with Consistently Excellent Arcs: Fullmetal Alchemist: Brotherhood and More
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Long Anime Series Where Every Arc Is a Masterpiece</div>
+      
+      
+      <div class="summary">Long anime require serious commitment from viewers. Spending 50, 100 or even hundreds of episodes with one series can be incredibly rewarding, but it is also an ample amount of time that allows for mistakes in a story.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-worst-ex-ever-true-crime-docuseries/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/09/seemona-sumasar-from-netflix-worst-ex-ever.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Docuseries 'Worst Ex Ever' Details Terrifying Abuse Stories
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's 2-Part Unhinged Docuseries Will Actually Give You Nightmares</div>
+      
+      
+      <div class="summary">Netflix's docuseries, Worst Ex Ever, details the stories of terrifying abuse at the hands of significant others. Significant others who, once professed love, only to flip the script to something far darker and contemptible. And what the brave survivo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/wonka-fantasy-success-netflix-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/wonka-chalamet-factory-header.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Timothée Chalamet's 'Wonka' Climbing Streaming Charts on Netflix and Digital
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Timothée Chalamet's $634M Prequel to a 10/10 Fantasy Classic Is Climbing Fast on Streaming</div>
+      
+      
+      <div class="summary">Timothée Chalamet has starred in several hit movies throughout his career, and taken on some memorable roles to date. In 2023, the star took on one of his most ambitious roles in Wonka, playing the legendary character of Willy Wonka. Years after its &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/cutest-garfield-comic-strips-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/06/odie-garfield-and-jon.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Cute Garfield Comic Strips, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Garfield, the lasagna-loving cat from Jim Davis' popular Garfield comic strip, is known for his sarcastic sense of humor. Garfield can often be found playing a trick on his canine counterpart, Odie, or begging his human owner, Jon Arbuckle, for more &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-top-boy-underrated-gangster-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/06/three-men-meet-in-top-boy.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Top Boy: The 5-Season Netflix Crime Series with 97% RT That Deserves More Attention
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The 5-Season Netflix Crime Show With 97% RT That the Algorithm Silently Buried</div>
+      
+      
+      <div class="summary">With the rise in crime and gangster programming, Netflix has jumped on the bandwagon and tried to break the procedural formulas with a few unexpected outings of its own.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/satyajit-ray-pather-panchali-greatest-directorial-debuts-leaving-hbo-max-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/12/pather-panchali.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Satyajit Ray's 'Pather Panchali' Leaving HBO Max Soon
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO Max Officially Says Goodbye to One of Cinema’s Greatest Directorial Debuts</div>
+      
+      
+      <div class="summary">Do you know what unites Orson Welles, David Lynch, Sidney Lumet, and Jordan Peele? Each of them made their directorial debuts with movies that are now considered all-time classics.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2262187/new-bose-earbuds-ultra-open-upgrades-features/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/boses-return-to-wireless-open-earbuds-comes-with-a-few-major-upgrades/l-intro-1789736818.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bose's Return To Wireless Open Earbuds Comes With A Few Major Upgrades
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Bose's Return To Wireless Open Earbuds Comes With A Few Major Upgrades The popular audio brand Bose, which kicked off the clip-on style open earbuds design with its Ultra Open Earbuds in 2024, is back with two new models.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/super-mario-64-ocarina-of-time-fan-game/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/super-mario-64-ocarina-of-time-is-the-crossover-fans-have-waited-40-years-for.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Super Mario 64: Ocarina of Time Is the Crossover Fans Have Waited 40 Years For
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Mario and Zelda are two of Nintendo's biggest video game franchises. The two have historically been entwined, including a Legend of Zelda segment in the Super Mario Bros. Super Show! However, other than Super Smash Bros.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/solo-leveling-arise-diana-lopez-hunter-origin-webtoon/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/3d2ae3f3-5b92-4fc5-bcf0-8486fd6e2d2f.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Solo Leveling Manhwa Chapter Revives the 1 Monarch Who Beat Sung Jinwoo
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Sung Jinwoo’s worst loss in Solo Leveling may be coming back to haunt him after the series’ latest manhwa release.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/lollipop-chainsaw-japanese-game-live-action-movie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/06/lollipop-chainsaw-repop-juliet-with-chainsaw-close-up.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lollipop Chainsaw Live-Action Movie Officially in Development
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Cult Classic Japanese Video Game Is Officially Getting A Live-Action Movie Adaptation</div>
+      
+      
+      <div class="summary">Another live-action video game adaptation is officially on its way. A live-action feature film based on the cult classic Japanese video game, Lollipop Chainsaw, is officially in development, bringing the franchise to the big screen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/peanuts-charlie-brown-best-quote-grief-deep/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/charlie-brown-lucy-booth-in-peanuts.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            29 Years Later, Charlie Brown's Best Quote On Grief Proves Just How Deep Peanuts Really Is
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Charlie Brown is easily the biggest downer out of anyone in the entire Peanuts gang, and there's really no competition. That is, of course, by design and following careful revision to his simpler earlier persona.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/final-fantasy-meets-chrono-trigger-free-demo-download/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/forge-of-the-fae-town.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Forge of the Fae, a Free JRPG Demo on Steam, Blends Final Fantasy and Chrono Trigger Vibes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Final Fantasy, Chrono Trigger Collide In New JRPG You Can Play Free</div>
+      
+      
+      <div class="summary">Final Fantasy helped usher in a completely new era of JRPGs. It was one of the most successful franchises of all time in its initial run, and by the time Final Fantasy 4 hit the SNES, tons of global fans were already waiting to see what would come ne&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/reacher-season-4-ending-breaks-tradition/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/8f8f7902-2dde-4180-8d1c-e9fdc1203dc9.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Reacher Season 4's Ending Breaks 2 Big Franchise Traditions
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Spoilers ahead for Reacher season 4.Instead of seeking novelty with each new installment, the Reacher franchise does not shy away from sticking to its well-worn tropes and trends.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-10-rotten-video-game-movie-that-lost-80m-is-suddenly-a-top-10-streaming-hit/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/02/krom-leads-an-army-of-psychos-in-borderlands.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Borderlands (2024) Becomes Top 10 Streaming Hit Despite 10% RT Score
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The 10% Rotten Video Game Movie That Lost $80M Is Suddenly a Top 10 Streaming Hit</div>
+      
+      
+      <div class="summary">Video game movies are taking over the Internet, and one of them is climbing the Vudu charts. Borderlands, based on the popular Gearbox and 2K series of the same name, is staging a comeback on the streaming and VOD platform after flopping in theaters.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/heart-of-the-beast-david-ayer-brad-pitt-final-cut-clash-report/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/brad-pitt-and-odin-huddled-over-a-map-in-heart-of-the-beast.jpg?q=49&fit=contain&w=3840&h=2160&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            David Ayer and Brad Pitt Clashed Over Final Cut of Survival Thriller 'Heart of the Beast'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: David Ayer & Brad Pitt Clashed Over Final Cut For New Survival Thriller In New Report</div>
+      
+      
+      <div class="summary">Dueling edits of Heart of the Beast were reportedly produced after Brad Pitt and David Ayer disagreed on the film's tone. Thanks to the immense success of Pitt's best films, his upcoming movie Heart of the Beast is highly anticipated.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/supernatural-anime-to-watch-before-jjk-season-4/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/jujutsu-kaisen-key-image-of-sukuna-holding-out-a-hand.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Perfect Supernatural Anime to Watch Before Jujutsu Kaisen Season 4
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Gege Akutami's Jujutsu Kaisen helped usher in a darker age of action storytelling. The series' popularity reached even greater heights after its impressive anime adaptation by MAPPA, which presented Yuji Itadori's supernatural coming-of-age story in &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/power-book-5-influence-canceled-reason/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/mv5bmwzmngzjngqtodzlys00ntdjltg3zdutmwexywm2zwnmzddlxkeyxkfqcgc-_v1_.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why Was Power Book V Canceled? What Happened To The Rashad Tate Spinoff
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Starz canceled Power Book 5: Influence, which led many to wonder what happened to the planned Rashad Tate spinoff. Created by Courtney A. Kemp, in collaboration with Curtis "50 Cent" Jackson, Power is a six-season crime drama that became one of cable&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-steps-disney-competitor-cinderella-stepsisters-not-evil-problem/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/steps-on-netflix-3.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'Steps' Movie Faces Problem Competing with Disney's Cinderella
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's New Disney Competitor Already Has A Major Problem</div>
+      
+      
+      <div class="summary">This November, Netflix is releasing a brand-new movie, Steps, that is going to put the streamer even more directly in competition with Disney than it already is.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/terminal-list-season-2-reacher-tame/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/bearded-chris-pratt-in-the-terminal-list-season-2.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Terminal List Season 2 Returns to Prime Video After 4 Years, Grittier Than Reacher
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video Action Thriller That Makes Reacher Look Tame Returns Soon After 4 Years</div>
+      
+      
+      <div class="summary">Reacher has grown to become Prime Video's most valuable IP in the action thriller genre. It is easily one of the most popular titles in the streaming service's catalog, and, despite being four seasons in, it is showing no signs of slowing down.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/chronicles-of-narnia-trilogy-blu-ray-release-date-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/chronicles-of-narnia-the-lion-the-witch-and-the-wardrobe-2.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Chronicles of Narnia Trilogy Gets New Blu-ray Set in 2026 Ahead of Netflix Reboot
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Narnia Officially Returns for 2026 Release Ahead of Netflix Reboot</div>
+      
+      
+      <div class="summary">Fantasy stories have long held a special place in popular culture. Their sprawling magical worlds, mythical creatures, heroes, and epic battles give audiences an escape into captivating worlds where their imaginations come alive. Franchises like Harr&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-x-men-rogue-costumes-comics/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/rogue-costumes.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            15 Best Rogue Costumes in X-Men History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anna Marie, also known as Rogue, debuted as a villain in Avengers Annual #10 in August 1981 and went on to become one of the most well-known X-Men members. Over the years, the mutant has stylishly worn several signature outfits that fans love.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/south-park-episodes-missing-hbo-max-why/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/south-park_nzdefr.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 5 Banned South Park Episodes Missing From Max (& Why HBO Removed Them)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Trey Parker and Matt Stone's South Park is well-known for being crude and controversial, and there are currently five banned South Park episodes not available on Max.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-wars-new-droid-knights-ren/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/a-cortosis-droid-attacks-in-the-fall-of-kylo-ren-2.webp?q=49&fit=crop&w=750&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Wars: The Fall of Kylo Ren #2 Introduces an Unkillable Cortosis Droid Villain
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Wars Introduces New Jedi-Level Villain To Official Lore</div>
+      
+      
+      <div class="summary">A new Star Wars villain makes their debut, described as an "unkillable" antagonist that even a Sith struggles to fight. Throughout their long history, the Sith have faced some of the galaxy’s most formidable threats, often beyond the Jedi themselves.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/time-travel-movies-that-make-sense/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/back_to_the_future_ii.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Near-Perfect Time Travel Movies Where the Science Actually Makes Sense
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Most time travel movies don’t sweat the math — or, more accurately, the quantum physics of how time travel might actually work. The writers and directors include the time-travel concepts that will help their story and ignore the ones that won’t.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/harlan-coben-i-will-find-you-netflix-record-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/i-will-find-you-rachel-mills-britt-lower-david-borroughs-sam-worthington.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Harlan Coben's 'I Will Find You' Earns 64% on Rotten Tomatoes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Harlan Coben’s New Netflix Thriller Officially Sets New Record</div>
+      
+      
+      <div class="summary">In Harlan Coben's latest Netflix thriller, a father takes a massive risk for a big reward. David Borroughs (Sam Worthington) has been serving a sentence for the murder of his son.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/metroidvanias-you-can-finish-under-10-hours/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/metroid-on-the-nes.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Metroidvanias You Can Finish in Under 10 Hours
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Metroidvanias have a long and storied history in the gaming world, but that doesn’t mean that the games are long themselves. In fact, many games within the genre can be completed in under 10 hours.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/jackie-chan-rush-hour-masterpiece/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/05/jackie-chan-and-chris-tucker-in-rush-hour.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jackie Chan's 'Rush Hour' (1998) Is Still a Masterpiece 28 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 28 Years Later, Jackie Chan's 95-Minute Action Thriller That Created Rotten Tomatoes Is Still a Masterpiece</div>
+      
+      
+      <div class="summary">Jackie Chan emerged as one of the most noteworthy action stars of the late 90s and 2000s after years as a leading man in Hong Kong cinema, but he produced an all-time classic upon breaking out in Hollywood.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-thriller-gandhari-streaming-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/img_2344-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Gandhari' Tops Netflix Global Non-English Chart with 9.6M Views
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Officially Has a New Global Hit on Their Hands</div>
+      
+      
+      <div class="summary">Tapsee Pannu has become an undisputed face for Bollywood on Netflix. She has starred in around 40 titles, and of that total career filmography, about 12 of her major titles have been hosted on Netflix globally or regionally over the years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/brendan-fraser-the-mummy-free-streaming-success/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/adobe-express-file-2025-11-04t172543-776.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brendan Fraser's 'The Mummy' (1999) Is a Free Streaming Hit 27 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brendan Fraser's $422M Creature Feature Is a Free Streaming Sensation 27 Years Later</div>
+      
+      
+      <div class="summary">27 years after its release, The Mummy is seeing a sudden surge in streaming. The 1999 blockbuster arrived on Tubi on Sep. 1, and viewership has been rising. The Mummy is currently the No. 3 most-watched movie in the United States on Tubi, per FlixPat&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <span class="current">5</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/6.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

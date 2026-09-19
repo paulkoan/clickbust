@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-19 15:03 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>25 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>41 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>131 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.bgr.com/2252158/star-trek-brent-spiner-villain-sci-fi-show-warehouse-13/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/star-treks-brent-spiner-played-a-villain-on-a-sci-fi-show-thats-rarely-talked-about-today/brent-spiner-loved-playing-brother-adrian-on-warehouse-13-1788793775.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brent Spiner Played Brother Adrian, a Villain on Warehouse 13
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek's Brent Spiner Played A Villain On A Sci-Fi Show That's Rarely Talked About Today</div>
+      
+      
+      <div class="summary">Star Trek's Brent Spiner Played A Villain On A Sci-Fi Show That's Rarely Talked About Today Paramount Most sci-fi fans know Brent Spiner for playing Data on "Star Trek: The Next Generation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-shonen-anime-no-power-of-friendship/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/09/denji-and-power-are-goofy-together-in-chainsaw-man.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Best Shonen Anime That Detest the Power of Friendship
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Long gone are the days when the power of friendship could be passed off as a legitimate power-up technique in shonen anime.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/hbo-max-reviving-netflix-cancelled-comedy-hit" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/photos/grodd2.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO Max's The People v. Gorilla Grodd Revives American Vandal's Mockumentary Style
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It’s Official: HBO Max Is Reviving Netflix’s Cancelled 98% RT Comedy Hit</div>
+      
+      
+      <div class="summary">An upcoming HBO Max comedy series is the perfect revival of a Netflix award-winner that ended in 2018. HBO Max and DC Studios have officially begun production on their next eight-episode series, The People v.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/mobland-season-2-tobi-bamtefa-cast-taylor-sheridan-crossover/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/tom-hardy-s-harry-looking-angrily-at-something-in-mobland-season-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tobi Bamtefa Joins MobLand Season 2
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan Star Heading To MobLand For Season 2 Of Guy Ritchie Series</div>
+      
+      
+      <div class="summary">A Taylor Sheridan collaborator is joining MobLand season 2. Co-created by Ronan Bennett and Guy Ritchie, the hit Paramount+ series premiered last year, chronicling warring British crime families and the exploits of fixer Harry Da Souza, played by Tom&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/stuart-fails-to-save-the-universe-season-2-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/stuart-fails-to-save-the-universe-poster.jpg?q=49&fit=crop&w=220&h=124&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stuart Fails to Save the Universe Season 2 Officially Moves Forward
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Big Bang Theory Sequel Officially Moves Forward With Major Spinoff Update</div>
+      
+      
+      <div class="summary">A new spinoff update confirms that The Big Bang Theory sequel is officially moving forward. Nearly 20 years since The Big Bang Theory premiered on CBS, the world that it created continues to thrive.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2262166/new-electronics-find-best-buy-september/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/10-new-electronics-at-best-buy-to-look-out-for-in-september-2026/l-intro-1789738551.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 New Electronics At Best Buy To Look Out For In September 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">10 New Electronics At Best Buy To Look Out For In September 2026 Bgwalker/Getty Images We may receive a commission on purchases made from links. If you're on the hunt for fresh and interesting gadgets to purchase, you can't go wrong with Best Buy and&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/narnia-netflix-reboot-controversy-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/meryl-streep.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Greta Gerwig's The Magician's Nephew Backlash: Meryl Streep as Aslan and Book Changes Explained
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's Narnia Backlash Explained, From Major Book Change To Meryl Streep's Aslan</div>
+      
+      
+      <div class="summary">Greta Gerwig's Narnia: The Magician's Nephew has stirred up quite a backlash on social media, with the first look at Netflix's Narnia dropping a lot of surprises. Published between 1950 and 1956, C.S. Lewis' The Chronicles of Narnia is a much-loved c&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-umbrella-academy-netflix-season-4-lovecraftian/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/08/the-umbrella-academy-season-4-episode-6-7.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Umbrella Academy Season 4 Goes Fully Lovecraftian
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's 4-Part Dark Fantasy Series Went Fully Lovecraftian In Its Final Season</div>
+      
+      
+      <div class="summary">Netflix is home to a four-part dark fantasy series that is still one of its best original shows, and for its final season, it decided to go fully Lovecraftian.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/v-for-vendetta-returns-theaters-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/v-for-vendetta-20th-anniversary-3.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            V for Vendetta 20th Anniversary Theatrical Re-Release Announced by Fathom Entertainment
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 20 Years Later, One of the Most Timely Action Thrillers Ever Made Confirms New Release</div>
+      
+      
+      <div class="summary">There is a distinct, personable quality a film must possess to pierce time, over and over again — whether that be through timeless themes that remain deeply resonant, characters so relatable that it's like revisiting a part of you, or, as some darker&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/v-for-vendetta-theaters-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/11/screenshot-2025-11-13-at-16-25-25.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            V for Vendetta Returns to Theaters for 20th Anniversary on November 1 and 5
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 20 Years Later, the Greatest Dystopian Sci-Fi Movie Ever Made Officially Returns to Theaters</div>
+      
+      
+      <div class="summary">Remember, remember, the fifth of November. Some movies can become less relevant as times change, and politics shift, but some of them remain eerily prescient and, dare we say, timeless. An anonymous Robin Hood, or terrorist, depending on your point o&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/bbc-cozy-mystery-ludwig-fixed-sherlock-formula/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/benedict-cumberbatch-as-the-titular-detective-in-front-of-a-red-backround-in-sherlock.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            BBC’s Most Addictive Cozy Mystery Finally Fixed the Sherlock Formula
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The British do cozy murder mystery shows like no one else. With a rich literary history to draw from, featuring greats like Agathie Christie, the BBC has become a notable archive of incredible crime shows.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/guy-ritchie-henry-cavill-ministry-ungentlemanly-warfare-netflix-streaming-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/henry-cavill-gleefully-shooting-his-weapon-in-the-ministry-of-ungentlemanly-warfare.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Ministry of Ungentlemanly Warfare Dominates Netflix as Instant Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Guy Ritchie & Henry Cavill's R-Rated War Thriller Instantly Dominates Netflix</div>
+      
+      
+      <div class="summary">Guy Ritchie and Henry Cavill have teamed up a few times so far, and two of the movies that came out of that are now ruling streaming, with one of them being an instant Netflix hit. Ritchie and Cavill have been at the forefront of several successful p&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/half-movie-2026-review-tiff/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/half_still_01.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Half Review: India’s Vampire Western Is Bloody, Brutal & Frustratingly Underdeveloped [TIFF]
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Imagine From Dusk Til Dawn or Near Dark transported from the American Southwest to the scorching deserts of India, where a duo of superpowered vampire siblings embark on a revenge mission against a gang of merciless marauders.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/atonement-movie-2026-review-tiff/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/hiam-abbass-running-through-a-cloud-of-dust-in-atonement.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Atonement Review: One Of The Best War Movies In Recent Memory [TIFF]
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">War films are some of the most frequently made in the entire industry. On the one hand, that’s a good thing, as audiences are exposed to various points of view on a given conflict.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/pokemon-winds-waves-new-starter-trio-designs-reveal/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/fc32dd7f-9d18-439c-be5e-f50960e6d440.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Winds & Waves Reveals New Starter Trio Designs for 30th Anniversary
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pokémon Winds and Waves was announced earlier this year and is set to arrive in 2027. So far, The Pokémon Company hasn't revealed much about the upcoming title, but they did show off the game's starter trio, Fire-type Pombon, the Grass-type Browt, an&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-studios-major-visionquest-character-identity" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/photos/jimhammond.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel's VisionQuest May Feature the Original Human Torch, Jim Hammond
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Studios Can’t Talk About 1 Secret VisionQuest Character, But His Identity May Be Obvious</div>
+      
+      
+      <div class="summary">Marvel Studios seems to be hiding one big character in VisionQuest, whose identity many feel has already been confirmed. VisionQuest is bringing in a massive cast of characters, including heroes and villains who have not graced the screen for Marvel &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/99-nights-in-the-forest-movie-sam-raimi-josh-cooley/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/99-nights-in-the-forest.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Josh Cooley and Sam Raimi Attached to Roblox Horror Game Movie 99 Nights in the Forest
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: An Oscar-Winning Director and Sam Raimi Are Now Attached to the Roblox Movie</div>
+      
+      
+      <div class="summary">Roblox's horror survival hit game 99 Nights in the Forest is getting its own movie. While details about the upcoming movie are still scarce, some big names have just been revealed to be attached to the project: Josh Cooley and Sam Raimi.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/near-perfect-horror-manga-flawless-masterpieces/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/junji-ito-tomie.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Near-Perfect Horror Manga That Are 10/10 Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Horror manga has a unique ability to make the impossible feel disturbingly real. From supernatural curses and grotesque creatures to psychological torment and humanity's darkest impulses, the genre has produced some of manga's most unforgettable stor&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/far-cry-series-cast-sam-spruell-brendan-gleeson-hamish-linklater/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/12/fargo-season-5-sam-spruell.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hamish Linklater and Jamie Demetriou Join FX's Far Cry Series from Noah Hawley
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Fargo' Star Officially Reunites With Noah Hawley for New Video Game Series</div>
+      
+      
+      <div class="summary">If the recent scores for Resident Evil have taught us anything, it's that adaptations are finally being figured out properly by filmmakers.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/mobland-carrigan-family-tree/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/mobland.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'MobLand's Harrigan Family Tree & How Everyone's Related to Conrad
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This article mentions rape and drug use. The return of Guy Ritchie's incredible show MobLand means it's time to refamiliarize yourself with the Harrigan family.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/transformers-optimus-prime-awakening-peter-cullen-josh-wassung/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/image-4.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Optimus Prime: Awakening' Director Details Saying “Goodbye” to Peter Cullen
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Summary Collider's Steve Weintraub talks with Joshua Wassung for Optimus Prime: Awakening. After an early screening of Transformers: The Movie, Wassung discussed the making of his short film.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/control-resonant-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/control-resonant-key-art.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Control Resonant Fails At Nearly All of Its Ambitions | Review
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Finnish developer Remedy Entertainment works a certain magic with its games. Even when they are rough around the edges, the worlds Remedy create compel you like nothing else.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-80s-movies-better-than-die-hard-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/the-breakfast-club.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 '80s Movie Masterpieces Better Than Die Hard
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 80s produced some of the most iconic movies and franchises in cinema history. Among these classics is 1988's Die Hard, which helped fundamentally reshape the action genre.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/wonder-woman-issue-40-release-date-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/gal-gadot-wonder-woman-dceu-patty-jenkins-header.avif?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wonder Woman's Biggest Era Yet Is Coming To An End
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Tom King and Daniel Sampere's critically acclaimed run on Wonder Woman is quickly approaching its end, and fans won't want to miss it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/joel-kinnaman-icefall-sylvester-stallone-cliffhanger-prime-video-streaming-milestone-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/icefall-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Icefall, Starring Joel Kinnaman, Reaches 30 Days in Prime Video's Top 10
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Joel Kinnaman’s Sneaky Remake Of Sylvester Stallone Classic Crosses Major Streaming Milestone</div>
+      
+      
+      <div class="summary">Joel Kinnaman's sneaky remake of a classic Sylvester Stallone movie has crossed a major streaming milestone almost a year after its original release. Kinnaman's movies and TV shows have made him a household name in streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/heart-of-the-beast-first-reactions/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/brad-pitt-celebrating-with-his-hands-in-the-air-and-odin-by-his-side-in-heart-of-the-beast.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brad Pitt's Heart Of The Beast First Reactions Are Officially In
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Brad Pitt's Heart of the Beast is tugging at heartstrings. Early reactions to the survival thriller Heart of the Beast have arrived, and critics are sharing their thoughts on Pitt's daring adventure with his canine companion, Odin.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/vonnegut-perfect-sci-fi-opening-closing/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/04/sirens-of-titan-book-cover-eyeballs-against-a-purple-backdrop.jpg?q=49&fit=crop&w=750&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Sirens of Titan: Kurt Vonnegut's 1959 Sci-Fi Masterpiece Bookended by Perfect Opening and Closing Lines
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This 67-Year-Old Sci-Fi Masterpiece Is Bookended By Two Perfect Lines</div>
+      
+      
+      <div class="summary">One of the most influential and important voices of the 20th century, Kurt Vonnegut built a literary career around his signature dark humor, sharp social criticism, and an unmistakably unconventional approach to storytelling.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/johnny-depp-bunnyman-sculpture/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/johnny-depp-in-sleepy-hollow.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Johnny Depp Unveils 'The Bunnyman' Sculpture, His First Foray into Fine Art
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Johnny Depp Unveils His Next Creative Project, and It's Straight Out of a Tim Burton Movie</div>
+      
+      
+      <div class="summary">Johnny Depp has long been known as one of cinema's ultimate chameleons, a master of the macabre whose career was built on the back of beautifully broken outsiders. The actor's affinity for the dark-fantasy aesthetic deepened through his creative part&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/better-call-saul-howard-hamlin-death-breaking-bad/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/05/tony-dalton-as-lalo-salamanca-in-better-call-saul-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Better Call Saul's Thrilling 2-Minute Scene Is One We'll Never Forget
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Just because character deaths on serialized television shows are inevitable, it doesn't mean they don't sting — some of the most iconic moments in TV history center around the sudden death of a beloved character.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/monster-lizzie-borden-story-netflix-ella-beatty/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/monster-the-lizzie-borden-story-ella-beatty-interview.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Monster: The Lizzie Borden Story’ Star Breaks Down Crime Series’ Most Brutal Moments
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This interview contains spoilers for the first two episodes of 'Monster: The Lizzie Borden Story.' Summary In an exclusive with Collider, Ella Beatty reveals the research she did to prepare for her leading role in Monster: The Lizzie Borden Story.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <span class="current">14</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/15.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

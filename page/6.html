@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-19 15:03 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>25 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>41 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>131 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.cbr.com/must-watch-movies-for-masters-of-the-universe-reboot-fans/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/masters-of-the-universe-movie-he-man.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Movies To Watch If You Loved Prime Video's Masters of the Universe Reboot
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Blending fantasy and sci-fi, Prime Video's Masters of the Universe remake became an instant classic of the 2020s, and there are some great classics to watch if you loved it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/most-powerful-versions-of-starscream-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/maxresdefault-2640310776-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Most Powerful Versions of Starscream, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Starscream built his reputation on cunning and betrayal, but certain versions of him break that stereotype entirely by making him use cosmic artifacts, overpowered sparks, and entire war machines.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/atlantis-bbc-merlin-meets-percy-jackson-and-the-olympians/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/atlantis-hercules-jason-pythagoras.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            2013 BBC Series 'Atlantis' Now Streaming on Hulu
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Merlin' Meets 'Percy Jackson and the Olympians' in Hulu's 2-Part Fantasy Thriller</div>
+      
+      
+      <div class="summary">Fantasy is more prevalent on TV now than ever, with fan-favorite series ranging from A Knight of the Seven Kingdoms to One Piece expanding the genre. Yet, while these releases are exciting, many older series deserve just as much attention, including &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/lollipop-chainsaw-live-action-movie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2022/06/Lollipop-Chainsaw-Sparkle-Hunting.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lollipop Chainsaw Getting R-Rated Live-Action Movie Prequel
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: James Gunn's Over-the-Top Zombie Game Is Being Turned Into an R-Rated Live-Action Movie</div>
+      
+      
+      <div class="summary">There's a lot to look forward to for fans of the Lollipop Chainsaw franchise. Ahead of a new video game and an animated series, it's been revealed that a live-action adaptation is also in the works.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/stranger-things-demogorgon-funko-pop-images-release-date-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/demogorgon.jpg?q=49&fit=contain&w=679&h=933&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New 'Stranger Things' Demogorgon Funko Pops Arrive in October 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Stranger Things’ Officially Sets the Date for New October Release</div>
+      
+      
+      <div class="summary">Stranger Things has never really been gone, has it? It's one of those shows that feels like it's always just waiting to come back, like it's perennially there while we anticipate another trip to Hawkins, Indiana.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/barbie-in-the-nutcracker-streaming-netflix-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/08/barbie-in-the-nutcracker-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            2001's 'Barbie in the Nutcracker' Returns to Netflix Top 10 Ahead of Remake
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Barbie’s Best Fantasy Adventure Officially Hits Netflix Ahead of 2026 Remake</div>
+      
+      
+      <div class="summary">Before Mattel began expanding its toy brands into major live-action movies, the company released animated films aimed at children. Many of these movies were released directly onto physical media, while some also aired on television.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/cartoon-network-anime-painful-to-watch-today/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2022/05/Duel-Masters-Shobu-Kirifuda-Cropped.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Cartoon Network Anime That Are Painful to Watch Today
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Cartoon Network introduced countless Americans to anime, but not every show from the network's anime era has aged with the same grace. The result is a group of shows that can trigger strong nostalgia while also making a modern rewatch surprisingly di&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/worst-family-movies-film-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/artemis-fowl-1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Worst Family Movies in Film History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Though quite a few of the greatest movies in history are family films, studios can sometimes get away with making a movie that's less-than-exceptional with the excuse that it's primarily aimed at kids.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/brad-pitt-heart-of-the-beast-release-date-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/09/heart-of-the-beast-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brad Pitt's 'Heart of the Beast' Hits Theaters September 25
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brad Pitt's Next Great Action Blockbuster Officially Releases in 1 Week</div>
+      
+      
+      <div class="summary">2026 was a benchmark year for Brad Pitt, who starred in the most successful movie of his entire career despite being more than 60 years old now.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/frances-mcdormand-nomadland-leaving-netflix-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/04/nomadland-poster-2020.jpg?q=49&fit=contain&w=1800&h=900&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Frances McDormand's 'Nomadland' Leaves Netflix on October 1
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Fargo' Star's Groundbreaking Epic Officially Leaves Netflix</div>
+      
+      
+      <div class="summary">One of the true gems of the past twelve months, the Chloé Zhao-directed Hamnet broke hearts and soothed souls on its way to Academy Awards success.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/ps2-games-still-play-perfectly-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/10/leon-holding-a-gun-in-resident-evil-4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 PS2 Games That Still Play Perfectly in 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The PlayStation 2 era stands as a golden age for interactive entertainment, defined by a wave of experimentation and artistic ambition.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/robert-pattinson-twilight-franchise-streaming-success-peacock-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2025/12/01443408_poster_w780.jpg?q=70&fit=contain&w=480&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Twilight Saga Movies Top Peacock Charts, Boosted by Robert Pattinson's Popularity
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Robert Pattinson Is Officially the New King of Streaming</div>
+      
+      
+      <div class="summary">All eyes have been on Robert Pattinson lately. Ever since a scene of his in The Odyssey went viral, and with anticipation building for his next appearance in the A24 film Primetime, where he plays Chris Hansen, people have noticed how his career has &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/rhaenyra-daenerys-targaryen-related-house-of-the-dragon-game-of-thrones/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/08/daenerys-and-rhaenyra.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Rhaenyra Targaryen Is Related To Daenerys
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! This article contains spoilers for House of the Dragon, A Knight of the Seven Kingdoms, & Game of Thrones.Rhaenyra Targaryen, one of the central characters in House of the Dragon, is related to Game of Thrones' Daenerys Targaryen, as one of &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dune-awakening-console-release-september-22/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/sharedimages/2026/06/dune-awakening-tag-page-cover-art.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dune: Awakening Console Release Date Set for September 22
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Dune Officially Returns September 22</div>
+      
+      
+      <div class="summary">Frank Herbert's Dune may be the most important piece of science fiction ever created, and as Denis Villeneuve's film saga brings the epic to mainstream audiences with its final chapter later this year, the franchise has arguably never been bigger.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/alan-ritchson-runner-beats-henry-cavill-in-the-grey-box-office/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/runner.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Henry Cavill's 'In the Grey' Outperformed by Alan Ritchson's 'Runner' at Box Office
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Henry Cavill's New Action Thriller Officially Gets Crushed by Alan Ritchson's 9/10 Box-Office Surprise</div>
+      
+      
+      <div class="summary">Although Henry Cavill is still an easy sell on streaming, his theatrical luck has started to look almost weirdly bad.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/tv-shows-sci-fi-and-fantasy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/movieweb-featured-image-template-2026-09-18t152244-831.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 TV Series That Are Both Sci-Fi and Fantasy
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Sci-fi and fantasy are often viewed as opposite ends of the genre spectrum, but there are also many instances where the two genres can co-exist quite beautifully indeed.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/taylor-sheridan-lioness-versus-guy-ritchie-the-gentlemen-streaming-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/taylor-sheridan-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan and Guy Ritchie Officially Go Head-to-Head on Streaming
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In many ways, both Guy Ritchie and Taylor Sheridan have established themselves as television moguls for a new era. This was historically the domain of producers such as Shonda Rhimes and Ryan Murphy, both of whom have scored record-breaking deals wor&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/over-the-garden-wall-fantasy-success-hulu-prime-video-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/10/elijah-wood.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Elijah Wood's 'Over the Garden Wall' Miniseries Surges on Streaming Charts
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Elijah Wood's Perfect 10-Episode Dark Fantasy Is Taking Over Streaming Again</div>
+      
+      
+      <div class="summary">Elijah Wood may be known for his legendary roles in things like The Lord of the Rings, but one of his most underrated roles is soaring on the streaming charts, and just in time for the Halloween season.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/zack-snyder-update-sucker-punch-directors-cut/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/sucker-punch.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zack Snyder Confirms Director's Cut of 'Sucker Punch' Is Coming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Zack Snyder Confirms Another Snyder Cut Is Coming for 15-Year-Old Fantasy Action Flick</div>
+      
+      
+      <div class="summary">After Zack Snyder and Warner Bros. released an alternate, extended cut of Justice League, another film by the filmmaker is set to get a director's cut. This time, he's revisiting his fantasy action flick 15 years after it first released in theaters.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/peacock-new-thriller-the-good-daughter/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/05/the-good-daughter-official-still-placeholder-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Peacock's 'The Good Daughter' Thriller Series Premieres November 12
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Peacock Finally Has the Next 6-Part Thriller It's Been Missing</div>
+      
+      
+      <div class="summary">Over the years, most streaming platforms have delivered at least a few suspenseful, nail-biting thrillers to its viewers.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/horror/falling-stars-2023-streaming.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/Falling-Stars-2023-4.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Folk Horror Film 'Falling Stars' Uses Unexplained Rules for Suspense
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tense Folk Horror Knows The Scariest Rules Are The Ones Nobody Explains</div>
+      
+      
+      <div class="summary">By Robert Scucci | Published 11 seconds ago There’s nothing I hate more in movies than over-explanation, unnecessary exposition dumps and worldbuilding, and generally any form of “telling without showing” that suggests the filmmaker thinks they’re sm&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/doctor-who-9th-10th-doctors-funko-pop-images-release-date-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/fifteenth-doctor.jpg?q=49&fit=contain&w=679&h=891&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ncuti Gatwa's Doctor Who Returns in New Funko Pop! Collection with 9th and 10th Doctors
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ncuti Gatwa’s Doctor Who Officially Returns for New Release With the 9th and 10th Doctors</div>
+      
+      
+      <div class="summary">Ncuti Gatwa's reign as the lead in Doctor Who was, regrettably, short but sweet. The Sex Education breakout was one of the biggest names to take on the TARDIS before regenerating suddenly.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/gal-gadot-the-runner-streaming-drop-prime-video-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/the-runner-gal-gadot-rory-wilmot.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gal Gadot's Prime Video Thriller 'The Runner' Gets Negative Reviews and Low Viewership
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Gal Gadot’s 'Taken' Replacement Officially Falls Flat on Prime Video</div>
+      
+      
+      <div class="summary">After headlining one of the most expensive Netflix original movies of all time, Red Notice, and watching her career-defining Wonder Woman franchise be retooled before her eyes, Gal Gadot took her business to Prime Video recently.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-fun-movies-since-2010-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/top-gun-maverick-tom-cruise.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 6 Most Fun Movies Released Since 2010
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are movies you recommend carefully, and then there are movies you almost shove into somebody’s hands. The 6 films on this list are from the latter category.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/most-unreadable-manga-of-all-time/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/the-characters-on-the-cover-of-gantz-26th-volume-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Unreadable Manga of All Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Manga is usually an incredibly accessible medium, but some creators push its visual language to its limits. Dense artwork, unconventional panel layouts, tiny details and frantic action can make even a straightforward scene surprisingly difficult to p&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/thrill/night-game-1989-review.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/09/Night-Game-1989-8.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Roy Scheider's 1989 Slasher 'Night Game' Has 0% RT but Is Better Than The Glass House
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Roy Scheider’s R-Rated 80s Slasher Has A 0% On Rotten Tomatoes, But It’s Still Better Than 2001’s The Glass House</div>
+      
+      
+      <div class="summary">By Robert Scucci | Published 9 seconds ago Roy Scheider’s name is mostly, and rightfully, associated with Jaws because it’s one of the greatest thrillers of all time. When in his element, Scheider is a force to be reckoned with, and I reckon that Mar&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/naruto-mobile-orochimaru-legendary-sannin-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/09/orochimaru-s-changes-between-naruto-and-boruto.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Naruto Mobile Game Adds Orochimaru's Legendary Sannin Version on September 24
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Naruto Officially Brings Back Orochimaru's Legendary Sannin Era on September 24</div>
+      
+      
+      <div class="summary">The Naruto franchise is prepping Orochimaru for a return to his nefarious self in its latest official release. A new animated video of Orochimaru has been released, which showcases the character from his heyday in the Naruto anime.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/matlock-season-3-behind-the-scenes-update-episode-count/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/10/matlock-kathy-bates.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            CBS's 'Matlock' Faces Behind-the-Scenes Lawsuits and Potential Cancellation
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: CBS' 2-Part Crime Series Is Officially Heading Down a Disappointing Path</div>
+      
+      
+      <div class="summary">Throughout the past few decades, there have been plenty of television shows that have been impacted by behind-the-scenes chaos.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/lizzie-borden-history-axe-murder-parents-trial-acquittal/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/ella-beatty-as-lizzie-borden-in-episode-401-of-monster-the-lizzie-borden-story.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lizzie Borden True Story & Why She Was Acquitted Of Murdering Her Parents
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix’s Monster: The Lizzie Borden Story fictionalizes most of the true story, so here’s everything you need to know about what really happened. Ryan Murphy’s Monster series returns with its first-ever woman accused killer, Lizzie Borden.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/k-dramas-about-falling-love-boss/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/03/kdramaemployeebossromance.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            25 K-Dramas About Falling In Love With The Boss
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">K-dramas have grown increasingly popular over the last few decades, especially among romance fans, and it is no secret why. The medium has every possible kind of story to offer, all with well-written characters, interesting dynamics, and very rewardi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <span class="current">6</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/7.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

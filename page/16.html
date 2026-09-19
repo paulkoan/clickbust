@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-19 15:03 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>25 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>41 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>131 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/the-assassins-2026-movie-review-tiff/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-assassin-s-three-protagonists-talking-together-in-a-sound-booth.jpg?q=49&fit=crop&w=1300&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Assassin(s) Review: Gripping JFK-Style Conspiracy Mystery Is a True Throwback [TIFF]
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Assassin(s) Review: Gripping JFK-Style Conspiracy Mystery Is A True Throwback [TIFF]</div>
+      
+      
+      <div class="summary">Few political assassinations have generated as many questions, contradictions, and conspiracy theories as the attempted killing of South Korean President Park Chung-hee.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2261731/nvidia-google-emerald-ai-energy-management-alliance/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/nvidia-and-google-form-ai-energy-management-alliance-heres-why-it-matters/l-intro-1789672139.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nvidia And Google Form AI Energy Management Alliance — Here's Why It Matters
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Nvidia And Google Form AI Energy Management Alliance — Here's Why It Matters Make more Aerials/Shutterstock AI is a glutton for electricity.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/uncanny-x-men-marvel-comics-rogue-pregnancy-character-analysis/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/04/x-men-97-a-furious-rogue-cries-and-flies-into-danger-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel’s Latest X-Men Story Officially Changes Everything That Defines Rogue
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Rogue being pregnant is not inherently a problem. That feels important to establish immediately, because it would be easy to reduce the conversation surrounding Uncanny X-Men right now to whether Rogue should or should not have a child.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-netflix-shows-4-seasons-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/ozark.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 8 Greatest 4-Season Netflix Shows of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix has no shortage of shows that arrive with a huge premise, dominate the conversation for a few weeks, and then disappear into the streaming abyss. The best four-season shows, however, have managed to become something far more lasting.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/zelda-ocarina-of-time-remake-fan-demo-download/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/legend-of-zelda-ocarina-of-time-official-art-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zelda: Ocarina Of Time Remake Demo Available To Check Out Now
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There is just two months to go until the launch of the highly anticipated The Legend of Zelda: Ocarina of Time Remake, and with the original 1998 title widely regarded as one of the greatest games of all time, it is no wonder that this Nintendo Switc&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/resident-evil-games-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/13690297/capcom_resident_evil_2_more_remakes_leon_claire.jpg.optimal.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Mainline Resident Evil Game, Ranked From Worst to Best
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After decades of misses, we’re finally getting a truly great video game movie adaptation. Well, sort of. Zach Cregger’s take on Resident Evil is a hit among critics who have praised the horror movie for its delightfully playful tone.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/fjord-sebastian-stan-reactions-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/fjord-sebastian-stan-cristian-mungiu-perri-nemiroff.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sebastian Stan Discusses Neon's New Drama 'The Apprentice' and 'The Batman Part II' Role
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Sebastian Stan Says the "Bigger the Reaction" It Gets, the More You Need to See Neon's New Drama</div>
+      
+      
+      <div class="summary">Summary Collider's Perri Nemiroff chats with Sebastian Stan and Cristian Mungiu for Fjord at TIFF 2026. The pair discuss how the film presents a neutral stance to a timely issue, opening up a dialogue for audiences.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/coyote-vs-acme-box-office-82-million/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/08/coyote-vs-acme-wile-e-coyote-featured.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Coyote vs. ACME' Passes Major Box Office Milestone Ahead of Wider Release
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Coyote vs. Acme’ Officially Passes Its Biggest Box Office Milestone Yet</div>
+      
+      
+      <div class="summary">Last week, Coyote vs. ACME proved Warner Bros. wrong by earning more than the company's $30 million tax write-off.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/landman-season-3-billy-bob-thronton-replacement-michael-kelly-william-crockett/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/billy-bob-thornton-as-tommy-norris-in-landman-season-2-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Paramount+ Casts Michael Kelly in 'Landman' Season 3 as Billy Bob Thornton's Replacement
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Paramount+ Just Set Up Billy Bob Thornton's Replacement for Landman Season 3</div>
+      
+      
+      <div class="summary">Landman Season 3 just set up its replacement for Billy Bob Thornton’s Tommy Norris as M-Tex Oil's president after Cami Miller (Demi Moore) fired him in the penultimate episode of Season 2.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-strange-new-worlds-deviations-evermore/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/anson-mount-on-the-bridge-of-the-enterprise-as-captain-pike-in-star-trek-strange-new-worlds.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: Strange New Worlds’ Best Gimmick Story Yet Is Unforgivable Underrated
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A 60-year-old franchise has the privilege of throwing a few curves now and then in the direction of its fans.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/casino-royale-parkour-freerunning-best-james-bond-scene/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/daniel-craig-as-james-bond-freerunning-in-casino-royale.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Casino Royale's Freerunning is the Best Scene in James Bond History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The James Bond franchise has given us some of the most iconic, memorable, and thrilling scenes in action movie history, but one scene from 2006's Casino Royale outmatches them all as the best ever.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/solo-leveling-karma-trailer-story-monarch-war/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/sharedimages/2026/06/solo-leveling-karma-2016-release-date-update.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Solo Leveling: Karma Game Explores Jinwoo's 27-Year War Against the Monarchs
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Solo Leveling's Big 2026 Project Will Explore a Massive Gap in Jinwoo's Life</div>
+      
+      
+      <div class="summary">Few properties have taken the world of entertainment by storm like Solo Leveling. The Korean fantasy web novel written by Chugong was first adapted into a record-breaking webtoon with hundreds of millions of views, and then into an anime produced by &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/steam-free-weekend-sea-of-thieves-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/steam-logo-yellow-background.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Steam Makes 10/10 Open-World Masterpiece Completely Free Until September 21
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The weekend is almost here once again, and after a long and arduous week, what better way to relax than by jumping into a highly rated game without having to spend a single penny? Well, that is now possible for Steam users, as the PC storefront has m&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/sci-fi-movies-mixed-reviews-masterpieces/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/christopher-nolan-and-matthew-mcconaughey-on-the-set-of-interstellar.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Sci-Fi Movies That Divided Critics At The Time But Are Now 10/10 Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Critics got an impressive amount wrong in the summer of 1982. Blade Runner arrived in June to mixed reviews and an indifferent box office. That same month, The Thing was treated even worse, with some critics attacking John Carpenter's practical effec&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/zack-snyder-the-last-photograph-negative-reviews-reaction/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/zack-snyder.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zack Snyder Gives an Official Verdict on New Crime Thriller Following Negative Reviews
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Director Zack Snyder is no stranger to fan support — his admirers rallied together and got Warner Bros. to fund a director's cut of Snyder's Justice League — but he created a monster, and the monster seems to have gotten out of control.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/gta-6-physical-release-album-pre-orders/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/gta-6-jason-lucia.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6 Official Physical Release Announced Alongside Pre-Orders
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">We are finally on the homestretch when it comes to the launch of Grand Theft Auto VI. After over a decade since the last installment was released, and following two major delays, the most anticipated game of all time is just two months away from rele&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-netflix-movies-watch-weekend-september-19-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/dolly-parton-doralee-rhodes-9-to-5-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zack Snyder Praises 'The Last Photograph' Despite Negative Reviews
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 3 Movies That Are So Good, You Need to Watch Them on Netflix This Weekend</div>
+      
+      
+      <div class="summary">Last weekend, Spider-Man: Brand New Day might've finally lost its spot at the top of the box office charts to fantasy legacy sequel Practical Magic 2, but it also smashed its biggest record yet, having now overtaken Star Wars: The Force Awakens to be&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/anne-hathaway-alone-at-dawn-release-date-december-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/verity-josh-hartnett-anne-hathaway.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Anne Hathaway's Film 'Verity' Sets Release Date
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Anne Hathaway's 'American Sniper' Replacement Officially Sets Release Date</div>
+      
+      
+      <div class="summary">Not only is she currently pregnant with her third child, but Hollywood royalty Anne Hathaway is also having the busiest year of her career.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/53-years-later-roadside-picnic-still-ends-with-one-of-sci-fis-most-enduring-lines/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/roadside-picnic.jpg?q=49&fit=crop&w=1300&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Greatest Closing Line in Sci-Fi: 'Roadside Picnic' by Arkady and Boris Strugatsky
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 53 Years Later, The Greatest Closing Line In Sci-Fi History Is Still The Best Book Quote Of The 1970s</div>
+      
+      
+      <div class="summary">The world of science fiction literature is home to countless unforgettable closing moments, from 1984’s short but devastating retrospective ("He loved Big Brother") to The Three-Body Problem’s defiant reminder that humanity, like the locust, cannot b&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/doctor-who-the-god-complex-anniversary-matt-smith/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/the-doctor-god-complex.jpg?q=49&fit=contain&w=1200&h=630&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Doctor Who's 'The God Complex' Remains a Dark and Twisty Episode 15 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 15 Years Later, Doctor Who's Darkest Matt Smith Episode Still Has the Greatest Twist</div>
+      
+      
+      <div class="summary">Toward the end of Matt Smith’s second season in the TARDIS, Doctor Who traps him with Amy Pond (Karen Gillan), Rory Williams (Arthur Darvill), and a small group of random people inside a nightmarish hotel with a huge, muscly minotaur.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/resident-evil-5-dlss5-remaster/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/03/resident-evil-requiem-story-expansion-dlc-characters-re5-jill.png?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Resident Evil 5 Remake Speculation Reignited by DLSS 5 Fan Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Resident Evil 5 Finally Getting The Remaster It Deserves</div>
+      
+      
+      <div class="summary">Stars are aligning with Resident Evil Veronica officially receiving the remake treatment, and a remake of Resident Evil 5 therefore seems far more inevitable than it did before.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/game-of-thrones-white-stag-reveal/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/white-stag-gameplay-dragonfire.png?q=49&fit=contain&w=2048&h=1152&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Game of Thrones: Dragonfire Mobile Game Adds The White Stag Hunt Event
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Game Of Thrones: The White Stag Officially Announced</div>
+      
+      
+      <div class="summary">Game of Thrones has had an incredible year of releases so far in 2026, with House of the Dragon Season 3 wrapping up and finally giving us a look at how the events at Tumbleton played out on screen, The Mad King play having a stellar debut run at the&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gundam-rogue-orbit-impressions-tokyo-game-show-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/06/gundam-rogue-orbit-ss-01.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gundam Rogue Orbit Could Be the Next Great Mech-Action Game
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Bandai Namco's new spin on the Gundam franchise is going big on style. Gundam Rogue Orbit is a high-mobility action game that is meant to be a new entry point for players, thanks to a new setting that doesn't require familiarity with five decades of &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/avengers-doomsday-marvel-studios-mcu-prequel" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/photos/shalla1.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Releases Fantastic Four: First Steps Prequel Comic Featuring Silver Surfer
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Studios Releases the Perfect MCU Prequel Ahead Of Avengers: Doomsday</div>
+      
+      
+      <div class="summary">A Fantastic Four: First Steps prequel has been released ahead of the return of the team and Robert Downey Jr.'s Doctor Doom in Avengers: Doomsday. The Fantastic Four are the newest superhero team to enter the MCU, with the core four comprising Reed R&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dungeon-crawler-carl-new-adventure-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/untitled-design-27.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dungeon Crawler Carl Tabletop RPG Launches November 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Dungeon Crawler Carl’s Next Adventure Officially Arrives November 2026</div>
+      
+      
+      <div class="summary">Dungeon Crawler Carl has gone from a relatively niche LitRPG series to one of the genre's most surprising success stories in just a few short years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/wheel-of-time-war-of-the-dragon-dark-one-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/wheel-of-time-war-of-the-dragon-board-game.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Dark One Returns in New Wheel of Time Board Game 'War of the Dragon'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 14 Years Later, The Wheel Of Time's The Dark One Officially Returns In New Release</div>
+      
+      
+      <div class="summary">The Wheel of Time's epic conclusion may have played out nearly 14 years ago now in the final entry in the series, A Memory of Light, but the legacy of the Last Battle, continues to be one of the most iconic encounters in fantasy.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/mr-robot-david-fincher-william-gibson-thriller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/rami-malek-as-elliot-in-mr-robot-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mr. Robot: A 45-Episode Thriller with One of the Greatest Finales
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: David Fincher Meets William Gibson In 45-Episode Thriller With 1 Of The Greatest Finales</div>
+      
+      
+      <div class="summary">David Fincher and William Gibson have long-established themselves as visionaries in their respective genres.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/spider-verse-3-trailer-sequel-spider-men" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/spider-verse-3-main-trailer.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spider-Verse 3 Trailer Confirms 8 Key Spider-Men In the Sequel
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Spider-Man: Beyond the Spider-Verse will officially bring back 8 major Spider-Men (and 4 Spider-Women) in the closing chapter of Miles Morales' story.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/lollipop-chainsaw-2-tokyo-game-show-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/lollipop-chainsaw-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lollipop Chainsaw 2 is Officially Bringing Back the Zombie-Slaying Cheerleader Cheesecake Franchise
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">More than 14 years after the zombie hack-and-slash game Lollipop Chainsaw was released, Juliet the undead slayer returns for an official sequel.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-snoopy-comics-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2021/02/the-snoopy-show-05.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Best Snoopy Comics of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Snoopy is a comic-strip character who somehow became bigger than the strip itself. Part of that comes from how easily Charles M. Schulz could reinvent him without ever making him feel inconsistent.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <span class="current">16</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/17.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-19 15:03 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>25 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>41 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>131 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/toy-story-franchise-marvel-dethrone-disney-plus-streaming-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/toy-story-woody-and-buzz.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Toy Story Franchise Dominates Disney+ Top 10, Outpacing Marvel Movies In Streaming Views
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney’s Era-Starting $3.3B Franchise Dethrones Multiple Marvel Hits On Streaming</div>
+      
+      
+      <div class="summary">One of Disney+’s main selling points is being the Marvel Cinematic Universe’s streaming homes. Except for Spider-Man: Brand New Day, which is still playing in theaters, all the superhero franchise’s movies and TV shows are available on the platform.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2257594/over-ear-headphone-brands-better-battery-life-bose/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-over-ear-headphone-brands-that-have-better-battery-life-than-bose/l-intro-1789400218.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Over-Ear Headphone Brands That Have Better Battery Life Than Bose
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Over-Ear Headphone Brands That Have Better Battery Life Than Bose We may receive a commission on purchases made from links. Bose over-ear headphones usually appear among the best options for users looking for both comfort and good noise cancellatio&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/spider-man-brand-new-day-box-office-week-8-domestic-chart-report/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/sharedimages/2026/07/spider-man-brand-new-day-poster-2.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spider-Man: Brand New Day Continues Record-Breaking Box Office Success
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Spider-Man: Brand New Day Drops From 100s Of Theaters, Has One Of Its Best Weekends Yet</div>
+      
+      
+      <div class="summary">Spider-Man: Brand New Day has a Spidey sense for what audiences want to be seeing in theaters. 2026's Spider-Man: Brand New Day, which is the 38th Marvel Cinematic Universe movie, has been a juggernaut at the box office since it debuted on July 31, s&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jon-bernthal-the-accountant-2-streaming-success-hulu-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/the-accountant-2-jon-bernthal.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gavin O'Connor's 'The Accountant 2' Hits Hulu Streaming Success
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jon Bernthal’s “Violence-Packed” Action-Thriller Is Officially a Hulu Super-Hit</div>
+      
+      
+      <div class="summary">With his illustrious Spider-Man: Brand New Day and The Odyssey co-stars Tom Holland and Zendaya drawing the bulk of attention for their success this year, let's not forget what a terrific 2026 Jon Bernthal is having.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/marvels-wolverine-update-scent-insomniac-games/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/marvel-s-wolverine-logan.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel's Wolverine Officially Updates Its Most Controversial Feature
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel's Wolverine has been dividing audiences since the day that it first showed a detailed look at gameplay, largely due to the way that the game approaches guiding players through Logan's adventure.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2257582/is-google-chrome-more-secure-microsoft-edge/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/is-google-chrome-safer-to-use-than-microsoft-edge/l-intro-1789388635.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Is Google Chrome Safer To Use Than Microsoft Edge?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Is Google Chrome Safer To Use Than Microsoft Edge? Koshiro K/Shutterstock A browser is your main window into the internet, but it's also one of the primary ways hackers target you. Cyberthreats are aplenty, from viruses to ransomware to phishing scam&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/rj-decker-abc-high-potential-replacement-disney-plus-streaming-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/scott-speedman-as-r-j-decker-in-r-j-decker-season-1.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            R.J. Decker Surges On Disney+ And Hulu, Becoming Top Streaming Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ABC’s High Potential Replacement That’s A Perfect Weekend Binge Surges On Streaming At The Best Time</div>
+      
+      
+      <div class="summary">ABC's High Potential replacement is a crime series that has just surged on multiple streaming services at the perfect time, and it makes for the best weekend binge. High Potential is a major hit on network TV, bringing in millions of viewers each wee&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/dc-flash-actor-iconic-speedster-2026" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/photos/Surreal_to_play_The_Flash_on_stuartfails_Since_I_was_a_young_lad_superheroes_were_OyxE6T6.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Andrew Ridings Discusses Playing Jay Garrick in Stuart Fails to Save the Universe
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: DC’s New Flash Actor Opens Up About Playing the Iconic Speedster In 2026</div>
+      
+      
+      <div class="summary">DC officially introduced its newest live-action Flash (and he's not part of the DCU). The Flash is a DC hero who has had more live-action portrayals than almost any other hero in the franchise, aside from Batman.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/lollipop-chainsaw-movie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/2607408/Highres_Screenshot_00000.1331054183.jpeg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lollipop Chainsaw Is Getting An Official Live-Action Movie Prequel
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Following the announcement of a new Lollipop Chainsaw video game, Dragami Games has also confirmed that a live-action prequel movie is in the works.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/comedy-movies-1960s-aged-well/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/the-beatles-leap-into-the-air-in-a-still-from-hard-day-s-night.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Comedy Movies From The 1960s That Have Aged Like A Fine Wine
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Summary 1960s comedies often age well, growing sharper as their core ideas outlast dated references. Timeless themes—bureaucracy, greed, fame, and roommate friction—keep the laughs relevant. Standouts include Dr. Strangelove, The Apartment, A Hard Da&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2262343/primeval-cult-classic-british-sci-fi-series-streaming-free/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/all-5-seasons-of-a-cult-classic-british-sci-fi-series-are-streaming-for-free/intro-1789745302.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 5 Seasons Of 'Primeval' Streaming For Free On Tubi And Pluto TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: All 5 Seasons Of A Cult-Classic British Sci-Fi Series Are Streaming For Free</div>
+      
+      
+      <div class="summary">All 5 Seasons Of A Cult-Classic British Sci-Fi Series Are Streaming For Free ITV/Watch We've already recommended some great dinosaur movies you've probably never heard of, but what about TV shows? "Primeval" isn't widely known outside of the United K&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-weight-rotten-tomatoes-audience-score-ethan-hawke-russell-crowe/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/sharedimages/2026/08/the-weight-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Weight Gets 80% Audience Score On Rotten Tomatoes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ethan Hawke & Russell Crowe’s New R-Rated Thriller Gets Official Audience Verdict On Rotten Tomatoes</div>
+      
+      
+      <div class="summary">The Rotten Tomatoes audience verdict is in for The Weight. In this R-rated thriller set during the Great Depression, Ethan Hawke plays Samuel Murphy, a man trapped in a brutal work camp and desperate to reunite with his daughter.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-fountainhead-adaptation-magnun-opus-zack-snyder/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2021/05/the-fountainhead-vertical.jpg?q=70&fit=crop&w=750&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zack Snyder Says His Adaptation Of Ayn Rand's The Fountainhead Would Be His Magnum Opus
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Zack Snyder's Rejected Netflix Adaptation Of 83-Year-Old Novel Would Be His "Magnum Opus"</div>
+      
+      
+      <div class="summary">Zack Snyder finds himself in the middle of an intense response to his new movie, but remains committed to the idea of producing a particular page-to-screen adaptation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/harry-potter-tv-remake-best-movie-scene-missing/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/harry-daniel-radcliffe-and-hermione-emma-watson-dancing-in-harry-potter-and-the-deathly-hallows-part-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Harry And Hermione's Dance Scene In Deathly Hallows Cannot Be Repeated In HBO's Harry Potter Remake
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: One Of The Greatest Harry Potter Movie Scenes Can't Be In HBO's Remake</div>
+      
+      
+      <div class="summary">HBO’s Harry Potter remake needs to strike a delicate balance. It must be faithful to the books; it is playing to a nostalgic movie audience; and it also has to forge its own identity.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/911-season-10-do-or-die/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/maddie-in-9-1-1-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            9-1-1 Faces Do Or Die In Season 10
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Losing Bobby Nash during 9-1-1 season 8 was one of the hardest parts of watching the show. Everything shifted tonally after that moment, and season 9 focused on what life would look like after that loss.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-mecha-anime-21st-century-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/the-cast-and-mecha-from-86-eighty-six.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Greatest Mecha Anime of the 21st Century, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Mecha anime entered the 21st century with decades of history behind it. Giant robots were already synonymous with some of anime's biggest franchises, leaving newer series with the difficult task of finding fresh ideas in a seemingly oversaturated mar&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/resident-evil-movie-zach-cregger-survival-horror-video-game-adaptation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/re4.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zach Cregger's 'Resident Evil' Adapts the Game Experience Instead of Story
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Resident Evil’ Officially Cracked the Code on How to Make a Video Game Movie</div>
+      
+      
+      <div class="summary">Hollywood has spent more than two decades trying to turn Resident Evil into a successful live-action franchise, and mostly failing. Paul W.S.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2259261/sams-club-finds-trick-out-tv-setup/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/8-sams-club-finds-that-can-trick-out-your-tv-setup/l-intro-1789491438.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Sam's Club Finds That Can Trick Out Your TV Setup
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">8 Sam's Club Finds That Can Trick Out Your TV Setup Imaginima/Getty Images We may receive a commission on purchases made from links. The TV is the most important device in your living room, so don't let a basic setup take away from your home entertai&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/todays-wordle-hints-answer-september-19-2026-puzzle-1918/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/image-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Today's Wordle Hints & Answer - September 19, 2026 (Puzzle #1918)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When it comes to today's Wordle, there aren't too many definitions for the answer itself, but the puzzle is actively trying to throw you off. A common word structure has an unexpected beginning, making the puzzle almost seem like a red herring.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-accountant-jon-bernthal-action-stream-apple-sept-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/the-accountant-jon-bernthal-action-thriller-stream-apple.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ben Affleck's 'The Accountant' Becomes a Hit on Apple TV+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jon Bernthal's Action Thriller Cult Classic Makes Official Comeback on Streaming</div>
+      
+      
+      <div class="summary">Apple TV continues to add amazing licensed movies to its streaming library, and its latest hit is Jon Bernthal's incredibly divisive action thriller. Apple TV is best known for its original programming, mainly series like Severance, Silo, Dark Matter&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/paramount-golden-axe-showrunner-interview-season-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/tcdgoax_i8002_h.JPG?q=70&fit=crop&w=1300&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Golden Axe Series Becomes Paramount+'s Sleeper Hit of 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Paramount's New High Fantasy Epic is Already the Streaming Sleeper Hit of 2026</div>
+      
+      
+      <div class="summary">Mike McMahan was working as a script doctor on the Sonic the Hedgehog movies when he received an incredible offer: A Sega executive approached him and asked if there were any other properties the storied game studio owned that he'd want to adapt into&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/russell-crowe-the-get-out-streaming-success-paramount-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/the-get-out-russell-crowe.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Russell Crowe's Derrick Borte-Directed Crime Thriller Reaches #1 on Paramount+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Russell Crowe’s ‘Uncut Gems’ Replacement Is Officially the #1 Movie on Paramount+</div>
+      
+      
+      <div class="summary">It's gearing up to be a great September for Russell Crowe, who will soon be seen in the hotly anticipated Netflix movie Unabomber. Also starring Jacob Tremblay, Shailene Woodley, and Annabelle Wallis, the movie will be released on September 25 in the&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/tombstone-doc-holliday-best-scene-darkest-western-mystery/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/02/doc-holliday-val-kilmer-in-tombstone-1-jpg.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Doc Holliday's Best Tombstone Moment Is the Darkest Western Mystery
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Tombstone made Val Kilmer a Western legend when he played Doc Holliday, but it also delved into one of the darkest mysteries in frontier history. Despite claiming to tell the true story of Wyatt Earp, it makes no apologies for embellishing, blurring &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/control-resonant-game-review-remedy-entertainment/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/control-resonant-featured-image.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Control Resonant Review
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Control Resonant continues Remedy Entertainment's hot streak with its single-player games. While critics and audiences considered FBC: Firebreak a disappointment, the rest of the library has been the opposite.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2253035/3d-printed-tool-helps-overcome-smartphone-addiction/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-3d-printed-tool-can-help-you-overcome-smartphone-addiction/l-intro-1788890202.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            BlockTap: A 3D-Printed Tool To Help Overcome Smartphone Addiction
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This 3D-Printed Tool Can Help You Overcome Smartphone Addiction</div>
+      
+      
+      <div class="summary">This 3D-Printed Tool Can Help You Overcome Smartphone Addiction Gorodenkoff/Getty Images Smartphone addiction is a tough thing to shake.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/upcoming-network-tv-shows-ranked-hype/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/m2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Upcoming Network TV Shows, Ranked by Hype
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After a summer off, the start of the next network TV season is officially around the corner. Starting this week and going into next month, all of the hit network shows that took the last month will be getting ready to return.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/gossip-girl-leaving-netflix-october-2028/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/03/blake-lively-in-gossip-girl-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            October 28 Will Be a Terrible Day for Gossip Girl Fans
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Few other teen shows hold the cultural capital that Gossip Girl does, but it's soon losing its streaming home.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/ncis-season-18-19-leaving-netflix-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/wilmer-valderrama-as-nick-torres-and-sean-murray-as-timothy-mcgee-on-ncis.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            NCIS Seasons 18 and 19 Leaving Netflix in October 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: NCIS Gets Some Bad Streaming News Ahead of New Episodes</div>
+      
+      
+      <div class="summary">As the NCIS Season 24 premiere approaches, viewers planning to catch up on previous seasons on Netflix will have to watch their favorite episodes elsewhere. While Netflix will be keeping a variety of past NCIS seasons, seasons 18 and 19 are soon expe&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/one-chicago-drama-nbc-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/chicago-fire.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            One Chicago Franchise Returns with Strong Ratings and New Season Details
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: One Chicago’s Major Shakeups Are the Start of a Promising New Era</div>
+      
+      
+      <div class="summary">The One Chicago franchise is on the cusp of returning to NBC with its full lineup of new seasons this fall. After having great success in the 2025-26 season, franchise shows have raised the bar to give viewers an exhilarating year of television. From&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-sweet-magnolias-canceled/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/brooke-elliott-as-dana-sue-sullivan-joanna-garcia-swisher-as-maddie-townsend-and-heather-headley-as-helen-decatur-on-sweet-magnolias.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Cancels Sweet Magnolias After 5 Seasons, Replaces It with Ladies of the House
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Officially Replacing Hit 5-Season Series Based on 20-Year-Old Books</div>
+      
+      
+      <div class="summary">It’s officially the end of an era for Sweet Magnolias. Netflix has canceled the romance drama after five seasons in favor of a new series. Loosely based on Lauren Edmonson’s novel of the same name, Ladies of the House comes from Sweet Magnolias execu&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    <span class="disabled">&laquo; Newer</span>
+  
+
+  
+    
+      <span class="current">1</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/2.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

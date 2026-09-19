@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-19 15:03 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>25 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>41 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>131 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/swat-exiles-release-date-starz-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/09/s-w-a-t-exiles-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'SWAT Exiles' Spinoff Premieres on Starz Next Week
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘S.W.A.T.’ Officially Returns in 1 Week</div>
+      
+      
+      <div class="summary">It’s been a rough couple of years for S.W.A.T. fans, but things are finally going to turn around when the franchise returns in just one week with a brand-new release. If it wasn’t for Shemar Moore, S.W.A.T.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-iii-the-search-for-spock-captain-kirk-best-quote-sci-fi-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2020/02/kirk-spock-star-trek-iii.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Captain Kirk's 'Needs of the One' Quote in Star Trek III: The Search for Spock
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek Gave Captain Kirk the Greatest Quote in Sci-Fi History</div>
+      
+      
+      <div class="summary">With an enduring legacy, Star Trek turns 60 this year and remains the cultural phenomenon it was when it first came on screen. Originally captained by James T. Kirk, the franchise has grown exponentially over the last six decades since its premiere i&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hardest-soulslike-games-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/1214931-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Hardest Soulslike Games of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Soulslike sub-genre has redefined modern action games by centering its core design philosophy around uncompromising challenge, spatial awareness, and high-stakes combat encounters.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/chris-pratt-jurassic-world-fallen-kingdom-streaming-hulu-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2025/01/01195870_poster_w780.jpg?q=70&fit=contain&w=480&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jurassic World: Fallen Kingdom Finds New Streaming Home
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Chris Pratt’s $1.3 Billion Sci-Fi Blockbuster Officially Finds a New Streaming Home</div>
+      
+      
+      <div class="summary">There can't have been many billion dollar blockbusters that begin with an attempt to rescue dinosaurs from an erupting volcano, blend into hide-and-seek with a genetically engineered killing machine, and end with those same dinosaurs being auctioned &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/harry-potter-series-wands-new-images/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2024/05/harry-potter-and-the-prisoner-of-azkaban-ron-hermione-harry.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO's 'Harry Potter' Officially Redesigns Major Magical Artifacts, Confirms 5 New Changes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">HBO's Harry Potter reboot has a tall order ahead of it for many reasons. The upcoming television reboot faces the unenviable task of recreating the whimsy and nostalgia of the celebrated eight-film franchise while also distinguishing itself enough, v&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-prime-video-movies-watch-weekend-september-19/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/jon-bernthal-looking-at-someone-in-the-amateur.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Best Movies To Watch On Prime Video This Weekend (September 19-20)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Prime Video subscribers will find three movies of different genres, but all with exciting stars and concepts, on the streaming service this weekend.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/marvel-kills-bucky-barnes-winter-soldier/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/bucky-barnes-dies-in-a-nuclear-explosion-in-avengers-armageddon-4.webp?q=49&fit=crop&w=750&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bucky Barnes Dies in Avengers Armageddon #4
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: After 85 Years, Marvel Kills Off A Beloved Superhero Icon</div>
+      
+      
+      <div class="summary">A major Captain America character and longtime Avenger seems to die in Marvel's main continuity. The Avengers earn their reputation as Earth's Mightiest Heroes thanks to unparalleled power.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/dc-lanterns-season-2-hbo-boss-casey-bloys/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/09/gpc7h43xpmev3goymqshfjbttlq.jpg?q=70&fit=contain&w=480&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO Boss Casey Bloys Teases Future of DC Shows Including Lanterns Season 2
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO Boss Officially Teases the Future of DC</div>
+      
+      
+      <div class="summary">Superheroes remain one of the most appealing characters in the movie industry, as evidenced by the box office success of Spider-Man: Brand New Day.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/space-opera-manga-everyone-should-read/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/07/captain-harlock.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Space Opera Manga Everyone Should Read At Least Once
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When people think of space opera anime, giant fleets and wars are usually what come to mind. However, a good space opera manga can make a lonely planet feel as important as an empire or turn one encounter into a reason to keep reading.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-fantasy-shows-netflix-perfect-no-notes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/avatar-the-last-airbender-4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Fantasy Shows on Netflix That Are 10/10, No Notes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fantasy has always been one of the most powerful vehicles for imaginative storytelling. Some might write the genre off as escapism, but it actually serves as a lens to explore the very world that we live in.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/chernobyl-hbo-miniseries-restore-faith-in-tv/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/07/chernobyl-hbo.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Chernobyl: HBO's 5-Part Miniseries Is a Powerful Historical Drama
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO's 5-Part Miniseries Will Restore Your Faith In TV</div>
+      
+      
+      <div class="summary">The Golden Age of Television has been defined by HBO's prestige dramas like The Sopranos and Mad Men, which not only appeared to break the rules but introduced a new wave of creativity that has not yet been paralleled, until HBO created a miniseries &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/resident-evil-movie-nyx-outbreak-file-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/05/nyx-in-resident-evil-outbreak-file-2.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Resident Evil Movie's Final Monster Is Nyx from Resident Evil Outbreak: File #2
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The 'Resident Evil' Movie's Final Monster Is a Deep Cut From the Franchise's Most Forgotten Game</div>
+      
+      
+      <div class="summary">WARNING: Spoilers for Resident Evil (2026) are below! The new Resident Evil movie is packed with impressive Easter eggs and video game references.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/rj-decker-crime-success-hulu-disney-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/sharedimages/2026/08/r-j-decker-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            R.J. Decker Becomes Streaming Sensation After Season 2 Release
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ABC's The Lincoln Lawyer Replacement Is a Streaming Sensation After Returning With New Episodes</div>
+      
+      
+      <div class="summary">As The Lincoln Lawyer preps for its fifth and final season, its ABC replacement is turning up the heat. R.J. Decker is a streaming sensation following the release of new episodes. The second season of the crime dramedy premiered on Sept.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/nicolas-cage-raising-arizona-best-80s-movie-quote/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/11/raising-arizona.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nicolas Cage's Closing Monologue in Raising Arizona: A Powerful 80s Quote
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Nicolas Cage’s Raising Arizona Quote Is the Most Powerful Line of the 80s</div>
+      
+      
+      <div class="summary">In 1987, Joel and Ethan Coen turned in one of the most powerful crime movies of the '80s in Raising Arizona, leading Nicolas Cage to deliver a flawless quote for the ages. For a decade often stacked with popcorn flick adventure and sci-fi blockbuster&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/joey-wheeler-yu-gi-oh-cards-upgrade-beyond-the-brave/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/yu-gi-oh-time-wizard.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Joey Wheeler's Cards Get Upgraded in Yu-Gi-Oh! Beyond the Brave Set
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Joey Wheeler's Iconic Yu-Gi-Oh! Cards Get An Upgrade In New Set</div>
+      
+      
+      <div class="summary">The best Yu-Gi-Oh! character might not have had the strongest deck in the manga and anime, but Joey Wheeler's cards are getting a much-needed upgrade in the upcoming Beyond the Brave set. Launching October 2026, this upgrade will Time Wizard to run h&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-secret-agent-criterion-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/12/the-secret-agent-wagner-moura.jpg?q=70&fit=crop&w=1300&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wagner Moura's Spy Thriller 'The Secret Agent' Gets Criterion 4K Release
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget James Bond, Netflix Star's 161-Minute Spy Thriller Masterpiece Gets Exciting New Release</div>
+      
+      
+      <div class="summary">It's not easy to make a great spy epic when Three Days of the Condor and The Conversation exist. A gold standard ingrained for half a century makes establishing a rival to those titles nearly impossible, and, despite many attempts, I don't believe Ho&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/avengers-doomsday-spoiled-x-men-cyclops-fate/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/avengers-doomsday_thb8fa.jpg?q=49&fit=crop&w=480&h=270&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers: Doomsday May Spoil the Fate of a Classic X-Men Character
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New Avengers: Doomsday Reveal May Have Just Spoiled One Classic X-Men's Grim Fate</div>
+      
+      
+      <div class="summary">Avengers: Doomsday could be the end of one beloved member of the X-Men. The upcoming superhero movie Avengers: Doomsday may have offered another clue about the danger awaiting one of its most important X-Men.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/reed-richards-bad-hero-marvel-worst/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/pedro-pascal-as-reed-richards-in-the-fantastic-four_-first-steps.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Confirms Yet Again That Reed Richards Is The Worst Superhero
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Everyone always asks who the greatest Marvel superhero is, but what about the worst? There is a strong case to be made that out of all Marvel's A-list, top-tier heroes, The Fantastic Four's Reed Richards is the bottom of the barrel. The worst among t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/superman-canon-ending-alan-moore/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/superman-the-ultimate-guide-4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            40 Years Later, Alan Moore's Canon Ending For The Original Superman Is Aging Like Fine Wine
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After 40 years, Alan Moore’s canonical ending for the original Superman is aging like fine wine. In 1986, shortly after Crisis on Infinite Earths streamlined DC’s continuity, the publisher began revamping its biggest icons, bringing them into the mod&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/ncis-meets-mass-effect-new-cyberpunk-thriller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/pecinct-ix-cover-image.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Precinct IX: Cyberpunk Police RPG Blends NCIS and Mass Effect
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: NCIS Meets Mass Effect In New Cyberpunk Sci-Fi Thriller</div>
+      
+      
+      <div class="summary">Cyberpunk has always thrived on the complicated relationship between technological progress and the people forced to live with the consequences.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/dutton-ranch-taylor-sheridan-stream-paramount-sept-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/taylor-sheridan-dutton-ranch-most-watched-show-of-2026-yellowstone-western.jpg?q=49&fit=crop&w=100&h=67&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan's 'Dutton Ranch' Western Sequel Rises in Streaming Charts
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget 'Lioness,' Taylor Sheridan's 9-Part Western Sequel Is Taking Over Streaming</div>
+      
+      
+      <div class="summary">Lioness might be one of the biggest shows on streaming right now ahead of its season finale, but Taylor Sheridan's other 2026 hit has risen from the dead to rise up the streaming charts once again. When Yellowstone ended in 2024, all eyes immediately&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/little-house-on-the-prairie-netflix-renewed-two-seasons/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/little-house-on-the-prairie-netflix.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'Little House on the Prairie' Remake Renewed Before Season 1 Premiere
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s Masterpiece Western Remake Was So Good, It Was Renewed a Season in Advance</div>
+      
+      
+      <div class="summary">I’m always impressed whenever a streamer/network decides to renew a show for a second season before the first one even premieres. It shows the powers that be are confident in the final product and what it has to offer. Sometimes, they're right to be.&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tracker-season-4-cast-the-vampire-diaries-michael-malarkey/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/the-vampire-diaries-1.avif?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The Vampire Diaries' Alum Officially Joins 'Tracker' Season 4
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Less than a week ago, we confirmed Tracker was undergoing a major change for its upcoming fourth season, premiering on October 4, 2026. The CBS hit drama promoted a key recurring star to series regular, returning the show to four regulars after Seaso&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-strange-new-worlds-paramount-plus-rising-on-streaming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/james-t-kirk-hugging-spock-back-to-the-camera-in-a-hotel-room-from-star-trek-strange-new-worlds.JPG?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Star Trek: Strange New Worlds' Rises in Streaming Charts Ahead of Reboot
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 1 of Star Trek's Last Shows Ahead of Paramount's New Reboot Is Rising on Streaming</div>
+      
+      
+      <div class="summary">tar Trek: Strange New Worlds is once again rising in the streaming charts. The series is currently the No. 6 most-watched TV show in the United States on Paramount+, per FlixPatrol. Globally, it is ranked No. 9. Last week, Strange New Worlds also rea&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/spider-man-brand-new-day-box-office-records-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/spider-man-brand-new-day.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Biggest Box Office Records Spider-Man: Brand New Day Has Broken So Far
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Spider-Man: Brand New Day is one of the biggest movies of all time. Five years after Spider-Man: No Way Home, the Tom Holland-led superhero film is not only a triumph; it is also one of the most successful films in the Marvel Cinematic Universe's nea&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-tng-patrick-stewart-favorite-episode-sci-fi-masterpiece/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/06/jean-luc-picard-as-elderly-kamin-playing-his-flute-in-an-orange-outfit-as-eline-stands-next-to-him-holding-a-baby-from-star-trek-the-next-generation.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Patrick Stewart's Favorite 'Star Trek: TNG' Episode Is 'The Inner Light'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Patrick Stewart's Favorite Star Trek Episode Is a 34-Year-Old Masterpiece for Sci-Fi Fans</div>
+      
+      
+      <div class="summary">With over 178 episodes to choose from, it can be difficult for anyone to pick their favorite episode of Star Trek: The Next Generation. TNG has many universally beloved episodes, and the cast has revealed their ownfavorites over the years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/last-train-to-fortune-exclusive-clip/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/last-train-to-fortune-poster.jpg?q=70&fit=crop&w=1300&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            James Paxton Stars in Western Comedy 'Last Train to Fortune' – First Look Clip
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: James Paxton Takes Over Father Bill's Role in First Look at Long-Gestating Western Comedy</div>
+      
+      
+      <div class="summary">Malcolm McDowell plays a schoolteacher who forms an unlikely bond with an outlaw played by James Paxton in Last Train to Fortune. Heading into the arrival of the new Western comedy film, CBR can exclusively debut a sneak peek clip. Last Train to Fort&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/forgotten-books-page-turners-start-to-finish/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/running-dog-book-cover-crop-1978.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Forgotten Books That Are Page-Turners From Start to Finish
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">If you want a rundown of the best books ever written, you can go elsewhere. Well, maybe a few of these are possible contenders for such a title, but they're here more because they're underappreciated and less well-remembered than they deserve.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-netflix-movies-watch-weekend-september-19/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/alan-ritchson-with-glasses-and-a-gun-in-the-ministry-of-ungentlemanly-warfare.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Best Movies To Watch On Netflix This Weekend (September 19-20)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix subscribers will find an intense selection of movies to watch on the streaming service this weekend, and I would even suggest going for a nervous, dark, and thrilling three-movie binge if you have the time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tv-shows-change-endings-final-10-minutes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/jeremy-strong-in-succession-s-finale-with-open-eyes.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 18 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 TV Shows That Completely Change in Their Final 10 Minutes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The following article contains spoilers.When it comes time for a television show to deliver the finale, most series strive for something focused and concise, something that will tie up all the loose ends and bring a sense of closure and finality to t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <span class="current">7</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/8.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

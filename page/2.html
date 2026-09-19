@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-19 15:03 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>25 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>111 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>41 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>131 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.polygon.com/wolverine-scent-trails-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/marvels-wolverine-whisky-bottles-uncanny-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel's Wolverine Update Reduces Opacity of Scent Trails to Address Complaints
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel's Wolverine Update Tones Down Its Most Controversial Feature</div>
+      
+      
+      <div class="summary">Compared to the typical big-budget, PlayStation-exclusive video game, the reception to Marvel's Wolverine has been much more muted. One of the biggest complaints is how much Marvel's Wolverine hand-holds players when directing them where to go next.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2257577/why-galaxy-watch-overheating/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/why-your-galaxy-watch-might-be-overheating-and-what-to-do-about-it/l-intro-1789394125.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why Your Galaxy Watch Might Be Overheating (And What To Do About It)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Why Your Galaxy Watch Might Be Overheating (And What To Do About It) HU Art and Photography/Shutterstock Your Galaxy Watch is basically a tiny computer strapped to your wrist. So, feeling a little warmth isn't necessarily a sign that something is wro&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tom-hardy-guy-ritchie-mobland-season-2-streaming-success-paramount-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/mobland-season-2-mandeep-dhillon.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Guy Ritchie’s ‘MobLand’ Season 2 Officially Defeats Taylor Sheridan on Paramount+
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A recent study found that audiences were more likely to lose interest in a television series if it took more than a year to return.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/rengoku-demon-slayer-line-greatest-quote-modern-anime/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/rengoku-vs-akaza-in-demon-slayer-mugen-train.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Years Later, Rengoku's Best Demon Slayer Line Is Still the Greatest Quote in Modern Anime
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Demon Slayer: Kimetsu no Yaiba’s Kyojuro Rengoku is a man made of his ideals. He is an honorable warrior who considers it his duty to protect the weak and does not let his judgment get clouded by his personal biases.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-guardian-yellowstone-comparison-kevin-costner-neal-mcdonough-tubi-streaming-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/10/untitled-17.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Kevin Costner & Neal McDonough Were Military Allies in The Guardian 13 Years Before Yellowstone
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 13 Years Before Being Yellowstone Enemies, Kevin Costner & Neal McDonough Were Military Allies In Streaming Hit</div>
+      
+      
+      <div class="summary">Kevin Costner starred as rancher John Dutton in Yellowstone and, in season 2, Neal McDonough played the ruthless business mogul and local villain Malcolm Beck, who targets the Dutton family directly, leading to a brutal war that culminates in major d&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/foundation-meets-mass-effect-sci-fi-rpg-free-demo/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/star-dynasty-planning-phase.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Dynasties: A Sci-Fi RPG Inspired by Foundation and Mass Effect, Free on Steam
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Foundation Meets Mass Effect In New Sci-Fi RPG You Can Play Free Now</div>
+      
+      
+      <div class="summary">Mass Effect is one of the most iconic modern RPG franchises of the past 20 years. While it didn't necessarily stick the landing, Mass Effect 2 in particular was a beast of a game, reshaping the Western RPG sphere as we know it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/funniest-discworld-quotes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/official-art-of-nanny-ogg-from-disworld-by-paul-kidby.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            9 Funniest Discworld Quotes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While there are countless reasons fans fall in love with the Discworld novels, one of the most common is the uniquely sharp humor of the late Terry Pratchett. His comedy could be absurd, cynical, surprisingly dark, or quietly philosophical, and was o&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/webtoon-first-global-manhwa-launch-the-warriors-ballad/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-warrior_s-ballad_2-sr.jpg?q=49&fit=contain&w=800&h=3379&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            WEBTOON Launches Global Debut of Action-Fantasy Manhwa The Warrior's Ballad (Exclusive)
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: WEBTOON Launches First-Ever Global Debut Of The New Action-Fantasy Manhwa Fans Crave (Exclusive)</div>
+      
+      
+      <div class="summary">Naver and LINE WEBTOON's presence in the vertical scroll webcomic scene is so ubiquitous that they handily earn their namesake, as they're the global go-to for official webtoons read around the globe.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/totally-killer-prime-video-sci-fi-slasher-back-to-the-future-scream/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2023/09/totally-killer-prime-movie-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Totally Killer: Prime Video's 106-Minute Sci-Fi Slasher Blends Scream and Back to the Future
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video’s 106-Minute Sci-Fi Slasher Is Scream Meets Back to the Future</div>
+      
+      
+      <div class="summary">While a blend of Scream and Back to the Future might sound hard to pull off in terms of tone and style, 2023’s Prime Video slasher comedy somehow managed to make this mix work.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/action-games-wolverine-pragmata-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/04/pragmata-switch-2-2.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Capcom's Resident Evil Requiem and Pragmata Lead Shift to Shorter Action Games
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget Your 100-Hour RPGs, Action Games Are Having a Moment</div>
+      
+      
+      <div class="summary">Gaming is a trend-based medium. Often, when a hit game turns into a generational success story, you can see it shape the industry in real-time as studios try to copy its notes. In recent history, we’ve seen that with an influx of two types of games: &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-cozy-cottagecore-books-last-10-years-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/snowwhite_house.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 8 Best Cozy Cottagecore Books of the Last 10 Years, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warm, welcoming themes and settings in books aren't anything new, with novels like Little Women and franchises like Anne of Green Gables written as early as 1868 and 1908. But, as is the case with anything that begins to have more content, more speci&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/diaclone-powered-convoy-v-max-takara-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/diaclone-da-127-powered-convoy-v-max-1-1.jpeg?q=49&fit=contain&w=1080&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Diaclone DA-127 Powered Convoy V-MAX: The Toy That Became Optimus Prime Returns
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Transformers Returns to Its Pre-G1 Era as Optimus Prime's Predecessor Powers Up</div>
+      
+      
+      <div class="summary">Decades ago, Takara and Hasbro took a previously released action figure and rebranded it as Optimus Prime, the face of the Transformers franchise. Now, the toy that became the legendary Autobot leader is being reimagined as a truly powerful collectib&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/horror-movies-like-insidious/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2022/10/Split-image-of-characters-from-The-Conjuring-Insidious-and-Lights-Out.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            20 Best Horror Movies Like Insidious
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The best movies like Insidious tap into that delicious blend of supernatural scares, eerie atmospheres, and relentless tension that keeps viewers checking under the bed long after the credits roll.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/2026-backrooms-movie-box-office-budget-profit/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/chiwetel-ejiofor-s-clark-looking-confused-while-kneeling-on-the-ground-in-backrooms.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Backrooms: 2026's Biggest Profit Hit Despite Being 11th in Box Office
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Why 2026's Biggest Box Office Win Is Technically Its 11th Highest Earner</div>
+      
+      
+      <div class="summary">When looking at the financial landscape of 2026 and its movie offerings, the year's 11th biggest box office success story is technically this time period's biggest hit in terms of profit, despite having a far lower box office than 2026's billion doll&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2257574/google-maps-setting-to-show-fastest-route/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/change-this-google-maps-setting-to-always-see-the-fastest-route/l-intro-1789398646.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Change This Google Maps Setting To Always See The Fastest Route
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Change This Google Maps Setting To Always See The Fastest Route Tada Images/Shutterstock Input a destination in Google Maps, and the app will give you various routes to get there, including one that's faster than the others.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-universally-loved-video-games-since-2000-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/ashley-johnson-as-ellie-in-the-last-of-us-2013.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Universally Beloved Video Games Since the 2000s, Ranked
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The 6 Most Universally Loved Games Released Since 2020, Ranked</div>
+      
+      
+      <div class="summary">If there is one thing everyone can agree on, it is that nothing is perfect, especially with video games, as more gamers and opinions flood the community, which will hate even the best titles.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hans-zimmer-inception-edith-piaf-song-marion-cotillard/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/07/inception-leonardo-dicaprio-marion-cotillard-1108x0-c-default.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Christopher Nolan Almost Cut 'Inception's Most Crucial Element
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Christopher Nolan’s Inception is a movie obsessed with time. Every tick of the clock is one step closer to disaster; seconds become minutes, become hours, become days, months, and years, as its characters descend through layers of dreams, and Hans Zi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dexter-resurrection-season-2-production-update-scott-reynolds/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/michael-c-hall-as-dexter-morgan-smirking-in-dexter-resurrection-season-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dexter: Resurrection Season 2 Gets Major Production Update From OG Writer
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Sep 19, 2026, 8:36 AM EDT Rianna is the Movie News Editor for ScreenRant. After earning her BA in Film Studies, she began her career as an entertainment writer, contributing to several publications before joining ScreenRant.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/reacher-die-trying-skipped-reason-alan-ritchson/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/sharedimages/2026/07/reacher-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alan Ritchson Confirms Why Reacher Skipped Adapting Die Trying Despite Approval
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Alan Ritchson Confirms Why Reacher Skipped His Favorite Lee Child Book Despite Approval</div>
+      
+      
+      <div class="summary">Alan Ritchson may have had a great idea for which novel to adapt for Reacher, but something got in the way. Reacher is based off of Lee Child's Jack Reacher series, which began in 1997.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/steven-spielberg-sci-fi-series-halo-leaving-netflix-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/06/transcendence.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Loses Halo, Steven Spielberg's Sci-Fi Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Officially Loses Steven Spielberg's Ambitious 2-Part Sci-Fi Series</div>
+      
+      
+      <div class="summary">Over the years, several shows with huge potential have had to wait to be discovered by larger audiences on Netflix. Breaking Bad was famously struggling until it found mainstream success on the streamer, which AMC used to divert viewers back to the s&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-superhero-movie-franchises-last-10-years/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/spider-man-andrew-garfield-tobey-maguire-tom-holland_00000.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Best Superhero Movie Franchises Launched In The Last 10 Years
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Superhero fatigue apparently forgot to tell Spider-Man. Less than a decade after Tom Holland's solo franchise began with Spider-Man: Homecoming, Spider-Man: Brand New Day has become the highest-grossing movie ever at the domestic box office.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/tom-and-jerry-better-than-looney-tunes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/05/nearly-3-years-later-cartoon-network-s-tom-jerry-anime-is-finally-coming-to-streaming.png?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why Tom and Jerry Still Outshines Looney Tunes After 51 Years
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The 51-Year-Old Hanna-Barbera Classic That Still Outshines Looney Tunes</div>
+      
+      
+      <div class="summary">Hanna-Barbera cartoons have been some of the most influential in the vast field of animation. Series like The Flintstones, The Yogi Bear Show, and Scooby-Doo, Where Are You! became cultural icons in entertainment and are fondly remembered as a key fo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-cosmere-books-brandon-sanderson-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/tress-of-the-emerald-sea-book-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Best Books in Brandon Sanderson's Cosmere Universe, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Cosmere is a shared literary universe of fantasy literature created by acclaimed author Brandon Sanderson. The ongoing series debuted in 2005 with Elantris, Sanderson's debut novel. The series currently consists of approximately 30 short stories,&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2257383/most-realistic-post-apocalyptic-movies/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/5-most-realistic-post-apocalyptic-movies-of-all-time/l-intro-1789261911.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Most Realistic Post-Apocalyptic Movies Of All Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Most Realistic Post-Apocalyptic Movies Of All Time Static Media How exactly would one define a "realistic" post-apocalyptic movie? It's not like anyone alive today has ever endured an apocalyptic event ... yet.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2257569/samsung-galaxy-s26-fe-cheaper-android-phone-alternatives/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-cheaper-android-phones-to-consider-instead-of-the-galaxy-s26-fe/l-intro-1789400289.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Cheaper Android Phones To Consider Instead Of The Galaxy S26 FE
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Cheaper Android Phones To Consider Instead Of The Galaxy S26 FE Gints Ivuskans/Shutterstock We may receive a commission on purchases made from links.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/homestead-neal-mcdonough-a-quiet-place-streaming-paramount-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/mcdhome_ec130-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Homestead, a Post-Apocalyptic Thriller, Becomes a Streaming Smash on Paramaount+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This 110-Minute 'Quiet Place' Replacement Is a Streaming Smash</div>
+      
+      
+      <div class="summary">For those hoping to see more crossover between the neo-Western genre and post-apocalyptic survival flicks, head on over to Paramount+.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/new-lego-batman-dlc-harley-quinn-arlene-sorkin/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/images-2.jpg?q=70&fit=crop&w=739&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            LEGO Batman Mayhem Collection DLC Honors Arleen Sorkin, Original Harley Quinn Voice Actor
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New LEGO Batman DLC Honors Harley Quinn's Original Voice Actor</div>
+      
+      
+      <div class="summary">The Mayhem Collection DLC for LEGO Batman: Legacy of the Dark Knight is now available, putting a villainous spin on the game. Rather than focusing on Batman and his allies, the DLC follows Joker and Harley Quinn as they stage a breakout from Arkham A&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/whodunit-books-page-turners-start-to-finish/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/magpie-murders.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Whodunit Books That Are Page-Turners From Start to Finish
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Your phone lights up on your nightstand, revealing the time: 12:48 a.m. You’d planned to sleep hours earlier, but you can’t. The sliding of one page over another is the only sound stabbing through the night’s silence. Adrenaline is pulsing in your ea&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/batman-knightfall-producers-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/mcdbatm_wb029.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Batman Producers Reveal Warner Bros. Told Them to Burn a Criminal's Face Off
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Batman: Knightfall is one of the most iconic Batman stories ever told. The 1993 comic arc introduced the brilliant steroid-enhanced villain Bane, who immediately established himself as an S-Tier supervillain by brutally breaking Batman’s back.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/gerard-butler-machine-gun-preacher-action-streaming-free-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/01/gerard-butler-as-sam-childers-in-machine-gun-preacher.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 19 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Machine Gun Preacher, Gerard Butler's 2011 Action Thriller, Gets Free Streaming Next Month
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Gerard Butler's Intense 128-Minute Action Thriller Scores New Free Streaming Home Next Month</div>
+      
+      
+      <div class="summary">From 300 to Den of Thieves, there's no denying that Gerard Butler has appeared in numerous action hits over the course of his career. However, for every smash he's had, there's been an equal number of flops that might not have made much money, but ar&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <span class="current">2</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/3.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>
