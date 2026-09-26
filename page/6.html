@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-26 17:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>30 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>105 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>3 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>56 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>125 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>17 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.cbr.com/greatest-time-travel-thriller-movies-ever-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/arnold-schwarzenegger-in-the-terminator.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Time Travel Thriller Movies of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Time travel is one of those rare sci-fi ideas that can fit almost anywhere. Pair it with romance and it can make a love story bittersweet. Put it inside a comedy or drama, and suddenly every choice carries another possible outcome.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-cw-charmed-better-than-supernatural/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/07/still-from-supernatural-tv-show.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Charmed: The 178-Episode Show That Outshines Supernatural's Sam & Dean
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The 178-Episode Supernatural Show That Outshines Sam & Dean Winchester</div>
+      
+      
+      <div class="summary">With 15 seasons and the clout of being the longest-running genre show on network television, Supernatural has earned some appreciation. Sam and Dean Winchester have become cult favorites in a world of demons, angels, and sibling rivalry.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/britbox-best-crime-thriller-a-mothers-son-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/a-mother-s-son2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            BritBox's 'A Mother's Son' Is a Gripping 2-Part Crime Thriller Perfect for a One-Night Binge
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: BritBox's Gripping 2-Part British Crime Thriller Is the Perfect One-Night Binge</div>
+      
+      
+      <div class="summary">Over the past few years, English TV shows have entered the spotlight more than ever before. From Baby Reindeer and Adolescence to Saturday Night Live UK, shows hailing from across the pond have received a newfound love and appreciation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2268031/oneplus-16-rear-lights-hands-on-video-details/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/the-oneplus-16s-rear-lights-take-a-page-out-of-nothings-playbook/l-intro-1790272433.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The OnePlus 16's Rear Lights Take A Page Out Of Nothing's Playbook
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The OnePlus 16's Rear Lights Take A Page Out Of Nothing's Playbook Oppo subsidiary OnePlus is setting up for a new flagship phone launch in China and the press is eating up every last bit of a tiny preview it can get.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-the-lincoln-lawyer-season-5-release-window-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/the-lincoln-lawyer-sasha-alexander.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'The Lincoln Lawyer' Returns for Final Season in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s 9/10 ‘Bosch’ Replacement Officially Returns in 2027 for Final Season</div>
+      
+      
+      <div class="summary">When it comes to crime thriller shows on streaming, very few titles have the same claim to fame as the Bosch franchise, starring the great Titus Welliver.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/zelda-a-link-to-the-past-returns-with-modern-day-remaster-thanks-to-fans/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/screenshot-2026-06-05-at-15-03-04.png?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fan-Made PC Port of Zelda: A Link to the Past Released
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Zelda: A Link To The Past Returns With Modern-Day Remaster Thanks To Fans</div>
+      
+      
+      <div class="summary">The Legend of Zelda is going through a genuinely important moment in its history as a franchise right now, and there are all sorts of exciting releases coming out designed to mark the 40th anniversary of one of the longest-lived series in gaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-studios-phase-7-mcu-face-new" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/marvel-studios-phase-face.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sadie Sink's Jean Grey Named New Face of MCU Ahead of Phase 7
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Studios Chooses the New Face Of The MCU Ahead Of Phase 7</div>
+      
+      
+      <div class="summary">There is little doubt that Marvel Studios already knows who will be the face of the MCU’s Phase 7, and the answer likely won’t surprise many. Once Avengers: Secret Wars arrives on December 17, 2027, the MCU’s next phase and saga will officially be un&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/apple-tv-sci-fi-neuromancer-release-date-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/apple-tv-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV's 'Neuromancer' Premieres Next Year
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV's "Unfilmable" Sci-Fi Thriller Officially Premieres Next Year</div>
+      
+      
+      <div class="summary">The diversity of settings in Apple TV's sci-fi shows is one of the biggest allures of its stories. From space expeditions on shows like For All Mankind to underground survival thrillers like Silo, Apple has proven it can bring abstract and difficult &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2267961/microsoft-ads-xbox-games-patent/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/microsoft-just-got-one-step-closer-to-putting-ads-in-xbox-games/l-intro-1790271056.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Microsoft Just Got One Step Closer To Putting Ads In Xbox Games
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Microsoft Just Got One Step Closer To Putting Ads In Xbox Games DIA TV/Shutterstock We've seen some really interesting developments around Xbox this year as Microsoft has been working to restore gamers' faith in the brand.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pokemon-charizard-redesign-new-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/best-pokemon-mega-evolutions-mega-charizard-y.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Official Charizard Redesign Is Gloriously Wild
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of the very best things about the Pokémon franchise as a whole is that there is a creature out there for every kind of fan.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ben-hur-greatest-epic-ever-made-streaming-free-justwatch-tv/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/ben-hur-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ben-Hur (1959) Now Available for Free Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: One of the Greatest Historical Epics Ever Made Officially Lands on Free Streaming</div>
+      
+      
+      <div class="summary">We’re in the middle of a particularly momentous new era for faith-based movies, which has been building toward the long-awaited The Passion of the Christ sequels. In recent years, several movies aimed at religious audiences — a rather underserved dem&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sleepy-hollow-streaming-hit-tubi-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/img_7869-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tim Burton's Sleepy Hollow Sees Streaming Surge Ahead of Sydney Sweeney's Remake
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tim Burton’s Gothic Horror Hit Officially Surges Ahead of Sydney Sweeney’s Remake</div>
+      
+      
+      <div class="summary">For better or for worse, Sydney Sweeney continues to make headlines. Her most recent sports ad has caused outrage on social media, but it feels as if this is just another day in the life of one of Hollywood's most famous names.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/chris-pratt-jurassic-world-fallen-kingdom-streaming-success-tubi-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/01/chris-pratt.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jurassic World: Fallen Kingdom Dominates Free Streaming on Tubi
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Chris Pratt's 128-Minute Sci-Fi Blockbuster Officially Dominates Free Streaming</div>
+      
+      
+      <div class="summary">2026 has been a roller-coaster of a year for Chris Pratt fans, especially after he starred in one of the biggest box office misfires of the year with Mercy.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/batman-dc-title-movie-change" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000011493.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Batman: Knightfall Part 2 Gets Official Title: Knightquest
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: DC Officially Changes the Title of Batman's Next Movie</div>
+      
+      
+      <div class="summary">The next Batman movie is just months away from release, and DC Studios and Warner Bros. finally gave it a title. The future of the Caped Crusader is as bright as ever, with the spotlight currently on The Batman: Part 2, which is in production now in &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-anime-like-frieren-to-watch-stream-cozy-fantasy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/06/26174007.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            11 anime to watch if you like Frieren
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Frieren: Beyond Journey's End is unlike anything else. Madhouse’s anime adaptation of Kanehito Yamada’s manga has delivered two brilliant seasons, with a highly anticipated third season still to come.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/dropout-game-changer-sam-reich-interview-rulette-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/game-changer-s8-rulette-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Game Changer Fans Want More ‘Rulette,’ but Dropout CEO Sam Reich Isn't Convinced
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Game Changer season 8 has wrapped, meaning Dropout subscribers will have to wait until next spring to see what ways host and company CEO Sam Reich will torture his stable of comedians next. Reich has told Polygon before how he hopes to still be hosti&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-big-bang-theory-streaming-success-hbo-max-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/04/the-big-bang-theory-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Big Bang Theory Becomes No. 2 Most-Streamed Show with 1.071 Billion Minutes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 12-Part Sitcom Smash Officially Becomes a Streaming Juggernaut</div>
+      
+      
+      <div class="summary">Television has changed quite a bit since a socially awkward genius last knocked three times on his neighbor's door.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/lord-of-the-rings-genre-switch-middle-earth-rpg/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/lord-of-the-rings-rotk-nazgul-king-black-metal-glove-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lord Of The Rings Officially Switches Genres In Its Most Anticipated New Gaming Project
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Lord of the Rings franchise is about to get an onslaught of new releases in the coming years, though not all of them are equally compelling, at least among longtime Tolkien fans.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/star-trek-episode-worth-revisiting.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/07/star-trek-kirk-scream-tv-1.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Decades Later, The Star Trek Episode That Ruined A Beloved Character Is Worth Revisiting
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">By Chris Snellgrove | Published 23 seconds ago What do you think of when you imagine the Star Trek character Geordi La Forge? Many fans think about his most iconic role on the Enterprise-D: chief engineer.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/star-wars-lucasfilm-fans-groups" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000011489.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lucasfilm Admits They Split Up Star Wars Fans Into 5 Different Groups
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Lucasfilm's leader confirmed what everyone already knows: Star Wars fandom isn't one big, happy family. Dave Filoni was promoted to president and chief creative officer in January, taking the reins from Kathleen Kennedy as Star Wars is stuck in an aw&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/dc-studios-lanterns-colors-future-dcu" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000011488.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DC Studios Chooses 4 Colors of Lanterns for DCU's Potential Future
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">HBO's Lanterns has finally caught up to the present day. After the fiasco in Rushville, Nebraska, in Episode 5, Episode 6, "Bad Optics," sends John Stewart back to the scene of the crime in 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/cbs-sci-fi-shows-twilight-zone-free-streaming-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/twilight-zone.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            CBS's Legendary 156-Episode Sci-Fi Anthology Series is Officially Free to Watch on Streaming
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In the realm of science fiction, Star Wars and Star Trek are generally considered to be the two biggest franchises. And, if you’re purely talking about profitability, that’s correct, as those two have dominated TV and film for decades.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/ridley-scott-blade-runner-final-cut-free-youtube-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/blade-runner-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Blade Runner: Final Cut Now Streaming for Free on YouTube
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ridley Scott's Near-Perfect Sci-Fi Masterpiece is Officially Streaming on YouTube for Free</div>
+      
+      
+      <div class="summary">The ‘70s and ‘80s were a major turning point for science fiction. Star Wars revitalized the genre and turned it into one of Hollywood’s main box office draws, inspiring a wave of films that are still shaping sci-fi today.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/lord-of-the-rings-aragorn-book-differences/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/11/lord-of-the-rings-featured.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Aragorn's Character Differs Between The Lord of the Rings Books and Films
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Lord of the Rings Character Who Was Completely Unrecognizable in the Books</div>
+      
+      
+      <div class="summary">The Lord of the Rings has made a name for itself on the page and on screen alike, and while the trilogy is one of the best book-to-movie adaptations, it does make changes. Fans can point to many examples, and they do; however, Peter Jackson's film's &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/expanse-meets-starfield-free-xbox-game-pass/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-outer-worlds-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Outer Worlds: Sci-Fi RPG Available Free on Xbox Game Pass
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Expanse Meets Starfield In This Sci-Fi RPG You Can Play Free Now</div>
+      
+      
+      <div class="summary">Somewhere between the gritty, corporate-scarred politics of The Expanse and the wide-open galaxy-hopping of Starfield is a promising sci-fi RPG that’s been quietly sitting on Xbox Game Pass.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/red-dead-redemption-2-forgotten-frontier-mod-out-now/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/rdr2-key-art.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Red Dead Redemption 2 Mod 'Nuevo Paraiso - The Forgotten Frontier' Is Out Now
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Red Dead Redemption 2: The Forgotten Frontier Is Out Now</div>
+      
+      
+      <div class="summary">Remember riding into Nuevo Paraiso back in 2010, chasing bounties across dusty Mexican towns in the original Red Dead Redemption? If you’ve been missing that stretch of map ever since Rockstar left it out of the sequel, it’s time to thank a very gene&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-mummy-brendan-fraser-leaving-leaving-free-streaming-tubi/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/mcdmure_ec018-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Mummy Trilogy Leaves Tubi on September 30
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Greatest Adventure Franchise of All Time Is Officially Saying Goodbye</div>
+      
+      
+      <div class="summary">If you're looking for the perfect adventure franchise to binge with "spooky season" just around the corner, there's no better reason to revisit The Mummy movies. Currently, all three entries in the original Brendan Fraser trilogy can be found streami&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/disney-frozen-3-elsa-redesign" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/frozen-3-elsa.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Frozen 3: Disney Releases First Look at Elsa's Major Redesign
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Disney finally gave fans a first look at Elsa in Frozen 3, which confirmed that she will be given a redesign for the threequel, and everyone seems to have mixed opinions, with some loving it and others hating it. Frozen 3 has the chance to be one of &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-switching-genres-warp-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/star-trek-chris-pine-kirk-kelvin-timeline.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek Franchise: Complete Cast and TV Show List
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek Is Officially Switching Genres In Star Trek: Warp Game</div>
+      
+      
+      <div class="summary">Created by Gene Roddenberry First Film Star Trek: The Motion Picture First TV Show Star Trek: The Original Series First Episode Air Date September 8, 1966 Cast William Shatner, Leonard Nimoy, George Takei, Nichelle Nichols, Deforest Kelley, James Doo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/dark-matter-2015-canada/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/dark-matter-2015-season-1-cast.JPG?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple's 'Dark Matter' Compared to Syfy's Canceled 'Dark Matter'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple's Smartest Sci-Fi Series Is No Match For This Canceled Cult Classic With the Same Name</div>
+      
+      
+      <div class="summary">Recently, a great many people have recommended that I watch Dark Matter, the second season of which premiered in August on Apple TV. The first couple of times it happened, I was confused, as I'd already seen Dark Matter and it had gone off the air al&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <span class="current">6</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/7.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

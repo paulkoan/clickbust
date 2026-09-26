@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-26 17:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>30 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>105 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>3 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>56 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>125 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>17 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/best-video-games-since-2000-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/halo-3-poster-2007.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 6 Best Video Games Released Since 2000, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In the year 2000, video gaming at large was still considered a niche interest, though the needle was beginning to move with Sony’s launch of the PlayStation 2, Nintendo’s growing dominion over handheld gaming devices, and the release of such titles a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/worst-hard-sci-fi-movies/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/mcdcore_ec014.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Hard Sci-Fi Movies That Failed the Genre
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There is a special kind of betrayal in a sci-fi movie that makes you start thinking seriously about orbital mechanics and then rewards that effort with magic rocks. Bad science fiction can be glorious when everybody knows the assignment. Hard sci-fi &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-cancel-ripley-good-decision/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/dakota-fanning-s-marge-in-ripley-2024.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ripley: Netflix's Psychological Thriller Was Better as a Miniseries
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Was Right To Cancel A Psychological Thriller Masterpiece After Only 8 Episodes</div>
+      
+      
+      <div class="summary">While one of Netflix’s best psychological thriller shows was canceled after a mere eight episodes, this was secretly a good thing for the series as a whole.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-spy-shows-perfect-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/the-americans-matthew-rhys-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Spy Shows That Are 10/10 With No Weak Episodes, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Espionage stories about spies are among the most reliable thrillers out there, similar to the gunslingers of classic Westerns, mobsters of crime epics, or knights in medieval adventures.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-netflix-movies-watch-weekend-september-26/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/russell-crowe-looks-a-jacob-tremblay-in-an-interview-in-umabomber-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Best Movies To Watch On Netflix This Weekend (September 26-27)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix subscribers will have three dark options of movies to watch on the streaming service for the final weekend of September, making for the perfect opportunity to pull out a three-movie binge on the streamer.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/zelda-ocarina-of-time-ganondorf-nintendo-today/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/0546d7ef-3fdf-470d-904a-80085ee0f99a.JPEG?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nintendo Releases New Ocarina of Time Remake Gameplay Footage with Ganondorf
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Nintendo Releases New Zelda Gameplay Footage Starring Ganondorf</div>
+      
+      
+      <div class="summary">The Legend of Zelda’s Ganondorf is having his moment in the spotlight in a big way right now. Not only has it recently been confirmed that Ganondorf will appear in the live-action Zelda movie, but the ongoing rumors about a new Zelda game starring Ga&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/one-piece-tendence-first-watch-re-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/8-years-after-selling-out-one-piece-brings-back-its-official-swiss-watch-collection.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Years After Selling Out, One Piece Brings Back Its Limited-Edition Swiss Watch Collection
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One Piece fans don't need to sail the Grand Line to get their hands on a Log Pose. Tendence is bringing back its original One Piece watch collection after eight years, including its sold-out design inspired by Nami's iconic navigation tool. Via PR Ti&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/heroes-nbc-2006-debut-change-superhero-tv-genre/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/zachary-quinto-and-sendhil-ramamurthy-in-unexpected-heroes-season-1-episode-16.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            20 Years Ago, NBC's Heroes Changed Superhero Shows Forever
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">On September 25, 2006, the entire superhero genre changed because NBC took a risk with Heroes. The series made it clear that viewers wanted more from TV storytelling. It's hard to believe that this groundbreaking sci-fi fantasy series is 20 years old&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-agatha-christie-movies-not-hercule-poirot/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/hercule-poirot-looking-at-the-host-in-death-on-the-nile.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Great Agatha Christie Movies That Don't Feature Hercule Poirot
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Agatha Christie is one of the most influential mystery writers in history, with her stories inspiring countless movies, television shows, and stage productions. Known for intricate plots, elaborate murder schemes, and unforgettable detectives, Christ&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/far-side-best-cow-comics-gary-larson/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/far-side-cow-with-elephants.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Best Far Side Comics Featuring Elephants
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New Adaptation of Iconic Horror Franchise Releases Today</div>
+      
+      
+      <div class="summary">Gary Larson's The Far Side famously loves the natural world, with piles of comics dedicated to bugs, birds and big game. It's therefore not surprising that there are so many great Far Side gags starring elephants.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dandadan-strongest-manga-characters-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2022/11/dandadan-volume-2-cover.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Strongest Dandadan Characters in the Manga, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Dandadan’s universe has grown enormously since the weekly manga began in 2021, and with Season 3 coming in 2027, it’s only getting bigger.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/rj-decker-crime-drama-abc-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/the-lincoln-lawyer-season-4-manuel-garcia-rulfo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ABC's R.J. Decker Is One of the Most-Watched Shows on Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ABC's Easy-to-Binge The Lincoln Lawyer Replacement Is 1 of the Most-Watched Shows on Streaming</div>
+      
+      
+      <div class="summary">The Lincoln Lawyer is one of the biggest legal crime dramas in recent years. Now, ABC's latest crime drama that takes a page from The Lincoln Lawyer's book is one of the most-watched shows in the world. Per FlixPatrol, R.J. Decker is rising on the st&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-classic-sci-fi-books-of-all-time-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/dune-part-two_i6e6dx.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Classic Sci-Fi Books That Are 10/10 Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Science fiction is so much more than futuristic gadgets, interstellar adventures, time travel, or any version of dystopia. Built on deeply complex foundations, the genre uses impossible worlds to explore timeless questions about morality, society, an&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/avengers-doomsday-thor-russo-brothers-confirm/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/hnrskgmxmaauuvu-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers: Doomsday’s Version Of Thor Is Finally Confirmed By The Russo Brothers
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Avengers: Doomsday directors Joe and Anthony Russo are bringing back a specific depiction of Thor. It’s been 15 years since Chris Hemsworth debuted as the Marvel Cinematic Universe’s Thor, and Avengers: Doomsday marks his 10th appearance as the Asgar&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/alan-ritchson-movies-turkey-bowl-free-youtube-watch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/alan-ritchson-the-turkey-bowl.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alan Ritchson's The Turkey Bowl Is Free to Watch on YouTube
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Alan Ritchson's 2019 Sports Comedy is Free to Watch on YouTube</div>
+      
+      
+      <div class="summary">Sports movies have a pretty impressive track record when it comes to becoming classics. From Rocky and Field of Dreams to Remember the Titans and Moneyball, there are plenty of movies that have managed to stick around in the cultural conversation lon&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/tom-holland-sabrina-carpenter-margaret-qualley-fred-astaire/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/tom-holland.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Holland's Fred Astaire Biopic Casts Sabrina Carpenter and Margaret Qualley
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Holland's 'Spider-Man: Brand New Day' Follow-Up Lands Sabrina Carpenter and Margaret Qualley</div>
+      
+      
+      <div class="summary">Tom Holland has had an incredible year thanks to the release of The Odyssey and Spider-Man: Brand New Day, the two highest-grossing films of 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/peanuts-linus-last-words-dont-slump-tragic-quote/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/linus-peanuts-strips.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            27 Years Later, Linus' Last Peanuts Quote Is The Most Tragic 2 Words In Comic History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While Charlie Brown and Snoopy might be the two most famous members of the Peanuts gang, it has always been Linus who was the true philosophical and moral heart of the comic strip. With his introspective nature and more than a few iconic running gags&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/top-sci-fi-movies-every-decade/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/03/2001-a-space-odyssey.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Top Sci-Fi Movie From Every Decade
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The vast possibilities of science fiction as a genre have found success in all different mediums of storytelling, yet the visual components and exceptional craft required to bring a feature film to life also work perfectly in terms of bringing amazin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/long-rpgs-you-can-play-for-months/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/a-custom-image-featuring-geralt-of-rivia-in-the-witcher-3-and-johnny-silverhand-in-cyberpunk-2077-1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 RPGs You Can Play for Months
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">RPGs are some of the best video games to get lost in for months at a time. It's a genre of gaming known for titles with plenty of lore, characters with real depth, and some of the most entertaining gameplay mechanics around.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/the-love-hypothesis-movie-holden" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000011481.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Holden's Role In 'The Love Hypothesis' Movie Is Way Different From The Book - And It Actually Worsens The Story
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Prime Video's The Love Hypothesis made several changes from the original source material, and one of the most obvious alterations involves the character of Dr. Holden Rodriguez.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/masters-of-the-universe-4k-blu-ray-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/nicholas-galitzine-s-prince-adam-looking-intensely-with-idris-elba-s-duncan-camila-mendes-teela-kristen-wiig-s-roboto-and-battle-cat-in-masters-of-the-universe.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Masters of the Universe Gets 4K Blu-ray Release After Box Office Flop
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Amazon's 140-Minute Fantasy Flop Returns With New Release Despite Box Office Bomb</div>
+      
+      
+      <div class="summary">One of Amazon's most recent box office flops is coming back in a brand-new way this October. Amazon MGM Studios has found great success with films like Project Hail Mary, which grossed $685 million and received critical acclaim. But not every project&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/control-resonant-health-upgrade-point-locations/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/ice-cream-stand_cr.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Health upgrade point locations in Control Resonant
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Health upgrade points are special items that are mostly found in large resource crates around the Control Resonant map. Health is always a valuable resource in action RPGs, as, well, you don't want to die.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/honkai-star-rail-version-4-6-release-times-maintenance-end/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/en.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            What time does Honkai Star Rail version 4.6 release in your time zone?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Honkai: Star Rail version 4.6 is coming soon, introducing Pearl as a playable character and continuing the story's Trailblaze Missions. As usual, this patch will also have new events to play to earn Stellar Jade and other sweet rewards.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/haunting-of-bly-manor-netflix-best-adaptation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/the-haunting-of-bly-manor-benjamin-evan-ainsworth-victoria-pedretti.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Haunting of Bly Manor Is Mike Flanagan's Best Book Adaptation
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 5 Years Later, Mike Flanagan’s Overlooked Netflix Mystery Thriller Beats His Other Series In One Major Way</div>
+      
+      
+      <div class="summary">It's easy to appreciate all five of Mike Flanagan's Netflix thrillers for different reasons. The Haunting of Hill House is everyone's favorite and has an epic car jump-scare scene. Midnight Mass is Flanagan's powerful story that "came most from the h&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/top-gun-maverick-action-netflix-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/tom-cruise-top-gun-maverick-premiere.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Top Gun: Maverick Is Soaring on Netflix Ahead of New Sequel
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Cruise’s $1.4B Action Masterpiece Is Soaring on Netflix Ahead of New Sequel</div>
+      
+      
+      <div class="summary">Tom Cruise's masterpiece action sequel, Top Gun: Maverick, is flying high on Netflix. The 2022 action-adventure is currently the second-most-watched movie on Netflix in the United States, according to FlixPatrol. It's also the No. 3 movie worldwide o&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/christian-bale-3-10-to-yuma-best-western-remake-ever/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/09/mixcollage-03-sep-2024-11-13-am-8200.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Christian Bale's 3:10 to Yuma is the Best Western Remake Ever
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 21st century has gifted Western fans some of the best movies ever made, but nothing beats Christian Bale's action-packed remake on HBO Max.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/bad-books-written-great-authors/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/img_7371-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Bad Books Written by Great Authors
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Finding authors who've gone their whole careers without publishing anything questionable quality-wise is probably going to lead to noting a bunch of creative minds who've prioritized quality over quantity to a dramatic extent. Like, nothing by J.D.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/control-resonant-power-upgrade-point-locations/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/power-upgrade-point-crate_cr.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Power upgrade point locations in Control Resonant
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Power upgrade points are special items that are mostly found in large resource crates scattered around the Control Resonant map. Once you collect three power upgrade points, you'll increase your maximum power, which is a resource used to cast combat &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-witcher-full-cast-audiobook-cast-sam-stafford-richard-armitage/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/09/the-witcher-henry-cavill-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New 'The Witcher' Audiobook 'Crossroads of Ravens' Features 'Vikings' Actor as Geralt
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘The Witcher’ Officially Recasts Geralt With a ‘Vikings’ Star for New Release</div>
+      
+      
+      <div class="summary">A witcher’s job is difficult enough when he knows what he’s doing. Crossroads of Ravens catches Geralt of Rivia before the names White Wolf and Butcher of Blaviken have begun following him around, when every contract is still teaching him what kind o&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-prime-video-movies-watch-weekend-september-26-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/07/once-upon-a-time-in-hollywood-leonardo-dicaprio-brad-pitt.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Major Movies Taking Over Prime Video This Weekend (Sep 26-27)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are some undeniably exciting additions to the theatrical circuit this weekend. Not only is the MCU preparing for Doomsday by re-releasing Avengers: Endgame on a global scale, but some tantalizing new titles will make their debuts.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <span class="current">10</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/11.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

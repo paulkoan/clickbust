@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-26 17:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>30 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>105 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>3 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>56 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>125 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>17 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://thedirect.com/article/marvel-studios-ultron-evil-plan-white-vision-visionquest" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/ultvis.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Studios Reveals Ultron’s Evil Plan For White Vision In VisionQuest
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ultron's nefarious plan for Vision in VisionQuest has been confirmed in a new report. The two robot rivals will be reunited in the upcoming Disney+ MCU show, 11 years after they last faced off in Avengers: Age of Ultron.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-prisoner-iron-maiden-song/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/the-prisoner-shows-number-six-with-men-sitting-behind-him.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 17-Part Mystery Series So Good, An Iconic Metal Band Wrote A Song About It
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">By 1967, Patrick McGoohan had risen to fame as the titular character in the UK espionage thriller, Danger Man​​​​.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/clayface-popcorn-bucket-leak/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/clayface.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DC Studios Unveils Creative Clayface Popcorn Bucket
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: DC Studios Just Delivered One of the Most Creative Popcorn Buckets in Years</div>
+      
+      
+      <div class="summary">After DC Studios delivers the last two episodes of Lanterns to end September and kick off October, the studio will return to theaters a few weeks later with director James Watkins' Clayface.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/mary-poppins-tv-show-books/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/mary-poppins.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Announces New Sesame Street Movie as Part of Preschool Push
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney's Iconic 62-Year-Old Fantasy Franchise Officially Getting TV Reboot</div>
+      
+      
+      <div class="summary">Producer Tom Winchester is experienced when it comes to reviving legacy IP. He was a producer on the first season of Shōgun, FX's fantastic historical fiction series based on the 1975 novel by James Clavell, originally adapted as a TV miniseries in 1&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/control-resonant-boss-locations-combat-ability-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/resonants_cr.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Resonant boss locations and combat ability list in Control Resonant
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Resonants are the primary bosses in Control Resonant, and when you defeat one, you'll unlock another combat ability. Not every resonant is mandatory in order to finish the game.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/dexter-resurrection-season-2-release-date-paramount-plus-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/dexter-resuurrection.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dexter: Resurrection Season 2 Returns to Paramount+ in October
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Paramount’s 2-Part Serial Killer Thriller Officially Returns in 1 Month</div>
+      
+      
+      <div class="summary">Dexter fans have been on a roller coaster of emotion the last few years, with a wave of renewals and cancellations, so many that it’s becoming tough to decipher what’s real and what’s not.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/evil-dead-burn-hbo-max-streaming-release-date-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/evil-dead-burn_mixxoc-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Evil Dead Burn Gets Official HBO Max Release Date After “Savage” Reception
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.Evil Dead Burn has risen from the grave and received an official HBO Max release date.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/russell-crowe-unabomber-rotten-tomatoes-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/henry-murray-looking-at-something-in-unabomber.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Russell Crowe's 'Unabomber' on Netflix Gets 31% Rotten Tomatoes Score
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Russell Crowe's New 100-Minute Netflix Crime Thriller Divides Critics on Rotten Tomatoes</div>
+      
+      
+      <div class="summary">Russell Crowe has a new film on Netflix, and it has already garnered quite a reputation. That is partly because it is based on the story of Tad Kaczynski, better known as the film's namesake, the Unabomber.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/horror-movies-hit-hard-over-20-years-later/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/open-water.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            These 10 Horror Movies Still Hit Hard Over 20 Years Later
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some horror films capture the collective fears of the moment and really make an impact when they are released. Unfortunately, these flicks don’t always age well, as the topics or themes they address can wither in relevance over time. But not these te&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2267880/xbox-mythic-achievements-feature-playstation-platinum-trophy-equivalent/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/xbox-is-finally-getting-a-feature-playstation-has-had-for-years/l-intro-1790268834.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Xbox Is Finally Getting A Feature PlayStation Has Had For Years
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Xbox Is Finally Getting A Feature PlayStation Has Had For Years iama_sing/Shutterstock Completionists rejoice — Microsoft is now introducing a new achievement that takes heavy cues from PlayStation's Platinum trophy.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/spiderman-brand-new-day-real-post-credits-scene-hulk-avengers-endgame-encore/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/tom-holland-as-peter-parker-looking-nervous-at-a-work-bench-in-spider-man-brand-new-day.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Unveils Spider-Man: Brand New Day's Real Post-Credits Scene 2 Months Later
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In a huge twist, the real post-credits scene for Spider-Man: Brand New Day has come two months after the movie's release.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/video/digger-cast-tom-cruise-s-transformation-shocked-them/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/john-goodman-michael-stuhlbarg-jesse-plemons.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Digger Cast: Tom Cruise’s Transformation Shocked Them
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">felt strange to his co-stars. John Goodman, Michael Stuhlbarg, and Jesse Plemons break down the unpredictable process behind Digger, including how scenes evolved from take to take and how the actors inspired each other to take bigger creative risks.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/avatar-the-legend-of-korra-red-lotus-strength-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/11/zaheer-talks-confidently-against-a-cloudy-sky.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Member of the Red Lotus, Ranked by Strength
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Book Three: Change featured four members of the anarchist organization, The Red Lotus, as the main antagonists: Zaheer, P'Li, Ming-Hua, and Ghazan.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/castlevania-new-collection-40th-anniversary/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/castlevania-lords-of-shadow.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Konami Teaser Gives Castlevania Fans Hope for a New 3D Collection
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Castlevania is celebrating its 40th anniversary, and for the first time in a long time, series fans actually have things to look forward to. Next month, we’re getting the highly anticipated Castlevania: Belmont’s Curse, the first mainline entry in mo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/sesame-street-movie-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/05/netflix-blood-of-zeus.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Black Doves Season 2 Trailer: Keira Knightley Returns in Netflix Spy Thriller
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Is Officially Bringing Back a 57-Year-Old Beloved Family Favorite in New Movie</div>
+      
+      
+      <div class="summary">Children's television is one of the most packed genres out there. Plenty of iconic, treasured gems stand out among the competition, with the likes of Ms. Rachel and Bluey delivering key education and life lessons via a delightfully watchable format.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/batman-knightfall-part-1-bane-bigger-than-ever/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/batman-knightfall-movie-bane.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Batman: Knightfall Producers Discuss Making Bane Bigger Than Ever
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The following article contains spoilers for Batman: Knightfall Part 1: Knightfall. There are few characters as important to the famous DC Comics storyline "Knightfall" as Bane.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/highlander-final-battle-greatest-fantasy-action-scene-ever/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/connor-macleod-highlander.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            40 Years Later, Highlander’s Best Action Scene Is Still the Greatest in Fantasy History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The fantasy genre is jam-packed with incredible action sequences, which means it can often be hard for fans to choose a definitive favorite. Fantasy action varies wildly from large-scale battles between never-ending armies to smaller-scale combat bet&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/brandon-sanderson-fires-of-december-excerpt/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2025/12/fires-of-december-brandon-sanderson.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brandon Sanderson’s New Cosmere Book Gets Exclusive New Reveal
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">December woke in her small dark chamber and, for the time it took to gasp, thought herself in her hut on the mountainside.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/tbbt-stuart-spinoff-season-2-first-look-tease/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/kevin-sussman-lauren-lapkus-brian-posehn-john-ross-bowie_0-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Unabomber Movie, Starring Russell Crowe, Gets 36% RT Score
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Stuart Fails to Save the Universe' Teases First Look at Season 2</div>
+      
+      
+      <div class="summary">Stuart Fails to Save the Universe has already teased its first look at Season 2. Stuart Fails to Save the Universe's Season 1 finale, "Spoiler: Filmed Before a Live Studio Audience," brings the first installment of The Big Bang Theory's spin-off to a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sonic-the-hedgehog-movie-franchise-cancellation-comments-takashi-iizuka/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/09/sonic-tails-knuckles-stand-together-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 'Sonic the Hedgehog' Franchise Almost Died Before It Really Got Started
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Sonic the Hedgehog seems impossible to kill now. The blue blur has three hit movies behind him, a fourth on the way, and a steady presence across games and animation. For a character celebrating his 35th anniversary, that sounds like business as usua&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/control-resonant-mysterious-dog-toy-locations-where-to-find/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/mysterious-dog_cr.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Where to find the mysterious dog's toy in Control Resonant
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A mysterious dog can be found sitting on a rooftop in Control Resonant. When you interact with her, you decide that you need to find her a toy, which every good dog deserves. Luckily, one can be found nearby.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/black-doves-season-2-keira-knightley-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/keira-knightley-in-black-doves-season-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Blackmere: Charlie Brooker's New Netflix Detective Series Casts Paddy Considine
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Keira Knightley Is Back in Action as Netflix's Best Spy Thriller Series Returns</div>
+      
+      
+      <div class="summary">Keira Knightley is best known for portraying compelling female leads in period pieces, notably in Pirates of the Caribbean and Pride and Prejudice. Throughout her career, she has carved out her own path in film, often taking on complex, powerful fema&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/netflix-unabomber-rotten-tomatoes-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/russell-crowe-in-unabomber.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Russell Crowe's New Netflix Crime Thriller Is a Dud With Critics on Rotten Tomatoes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In Netflix's new true crime thriller, Russell Crowe plays professor Henry Murray, the man who influenced the future unabomber Ted Kaczynski. Murray served as a psychology professor who administered unethical mind control experiments on students, incl&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/legend-of-zelda-ganondorf-ubisoft-game-canceled/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/24582693/ganondorf_totk_trailer.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ubisoft Was Working on an Official Legend of Zelda Game, Report Says
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ubisoft and Nintendo formed a partnership in the 2010s and early 2020s, resulting in 2017's crossover RPG Mario + Rabbids Kingdom Battle and its 2022 sequel.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/pokemon-30th-anniversary-jirachi-sir-price-avery-poke-kid/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/jirachi_m06.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon 30th Anniversary Jirachi Card Price Explodes After Tragic Death
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">For people who buy and sell Pokémon cards, the period right after a set releases is a chaotic one. Prices for illustration cards move in unpredictable ways, but the trend is almost always downward.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/robert-eggers-90-rt-period-fantasy-finds-global-audience/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2025/05/01595029_poster_w780.jpg?q=70&fit=contain&w=480&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Northman Gains Cult Status on Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Anya Taylor-Joy’s R-Rated Fantasy Epic Officially Rises From the Dead on Streaming</div>
+      
+      
+      <div class="summary">Fans are always eager to succumb to darkness when it’s a Robert Eggers movie. The fan-favorite director is known and loved for delivering incredible period pieces with his frequent on-screen collaborators, which often feature a lot of blood and an em&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/castlevania-game-free-limited-time-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/02/alucard.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Original Castlevania Game Free on Mobile Until October 24
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Classic Castlevania Game Is 100% Free Until October 24</div>
+      
+      
+      <div class="summary">The Castlevania franchise is celebrating its 40th anniversary in 2026, and to mark the occassion, Konami is giving away a legendary entry in the franchise for free.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/blackmere-paddy-considine-first-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/04/harry-kevin-talk-in-mobland.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Black Mirror' Creator Casts 'MobLand' Star in First Look at New 2027 Netflix Detective Series
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix expands its crime fiction slate with a gritty dark comedy that's giving off The Gentlemen vibes, mixed with a bit of Bodkin and Big Mistakes. It's already getting the flagship-level treatment ahead of its release, bolstered by a creative visi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/mary-poppins-tv-series-darker-pl-travers-books/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/10/julie-andrews-mary-poppins-bird.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Mary Poppins' Officially Returns With a Major New Live-Action Series
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The early days of Walt Disney Productions brought with them plenty of storied classics that helped turn the studio into the titan it is today, from the original Snow White & the Seven Dwarves to Pinocchio and Cinderella.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-a-killer-paradox-dexter-replacement/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/08/dexter-resurrection-spoiler-is-dead-and-their-last-words-will-break-your-heart.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'A Killer Paradox' with 100% RT Score Is a Perfect Dexter Replacement
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's 8-Episode Thriller With 100% on Rotten Tomatoes Is the Perfect Dexter Replacement</div>
+      
+      
+      <div class="summary">Dexter Morgan is officially back in Dexter: Resurrection, now streaming on Paramount+. The obsession with such shows has always been about more than the kills; it's about the killer's twisted psychology and the thrilling cat-and-mouse game between ju&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <span class="current">15</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/16.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

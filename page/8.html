@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-26 17:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>30 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>105 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>3 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>56 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>125 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>17 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/reacher-the-midnight-line-adaptation-lee-child-alan-ritchson/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/tcdreac_zu023-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lee Child Confirms He Wants Reacher to Adapt 'The Midnight Line' [Exclusive]
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Lee Child Officially Confirms Which Novel He Wants Alan Ritchson’s ‘Reacher’ to Adapt [Exclusive]</div>
+      
+      
+      <div class="summary">There are still plenty of stories waiting for Alan Ritchson if Prime Video’s Reacher keeps Jack Reacher wandering into trouble for years to come.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/sydney-sweeney-the-housemaid-hbo-max-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/sydney-sweeney-83rd-venice-international-film-festival2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Housemaid: Sydney Sweeney's $400M Thriller Sets HBO Max Release Date
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Sydney Sweeney's $400M R-Rated Thriller Sets HBO Max Release Date</div>
+      
+      
+      <div class="summary">In 2024, Sydney Sweeney starred in several unsuccessful releases, but ended the year strong with her best-ever release: The Housemaid. The movie was a major hit in theaters, on PVOD, and later on streaming. The Housemaid premiered in theaters on Dec.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/complete-anime-series-under-50-episodes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/gundam-turn-a-from-turn-a-gundam.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Complete Anime Series You Can Finish in Under 50 Episodes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anime fans have endless options when it comes to what titles they check out and there's always the concern that a series falls flat or doesn't even reach a proper conclusion.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-movie-franchises-that-rival-star-wars-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/02/daniel-radcliffe-in-harry-potter-and-the-sorcerers-stone.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Masterpiece Movie Franchises That Rival Star Wars
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When it comes to franchises with intricate world-building, character development, and a token Chosen One, Star Wars is in a galaxy far, far away from the rest. The franchise’s cultural impact has spanned decades, showing no signs of slowing down.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/cowboy-bebop-neo-noir-western-masterpiece/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/08/tank-opening-2.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cowboy Bebop Is Still a Masterpiece 29 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Neo-Noir Western Is So Good, It's Still a Masterpiece 29 Years Later</div>
+      
+      
+      <div class="summary">25 years ago, the epic genre mash-up anime series, Cowboy Bebop, debuted on Cartoon Network's brand-new Adult Swim block.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-helo-narcos-director-andres-baiz/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/netflix-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Is Developing A Top Gun-Style Action Thriller With Narcos Director
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix is adding a brand-new thriller to its growing library of action films. Netflix is continuing to invest in action movies, as the genre has become incredibly successful on the streaming platform. Now, the company has confirmed that a new police&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/keanu-reeves-good-fortune-streaming-success-prime-video-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/good-fortune-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Keanu Reeves' 'Good Fortune' Is a Streaming Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Keanu Reeves’ Biggest Genre Swing Since ‘John Wick’ Is Officially a Streaming Hit</div>
+      
+      
+      <div class="summary">Keanu Reeves is best known worldwide for his action roles; even audiences who don't know his extensive filmography recognize him from The Matrix franchise, which changed how movies are made and how viewers understand them, becoming a worldwide phenom&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/weakest-captains-in-bleach-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/soi-fon-looks-serious-during-her-fight-with-barragan-in-the-bleach-anime-series.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Weakest Captains in Bleach, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Becoming a captain in Bleach already places a Soul Reaper among Soul Society's elite. Captains typically possess enormous spiritual pressure, extensive combat experience and, in most cases, a Bankai that immediately separates them from regular member&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/zack-snyder-explains-why-he-left-dceu-and-netflix-blockbusters-for-indie-filmmaking-and-his-new-film" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/The-Last-Photograph-article-V2.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zack Snyder Explains Why He Left DCEU and Netflix Blockbusters for Indie Filmmaking and his New Film 'The Last Photograph' | TIFF 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Zack Snyder is back with a vastly different film compared to his past blockbuster filmography, which includes the DCEU, Army of the Dead, and Rebel Moon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/god-of-war-show-fantasy-tv-event-not-harry-potter/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/god-of-war-kratos.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's God of War TV Show Aims to Be the Next Big Fantasy Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget Harry Potter, Prime Video's New Norse Mythology Series Is The Fantasy Event Of The Decade</div>
+      
+      
+      <div class="summary">HBO's upcoming Harry Potter TV series is all but guaranteed to dominate the fantasy genre as we roll into 2027, but Prime Video has a project on the way that really should be a much bigger deal.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/deadpool-and-wolverine-streaming-success-disney-plus-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/disney-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Deadpool & Wolverine Is a Major Streaming Hit for Disney
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney’s R-Rated Gamble Officially Pays Off in Major Streaming Comeback</div>
+      
+      
+      <div class="summary">Ryan Reynolds has given us some good movies, like the John Krasinski-directed family movie IF, Shawn Levy’s The Adam Project, and Free Guy, along with some action-packed features like The Hitman’s Bodyguard franchise, where he stars alongside Samuel &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/jrpgs-with-job-systems-to-play-for-months/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/fire-emblem-fortune-s-weave.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 JRPGs With Job Systems You Can Play for Months
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Though there are a handful of shorter JRPGs out there, that's become less common as the genre has developed. While early NES and SNES games were fairly short, it feels like every generation, JRPGs have gotten a bit longer.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tom-cruise-top-gun-maverick-streaming-success-paramount-plus-prime-video-apple-tv-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/img_1831.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Cruise's 'Top Gun: Maverick' Continues Streaming Success
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Cruise Officially Crowned the King of 4 Streaming Platforms</div>
+      
+      
+      <div class="summary">Tom Cruise is undeniably the most recognized action star in the world. Year after year, the actor has worked hard and harder to bring us stories and stunts that make the trip to theatres worthwhile, making him Hollywood's most bankable star.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/rings-of-power-fantasy-prime-video-season-3-return-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/10/elrond-rings-of-power-season-1-episode-7.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Lord of the Rings: The Rings of Power Returns on Prime Video in 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: One of TV’s Most Rewatchable Fantasy Shows Is Returning on Prime Video in 2026</div>
+      
+      
+      <div class="summary">Fantasy is more prevalent on television than ever, with a constant stream of new projects, but Prime Video's The Lord of the Rings: The Rings of Power has survived streaming's cutthroat environment and is set to return for its third season on Novembe&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/western-books-read-in-one-weekend/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/true-grit-matt-damon-1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Western Books You Can Finish in a Weekend
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Western genre is one that is just as vibrant and rich on the page as it is on the screen. Of course, Western films and television programs are perhaps the crown jewel, revisited by long-time fans and genre newcomers regularly and with increased p&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/melissa-barrera-addresses-scream-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/melissa-barrera-scream-vi.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            After Harsh Scream 7 Criticism, Melissa Barrera Is Open to a Scream Return
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After starring in two Scream movies, Melissa Barrera was fired from the franchise three years ago. She has since made it clear she's no fan of the subsequent sequel, Scream 7, but she still hasn't written off a return to the franchise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pluto-netflix-cyberpunk-masterpiece-better-altered-carbon/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/altered-carbon-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pluto Is the Cyberpunk Anime That Altered Carbon Should Have Been
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's 8-Episode Cyberpunk Masterpiece Is Everything Altered Carbon Should Have Been</div>
+      
+      
+      <div class="summary">Altered Carbon started with almost everything needed for a great cyberpunk series. The idea of human consciousness being transferred into different bodies called “sleeves” was already wild enough, but then Netflix added a hard-boiled murder mystery o&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/historical-k-dramas-must-watch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/nana-in-the-scandal-netflix-k-drama.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            12 Must-Watch Historical K-Drama Series
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some of the best K-dramas of all time captivate viewers with tales that take place thousands of years ago.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/sleepers-brad-pitt-thriller-stream-hit-tubi-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/08/brad-pitt-in-sleepers.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sleepers: Brad Pitt's Thriller That Roger Ebert Doubted Returns to Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brad Pitt's 147-Minute Thriller That Roger Ebert Didn't Believe Is a True Story Resurfaces on Streaming</div>
+      
+      
+      <div class="summary">One of the earliest films in Academy Award winner Brad Pitt's decades-long career has resurfaced on streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/star-trek-thomas-jane-bones-reference/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/movieweb-featured-image-template-2026-09-23t125931-265.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Thomas Jane Makes Long-Awaited Debut as Dr. McCoy in Star Trek: Strange New Worlds
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek Finally Introduces 'The Expanse' Icon's Long-Awaited Character</div>
+      
+      
+      <div class="summary">Warning! Spoilers ahead for Star Trek: Strange New Worlds Season 4, Episode 10, "Tomorrow's Enterprise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/outlander-streaming-success-starz-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/01/outlander-season-7-part-2-sophie-skelton.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Outlander Still Dominates Streaming Charts After Series Finale
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: TV’s 8-Part Fantasy Masterpiece Is Still Officially a Streaming Juggernaut</div>
+      
+      
+      <div class="summary">Although it's been about four months since one of the most influential fantasy series wrapped up its remarkable run, it still dominates streaming charts.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/lioness-season-3-replace-zoe-saldana-joe-mcnamara/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/zoe-saldana-as-joe-mcnamara-in-lioness-season-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lioness Season 3 Finale Hints at Zoe Saldaña's Character Being Replaced in Season 4
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan Is Ready to Replace Zoe Saldaña in Lioness Season 4</div>
+      
+      
+      <div class="summary">The following contains spoilers for Lioness Season 3, Episode 8, “The Unraveling,” which premiered on Paramount+ on Sunday, September 20, 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/superman-superhero-netflix-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2022/08/Warner-Bros-logo.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            James Gunn's 'Superman' Reboot Is One of the Most-Watched Movies Worldwide
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Warner Bros.’ 129-Minute Superhero Reboot With 83% RT Is 1 of the Most-Watched Movies Worldwide</div>
+      
+      
+      <div class="summary">Warner Bros. Pictures and DC Studios' Superman ​​​​​​reboot is a global streaming hit. The James Gunn-directed superhero movie that launched the DC Universe has soared to seventh place on Netflix worldwide, according to FlixPatrol.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dragon-ball-strongest-forms-that-arent-canon-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/10/10-strongest-non-canon-dragon-ball-forms-ranked.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Strongest Non-Canon Dragon Ball Forms, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of Dragon Ball’s most famous and influential concepts is the battle transformation. Ever since Goku’s Great Ape form debuted in the original series, the franchise has introduced countless transformations, and that love of transformations extends &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/harry-potter-star-tom-felton-altered-streaming-success-hbo-max-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/10/tom-felton-in-altered.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Altered, Tom Felton's Sci-Fi Film, Finds Streaming Audience Despite 10% RT Score
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Harry Potter Star's 10% RT Sci-fi Officially Finds Its Audience</div>
+      
+      
+      <div class="summary">Big budget franchises usually burden their stars with a lifetime of being remembered as that "one character"; for a generation, Harrison Ford is either Indiana Jones or Han Solo, and Mark Hamill will forever be Luke Skywalker.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/masterpiece-dark-fantasy-anime-best-power-systems/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/rika_full_manifestation_-28anime-29.webp?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dark Fantasy Anime With the Best Power Systems, Including Chainsaw Man
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Masterpiece Dark Fantasy Anime With the Best Power Systems</div>
+      
+      
+      <div class="summary">Dark fantasy anime often introduce worlds where supernatural power is as dangerous to the person using it as the enemy standing in front of them. Magic rarely comes without consequences, and characters sacrifice their bodies or accept dangerous restr&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/cast-mamas-family-actors-still-alive/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/mamas-family_qqnznr.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Cast Of Mama's Family: Which Actors Are Still Alive
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It was one of the defining series of the 1980s, but as time goes on, some wonder who's died from Mama's Family. Devised as a spinoff of the recurring sketch "The Family" on The Carol Burnett Show, Mama's Family further explored the world of "Mama" Ha&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-sci-fi-shows-inspired-by-isaac-asmiov/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/nissa-staring-through-broken-glass-in-the-tv-show-humans.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Near-Perfect Sci-Fi Shows Inspired By Isaac Asmiov
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Few, if any, sci-fi authors have influenced the genre more profoundly than Isaac Asimov. Across over 40 novels and countless short stories, Asimov helped define everything from fictional robotics to galaxy-spanning civilizations, creating ideas that &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/stuart-fails-to-save-the-universe-season-2-filming-update-release-window-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/the-big-bang-theory-cast.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stuart Fails to Save the Universe Eyes 2027 Return
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘The Big Bang Theory’s Sci-Fi Spin-Off Officially Eyes 2027 Return</div>
+      
+      
+      <div class="summary">The Big Bang Theory's mind-bending sci-fi spin-off ended with quite a twist last night on HBO Max, leaving viewers reeling. Fortunately, the show has already secured a second season, with a tentative filming schedule and premiere date recently confir&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-drop-a-snowfall-saga-disney-plus-streaming-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/the-drop-a-snowfall-saga-isaiah-john.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            FX's 'The Drop: A Snowfall Saga' Hits No. 1 on Disney+ in the U.S.
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: FX's New 8-Part Crime Spinoff Returns as No. 1 on Disney+ in the U.S.</div>
+      
+      
+      <div class="summary">The spinoff to the popular 2017 crime drama Snowfall premiered this month, and the show is already a major hit. The Drop: A Snowfall Saga has been climbing the streaming charts since its debut on FX on Sept. 8. The Drop: A Snowfall Saga is currently &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <span class="current">8</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/9.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

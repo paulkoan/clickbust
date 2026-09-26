@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-09-26 17:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>30 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>105 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>3 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>56 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>125 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>17 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/1990s-comic-strips-better-than-dilbert/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/dilbert-comic-strip.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 1990s Comic Strips Better Than Dilbert
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 1990s were a massive decade for the comic strip medium. It marked the last full decade of Peanuts, while featuring other conclusions like that of The Far Side, while ushering in impressive new talent and engaging stories.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/prime-video-new-streaming-bundle-amc-plus-britbox-problem/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/from-season-4-finale-harold-perrineau.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video’s Newest Mega Streaming Bundle Exposes an Even Bigger Viewership Problem
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's 2026, and it's getting harder than ever to pretend the "streaming revolution" didn't just loop back to where it started. Earlier this week, Prime Video launched a $29.99/month bundle with AMC+, BritBox, MGM+, PBS Masterpiece, and Starz.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/anime-movies-every-fan-must-watch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/pop-idol-mima-kirigoe-lays-in-blue-foliage-in-perfect-blue.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Anime Movies Every Fan Needs to Watch at Least Once
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anime movies can accomplish an extraordinary amount in only a couple of hours. Without dozens of episodes to build up their world and their characters, some of the best movies have to establish their identity right from the beginning.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/naruto-sci-fi-genre-change-not-forgive/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/naruto-uzumaki-as-seen-in-naruto-shippuden.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            12 Years Later, I Still Can't Forgive Naruto For Abruptly Switching Genres
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Naruto begins like most typical shōnen anime. It centers around a misfit titular lead who is often misunderstood by those around him. Yet, he dreams big and hopes to become the Hokage someday.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/jurassic-world-not-best-sequel-camp-cretaceous/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/owen-and-claire-look-angry-at-each-other-in-jurassic-world.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jurassic World: Camp Cretaceous Is the Best Sequel in the Franchise
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jurassic World Is No Longer The Best Sequel In Its Own Franchise</div>
+      
+      
+      <div class="summary">The Jurassic Park franchise has expanded vastly since the first movie was released in 1993, and the 2015 Jurassic World film is no longer the best sequel.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/peanuts-comics-characters-ages-trivia/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/08/10-things-you-didn-t-know-about-character-ages-in-peanuts-comic-strips.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            13 Things You Didn’t Know About Character Ages in Peanuts Comic Strips
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Peanuts will always be known as one of the best classic comic strips ever created. Creator Charles Schulz put great effort into making his characters relatable and hilarious.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-william-shatner-wrong-about-banned-episode/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/william-shatner-captain-kirk-yell.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek's 'Plato's Stepchildren' Is Better Than William Shatner Claims
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Banned Classic Star Trek Episode William Shatner Called 'Dull & Forgettable' (He's Wrong)</div>
+      
+      
+      <div class="summary">Despite its bad reputation among die-hard fans, Star Trek: The Original Series Season 3 produced some of the show's most iconic and memorable episodes.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2267905/qualcomm-audio-chip-new-functionality/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/why-im-excited-for-qualcomms-newest-snapdragon-audio-chip/l-intro-1790269345.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why I'm Excited For Qualcomm's Newest Snapdragon Audio Chip
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Why I'm Excited For Qualcomm's Newest Snapdragon Audio Chip Connor Jewiss/BGR Alongside the new Snapdragon 8 Elite Extreme Gen 6 mobile chipset, Qualcomm announced the Snapdragon Sound Elite Gen 2 chip at Snapdragon Summit in Maui.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/most-valuable-pokemon-tcg-cards-discontinued-sets/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/screenshot-2026-09-23-at-10-10-57-pm-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Valuable Pokémon TCG Cards From Discontinued Sets
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Pokémon Company usually releases five to seven new Pokémon Trading Card Game (TCG) sets in a single year. With such a fast turnaround for new TCG releases, The Pokémon Company also has to discontinue Pokémon TCG sets relatively quickly, along wit&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/james-gunn-dcu-blake-lively" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/dc-blake-lively.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Carol Ferris Debuts in 'Lanterns' with New Actress Amie Mackenzie
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Blake Lively's DC Character Finally Makes Her Debut In James Gunn's DCU (But With A New Replacement Actress)</div>
+      
+      
+      <div class="summary">James Gunn's new DCU just introduced Blake Lively's character from Ryan Reynolds' Green Lantern film, but the character is being played by a different actress. Lanterns has played an important role in the world-building of the DCU.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-war-movie-opening-scenes-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/07/saving-private-ryan-1998-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Best War Movie Opening Scenes, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When it comes to writing a story, one of the hardest aspects to nail is the beginning. One would think that's the easiest part, but in fact, it's exceptionally difficult to nail the tone, establish the plot, setting, and characters, and hook your aud&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/transformers-grimlock-dinobot-combiner-dr-wu-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/transformers-grimlock-becomes-the-heart-of-a-new-dinobot-combiner.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Transformers' G1 Grimlock Completes a New Dinobot Combiner
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Back in the classic Generation 1 version of Transformers, Grimlock and the Dinobots were one of the few subgroups that couldn't combine. That's since been rectified in the past decade or so, with one company getting in on the action by bringing a pre&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/deadlocked-jaime-foxx-adds-marko-zaror-john-wick/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/jamie-foxx-looking-serious-in-baby-driver.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jamie Foxx's Deadlocked Casts John Wick Veteran Marko Zaror
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jamie Foxx’s Upcoming Action Movie Adds John Wick Veteran to Growing Cast</div>
+      
+      
+      <div class="summary">Jamie Foxx's upcoming action movie from Amazon MGM Studios has added an exciting John Wick veteran to its cast. In addition to landing celebrated comedy and drama roles, several of Jamie Foxx's best movies have been action-packed.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/studio-ghibli-new-steelbook-release-15-movies/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/10/studio-ghibli-anime.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Studio Ghibli Re-Releases 15 Beloved Films in Steelbook Collection
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Studio Ghibli Is Back With Epic New 15 Movie Release</div>
+      
+      
+      <div class="summary">Studio Ghibli is known for its catalog of beloved films that range from whimsical and magical to emotional and grounded masterpieces that are perfect for a quiet night.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-beam-me-up-mtg-november-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/william-shatner-as-captain-kirk-using-a-communicator-in-star-trek-the-original-series.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Magic: The Gathering x Star Trek 'Beam Me Up' Bundle Launches November 13
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek: Beam Me Up Officially Arrives November 13</div>
+      
+      
+      <div class="summary">Star Trek's 60th anniversary has seen dozens of exciting announcements celebrating every major era of franchise history.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/hbo-harry-potter-theme-abandon-makes-sense/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/0817e99c-7c08-495d-bdb3-a053742ab80e.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO's Harry Potter Drops the Movies' Iconic 'Hedwig's Theme'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO’s Harry Potter Ditches The Movies’ Most Beloved Aspect, And It Makes Sense</div>
+      
+      
+      <div class="summary">HBO's Harry Potter is not shying away from changing many aspects of the movies. It is not only striving to cover more narrative ground from the books than the movies ever could, but also setting the stage for many fascinating retcons.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-fall-series-hulu-over-the-garden-wall/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/hulu-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Over the Garden Wall on Hulu Is the Perfect Fall Binge
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Beloved 10-Part Miniseries Streaming on Hulu Is the Perfect Fall Binge</div>
+      
+      
+      <div class="summary">Cartoon Network's Over the Garden Wall is 12 years old this year, but it's still the undefeated champion of autumnal binge-watching. The animated miniseries is only 10 episodes long, and at 11 minutes per episode, the entire show runs the length of a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/lanterns-hbo-max-dc-show-next" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/lanterns-hbo-max.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Krypto Saves the Day! and Batwheels: Next DC Shows on HBO Max After Lanterns
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO Max Announces the Next DC Show After Lanterns - And It's Coming Soon</div>
+      
+      
+      <div class="summary">HBO Max has revealed its next DC releases just as its superhero mystery hit, Lanterns, draws to a close. The DC Studios series quickly became one of the most-watched shows on the streamer when it premiered on August 16, pulling 9.3 million views in i&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/complete-anime-worth-multiple-rewatch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/koro-sensei-draws-on-the-board-in-school-with-his-octopus-like-hands-in-assassination-classroom.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mob Psycho 100, Kill la Kill, and More Complete Anime Worth Rewatching
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Complete Anime Series Worth Multiple Rewatches</div>
+      
+      
+      <div class="summary">Finishing a great anime can be a bittersweet thing. After spending dozens of episodes becoming invested in its characters and world, reaching the final credits means accepting that there is nothing left to watch.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/final-problem-new-sherlock-holmes-netflix-adaptation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/jose-coronado-as-benjamin-basil-in-the-series-the-final-problem.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's The Final Problem Is A Must-Watch Mystery Miniseries
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s New Take On Sherlock Holmes Is A Must-Watch Mystery Series Fans Can Finish In One Day</div>
+      
+      
+      <div class="summary">Murder mystery stories are a staple of Netflix's catalog, with the genre holding an appeal that goes beyond the simple thrill of trying to guess the culprit's identity, creating fascinating deceptions that become impossible puzzles to resolve.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/abra-kadabra-worst-design-dc-on-purpose/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/absolute-flash-abra-kadabra-redesign.webp?q=49&fit=contain&w=480&h=768&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DC's Absolute Flash Gives Abra Kadabra an Intentionally Bad Redesign
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: DC Just Dropped It's Worst Redesign Yet, And It's Entirely On Purpose</div>
+      
+      
+      <div class="summary">Always a publisher eager to rise to the challenge when it comes to visually reinventing its characters, DC Comics seized yet another golden opportunity upon its introduction of the Absolute Universe. Its worlds are meant to be a darker mirror to the &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/neagley-return-book-after-reacher-spin-off-season-1/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/2c3df2d6-0705-4f57-b4e4-addd8da2048a.jpeg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lee Child's First Neagley Novel Zero Margin Arrives in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Before Reacher Season 5, Neagley Is Officially Coming Back In 6 Months</div>
+      
+      
+      <div class="summary">After Reacher season 4, even the Neagley spin-off has performed incredibly well on Prime Video with its opening installment. Like all previous Reacher seasons, Neagley season 1, too, has earned positive reviews from viewers and critics and even boast&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-wars-ahsoka-season-2-anakin-skywalker-chosen-one-mortis-gods/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2023/10/img_d8fa767b7ccc-1.jpeg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ahsoka Season 2 May Reveal Anakin Skywalker's Force Ghost Fate
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 21 Years Later, Star Wars' Biggest Anakin Skywalker Secret Is About To Be Revealed</div>
+      
+      
+      <div class="summary">Although Anakin Skywalker/Darth Vader has been a critical part of Star Wars movies and TV shows from the beginning, and he continues to appear in the franchise's most recent shows (with his latest appearance in Star Wars: Maul Shadow Lord), there's s&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/william-shatner-statement-star-trek-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/09/star-trek_kirk.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            60 Years Later, Star Trek's William Shatner Addresses Returning as Captain Kirk
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This year marks the 60th anniversary of Star Trek, the dawn of a new era for sci-fi entertainment. Right there from the start was William Shatner, who led the original show's cast in his role as Captain James T. Kirk.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/coraline-streaming-hbo-max-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/hbo-max-logo-featured.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Coraline, the Best Fantasy Horror Movie of the 2000s, Hits HBO Max
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Best Fantasy Horror Movie of the 2000s Officially Hits HBO Max</div>
+      
+      
+      <div class="summary">While the 2000s saw the rise of fantasy blockbusters like The Lord of the Rings and Harry Potter, it was also a great time for stories that wove more darkness into the genre.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/absolute-batman-new-origin-scarecrow/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/batman-1.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Absolute Batman #24 Reveals Bruce Wayne's New Origin
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: DC Unveils Bold New Origin For Batman That Completely Redefines The Classic Hero</div>
+      
+      
+      <div class="summary">Each issue of Absolute Batman leaves readers with a lot of emotions. Sometimes the series wants fans to feel bad for what happened to Bruce Wayne, his mother, or his friends, or upset that this version of Gotham City resembles the current world.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/open-world-games-that-complicate-criminal-acts/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/the-player-at-the-market-place-in-the-major-city-in-the-blood-of-dawnwalker.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Open-World Games That Make Being a Wanted Criminal Surprisingly Complicated
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Open-world games that feature wanted systems or criminal mechanics tend to be very limited in what players can do, and breaking the law comes with actual consequences.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/denzel-washington-the-equalizer-netflix-streaming-release-date-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/10/the-equalizer-denzel.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Denzel Washington's The Equalizer Arrives on Netflix October 1
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Denzel Washington & Netflix Are Teaming Up To Take Over Streamer With 132-Minute Action Thriller's Release</div>
+      
+      
+      <div class="summary">Denzel Washington is coming to dominate Netflix with one of his best action thrillers. Netflix's movie roster packs quite the punch with its many action thrillers.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-i-am-not-okay-with-this-carrie-replacement/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2020/03/I-Am-Not-Okay-with-This-Sophia-Lillis-2.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's I Am Not Okay With This Blends Matilda and Stephen King's Carrie
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s R-Rated Matilda Is A Stephen King Series In Disguise</div>
+      
+      
+      <div class="summary">A bleak coming-of-age show on Netflix feels like an R-rated take on Matilda. However, a closer look at it reveals how it easily qualifies as a loose and modernized Stephen King adaptation. On the small-screen, Stephen King adaptations have usually st&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/friends-show-russ-ross-snaro-david-schwimmer-credit/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/david-schwimmer-as-russ-in-friends.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Sep 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Friends: Why Russ Is Played By "Snaro" (When It's Really David Schwimmer)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Friends season 2, episode 10, "The One with Russ" introduces Rachel's new boyfriend, Russ, who is also played by David Schwimmer, yet the character is credited as "Snaro.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <span class="current">7</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/8.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>
