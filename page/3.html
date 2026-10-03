@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 8 sites · Generated 2026-10-03 19:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>121 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://movieweb.com/taylor-sheridan-cast-elle-chapman-dutton-ranch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/dutton-ranch-kelly-reilly-cole-hauser.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Elle Chapman ('The Madison') Expresses Interest in Joining 'Dutton Ranch'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Dutton Ranch' Finds Perfect New Cast Candidate as Taylor Sheridan Veteran Officially Confirms Interest</div>
+      
+      
+      <div class="summary">Producer Taylor Sheridan is known for bringing the same actors back for multiple projects. For instance, James Jordan has appeared in six of Sheridan's projects, playing different characters in Wind River, Yellowstone, Mayor of Kingstown, 1883, Speci&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/avengers-doomsday-merch-first-look-doctor-doom-face-mask" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/rdj_doom_no_mask.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers: Doomsday Merch Reveals First Look At Doctor Doom’s Face Without His Mask
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel Studios made the announcement to end all announcements at San Diego Comic-Con 2024 when Robert Downey Jr. took the stage as Doctor Doom. After striking out with Kang, Kevin Feige and Co. needed to take a big swing, and they landed on arguably &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/tracker-season-4-russell-shaw-villain/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/mixcollage-27-may-2026-02-59-pm-8992.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tracker Season 4: Russell Shaw Returns as the Villain
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tracker's Returning Original Character Is Season 4's Villain</div>
+      
+      
+      <div class="summary">When Tracker season 4 returns, it will have a peculiar villain — a fan-favorite original character in the series. Justin Hartley made the transition from playing Jack and Rebecca Pearsons' firstborn in NBC's This Is Us to people's favorite survivalis&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/anya-taylor-joy-super-mario-galaxy-movie-streaming-success-peacock-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/rosalina-super-mario-galaxy.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Anya Taylor-Joy's 'The Super Mario Galaxy Movie' Reaches $1 Billion at the Box Office
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Anya Taylor-Joy’s $1 Billion Sci-Fi Blockbuster Is Officially Taking Over the World</div>
+      
+      
+      <div class="summary">2026 has been the year of Anya Taylor-Joy so far, and she isn’t slowing down as she’s poised to star in one of the biggest sci-fi movies of the year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/twilight-zone-season-4-format-change-ended-perfect-sci-fi-run/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/burgess-meredith-with-a-crumpled-cigar-in-his-mouth-from-the-twilight-zone.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Twilight Zone’s Season 4 Format Change Ended a Perfect 102-Episode Sci-Fi Run
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After three years of building a perfect run of sci-fi stories, The Twilight Zone made a huge change in Season 4 that ended its hot streak.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/brandon-sanderson-mistborn-script-apple-tv-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/11/mistborn-trilogy.jpg?q=70&fit=crop&w=1300&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brandon Sanderson's Mistborn Movie Gets Apple TV Update: Script Draft Submitted
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brandon Sanderson's New 7-Part Fantasy Epic Gets Apple TV Update</div>
+      
+      
+      <div class="summary">Brandon Sanderson is one of the most popular fantasy authors of all time, whose work has turned into international bestsellers. However, he has yet to turn them into films and shows, as he's working with Apple TV for his first releases, which will in&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/casino-royale-best-james-bond-reboot/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/daniel-craig-emerging-from-the-water-in-casino-royale-2006.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            20 Years Later, Daniel Craig's Casino Royale Is Still The Best James Bond Reboot
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">20 years on from Daniel Craig's debut as James Bond, Casino Royale remains the franchise's best reboot. It's easy to forget now, but Craig's casting as 007 was hugely controversial when it was announced.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/books-about-the-end-of-the-world-barack-obama-recommended/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/seek-immediate-shelter.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Barack Obama Keeps Recommending Books About The End Of The World, And I’m Wondering Why
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ok, I’m not saying President Barack Obama is attempting to tell us something about the apocalypse through his seasonal reading lists, but I definitely think he’s dropping some strong hints.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2274675/henry-cavill-alan-ritchson-action-war-movie-netflix-hit-bomb-theaters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/henry-cavill-and-alan-ritchsons-action-war-movie-is-a-netflix-hit-after-bombing-in-theaters/the-ministry-of-ungentlemanly-warfare-earned-a-decent-salute-from-critics-but-not-from-audiences-1790871834.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Ministry of Ungentlemanly Warfare Becomes Netflix Hit After Theatrical Flop
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Henry Cavill And Alan Ritchson's Action War Movie Is A Netflix Hit After Bombing In Theaters</div>
+      
+      
+      <div class="summary">Henry Cavill And Alan Ritchson's Action War Movie Is A Netflix Hit After Bombing In Theaters Lionsgate Over the last few years, the online comic book movie-loving community has made a big effort to get tough-as-nails "Reacher" star Alan Ritchson into&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/one-piece-weakest-conquerors-haki-users-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/donquixote-doflamingo-smiling-menacingly-in-one-piece.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Weakest Conqueror's Haki Users in One Piece, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Conqueror's Haki is one of the rarest abilities in One Piece. Unlike Observation or Armament Haki, it cannot simply be learned through training. Its users possess an exceptionally powerful will, which explains why only the anime's greatest pirates, M&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/fire-emblem-fortunes-weave-free-time-too-big/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/fire-emblem-fortunes-weave-cai.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fire Emblem: Fortune's Weave Doesn't Have to Be a Slog
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">I admire Fire Emblem: Fortune's Weave approach to bigness. What stood out to me during the review period and since is how many ways it lets you tailor free time and some battles to your needs, even if that tailoring means skipping certain things enti&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/harlan-coben-final-twist-season-2-stream-paramount-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/harlan-coben-is-the-host-in-final-twist.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Harlan Coben's 'Final Twist' Season 2 Premieres This Month
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Harlan Coben's Binge-Worthy Hit Crime Thriller Series Returns With New Streaming Release This Month</div>
+      
+      
+      <div class="summary">As fans of Harlan Coben's vast catalog of thrillers are anticipating his next miniseries on Netflix, one of the author's best shows is about to return with a new exciting release.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/lanterns-season-2-everything-we-know/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/movieweb-featured-image-template-2026-10-02t124958-484.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Lanterns' Season 2: Everything We Know About the HBO Sci-Fi Series
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Despite initial skepticism about the DCU-set series before it debuted, Lanterns has proven a big hit for HBO with critics and audiences alike. The series sits at 92% on Rotten Tomatoes and quickly became a mainstay in the Top 10 of HBO Max for weeks &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/highlander-henry-cavill-fantasy-reboot/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/henry-cavill-in-highlander-reboot.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Henry Cavill's Highlander Reboot: What We Know So Far
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'John Wick' Meets 'The Witcher' in Henry Cavill's Long-Awaited '80s Action Fantasy Reboot</div>
+      
+      
+      <div class="summary">Henry Cavill has become a trusted source of action entertainment. Whether "reloading his fists" in Mission: Impossible — Fallout (2018) or thwarting evil as the DCEU's Superman, he has won audiences over with undeniable charisma and dedication.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/marshals-season-2-yellowstone-return-date-how-to-watch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/marshals-season-2-luke-grimes-03.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan's 'Marshals' Premieres on CBS This Weekend
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan’s ‘Yellowstone’ Sequel Officially Returns in 24 Hours</div>
+      
+      
+      <div class="summary">While Taylor Sheridan's day-to-day involvement in the Yellowstone franchise remains limited, the legacy that he has left behind is immense. Sheridan is all set to begin a creative partnership with NBCUniversal, following several successful years at P&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/yu-gi-oh-dark-side-of-dimensions-new-trailer-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/07/yami-yugi-in-yugioh.jpg?q=49&fit=contain&w=1920&h=960&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Yu-Gi-Oh! The Dark Side of Dimensions Returns to Theaters November 20 with New Trailer
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Yu-Gi-Oh! Returns November 20 With New Official Trailer</div>
+      
+      
+      <div class="summary">Yu-Gi-Oh! is heading back to theaters this November for a major anniversary release, revisiting The Dark Side of Dimensions after 10 years. Studio Gallop's fan-favorite Yu-Gi-Oh! The Dark Side of Dimensions is officially returning to theaters for a l&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/john-wick-movies-pluto-tv-success-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/john-wick-chapter-4-keanu-reeves-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 4 John Wick Movies Land in the Streaming Top 10 With Every Movie Free to Watch
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The John Wick films make up one of the most successful action franchises of the modern era. Even without any new releases, the action films have quickly risen up the ranks as fans flock to re-enjoy the Keanu Reeves movies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-amazing-spider-man-1000-spider-man-replacement/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/amazing-spider-man-1000-new-spider-man.jpg?q=70&fit=crop&w=750&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel's Amazing Spider-Man #1000 Reveals Peter Parker's Grandson as New Spider-Man
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Say Goodbye To Spider-Man As Marvel Officially Confirms His Replacement</div>
+      
+      
+      <div class="summary">This article contains spoilers for The Amazing Spider-Man #1000 Marvel is ready to make history with Spider-Man, and it's doing so by taking the title away from Peter Parker.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/dan-houser-absured-ventures-open-world-game/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/04/gta-6-take-two-earnings-call-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA Creator Has Avoided GTA 6 While Making New Open-World Games
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While Dan Houser is best known as one of Rockstar's co-founders and for creatively spearheading the first five Grand Theft Auto games, he founded Absurd Ventures in 2023 to make new creative projects, including video games.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2271225/cool-new-features-added-to-youtube-this-year/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-cool-new-features-added-to-youtube-in-2026/l-intro-1790623102.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Cool New Features Added To YouTube In 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Cool New Features Added To YouTube In 2026 Chayjitti Hongmanee/Shutterstock YouTube is a steadily evolving platform, and while it has changed quite a bit over the years, 2026 has brought some particularly interesting additions to the masses.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/pokemon-switch-2-new-release-plantopia/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/02/nintendo-switch-2-and-pikachu.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Celebrates 30th Anniversary With 3 New Switch 2 Releases Available Now
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Nintendo Switch 2 gamers just got the perfect way to show off their love of the Pokémon franchise before the 30th anniversary celebrations come to an end.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2271068/how-long-samsung-smart-appliances-get-software-support/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-long-do-samsung-smart-appliances-get-software-support/l-intro-1790617752.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Long Do Samsung Smart Appliances Get Software Support?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How Long Do Samsung Smart Appliances Get Software Support? AS project/Shutterstock We may receive a commission on purchases made from links.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tom-cruise-digger-box-office-opening-10-million/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/digger-tom-cruise-2.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Cruise's 'Digger' Opens to Disappointing $4 Million at Box Office
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Cruise’s New $200M Movie Is Officially One of His Worst Box Office Debuts</div>
+      
+      
+      <div class="summary">It's an unfortunate weekend in the history of movies — "the last movie star," Tom Cruise, is struggling to pull audiences to theaters, and the historic Warner Bros. is no more.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/video/adam-savage-why-mythbusters-was-never-a-science-show-fanx-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/adam-savage-2.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Adam Savage: Why MythBusters Was Never a Science Show | FanX 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Adam Savage reveals why MythBusters was never intended to be a science show — and why its unexpected success still amazes him.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/avengers-doomsday-directors-doom-collecting-people-hulk" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/avengers-doomsday-hulk-mcu-marvel.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers: Doomsday Directors Confirm Doctor Doom Is Collecting More People Besides Hulk
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Avengers: Endgame Encore has confirmed that Doctor Doom (Robert Downey Jr.) is eyeing up the Avengers for his own team in Avengers: Doomsday, and it will include more than just Bruce Banner/Hulk.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/landman-season-3-production-delay-taylor-sheridan-neo-western/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/landman-billy-bob-thornton-1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Landman's Season 3 Delay Is Officially Risking the Success of Taylor Sheridan’s Neo-Western
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">If this fall feels a little empty, that’s because the new season of Landman won’t return as scheduled. Starring Billy Bob Thornton as crisis executive Tommy Norris, Taylor Sheridan’s neo-Western series follows the cyclical highs and lows of oil boomt&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/digger-tom-cruise-monologue-scene-director-alejandro-g-inarritu-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/alejandro-g-i-rritu-interview.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alejandro G. Iñárritu Was So Blown Away by Tom Cruise’s ‘Digger’ Take He Refused to Film Coverage
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Summary Collider's Steve Weintraub talks with director Alejandro G. Iñárritu for Digger. Iñárritu discusses years of prep and a two-year edit, honing the filmmaker's ambitious vision. He also highlights Cruise's masterful monologue, calling it a "mir&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2271164/apple-iphone-2007-vs-iphone-2026-whats-changed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/2007-vs-2026-apple-iphone-whats-changed-over-the-years/l-intro-1790521750.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            2007 Vs. 2026 Apple iPhone: What's Changed Over The Years?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">2007 Vs. 2026 Apple iPhone: What's Changed Over The Years? Anastasiia Sapozhnikova/Shutterstock Nearly 20 years ago, Apple launched the very first iPhone, which would go on to build today's strong following.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-manga-that-started-in-2026-so-far/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/roku-s-house-of-oddities-manga-art.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Best Manga That Started in 2026, So Far
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">2026 has already entered its last stretch, but the year has served up some explosive manga already. From unhinged power-ups to borderline insane protagonists and a strange mix of tropes, 2026 has produced a few bold manga that have the potential to b&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-last-of-us-season-3-pedro-pascal-joel-role-backflashes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/tlou.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Joel's Legacy Can Help 'The Last of Us' Season 3 Adapt Abby's Story
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: One Major Way Pedro Pascal Can Save ‘The Last of Us’ Season 3</div>
+      
+      
+      <div class="summary">Adapting a video game can be tricky. Watching a movie or TV show is a different experience than playing a game, and often times, the mediums don't overlay well.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <span class="current">3</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/4.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

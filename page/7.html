@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 8 sites · Generated 2026-10-03 19:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>121 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/avatar-seven-havens-replace-aang-korra/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/avatar-the-last-airbender-season-3-still.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avatar: Seven Havens Replaces Aang and Korra with New Earthbender Pavi
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Avatar: The Last Airbender Is Replacing 2 Main Characters In Major New Sequel</div>
+      
+      
+      <div class="summary">An upcoming sequel to Avatar: The Last Airbender is replacing two of the franchise's most famous main characters. The Avatar: The Last Airbender franchise has been very busy in recent years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/jim-henson-dark-crystal-game-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/09/a-still-from-the-dark-crystal-prequel-tv-show.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Dark Crystal: The Card Game Announced by River Horse
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jim Henson's Dark Crystal Is Officially Returning In Brand-New Game</div>
+      
+      
+      <div class="summary">The Dark Crystal is an absolute classic. Debuting in 1982 and directed by Jim Henson and Frank Oz, the puppet-filled adventure story is not only visually intriguing, but also a fascinating work that drew on hundreds of different skills and showcased &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/game-thrones-war-for-westeros-monster-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/07/game-of-thrones-war-for-westeros.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Giant Spiders from Game of Thrones Lore Appear in Upcoming RTS Game 'War for Westeros'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Game of Thrones’ Biggest Villain Is Even More Terrifying in an Upcoming Official Release</div>
+      
+      
+      <div class="summary">PlaySide Studios based its upcoming real-time strategy game Game of Thrones: War for Westeros on the hit HBO series, using the likeness of actors like Nikolaj Coster-Waldau, Kit Harington, and Emilia Clarke for the hero units you can field in battle.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/full-metal-jacket-stream-hbo-september-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2024/10/x-6.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stanley Kubrick's Full Metal Jacket Now Streaming on HBO Max
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 39 Years Later, One of the Greatest War Movies Ever Made Is Making a Comeback on Streaming</div>
+      
+      
+      <div class="summary">One of, if not the greatest war movies ever made, is officially one of the biggest movies on streaming. The title of the greatest war movie is an incredibly contentious one.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/steven-spielberg-jurassic-park-streaming-starz-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/jurassic-park-1993-5.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jurassic Park Lands on Starz as Fans Honor Sam Neill
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Steven Spielberg's $1B Dollar Sci-Fi Masterpiece Officially Conquers a New Streaming Home</div>
+      
+      
+      <div class="summary">Ten months into 2026, the world has already lost several Hollywood icons. From Dolly Parton to Tim Curry, some of the best screen stars have sadly died this year. In July, the news broke that the iconic Sam Neill had passed away at the age of 78.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/yellowstone-jimmy-hurdstrom-return-in-marshals-not-dutton-ranch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/11/yellowstone-jimmy-emily-1.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan Cancels 6666 Spinoff, Jimmy Returns in Marshals Instead
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan Is Wasting the Perfect Replacement for Jimmy’s Canceled Yellowstone Spinoff</div>
+      
+      
+      <div class="summary">Taylor Sheridan is wasting what could have been the perfect replacement for his canceled Yellowstone spinoff, 6666, by bringing back Jefferson White as Jimmy Hurdstrom in Marshals instead of Dutton Ranch.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-cyberpunk-movies-last-20-years-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/mv5boti1nja5otmzml5bml5banbnxkftztcwmtiynjm4na-_v1_-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Greatest Cyberpunk Movies of the Last 20 Years, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The best cyberpunk movies of the last 20 years owe plenty to the films that came before them. Blade Runner, Akira, Ghost in the Shell, and The Matrix each left their mark on the genre, creating worlds and ideas that filmmakers are still playing with &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/christopher-nolan-the-prestige-streaming-netflix-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/04/theprestige.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Christopher Nolan's The Prestige Arrives on Netflix in October
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Christopher Nolan’s Mind-Bending $110M Thriller Is Officially Coming to Netflix</div>
+      
+      
+      <div class="summary">We’re living in an era where arguably the biggest crowd-pullers are not movie stars but a filmmaker and a fictional character. This summer saw both operating at the peak of their popularity.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/metal-gear-solid-naked-snake-october-2026-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/8fbafca5bfd935004daed4a7982eb0ca7992.webp?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Metal Gear Solid Delta: Snake Eater Statue Available for Pre-Order in October 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Metal Gear Solid Fans, Mark Your Calendars For October 2026</div>
+      
+      
+      <div class="summary">Released back in 2025 as a remake of 2004's Metal Gear Solid 3: Snake Eater, Metal Gear Solid Delta: Snake Eater was a return to form for the Metal Gear Solid franchise, marking the first major entry in the series since 2018's Metal Gear Survive.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ridley-scott-black-hawk-down-streaming-free-fandango-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2025/10/the-soldiers-in-a-gunfight-in-black-hawk-down.jpg?q=49&fit=crop&w=480&h=240&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Black Hawk Down Now Free to Stream on Fandango at Home
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ridley Scott's Epic War Thriller Is Officially Free to Stream</div>
+      
+      
+      <div class="summary">One of Ridley Scott's most accomplished films, which earned him an Academy Award nomination for Best Director, has officially landed on free streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2266412/desk-gadgets-replace-your-notepad/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-desk-gadgets-that-can-replace-your-notepad/l-intro-1790173719.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Desk Gadgets That Can Replace Your Notepad
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Desk Gadgets That Can Replace Your Notepad TippaPatt/Shutterstock We may receive a commission on purchases made from links. Even in the digital age, an old-fashioned paper notepad is still one of the best productivity tools.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pokemon-ruby-sapphire-emerald-2027-new-statues/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/rayquaza.avif?q=49&fit=contain&w=1000&h=750&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokemon Ruby, Sapphire, and Emerald Legendary Figures Releasing in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Pokemon Ruby, Sapphire, and Emerald Are Officially Returning In 2027</div>
+      
+      
+      <div class="summary">Pokémon is certainly going through an exciting time right now, with the 30th Anniversary proving to be a real landmark for the franchise, particularly in the seemingly impossible-to-stop TCG.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/excalibur-john-boorman-45-years-anniversary/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/04/excalibur_ver2_xlg.jpg?q=70&fit=crop&w=750&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Excalibur: John Boorman's Arthurian Epic at 45
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 45 Years Ago, a Failed Lord of the Rings Movie Became a Film That Transcended Fantasy</div>
+      
+      
+      <div class="summary">In the late 15th century, a man named Thomas Malory, whose identity is still debated by scholars, wrote Le Morte d’Arthur, a compilation of legends, chivalric poems, and folklore related to King Arthur and the Knights of the Round Table.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jj-abrams-cult-classic-overlord-leaving-paramount-plus-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/08/overlord.jpeg?q=70&fit=contain&w=750&h=422&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Overlord: J.J. Abrams' WWII Horror Film Leaves Paramount+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Saving Private Ryan' Meets '28 Days Later' in J.J. Abrams’ Cult Classic Sci-Fi Thriller Leaving Paramount+</div>
+      
+      
+      <div class="summary">After a seven-year gap, J.J. Abrams made a return to the sci-fi genre this year as a producer on The End of Oak Street. Directed by David Robert Mitchell, the film starred Anne Hathaway and Ewan McGregor in the lead roles.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/m-night-shyamalan-remain-movie-aspect-ratio-changes-meaning-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/remain-jake-gyllenhaal.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            M. Night Shyamalan Reveals Visual Trick in New Film 'Remain' [Exclusive]
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: M. Night Shyamalan Officially Reveals the Bold Visual Trick in His New Psychological Thriller [Exclusive]</div>
+      
+      
+      <div class="summary">Summary Beyond Fest celebrates M. Night Shyamalan with Night Visions: The Shock and Awe of M. Night Shyamalan. Collider's Steve Weintraub speaks with Shyamalan about his career in a conversation that spans the past, present, and future.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/sicario-3-script-taylor-sheridan-paramount/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/07/sicario-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sicario 3 is Happening with Taylor Sheridan Returning to Write
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Taylor Sheridan has become one of the most popular and prolific TV writers of the last decade, thanks to series like Yellowstone, Landman, and Dutton Ranch.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/paul-rudd-clueless-streaming-starz-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/clueless.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Clueless Leaves Netflix, Now Streaming on Starz
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Dropped This Iconic ’90s Teen Movie, but Starz Is Officially Saving It</div>
+      
+      
+      <div class="summary">Paul Rudd is one of the many MCU alumni joining the cast of the upcoming Avengers: Doomsday. The MCU's biggest project since Endgame, which is currently re-released in theaters, almost anyone associated with the franchise has been announced in a fran&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/dimension-20-best-seasons-episodes-to-start-with/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/25160464/dimension_20_junior_year.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dimension 20 Best Season to Start? 6 Campaigns to Get Into Dropout’s D&D Show
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After performing for nearly 20,000 fans at a sold-out Madison Square Garden in January 2025, Dimension 20 cemented its status as one of the internet’s most popular tabletop live-play shows. But despite the show’s increasingly mainstream profile, figu&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-the-original-series-echoes-in-eternity/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/star-trek-echoes-in-eternity-book-cover.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Star Trek: The Original Series Novel 'Echoes in Eternity' Out October 27
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek: The Original Series Officially Returns October 27 With Echoes In Eternity</div>
+      
+      
+      <div class="summary">Star Trek: The Original Series changed science fiction television forever when it premiered in 1966, introducing audiences to Captain James T. Kirk, Spock, Dr. McCoy, and the crew of the USS Enterprise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/steam-horror-game-turns-ps1-era-graphics-into-backrooms-style-nightmare-fuel/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/fatum-betula-6.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fatum Betula: PS1-Era Horror Game on Steam Delivers Backrooms-Style Dread
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Steam Horror Game Turns PS1-Era Graphics Into Backrooms-Style Nightmare Fuel</div>
+      
+      
+      <div class="summary">There is something uniquely unsettling about empty video game spaces. Blown wide open in the wake of Backrooms, the concept of liminal horror has seeped out from internet forums and chat rooms to become a subculture all its own.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/10-cloverfield-lane-streaming-peacock-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/10-cloverfield-lane.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Cloverfield Lane Joins Peacock Streaming Service
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: J.J. Abrams' Near-Perfect Sci-Fi Nightmare Officially Finds a New Streaming Home</div>
+      
+      
+      <div class="summary">Being trapped in an underground bunker as the world outside you falls apart is a grim situation in its own right, but when you're trapped underground with a very large and angry man — a man who claims to have saved your life, but you can't help suspe&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/superman-2-dc-movie-character-replace" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/superman-dc-replace.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Man of Tomorrow Replaces Lex Luthor with Brainiac as Main Villain
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Superman 2 Replaces One Main DC Character From the First Movie</div>
+      
+      
+      <div class="summary">2027's Man of Tomorrow, the sequel to 2025's Superman, will replace Nicholas Hoult's Lex Luthor as the main villain, but luckily for the audience, the new antagonist will be better in multiple aspects.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-visionquest-runtime" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/visionquest-disney-runtime.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel's VisionQuest Gets Record-Breaking Runtime
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A new listing revealed the official runtimes for VisionQuest's first two episodes will break a key record.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/legend-of-zelda-quartet-of-time-2026-psa/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/zelda-ocarina-of-time-remake.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Legend Of Zelda: Quartet Of Time Officially Unveiled, Coming Soon
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">If The Legend of Zelda is known for anything besides its puzzle-laden dungeons and an abundance of endearing art styles, it’s surely the franchise’s wonderful music.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/battlestar-galactica-scattered-hopes-new-captain/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/untitled-design-3-4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Battlestar Galactica: Scattered Hopes Puts Players in Command of a Gunstar Captain
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Battlestar Galactica Latest Release Officially Puts A New Captain In Charge</div>
+      
+      
+      <div class="summary">Battlestar Galactica has always been defined as much by the people commanding its ships as by the Cylons relentlessly pursuing them.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/house-of-the-dragon-return-lord-of-the-hightower/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/james-norton-_1-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            House of the Dragon Characters Join Game of Thrones: Legends in Lord of the Hightower Summon
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: House Of The Dragon Makes Surprise Return In Lord Of The Hightower October 7</div>
+      
+      
+      <div class="summary">House of the Dragon is making an official surprise return ahead of its final season with a new release next week. Fans of the series are waiting on pins and needles after a divisive three seasons ended with some major on-screen deaths that Fire & Blo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-boys-real-soldier-boy-appear-vought-rising/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/jensen-ackles-as-soldier-boy-holding-his-shield-aggressively-in-the-boys-season-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Soldier Boy Returns in The Boys Prequel Series Vought Rising
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Real Soldier Boy Will Finally Appear In The Boys' Next Series</div>
+      
+      
+      <div class="summary">Throughout The Boys' five seasons, the story predominantly focused on the titular group trying to take down Homelander and Vought International, but they faced plenty of other dangerous foes along the way.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/tomb-raider-lara-croft-sophie-turner-perfect-indiana-jones-successor/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/indiana-jones-and-the-temple-of-doom_ktfprp.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sophie Turner Cast as Lara Croft in Amazon's Tomb Raider Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Amazon Has Cast Indiana Jones' Successor, And She's The Perfect Choice</div>
+      
+      
+      <div class="summary">Amazon has found the successor to Harrison Ford's Indiana Jones, and the actress they cast is perfect for the role. As Harrison Ford has gotten older, Disney and Lucasfilm have tried to replace him a handful of times.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/bleach-mirrors-high-november-2026-sequel-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/ichigo-kurosaki-as-seen-in-bleach-thousand-year-blood-war-anime.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bleach Mobile Game Mirrors High Launches November 2026 as Thousand-Year Blood War Sequel
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Bleach Officially Returns November 2026 With Sequel To Thousand-Year Blood War Arc</div>
+      
+      
+      <div class="summary">Bleach is arguably one of the most iconic manga and anime series of all time, with the original show airing from 2004 to 2012 and consisting of a whopping 366 episodes.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-offer-better-than-godfather-3/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/juno-temple-in-the-offer-2022.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Offer Miniseries Is a Better Godfather Follow-Up Than Part III
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Admit It, Paramount's 10-Part The Godfather Series Is Better Than The Godfather Part III</div>
+      
+      
+      <div class="summary">While The Godfather trilogy might be beloved as a whole, it is time to admit that Paramount’s raucous miniseries based on the behind-the-scenes story of the original movie is actually a superior follow-up to The Godfather Part III.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <span class="current">7</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/8.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

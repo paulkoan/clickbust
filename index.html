@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 8 sites · Generated 2026-10-03 19:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>121 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.polygon.com/futurama-series-finales-ranked-best-worst/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/23249598/mgid_arc_imageassetref_comedycentral.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Futurama' Series Finales Ranked: All 6 of Them, From Worst to Best
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">“One thing we take pride in at Futurama is that we have a lot of practice writing last episodes ever.” When David X. Cohen sat down for an interview with Polygon last week, this is what he said about the show’s latest “last episode ever,” titled “Fin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/kirsten-dunst-nicole-kidman-the-beguiled-streaming-youtube-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/11/the-beguiled.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Kirsten Dunst's 'The Beguiled' (2017) Is Now Free to Stream on Pluto TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Kirsten Dunst’s Twisted Clint Eastwood Remake Is Officially Free to Stream</div>
+      
+      
+      <div class="summary">Nicole Kidman has been on a rampage in these last few years, appearing in around half a dozen popular shows such as Lioness, Nine Perfect Strangers, and Margo’s Got Money Problems.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-family-drama-movies-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/the-godfather-1972-poster.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Best Family Drama Movies of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There’s a lot of drama within quite a few families, it’s safe to say, both when it comes to real life and in fiction.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/prime-video-dark-tower-series-fate-confirmed-mike-flanagan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/stephen-king-s-the-dark-tower-cover-featuring-the-gunslinger.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's Dark Tower Series Fate Confirmed by Frequent Stephen King Collaborator
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Horror and sci-fi author Stephen King is one of the most prolific writers, and Hollywood jumped at every opportunity to adapt his work. However, only three directors have adapted his work more than twice, and Mike Flanagan has officially become his m&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-games-like-witcher-3-wild-hunt/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/games-like-witcher-3-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 8 Best Games Like The Witcher 3: Wild Hunt
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Witcher 3: Wild Hunt is one of, if not the best, RPGs of all time. 11 years after launch, everyone's playing it again thanks to a fancy new remaster (that's free for anyone who owns the existing game), meant to prep players for the Songs of the P&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/crime-shows-like-the-shield/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/untitled-design-13-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            9 Near-Perfect Crime Shows To Binge If You Love The Shield
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While The Sopranos gave us one of TV's greatest antiheroes, just one year later, The Shield would give viewers another in Vic Mackey, whose descent resembles a Greek tragedy taking place within a police department.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/scrubs-revival-stealth-sequel-my-mentor-mentee/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/182898_0105-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Scrubs' Revival Officially Comes Full Circle With Inevitable Stealth Sequel
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Scrubs celebrates its 25th anniversary this year, and Season 2 of the revival isn't wasting any time when it comes to reminding us about the show's original run.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pokemon-winds-waves-map-size-leak-opening-sequence/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/pokemon-winds-and-waves-underwater-scene.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Winds & Waves Opening Leaks, Reveals New Region Map Size
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Nintendo might not show much of Pokémon Winds & Waves until 2027, but the next generation of Pokémon games has been subject to plenty of leaks in the meantime.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/chicago-fire-season-15-showrunner-change-andrea-newman/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/chicago-fire.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            After 14 Seasons, It's Officially the End of an Era for 'Chicago Fire'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The One Chicago franchise is no stranger to departures, and heading into its 15th season, Chicago Fire is faced with a handful of them.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/perfect-sci-fi-books-became-even-better-movies/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/starship-troopers-book-cover-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Perfect Sci-Fi Books That Became Even Better Movies
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Films based on books have been made since pretty much the birth of cinema as a storytelling medium, and "the book was better than the movie" has been the age-old adage that has been most often heard said about such films.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/batman-2-robert-pattinson-bruce-wayne-set-photos/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/robert-pattinson-at-the-78th-cannes-film-festival-die-my-love-premiere.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Robert Pattinson Officially Returns As Bruce Wayne In New Batman 2 Set Photos
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Robert Pattinson returns as the Caped Crusader. Following Superman's huge success in 1938, Bob Kane and Bill Finger created Batman, who first debuted in Detective Comics #27. The character has undergone many adaptations, transitioning from 1940s comi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/far-side-best-quote-dark-funny/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/03/far-side-grinning-man-left-and-wide-eyed-man-right.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            44 Years Later, The Far Side's Best Quote Is Darker And Funnier Than Ever
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Far Side's most timeless line of dialogue hits harder nearly 45 years after it was first published. The thing about The Far Side is, it's literature.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/a-nightmare-on-elm-street-ranked-fear-factor/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-entity-freddy-krueger-grabs-dylan-miko-hughes-in-wes-craven-s-new-nightmare-1994.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 9 A Nightmare On Elm Street Movies Ranked By Fear Factor
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's simple enough to rank the A Nightmare on Elm Street saga by quality, but how do they stack up in terms of scares? A glut of slasher movies followed the success of John Carpenter's groundbreaking Halloween in 1978, leading to the subgenre almost &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-thriller-tv-series-all-time/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/untitled-design-1-16.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 20 Best Thriller Series Of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Everyone loves an excellent thriller series every once in a while. Considering there’s no shortage of amazing thriller shows available, figuring out which to watch can be challenging, though.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/masterpiece-military-thriller-movies-rent-free/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/05/13-hours-the-secret-soldiers-of-benghazi_iyqgyx-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Masterpiece Military Action Thriller Movies That Live Rent-Free In Our Minds
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Compared to regular action movies, military thrillers just hit differently. Maybe it's the chain of command breathing down everyone's neck, or the fact that many of these stories are ripped from real missions, or that watching military professionals &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/marvel-loki-disney-plus-streaming-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/disney-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Loki Surges on Disney+ Streaming Before 'Avengers: Doomsday'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel’s Best Disney+ Show Officially Surges on Streaming Before ‘Avengers: Doomsday’</div>
+      
+      
+      <div class="summary">Marvel fans have had a lot to be excited about this year, and one of the franchise’s best TV shows is trending upwards on streaming before the premiere of Avengers: Doomsday.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-wonkas-golden-ticket-rotten-tomatoes-audience-score-franchise-record/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/04/wonka-and-oompa-loompas.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wonka's The Golden Ticket Gets Lowest Rotten Tomatoes Audience Score in Franchise History
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's Willy Wonka Series Rotten Tomatoes Score Officially Breaks Audience Record After 20 Years</div>
+      
+      
+      <div class="summary">Netflix's Wonka's The Golden Ticket has officially set another unwanted Rotten Tomatoes record. Charlie and the Chocolate Factory is one of Roald Dahl's most adapted stories. The novel was first adapted into a 1971 film starring the beloved Gene Wild&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/shrinking-apple-tv-comedy-streaming-success/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/shrinking_photo_030605.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Shrinking' Holds Strong in Apple TV+ Top 10 After Season 3
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV's Near-Perfect 3-Part Comedy Refuses To Back Down on Streaming</div>
+      
+      
+      <div class="summary">Apple TV has many unforgettable shows, ranging from the likes of Stick to Silo. With so many options to watch, earning a place in the streamer's most-watched titles can be fiercely competitive.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/verity-rotten-tomatoes-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/verity-anne-hathaway-red-dress.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Colleen Hoover's 'Verity' Earns Divisive Rotten Tomatoes Scores
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It Ends With Us Author's New 114-Minute R-Rated Thriller Continues Divisive Rotten Tomatoes Trend</div>
+      
+      
+      <div class="summary">A new Colleen Hoover adaptation is out in theaters. Verity, the author's first-ever foray into thriller territory, continues a divisive trend on Rotten Tomatoes. The R-rated psychological thriller hit theaters on Oct. 2, and it features a star-studde&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2271453/brad-pitt-sci-fi-movies-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/all-3-brad-pitt-sci-fi-movies-ranked/l-intro-1790633747.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 3 Brad Pitt Sci-Fi Movies, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">All 3 Brad Pitt Sci-Fi Movies, Ranked Static Media Brad Pitt has been in the screen acting business since the 1980s, and has been one of Hollywood's big names since his string of hits in the 1990s. Over the decades, the number of projects he's acted &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2271226/essential-ugreen-gadgets-for-desk/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-essential-ugreen-gadgets-for-your-desk/l-intro-1790623184.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Essential UGREEN Gadgets For Your Desk
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Essential UGREEN Gadgets For Your Desk Robert Way/Shutterstock We may receive a commission on purchases made from links. Keeping your everyday workflow tools accessible and organized isn't something we all do, but a little optimization goes a long &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/naruto-most-powerful-missing-nin-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/naruto-s-orochimaru-before-he-fled-the-village.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Naruto's 10 Most Powerful Missing Nin, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Naruto is one of the most popular anime ever made, with fans around the world following its story. The Narutoverse is full of shinobi who have made a name for themselves. However, while some became heroes, others became missing-nin after abandoning t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/robert-pattinsons-very-different-2026-roles-ranked-while-we-wait-for-the-batman-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/robert-pattinson-in-the-batman-suit-for-the-batman-part-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Robert Pattinson's 2026 Movie Roles Ranked While We Wait For The Batman 2
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Robert Pattinson has spent most of his career refusing to become too easy to define. He first broke through as Cedric Diggory in Harry Potter and the Goblet of Fire, then became Edward Cullen in the Twilight movies, two roles big enough that either c&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/morgan-freeman-an-unfinished-life-paramount-plus-streaming-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/an-unfinished-life-morgan-freeman-mitch-bradley.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Morgan Freeman's An Unfinished Life Becomes Streaming Hit on Paramount+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Morgan Freeman's Neo-Western Is Quickly Becoming A Streaming Powerhouse</div>
+      
+      
+      <div class="summary">Morgan Freeman hasn't starred in very many Westerns in his long and illustrious career, but one of them is seeing a resurgence 21 years later.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-daily-show-spinoffs-ranked-stephen-colbert-john-oliver/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-daily-show.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Colbert Report & Every Other Spinoff Of The Daily Show, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There have been many takes on the late night TV show format, but The Daily Show might be the most iconic. Ushering in a new era of sharp satire and political commentary, The Daily Show is most associated with one of the series' long-time hosts, Jon S&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/ace-combat-8-wings-of-theve-soundtrack/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/ace-combat-8-wings-of-theve-pilot.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ace Combat 8 Secretly Has the Best Video Game Music of the Year
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ace Combat 8: Wings of Theve is one of the best video games I’ve played in 2026, and there are plenty of reasons why.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/ice-road-vengeance-liam-neeson-stream-hbo-max-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/liam-neeson-reprises-his-role-as-mike-mccann-in-ice-road-vengeance.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Liam Neeson's 'Ice Road: Vengeance' Finds Success on Streaming After Flop
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Liam Neeson's 114-Minute Action Thriller Sequel Flop Becomes One of the Biggest Movies in the World</div>
+      
+      
+      <div class="summary">One of the most underrated action thrillers in Liam Neeson's massive catalog has finally found success on streaming. The Academy Award-nominated star, best known for franchises like Taken and movies like Unknown and The Commuter, has become a reliabl&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/sicario-3-taylor-sheridan-writing/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/taylor-sheridan-spec-ops-lioness-streaming-success-paramount.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan Returns to Write 'Sicario 3'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 8 Years Later, Taylor Sheridan Finally Returns to the Action Thriller Franchise Everyone Has Been Waiting For</div>
+      
+      
+      <div class="summary">The first name in 2020s television is undoubtedly the prolific writer, director, and producer Taylor Sheridan, who has been the mastermind behind some of the most popular and well-received TV shows of the decade.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/steve-carell-the-40-year-old-virgin-streaming-starz-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/09/steve-carell.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Steve Carell's 'The 40-Year-Old Virgin' Is Now Streaming on Starz
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 21 Years Later, Steve Carell’s $177M Breakout Hit Is Officially Moving Streamers</div>
+      
+      
+      <div class="summary">One of the most influential names in modern comedy, the Oscar-nominated Steve Carell is the face of many people's favorite comfort shows, most notably as the lovable Michael Scott in The Office.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/war-legal-drama-thriller-hbo-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/dominic-west-as-morgan-henderson-in-war.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO's Legal Thriller 'War' (87% RT) Becomes Top 10 Hit in 2 Days
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: In Just 2 Days, HBO's New Legal Thriller With 87% RT Is 1 of the Most-Watched Shows on Streaming</div>
+      
+      
+      <div class="summary">Legal thrillers can deliver some of the most addictive and compelling stories. And HBO's latest legal thriller starring Dominic West and Sienna Miller proves it, quickly becoming a streaming hit in just two days. Per FlixPatrol, War is currently the &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    <span class="disabled">&laquo; Newer</span>
+  
+
+  
+    
+      <span class="current">1</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/2.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

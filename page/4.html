@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 8 sites · Generated 2026-10-03 19:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>121 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/community-halloween-episodes-every/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/community_cevxhe-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Community Halloween Episode (In Chronological Order)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Greendale Community College sure knew how to get into the Halloween spirit with the Community Halloween episodes often being highlights of the series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/yellowstone-iconic-location-return-main-camp-marshals-season-2-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/luke-grimes-kayce-looking-somberly-while-talking-to-breckin-merrill-s-tate-in-marshals-season-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marshals Season 2 Returns to Yellowstone's Dutton Ranch in 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Yellowstone Will Officially Return To Its Most Iconic Location In 2026</div>
+      
+      
+      <div class="summary">EXCLUSIVE: After being notably absent from season 1, Spencer Hudnut says an iconic Yellowstone location is coming back for Marshals season 2.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/x-men-heroes-hope-make-final-lineup-characters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/sadie-sink-at-the-2026-bafta-film-awards-at-the-royal-festival-hall-in-london.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 X-Men Heroes We Hope Make The Team's Final Lineup In The MCU's 2028 Reboot
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel Studios already has a promising lineup for its first X-Men movie, but chances are, it's not the final roster. So far, a long list of iconic characters associated with the X-Men have been confirmed to be a part of the untitled 2028 MCU project.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/where-lyle-erik-menendez-brothers-are-now/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-menendez-brothers-smiling-in-monsters_-the-lyle-erik-menendez-story-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Where The Menendez Brothers Are Now: Resentencing & Possible Parole Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This article contains discussions of sexual and psychological abuse. Few true-crime cases have remained as deeply embedded in popular culture as the story of Lyle and Erik Menendez, so naturally documentaries and TV shows, including Netflix’s Monster&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/purple-hearts-movies-to-watch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2023/05/1660018406098_purple-hearts-social.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Movies to Watch If You Loved 'Purple Hearts'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix's Purple Hearts ranks among the streamer's most successful original romances, adapting Tess Wakefield's novel of the same name.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/green-lantern-head-trauma/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/hal-jordan-kyle-chandler-wields-is-green-lantern-ring-in-lanterns.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Lanterns' Makes Even More Sense If You Know About DC's Iconic 20-Year-Old Meme
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">HBO Max's Lanterns has made the cosmic side of the DC Universe more popular than it's been in a while.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/underrated-crime-movies-netflix-resurgence/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/12/caught-stealing_npgmym.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Underrated Crime Thriller Movies That Had a Resurgence Streaming on Netflix
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some movies arrive in theaters with a lot of hype and then disappear. Then they turn up years later on a streaming service and suddenly become the movie everyone seems to have missed. We saw it happen with The Nice Guys, Dredd, Scott Pilgrim vs.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/tom-hanks-greyhound-war-apple-tv-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/10/tom-hanks.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Hanks' 'Greyhound' Returns to Apple TV Charts Ahead of Sequel
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Hanks' 10/10 WW2 Drama Returns to the Charts Ahead of Highly-Anticipated Sequel</div>
+      
+      
+      <div class="summary">Tom Hank's war film Greyhound is gearing up for a sequel, and ahead of that, the original movie is surging again on streaming. After debuting back in 2020 on Apple TV, Greyhound is back in the conversation amongst most-watched movies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-dark-series-finale/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/jonas-kahnwald-in-the-future-in-dark.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'Dark' Finale Hailed as One of the Greatest Episodes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s 3-Season Sci-Fi Masterpiece Has 1 of the Greatest Final Episodes Ever Made</div>
+      
+      
+      <div class="summary">A great mystery can keep viewers guessing for years, but its ending has to make all that uncertainty worthwhile.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/strongest-non-canon-dragon-ball-characters-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/dragon-ball-s-fu-pushing-up-his-glasses.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Strongest Non-Canon Dragon Ball Characters, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Dragon Ball remains an evergreen classic after over four decades of groundbreaking storytelling that fearlessly tackles new challenges and greater threats.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-rocketeer-greatest-stories-of-all-time-officially-confirmed-to-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2018/11/The-Rocketeer-poster-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Rocketeer's Greatest Classic Stories of All Time Are Officially Confirmed To Return
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Rocketeer is back, and this time he's packing a ton of nostalgia in his punch. Fans of Cliff Secord, a pilot that was down in the dumps of life and trying to survive by chasing a fast buck, time and again, saw his luck change for the better when &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2271158/disadvantages-using-spotify-web-app/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-disadvantages-of-using-spotifys-web-app/l-intro-1790615704.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Disadvantages Of Using Spotify's Web App
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Disadvantages Of Using Spotify's Web App Bangla press/Shutterstock You know the phrase, "There's an app for that?" Well, it couldn't be more true these days. It seems like almost every company wants you using its app, from social sites like X and R&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/heroes-sydney-sweeney-character/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/sydney-sweeney.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sydney Sweeney's Heroes Character Is A Distant Memory 17 Years Later
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While Sydney Sweeney is one of the biggest names in Hollywood today, many forget that she made her TV debut in an incredibly popular series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-final-problem-netflix-global-streaming-hit-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/the-final-problem-netflix-season-1-4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Forget ‘Knives Out’, Netflix’s 4-Part Murder Mystery Is Officially a Global Streaming Smash
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The return to prominence of old-fashioned murder mysteries can be traced back to the box-office success of the Murder on the Orient Express reboot in 2017. Directed by Kenneth Branagh, the star-studded movie grossed $350 million worldwide and spawned&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/verity-next-colleen-hoover-movie-adaptation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/04/dakota-johnson-as-lowen-reading-a-book-in-verity.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            After Verity, Layla Is The Colleen Hoover Book Hollywood Needs To Adapt Next
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Verity is the latest big Colleen Hoover adaptation to hit cinemas, and the popular author has the perfect book to be adapted next.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/ethan-hawke-batwheels-hbo-max-batman-series-season-3-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/03/instar55498265-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Batman Quiz: How Well Do You Know the Caped Crusader?
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ethan Hawke's Batman Series Officially Returns With New Episodes On HBO Max</div>
+      
+      
+      <div class="summary">Ethan Hawke is back as DC's Bruce Wayne with the release of the new episodes of his Batman series on HBO Max to start October on the right foot. Hawke's impressive filmography shows just how talented an actor he is.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/capcom-ai-re-engine-statement-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/03/nvidia-dlss-5-reveal-_-resident-evil-requiem-0-14-screenshot.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Resident Evil Dev Capcom Plans To Embrace AI In Game Development
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A Capcom developer recently made some eyebrow-raising statements about integrating AI into RE Engine, the game engine Capcom uses to make games like Resident Evil Requiem, Pragmata, and Onimusha: Way of the Sword.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-rookie-season-9-bailey-exit-scare-good-future/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/02/bailey-on-the-rookie.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bailey’s The Rookie Exit Scare Is Fantastic News For Its Future
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Jenna Dewan's personal update cast doubts about Bailey Nune's future in The Rookie, and its resolution is great news for the show's future. ABC's fall 2026 lineup is already rolling, but the Disney-owned network is missing a few hits, including Alexi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/equalizer-3-denzel-washington-stream-netflix-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/denzel-washington-the-equalizer-3-streaming-success-netflix-action-thriller-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Denzel Washington's Near-Perfect 109-Minute Action Thriller Is a Global Streaming Hit Ahead of New Sequel
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Before its recently announced sequel, Denzel Washington's 95%-rated action thriller is currently one of the biggest movies in the world. Back in 2014, audiences were first introduced to Washington's now-iconic action hero, Robert McCall.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-lightkeeper-sneak-peek-dominic-cooper-sarah-bolger/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/the-lightkeeper-dominic-cooper.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dominic Cooper's New Romance Film Is the Polar Opposite of 'Mamma Mia' in This Sneak Peek [Exclusive]
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The life of a lighthouse keeper was truly a lonely and grueling one. While few such beacons nowadays are run by a human crew, those who once manned the light for the safety of others did so at the cost of regular human companionship, often living in &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/pokemon-games-aged-the-best-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/01/pokemon-2d-3sd.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Pokémon Games That Have Aged the Best, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pokémon is currently celebrating its 30th anniversary, and the franchise is set to enter its 10th generation with Winds & Waves next year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/pokemon-30th-anniversary-best-buy-tcg-trade-play-event-promo-card/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/30th-anniversary-pok-mon-tcg-mew-ex-and-mewtwo-ex.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Best Buy's Official 'Pokémon' 30th Anniversary TCG Event Details
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Best Buy is keeping the Pokémon 30th Anniversary trading card game festivities going in October with a new "Trade and Play" event. Here's what you need to know. When is Best Buy's Pokémon event? Trade and Play day lands on Saturday, Oct. 3, from noon&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2271836/clint-eastwood-first-role-forgotten-sci-fi-50s-horror-movie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/clint-eastwoods-first-acting-role-was-in-a-forgotten-50s-sci-fi-horror-movie/l-intro-1790688197.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Clint Eastwood's First Acting Role Was in 'Revenge of the Creature'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Clint Eastwood's First Acting Role Was In A Forgotten '50s Sci-Fi Horror Movie</div>
+      
+      
+      <div class="summary">Clint Eastwood's First Acting Role Was In A Forgotten '50s Sci-Fi Horror Movie We may receive a commission on purchases made from links. You have probably heard of Clint Eastwood.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/scarlett-johansson-upcoming-movies-shows-release-dates/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/02/scarlett-johansson-smiling-at-newport-beach-film-festival-honors.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 8 Upcoming Scarlett Johansson Movies & TV Shows (Releasing In 2026 & Beyond)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Scarlett Johansson is one of Hollywood's biggest, most successful, and busiest stars, which is why she has so many upcoming movies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/weakest-legendary-pokemon-anime-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/pokemon-anime-cosmog.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Weakest Legendary Pokémon in the Anime, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Legendary Pokémon are supposed to feel like the biggest deal in the room. They get dramatic entrances, huge attacks and enough hype to make even strong trainers look completely outmatched.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/william-shatner-changing-careers-metal-album/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/star-trek-generations_j8sdd8.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            William Shatner Fronts Heavy Metal Band The *uckers, Releases Album
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: William Shatner Is Officially Changing Careers With Surprising New Release</div>
+      
+      
+      <div class="summary">Is there anyone in Hollywood with a more varied career than William Shatner? Whereas his Star Trek co-star Leonard Nimoy hung his hat on the role of Spock, Kirk was just the beginning for Shatner.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-action-movies-of-all-time/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/07/bruce-willis-die-hard.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            These 10 Action Movies Are Officially the Best of All Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Action movies are awesome. There's no need for any ostentatious language to state the obvious. Action movies aren't often made to be profound or to earn critical points. They're made to excite and entertain, and they do it better than just about any &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2271012/best-sams-club-finds-build-gaming-station/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/10-sams-club-finds-that-can-build-a-serious-gaming-station/l-intro-1790616012.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Sam's Club Finds That Can Build A Serious Gaming Station
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">10 Sam's Club Finds That Can Build A Serious Gaming Station Kjetil Kolbjornsrud/Shutterstock We may receive a commission on purchases made from links. Gaming stations are never finished, as gamers can always find something to add.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/the-simpsons-mike-price-internet-questions-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/1257480.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Is Barney Nelson's Dad? 'The Simpsons' Producer Weighs In On a Persistent Fan Theory
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This past weekend, The Simpsons launched its 38th season with "The Children's Book Job,” featuring guest star Emma Thompson. Owen Wilson and Meg Ryan will also appear this season, as well as returning favorite Joe Mantegna as Fat Tony.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/unabomber-russell-crowe-netflix-streaming-hit-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/mindhunter-holt-mccallany.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Mindhunter’ Fans Have a New Russell Crowe Psychological Thriller Taking Over Netflix
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While everyone from David Fincher to Netflix co-CEO Ted Sarandos has expressed disappointment about Mindhunter's abrupt end, there's no shortage of alternatives out there for fans of the cult classic series.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <span class="current">4</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/5.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

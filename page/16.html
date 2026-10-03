@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 8 sites · Generated 2026-10-03 19:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>121 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.polygon.com/fortnite-chapter-7-season-4-flusher-location-reveal-enemies-geno-quest/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/flusher_fn.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            What is a flusher in Fortnite Chapter 7 Season 4?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Flushers are port-a-potties that act as teleporters in Fortnite Chapter 7 Season 4. As soon as you enter one, you'll be transported to a nearby location or even another port-a-potty in the area. Port-a-potties were a lot more common in previous seaso&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2273187/amd-older-gpus-still-worth-buying/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/are-older-amd-gpus-still-worth-buying/l-intro-1790778110.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Are Older AMD GPUs Still Worth Buying?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Are Older AMD GPUs Still Worth Buying? Yasin Hasan/Shutterstock When looking back at AMD GPUs released between 2020 and 2025, some of these cards span several generations of underlying architecture and require older drivers to work properly.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/disney-plus-hulu-price-increase-2026-details/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/02/streaming-service-costs-netflix-hbo-max-hulu-apple-tv-disney-plus.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Disney+ and Hulu's Fourth Price Hike in 4 Years Reveals a Bigger Problem
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When streaming networks first emerged, they seemed like the perfect alternative to cable television. Viewers were fed up with paying an arm and a leg to catch up on their favorite shows, and "cutting the cord" became a common expression, as people in&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/keri-russell-felicity-streaming-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/the-diplomat-keri-russell.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Officially Lands 'The Diplomat' Star's Hit 4-Season Series
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Diplomat is returning to Netflix next month for a fourth season of intrigue and infighting. Star Keri Russell had a long and distinguished career before stepping into the power suits of Kate Wyler, and now, thanks to a new licensing deal with Dis&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/most-popular-superheroes-right-now/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/01/david-corenswet-as-superman-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Popular Superheroes of All Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Superheroes have captivated audiences for generations, leaving an indelible mark on both comic books and pop culture. From their incredible abilities to their timeless storylines, these heroes have evolved beyond the comic book page and become global&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/steel-ball-run-jojo-music-ending-dead-or-alive-controversy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/vs-youtube-46steelballrunjojosbizarreadventure2ndstageofficialtrailernetflix-youtube-0-43-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Biggest Anime of 2026 Breaks a 14-Year-Old Tradition, and Fans Are Furious
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Since the animated adaptation of Hirohiko Araki's manga JoJo's Bizarre Adventure premiered in 2012, the series has quickly risen to cult status.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-tony-stark-iron-man-line-marvel-cinematic-universe/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/3422618/a62a0389535b47ca8ee3626096c51479b89bf986016a2516125f6f446d7cd89b_facebook.0.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            18 Years Ago, Tony Stark's Best MCU Quote Changed the Course of Superhero Movies Forever
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Avengers: Endgame is back in theaters now, which has sparked an online debate about whether or not just four minutes of added material is worth the price of admission. Honestly though, I think people have got it all wrong.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/avengers-endgame-encore-new-marvel-easter-eggs/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/11/chris-evans-in-avengers-endgamem.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 New Marvel Easter Eggs in 'Avengers: Endgame Encore'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: SPOILERS ahead for Avengers Endgame: Encore.In the lead-up to Avengers: Doomsday, Marvel Studios re-released Avengers: Endgame in theaters. Now titled Avengers: Endgame: Encore, the movie is largely the same as the one released in 2019, with&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/boyd-holbrook-atonement-war-movie-rooftop-scene-details/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/atonement-5.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Boyd Holbrook Breaks Down the Brutal Filming of Atonement's Intense Rooftop Shootout
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Boyd Holbrook Breaks Down the Brutal Filming of His Newest War Movie’s Intense Rooftop Shootout</div>
+      
+      
+      <div class="summary">Editor's note: The following contains spoilers for Atonement. Summary 'Atonement' reframes the Iraq War through an intimate, emotionally rare portrait of humanity. Lou D'Alessandro's return home shows raw guilt, PTSD, and the hard work of seeking for&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/apple-tv-nocturne-perfect-for-hannibal-fans/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/mads-mikkelsen-in-protective-gear-as-the-titular-hannibal.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nocturne: Apple TV's Serial Killer Thriller Based on Nordic Noir Novels
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV’s New 10-Episode Serial Killer Thriller Belongs on Every Hannibal Fan’s Radar</div>
+      
+      
+      <div class="summary">In the history of network television, few shows have been as gloriously gruesome as NBC's Hannibal, which ran for three increasingly macabre seasons between 2013 and 2015.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/power-rangers-green-2-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/power-rangers-green-2-cover-ri-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Review: Power Rangers: Green #2 Offers the Franchise's Most Profound Story Yet
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The following contains major spoilers for Power Rangers: Green #2, on sale now from BOOM! Studios. Tommy Oliver is easily one of the most iconic Power Rangers of all time, and for good reason.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/backrooms-avoided-the-worst-horror-movie-fate-franchise-setup/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/backrooms_kmqezw.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Backrooms Has Already Avoided The Worst Horror Movie Fate
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Backrooms is already set up in a way that dodges around a prevalent and unfortunate complaint that many horror movies and horror franchises have faced over the years, positioning the 2026 film and the prospect of follow-ups into a promising vantage p&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/xmen-midnight-storm-redesign/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/halle-berry-s-storm-smiles-in-x-men-2000-poster.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Shares First Look At New Storm Design For X-Men's Big Reboot
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The X-Men's Storm is the first mutant to be revealed in Marvel's new universe, with a big power upgrade that might make her a major antagonist. The X-Men roster changes drastically across leadership changes, eras, and timelines. However, a few mutant&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/assassins-creed-game-shutdown-january-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/assassin-s-creed-unity-action-shot.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Assassin's Creed Rebellion to Be Delisted and Shut Down January 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Assassin's Creed Game Will Disappear Forever January 2027</div>
+      
+      
+      <div class="summary">Assassin's Creed fans only have a few months left before one of the franchise's most underrated games disappears forever. Ubisoft has officially delisted Assassin's Creed Rebellion eight years after the hit mobile title launched.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2271355/disadvantages-of-blu-ray/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-disadvantages-of-blu-ray-discs/l-intro-1790626465.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Disadvantages Of Blu-Ray Discs
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Disadvantages Of Blu-Ray Discs Xxmmxx/Getty Images Blu-ray discs are making a comeback, and not just for their retro vibes. As a media format, Blu-ray is good for delivering Full HD resolution and quality audio, and there are even some additional p&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/high-value-target-hunt-for-saddam-joel-kinnaman-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/joel-kinnaman-in-high-value-target-2026.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Joel Kinnaman's New CIA Thriller Series Has A Vital Message For The World
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Joel Kinnaman hopes his new political thriller, High Value Target: The Hunt for Saddam, will resonate with viewers long after the finale airs on October 4. Created by Daniel Stiepleman and Jonathan Wakeham, TNT's limited series follows CIA Agent John&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tim-allen-shifting-gears-netflix-streaming-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/12/01344171_poster_w780-1.jpg?q=70&fit=contain&w=480&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tim Allen's Sitcom Shifting Gears Is Officially Coming to Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tim Allen's Hit Sitcom Is Officially Coming to Netflix</div>
+      
+      
+      <div class="summary">Tim Allen has spent most of his long and successful career playing dads who, while they love their families, would probably rather be off doing their own thing and unwinding.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/warner-bros-michael-de-luca-pamela-abdy-exit-skydance-takeover/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2022/08/Warner-Bros-logo.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Say Goodbye to Warner Bros. as 103-Year-Old Studio Prepares to Disappear
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warner Bros. is officially disappearing. After the upcoming mega-merger with Paramount Skydance, not only is Warner Bros. losing its identity, but it's losing its core people. Per a new report by Puck News, the Warner Bros. everyone knows is ending. &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/boston-blue-season-2-danny-jamie-one-off-case-make-sense/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/danny-regan-and-brian-rodgers-standing-next-to-each-other-in-boston-blue.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Boston Blue's Reagan Family Separation Makes Total Sense
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Boston Blue's Reagan family separation now makes total sense following a season 2 update that sees a core member of the family make a return.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/once-upon-time-hollywood-brad-pitt-stream-prime-video-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/p.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Once Upon a Time... in Hollywood Becomes a Streaming Hit on Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brad Pitt's 161-Minute Blockbuster Is One of the Biggest Streaming Hits in the World Ahead of Netflix Sequel</div>
+      
+      
+      <div class="summary">As Netflix gears up for the release of one of Brad Pitt's most anticipated sequels of the year, the one that started the whole craze has become a streaming success.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/army-wives-netflix-streaming-return-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/netflix.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Officially Revives Army Wives, the Beloved 7-Season Military Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Officially Revives a Beloved 7-Season Military Series</div>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/red-dead-redemption-2-undead-nightmare-2-halloween-fan-expansion/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/rdr2-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Red Dead Redemption 2: Undead Nightmare 2 Is The Perfect Halloween Expansion
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Red Dead Redemption 2 just got the perfect unofficial expansion: the long-awaited successor to Undead Nightmare. The original Red Dead Redemption had just a singular story expansion, the well-loved Undead Nightmare.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/percy-jackson-and-the-olympians-streaming-netflix-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/percy-jackson-and-the-olympians-season-2.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Percy Jackson and the Olympians Seasons 1-2 Arrive on Netflix Temporarily
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Percy Jackson Is Officially Moving to Netflix</div>
+      
+      
+      <div class="summary">Getting to Camp Half-Blood usually involves surviving an encounter with something that wants to kill you.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/video/understanding-kingdom-hearts-and-every-other-story-unraveled/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/understanding-kingdom-hearts-and-every-other-story-unraveled.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Understanding Kingdom Hearts (and every other story) | Unraveled
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Everyone wants to get caught up on Kingdom Hearts' story before the new game comes out. But Brian David Gilbert will do you one better: he'll help you understand EVERY story.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dragon-ball-lego-new-set-goku-shenron/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/dragon-ball-s-goku-is-thrilled-about-the-new-movie.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dragon Ball Confirms New Official Lego Set With Epic First Look
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">LEGO has collaborated with many anime franchises, featuring series like Pokémon and One Piece with their own dedicated sets, but one franchise that had long been in need of a foray into the world of building blocks was Dragon Ball.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/will-trent-streaming-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/the-lincoln-lawyer.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Officially Scores Will Trent as 4-Season Lincoln Lawyer Replacement
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Officially Scores 4-Season ‘Lincoln Lawyer’ Replacement</div>
+      
+      
+      <div class="summary">Netflix will always be famous for helping to revolutionize the sci-fi genre on TV with shows like Stranger Things and Black Mirror, but the platform is also home to some older classics that were discarded by other networks.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2272807/best-horror-movies-80s-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/5-best-horror-movies-of-the-80s-ranked/l-intro-1790720735.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Best Horror Movies Of The '80s, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Best Horror Movies Of The '80s, Ranked Static Media The 1970s were a groundbreaking decade for horror, and the 1980s continued to push the genre beyond its limits.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/fourth-wing-threshing-day-brennan-naolin-romance/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/threshing-day-fourth-wing.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fourth Wing Author Officially Confirms a Major Fan Theory in New Book
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Threshing Day, the latest entry in the Empyrean series released Sept. 29, is a novella in the Fourth Wing universe. It features 13 short stories, each one focused on a character from the mainline books. The first chapter focuses on Brennan Sorrengail&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-fun-sci-fi-movies-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/star-wars-1977.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Most Fun Sci-Fi Movies of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Brainy and contemplative science fiction movies like 2001: A Space Odyssey, Solaris, and Blade Runner (well, the latter to some extent) are nice and all, but what about science fiction that aims to be a bit more fun? It’s not like fun sci-fi movies a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/disney-netflix-streaming-license-titles/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/05/disney-plus-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 02 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Disney Walks Back Foundational Rule of Disney+ in Major Netflix Streaming Deal
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Oct 2, 2026, 12:17 PM EDT Richard is a writer/journalist from Oregon (by way of California) with a love of Marvel, Star Wars, DC, and all kinds of entertainment. He joined MovieWeb in January 2026 as a Movie & TV Writer/Editor.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <span class="current">16</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/17.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

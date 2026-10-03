@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 8 sites · Generated 2026-10-03 19:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>121 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.bgr.com/2268684/which-nvidia-gpu-is-equivalent-to-apple-m5/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/which-nvidia-gpu-is-equivalent-to-the-apple-m5-gpu/l-intro-1790342242.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Which Nvidia GPU Is Equivalent To The Apple M5 GPU?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Which Nvidia GPU Is Equivalent To The Apple M5 GPU? Vladimka production/Shutterstock PC gaming mostly revolves around Windows and Linux systems and their components, with Nvidia and AMD graphics cards being chief among them. However, don't rule out A&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/lanterns-streaming-success-hbo-max-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/lanterns-episode-5-kyle-chandler-1.jpeg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Lanterns' Reaches No. 1 on HBO Max Worldwide
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘True Detective's Sci-Fi Replacement Soars to No. 1 Across the Globe on HBO Max</div>
+      
+      
+      <div class="summary">HBO appears to have firmly embraced its franchise era with shows such as House of the Dragon, The Penguin, and the upcoming Harry Potter. Harry Potter, in particular, is being regarded as the biggest television event of the year, with an ambitious de&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/quentin-tarantino-sequel-once-upon-a-time-in-hollywood-part-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/05/2026-02-09-the-adventures-of-cliff-booth-super-bowl-lx-teaser-trailer-32-000042-375-jpg.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The Further Mis-Adventures of Cliff Booth' Arrives Next Month
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Quentin Tarantino's First Movie Sequel Officially Arrives Next Month</div>
+      
+      
+      <div class="summary">Seven years after the fact, Quentin Tarantino's period action-drama Once Upon a Time ... in Hollywood is getting an official sequel, just not one directed by Tarantino himself.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/after-nearly-half-a-dozen-adaptations-mike-flannigans-carrie-adds-a-modern-take-to-the-listand-the" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/Carrie_thumb.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            After Nearly Half a Dozen Adaptations, Mike Flanagan's 'Carrie' Adds a Modern Take to the List—And the Cast Knows Exactly Why It's Necessary
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Carrie is easily one of Stephen King's most famous stories. Originally written in 1974, the follows Carrie White, a reclusive young girl who enters high school, only to be met with ruthless bullying.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/daredevil-adolescence-the-studio-one-shot-scenes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/04/daredevil-hallway-oner.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Daredevil' and Other Shows Master the One-Shot Sequence
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Daredevil’ and Streaming’s Greatest Shows Just Mastered Hollywood’s Hardest Trick</div>
+      
+      
+      <div class="summary">Editing is a large part of what makes movies so unique, and this includes the (ironically) all-powerful one-shot sequence – a technique that presents action in one continuous shot, sometimes using hidden edits.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-fugitive-best-lone-wolf-survival-tv-show-better-than-tracker/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/tracker_zzwhgs-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Forget Tracker, ABC’s 120-Episode Drama Is TV’s Best Lone-Wolf Survival Series
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Tracker has spent the past few years establishing itself as the best modern lone-wolf procedural, using a survivalist at its core in the same way one of ABC's long-running shows did in the past.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/resident-evil-requiem-the-dive-halloween-event/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/resident-evil-requiem-leon-in-car.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Resident Evil Requiem: The Dive Is Officially Available Now
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">February feels like it was years ago, but Resident Evil Requiem did indeed come out earlier this year and, in my humble opinion, is a genuine Game of the Year contender.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/fire-emblem-fortunes-weave-plot-mystery-eshmel-identity/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/fortunes-weave-classic-fire-emblem.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fire Emblem Fans Just Cracked Fortune’s Weave’s Biggest Mystery (Maybe)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fire Emblem: Fortune's Weave's protagonist, Eshmel (or whatever you call them), is a lot like Three Houses' Byleth. They say little, someone else's soul inhabits their body, and despite ostensibly having no personality, they're the most important per&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/see-jason-momoa-action-stream-apple-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/jason-momoa-see-streaming-success-apple-action-fantasy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jason Momoa's See Makes a Comeback on Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jason Momoa's Forgotten 3-Part Sci-Fi Action Epic Is Making a Comeback on Streaming</div>
+      
+      
+      <div class="summary">Easily Jason Momoa's coolest role to date didn't get the attention it deserved when the action fantasy epic dropped on streaming back in 2019.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/yellowstone-jimmy-hurdstrom-joins-marshals-season-2-cast/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/jefferson-white-as-jimmy-hurdstrom-in-yellowstone.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jefferson White Joins 'Marshals' Season 2 as Jimmy Hurdstrom
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan Is Finally Giving CBS's Yellowstone Spinoff a Much-Needed Upgrade</div>
+      
+      
+      <div class="summary">Yellowstone is giving its most divisive spinoff the perfect upgrade, as Jefferson White joins the cast of Marshals for Season 2 as fan-favorite cowboy Jimmy Hurdstrom. CBS’s Yellowstone spinoff launched in early 2026, becoming the franchise's first p&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/mandalorian-and-grogu-sci-fi-disney-plus-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/star-wars-the-mandalorian-and-grogu-header.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The Mandalorian and Grogu' Becomes One of Most-Streamed Movies on Disney+ After One Month
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: After 1 Month, Disney+’s 132-Minute Space Adventure Is 1 of the Most-Watched Movies in the World</div>
+      
+      
+      <div class="summary">Star Wars' latest theatrical adventure is finding a measure of redemption on streaming, after underperforming at the box office. The Mandalorian and Grogu is one of the most-streamed movies worldwide on Disney+ exactly one month after its debut on th&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2274614/jeff-bridges-john-carpenter-80s-sci-fi-classic-starman-streaming-free/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/jeff-bridges-and-john-carpenters-80s-sci-fi-classic-is-streaming-for-free/l-intro-1790870043.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jeff Bridges And John Carpenter's '80s Sci-Fi Classic Is Streaming For Free
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Jeff Bridges And John Carpenter's '80s Sci-Fi Classic Is Streaming For Free Columbia Pictures John Carpenter is known for directing some of the best horror movies ever — "Halloween" being a prime example.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/christopher-abbott-x-men-charles-xavier-telepathy-comments/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/x-men-first-class-james-mcavoy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New ‘X-Men’ Star Officially Shares His Charles Xavier-Like Experience
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Christopher Abbott, who has been cast as Charles Xavier in the Marvel Cinematic Universe's X-Men reboot, said that he has developed an interest in the idea of "consciousness" and that he had a telekinetic experience in real life.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/kraven-the-hunter-failure-christopher-abbott-comments/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/kraven-the-hunter-russell-crowe.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Future ‘X-Men’ Star Officially Addresses His ‘Kraven the Hunter’ Role
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Christopher Abbott, who has been cast as Charles Xavier in Marvel Studios' upcoming reboot of the X-Men franchise, said that he could guarantee the movie will be better than his previous superhero movie, Kraven the Hunter.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/naruto-weakest-uchiha-clan-members-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/powerful-uchihas-with-sasuke-itachi-and-madara.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Weakest Uchiha in Naruto, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Naruto's infamous Uchiha clan is known for the strength of their members. While the likes of Sasuke, Itachi, Obito and Madara might make it seem otherwise, a lot of people in the Uchiha clan were normal ninjas without godlike power.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-netflix-movies-watch-weekend-october-3/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/jason-bourne.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Best Movies To Watch On Netflix This Weekend (October 3-4)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix has a selection of movies of different genres for subscribers this weekend, though two can easily fit into the Halloween season, while the other is a spy thriller that speaks to what most Netflix viewers like to watch on the streamer.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/marshals-season-1-recap-yellowstone-taylor-sheridan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/copy-of-collider-template-2026-05-07t075329-601.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Marshals' Season 1 Recap: What To Remember Before Season 2 of Taylor Sheridan's Yellowstone Spin-Off
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Yellowstone fans rejoice, because the Taylor Sheridan universe continues to expand with Marshals Season 2. But before the second season returns, it's important to remember where we last left lawman Kayce Dutton (Luke Grimes) and his new supporting ca&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/behemoth-rotten-tomatoes-score-pedro-pascal-tony-gilroy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/pedro-pascal-at-the-premiere-of-the-mandalorian-and-grogu-in-los-angeles.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pedro Pascal’s First Movie After Mandalorian & Grogu Debuts To Stellar Rotten Tomatoes Score
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.The Rotten Tomatoes score has debuted for Pedro Pascal's first movie after The Mandalorian and Grogu.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/green-lantern-yellow-lanterns-reboot/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/hal-jordan-carries-a-green-lantern-in-dc-universe-official-art.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Green Lantern's New Series Reboots Hal Jordan's Biggest Villains
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">DC's new Green Lantern series explores Hal Jordan's most iconic enemies from a very different perspective than usual. In traditional DC lore, the Green Lantern Corps confronts an extensive rogues' gallery with more members than any other DC heroes' c&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/black-mirror-philomena-cunk-connection/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/siena-kelly-in-black-mirror-s7.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Black Mirror Is Connected To A Popular 8-Show Franchise And Hardly Anyone Knows
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Black Mirror is arguably the most renowned sci-fi series of the century, but the dystopian favorite is secretly connected to one of the best franchises in British TV history.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/al-pacino-sea-of-love-streaming-prime-video-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/img_2572-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Al Pacino’s Hit Crime Thriller Officially Brings a Deadly Love Affair to Prime Video
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">During the 1970s, Al Pacino had established an extraordinary reputation through The Godfather, Serpico, The Godfather Part II, and Dog Day Afternoon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hardest-game-boy-games-of-all-time-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/hardest-game-boy-games-all-time.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Hardest Game Boy Games of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Nintendo Game Boy wasn't the first handheld console, but it's the system that defined what handheld gaming could be, and 37 years after its debut, it's still iconic.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/gundam-iron-blooded-orphans-metal-robots-spirits-vidar-first-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/gundam-ibo-vidar-first-look.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Years Later, Gundam's Darkest Anime Revives 1 of Its Most Sinister Mecha in New First Look
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Over 10 years ago, the Mobile Suit Gundam franchise received one of its darkest entries, and one of its most acclaimed. Now, one of the most notable designs from the anime is set to be recreated in a premium Bandai toy line.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2268960/best-swiss-smartwatches/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-sophisticated-swiss-smartwatches-to-level-up-your-style/l-intro-1790344706.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Sophisticated Swiss Smartwatches To Level Up Your Style
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Sophisticated Swiss Smartwatches To Level Up Your Style VG1/Shutterstock The Apple Watch remains king in the smartwatch segment, and it has several unique features that its users love. However, before Apple disrupted this market, many people dreame&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/american-horror-story-streaming-success-disney-plus-hulu-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/img_2573-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘American Horror Story’ Is Officially Taking Over the World Following Season 13 Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The spooky season stops feeling far away as soon as streamers start rolling out Halloween releases. It’s finally that time of the year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/flawless-anime-no-weak-episode-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/filters_quality-95-format-webp-1-8.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Flawless Anime Series With No Weak Episodes, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some of the best anime ever still have at least one episode that tempts people to skip it. Slow transitions between important storylines or unnecessary deviations from the plot can disrupt an otherwise great series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sci-fi-miniseries-perfect-start-to-finish/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/station-eleven-tv-show.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Sci-Fi Miniseries That Are Perfect From Start to Finish
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are many benefits to investing in a great miniseries, one of them being its capability to tell a complete and satisfying story in just one sitting.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/yuri-on-ice-theater-release-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/crunchyroll.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Greatest Sports Anime Ever Made Officially Returns to Theaters
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Last year, Crunchyroll announced "Crunchyroll Anime Nights," bringing anime titles to theaters for a limited time. The first anime to join the program was Miss Kobayashi's Dragon Maid: A Lonely Dragon Wants to Be Loved, and since then, more titles ha&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-big-bang-theory-recasting-2026-actors/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/untitled-design-15.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Recasting The Big Bang Theory For 2026: All 8 Main Characters
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Big Bang Theory might not feel as though it aired too long ago, yet despite having such an immense impact on the sitcom landscape through its unique premise, a harsh reality of rewatching The Big Bang Theory is that it has not always aged well.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/dark-matter-season-2-entanglement-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/movieweb-featured-image-template-2026-10-02t094951-634.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV's Near-Perfect Sci-Fi Adaptation Finally Explains Its Confusing Book Change
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! Spoilers ahead for Dark Matter Season 2, Episode 6, "What the Universe Is Made Of."Dark Matter, originally a 2016 book by Blake Crouch and now an Apple TV sci-fi series with Crouch in the showrunner's chair, has been brilliant so far.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <span class="current">10</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/11.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 8 sites · Generated 2026-10-03 19:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>110 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>121 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/brandon-sanderson-stormlight-war-for-roshar-october-13/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/stormlight-archive-tidebreakers-october-2027-release-brandon-sanderson-wind-and-truth.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stormlight Archive TTRPG War for Roshar Launches in October
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brandon Sanderson's Stormlight Officially Returns October 13</div>
+      
+      
+      <div class="summary">Written by Brandon Sanderson and eventually set to welcome ten dedicated novels, The Stormlight Archive is a high fantasy series set within the author's broader Cosmere universe. Put simply, Sanderson has the writing speed that we all wish George R.R&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/ahsoka-season-2-star-wars-timeline-trend-year" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000011593.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ahsoka Season 2 Breaks a 41-Year Star Wars Timeline Trend
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ahsoka Season 2 makes an early decision in its trailer footage that bucks the tradition of previous Star Wars live-action series trailers.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/blade-runner-2027-immersive-experience-genre-switch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/blade-runner-2049_aeaqb5.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Blade Runner: The Immersive Experience Arrives in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Blade Runner Is Officially Switching Genres In 2027 In Upcoming Gaming Release</div>
+      
+      
+      <div class="summary">Beginning its life with Do Androids Dream of Electric Sheep? by author Philip K. Dick before being adapted into a hit movie by Ridley Scott back in 1982, Blade Runner swiftly became something of a cultural phenomenon, drawing attention to the cyberpu&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-captain-archer-return-october-2026-fluxx/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/captain-archer-in-enterprise.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek Officially Confirms Captain Archer's Return October 20 In Fluxx
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Captain Jonathan Archer occupies a unique place in Star Trek history, standing at the very beginning of the era that would eventually produce the United Federation of Planets.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/the-batman-2-robert-pattinson-bruce-wayne-redesign" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/batman-bruce-wayne.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Batman 2 Photo Unveils Redesign For Robert Pattinson's Bruce Wayne
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Robert Pattinson's Bruce Wayne looks different in The Batman: Part 2, and part of the reason is his newfound status in Gotham. Matt Reeves' DC sequel, set to release on February 18, 2028, will reshape Bruce's portrayal in this Elseworlds universe, bu&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-jane-austen-quote-persuasion-underappreciated-book/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/persuasion-book-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jane Austen's Greatest Quote Comes From Her Underappreciated Novel 'Persuasion'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Greatest Jane Austen Quote Comes From Her Most Underappreciated Book</div>
+      
+      
+      <div class="summary">Who doesn't love Jane Austen? The iconic English writer is a pillar of modern literature, quite possibly the greatest writer of her generation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/lanterns-arrowverse-scene-episode" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/lanterns-arrowverse.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New 'Lanterns' Episode Directly Recreates 1 Iconic Arrowverse Scene (And Makes It Even Better)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Lanterns Episode 5's ending recreated a memorable Arrowverse scene by improving it with a much more compelling sequence that has lasting ramifications for the DCU.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dungeon-crawler-carl-unstoppable-release-date-psa/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/carl-and-princess-donut-in-the-dungeon-crawler-carl-webtoon.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dungeon Crawler Carl: Unstoppable TTRPG Launches November 23
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Dungeon Crawler Carl Will Officially Return Next Month</div>
+      
+      
+      <div class="summary">After beginning its life as a self-published novel by author Matt Dinniman, Dungeon Crawler Carl soon shot to the top of the LitRPG charts and now, thanks to the help of Ace Books, which took over publishing in 2024, the series has become a cultural &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/horror-movies-streaming-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2025/08/the-substance.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            12 New Horror Movies to Watch in October on Netflix, HBO, and Hulu
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Spooky season is here, and all the major streaming services are boosting their horror offerings to appeal to viewers who want to start getting into the Halloween spirit early.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/anime-defined-toonami-golden-age/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/dragon-ball-z-gohan-super-saiyan-2-featured-image.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Anime That Defined Toonami's Golden Age
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Growing up in the 1990s and 2000s gave audiences a vast library of high-quality, memorable animated entertainment. Some defined their tastes through seminal classics like 1992's Batman: The Animated Series, while others enjoyed the surreal bedlam of &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/berserk-slan-prime-1-studio-reveal/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/berserk-officially-unveils-massive-1-799-new-release-ahead-of-preorders.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Berserk's $1,799 Slan Statue by Prime 1 Studio Is Available for Preorder
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Berserk Officially Drops Massive New $1,799 Release Available for Preorder Now</div>
+      
+      
+      <div class="summary">The Berserk franchise is no stranger to high-end collectibles, particularly those that perfectly showcase the brand's sometimes "racy" elements. Such is the case with the newest creation from Prime 1 Studio, which is a truly striking work of art.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/spider-man-hulk-infernal-war-age-monsters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/spider-man-brand-new-day-hulk-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spider-Man Faces the Infernal Hulk in Marvel's 'Infernal Hulk vs. Spider-Man #1'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Spider-Man is the Only One Who Can Stop the Hulk From Officially Starting the Age of Monsters</div>
+      
+      
+      <div class="summary">As we noted recently in a preview of The Infernal Hulk vs. Wolverine #1, the Hulk is in a very different stage in his life right now. The Hulk's body has been possessed by the evil creature known as the Eldest and is now known as the INFERNAL Hulk.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/friday-the-13th-crystal-lake-debuts-peacock-october-15/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/07/roy-burns-friday-the-13th-5.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Crystal Lake,' the 'Friday the 13th' Prequel Series, Premieres This Month on Peacock
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Friday the 13th Returns With a New Release This Month</div>
+      
+      
+      <div class="summary">Jason Voorhees has spent a long time at the bottom of Crystal Lake since the last Friday the 13th film was released in 2009. That's changing in a major way this month with the iconic character making an on-screen return this month for an official new&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ted-lasso-season-4-episode-9-keeley-pregnancy-fate-hint/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/ted-lasso-season-4-keeley-rebecca-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Ted Lasso' Season 4 Hints at Keeley's Pregnancy Complications in Episode 9
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Did ‘Ted Lasso’ Just Hint at [SPOILER]’s Fate With This Blink-and-You’ll-Miss-It Moment?</div>
+      
+      
+      <div class="summary">Editor's note: The below contains spoilers for Ted Lasso Season 4 Episode 9. Ted Lasso expertly balances comedy and drama, and Season 4 is no exception.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2267648/which-usb-ports-fastest-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/which-usb-ports-are-the-fastest/l-intro-1790261354.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Which USB Ports Are The Fastest?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Which USB Ports Are The Fastest? Akinbostanci/Getty Images Universal Serial Bus (USB) is a widely used and versatile interface that can be found in computing devices, lifestyle products, smart TVs, and more.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-wars-starfighter-movie-traditions-break-save-franchise/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/star-wars-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Wars: Starfighter Breaks 6 Franchise Traditions
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Next Star Wars Movie Breaks 6 Traditions To Save The Franchise</div>
+      
+      
+      <div class="summary">50 years after the release of 1977's A New Hope, next year's Star Wars: Starfighter is set to break more than one tradition as it attempts to save the franchise and reassert Star Wars as a major box-office draw.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dragon-ball-villains-stronger-than-frieza/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/07/04bb33b1-24ca-4b60-bacd-10fb327bca05.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Dragon Ball Villains Stronger Than Frieza
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Akira Toriyama's Dragon Ball is responsible for introducing just as many iconic antagonists as it has exceptional shonen heroes. That being said, Frieza is far more iconic than every other villain in the franchise by a mile. And while he's also curre&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/m-night-shyamalan-remain-first-reactions/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/jake-gyllenhaal-with-phoebe-dynevor-s-hand-in-remain-2027.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            M. Night Shyamalan's 'Remain' Gets Heartbreaking and Scary First Reactions
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: M. Night Shyamalan's 'Heartbreaking' New Thriller Is 'Scary as Hell,' First Reactions Say</div>
+      
+      
+      <div class="summary">The Sixth Sense filmmaker M. Night Shyamalan has delivered one of his most frightening movies yet, according to those who were in attendance for an early screening of Remain.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2268977/amd-processors-common-problems/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-common-problems-with-amd-processors/l-intro-1790351623.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Common Problems With AMD Processors
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Common Problems With AMD Processors aileenchik/Shutterstock AMD processors are incredibly popular in the PC gaming space, but they're not perfect. AMD's processor lineup has something for every price point, but even high-end Ryzen CPUs can still be&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/andor-broke-star-wars-rules-disney-plus-masterpiece/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/pre-mor-soldiers-in-a-shuttle-in-andor-season-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Andor Breaks Star Wars Rules in 24 Episodes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney+'s 24-Episode Sci-Fi Series Deserves Kudos For Breaking The Rules</div>
+      
+      
+      <div class="summary">A sci-fi show on Disney+ is rightly hailed as a masterpiece, but it deserves even more credit for breaking all the rules it should have conformed to. Disney+'s best sci-fi shows are often linked to some of the biggest franchises under the House of Mo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-the-haunting-of-hill-house-gothic-masterpiece/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/kate-siegel-as-theodora-crain-in-the-haunting-of-hill-house.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Haunting of Hill House: 95% RT Horror Series with a Landmark Pilot Episode
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The 95% RT Sci-Fi Masterpiece With the Greatest Pilot Episode in TV History</div>
+      
+      
+      <div class="summary">This article contains thorough coverage of graphic, upsetting, and potentially triggering content, including, but not limited to, violence and suicide. If you or someone you know is struggling with thoughts of suicide, help is available.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/peanuts-linus-blanket-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/linus-hugs-his-blanket-and-charlie-brown-makes-it-all-about-himself.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Linus van Pelt's Security Blanket Was Introduced Two Years After His Peanuts Debut
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Two Years After Their Debut, This Peanuts Character's Most Iconic Trait Was Introduced</div>
+      
+      
+      <div class="summary">Peanuts is one of the greatest comic strips of all time, with its endless roster of memorable characters and its dry wit that filled every panel. However, Peanuts took years to develop into the recognizable comic that fans know and love today.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/lincoln-lawyer-replacement-series-the-rainmaker-season-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/the-lincoln-lawyer-netflix.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The Rainmaker' Is the Perfect Weekend Binge Ahead of Season 2 for 'Lincoln Lawyer' Fans
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This ‘Lincoln Lawyer’ Replacement Is the Perfect Weekend Binge Ahead of Season 2</div>
+      
+      
+      <div class="summary">From the backseat of his Lincoln, Manuel Garcia-Rulfo has won over viewers as the titular character in Netflix’s The Lincoln Lawyer. The series was based on the novels by Michael Connelly and previously adapted into the film of the same name, starrin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/video/pans-labyrinth-3d-release-guillermo-del-toro-clip/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/10/pan-s-labyrinth-ofelia.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Pan's Labyrinth 3D Re-Release Is Just The Beginning For Guillermo Del Toro
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">EXCLUSIVE: ScreenRant presents a BTS clip celebrating the upcoming re-release of Pan's Labyrinth, in which Guillermo del Toro explains his love of 3D.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2270679/why-pro-gamer-dont-use-oled/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/why-pro-gamers-dont-use-oled-monitors/l-intro-1790607643.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why Pro Gamers Don't Use OLED Monitors
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Why Pro Gamers Don't Use OLED Monitors Fpphotobank/Getty Images Professional gamers don't use OLED monitors because they use equipment similar to what they use in tournaments or scrims.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/most-unplayable-games-on-the-nes-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/nintendo-entertainment-system-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Unplayable Games on the NES, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Nintendo Entertainment System launched countless iconic franchises, but its massive library also harbored some of the most frustratingly broken software in gaming history.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hugh-jackman-van-helsing-the-mummy-streaming-peacock-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/02/van-helsing_59566364.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hugh Jackman's 'Van Helsing' Is Back Streaming on Peacock
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Hugh Jackman's 'The Mummy' Replacement Is Officially Back on Streaming</div>
+      
+      
+      <div class="summary">If you’re in the mood for a real monster mash now that October has rolled around, then it's the perfect time to head over to Peacock.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/ted-lasso-season-4-mae-death-annette-badland-finale-tease/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/coaches-alice-chilton-ted-lasso-and-beard-observing-practice-in-ted-lasso-season-4-episode-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            What Ted Lasso Season 4’s Major Death Means For The Finale Teased By Star
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: There are spoilers ahead for Ted Lasso season 4, episode 9, "Mae Rides the Bus."A major character death has forever changed Ted Lasso. After the Lady Greyhounds win a crucial game in season 4, episode 9, Mae Green (Annette Badland), who was &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-studios-disney-plus-new-show" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000011591.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Countdown to Avengers: Doomsday Podcast Wraps First Season on Disney+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney+ Says Goodbye To Marvel's Best New Show</div>
+      
+      
+      <div class="summary">It's officially the end of the road for Marvel Studios' latest Disney+ series. Since 2021, Disney+ has been a key part of the MCU as Marvel Studios expanded its universe beyond movies and brought some of its most notable theatrical characters to the &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-sopranos-tony-best-moment-second-coming-pool-scene/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/10/sopranos-james-gandolfini.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 03 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tony Soprano's Best Moment Comes in Season 6's 'The Second Coming'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'The Sopranos' Best Tony Moment Comes From a Near-Perfect Season 6 Episode</div>
+      
+      
+      <div class="summary">The very first episode of David Chase's The Sopranos has Tony Soprano (James Gandolfini) obsessed with a family of ducks living in his swimming pool. This singular moment immediately tells the viewer that this isn't going to be your run-of-the-mill m&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <span class="current">8</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/9.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>
