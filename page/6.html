@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-10 17:07 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>97 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>62 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>120 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>12 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/pokemon-black-white-new-2027-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/kotobukiya-pokemon-hilbert-with-victini-collectible-figure-gallery-6a8df4e975167.avif?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Black & White Figure of Hilbert with Victini Now Available for Pre-Order
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Pokémon Black & White Officially Return In 2027 Release</div>
+      
+      
+      <div class="summary">Released back in 2010 for the Nintendo DS, Pokémon Black and White welcomed the beginning of Gen 5 with 156 brand-new additions to the Pokédex, as well as new features such as seasonal cycles, rotation battles, triple battles, hidden abilities, and f&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/avatar-seven-havens-seven-chakras/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/07/avatar-seven-havens-09h56m37s385.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avatar: Seven Havens's Biggest Plot Twist May Be Hiding in Plain Sight
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Avatar: Seven Havens is a far more mystery-driven series than its predecessors, The Legend of Korra and Avatar: The Last Airbender. Avatar Korra supposedly caused a cataclysm that destroyed most of the world, but it’s unclear why she would do that an&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/edie-arnold-is-a-loser-punk-rock-adi-madden-cabrera/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/edie-arnold.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Edie Arnold Is a Loser’ Star Turned to a Video Game To Help Her Become a Punk Rock Drummer
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's note: The following contains spoilers for Edie Arnold Is a Loser. Summary In 'Edie Arnold Is a Loser,' Edie and her Catholic school friends form a punk band called The NunDead. Adi Madden Cabrera learned to play the drums through lessons, Yo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/spider-man-far-from-home-streaming-hit-tubi-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/spider-man_-far-from-home-2019.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spider-Man: Far From Home Becomes a Hit on Free Streaming Service Tubi
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Holland’s $1.1B Superhero Blockbuster Officially Becomes a Free Streaming Sensation</div>
+      
+      
+      <div class="summary">How will 2026 in film be remembered? Big surprise hits such as Obsession and ambitious critical darlings like Christopher Nolan's The Odyssey are sure to prove lasting, but no film is set to define 2026 better than Spider-Man: Brand New Day.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ridley-scott-blade-runner-2049-prime-video-streaming-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/blade-runner-2049-sylvia-hoeks.jpg?q=49&fit=crop&w=100&h=67&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Blade Runner 2049 Now Streaming on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ridley Scott's 164-Minute Sci-Fi Masterpiece Officially Landed on a New Streamer</div>
+      
+      
+      <div class="summary">Some sci-fi movies flop because they just don't hit audiences properly, perhaps because they go in to see one film and end up seeing a miserable Ryan Gosling wandering around a dreadful, dusty-yet-neon-soaked dystopia for almost three hours.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sean-connery-from-russia-with-love-james-bond-classic-streaming-prime-video-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/from-russia-with-love-sean-connery.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Quentin Tarantino Hated 'From Russia with Love' but It's Now Streaming on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Quentin Tarantino Hated This James Bond Classic, but It's Officially Streaming on Prime Video</div>
+      
+      
+      <div class="summary">Director Quentin Tarantino has gone on the record to state that Pierce Brosnan is his favorite James Bond actor. Tarantino also aggressively pursued the rights to Ian Fleming's first Bond novel, "Casino Royale," which he wanted to direct as a black-a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/disney-live-action-movies-strategy-years" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000011822.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Disney Abandons Its Live-Action Movie Strategy After 16 Years
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Disney is completely changing the way it is creating its live-action films, abandoning a strategy that the company has used for many years now, as a new era is ushered in for the entertainment giant. No one can argue that Disney is one of the most su&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/brilliant-anime-with-no-bad-episodes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/07/steins-gate-girl.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Brilliant Anime That Don’t Waste a Single Episode
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Even the greatest anime usually have an episode or two that fans are tempted to skip during a rewatch. A select few, however, never let up. Every chapter advances the story, reveals something meaningful about its characters, or delivers an unforgetta&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-deep-space-nine-peacemakers-sequel-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-peacemakers-deep-space-nine-cover.jpg?q=70&fit=crop&w=579&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: Deep Space Nine Returns in New Novel 'The Peacemakers' on November 17
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek: Deep Space Nine Officially Returns With New Sequel On November 17</div>
+      
+      
+      <div class="summary">One of the most important chapters in the franchise's 60-year history, Star Trek: Deep Space Nine is still to this day one of the most beloved series in science fiction.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/sci-fi-books-better-movie-adaptations/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/mv5bmtuzntu3nzc3nf5bml5banbnxkftztgwnjq3oti1ntm-_v1_.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Sci-Fi Books That Are Better Than Their Movie Adaptations
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Science fiction has always asked hard-hitting questions about reality. The genre is at its best when it explores real-life social issues through futuristic allegories, inspires actual scientific inventions or research concepts, and teaches us key les&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tulsa-king-season-4-paramount-plus-october-16-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/09/tulsa-king-season-4-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tulsa King Season 4 Returns on Paramount+ in 1 Week
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan's 'The Sopranos' Replacement Officially Returns in 1 Week</div>
+      
+      
+      <div class="summary">Taylor Sheridan has built a small television empire over the last few years, but one of his biggest hits doesn't have a cowboy, an oil rig or a Montana ranch anywhere in sight.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jeremy-strong-method-acting-the-social-reckoning-mark-zuckerberg-wunmi-mosaku-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/08/idris-elba-red-carpet.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Jeremy Strong Transformed Into a “Living Breathing” Mark Zuckerberg for ‘The Social Reckoning’
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Summary Collider's Steve Weintraub talks with Wunmi Mosaku for The Social Reckoning. Wunmi discusses the advice she got from Idris Elba and her preparation process. She also discusses Jeremy Strong’s method approach to Mark Zuckerberg.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/spider-man-collection-tom-holland-sony-mcu-hero-photos" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000011821.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sony Reveals Historic 4-Movie Spider-Man Collection for Tom Holland's MCU Hero
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Sony released its first-ever Spider-Man movie in 2002, the opening entry of Sam Raimi's Spidey trilogy. However, 2026 marks the first time the studio has put together a four-movie collection for the web-slinger.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sebastian-stan-fjord-marvel-bucky-barnes-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/07/sebastian-stan.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sebastian Stan Says Hollywood Is Finally Looking at Him Differently After 15 Years in Marvel
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Summary Collider's Steve Weintraub talks with Sebastian Stan and Cristian Mungiu for Fjord. Stan discusses his time with Marvel, his physical transformation in Fjord, and the roles he takes on now. Mungiu discusses uncomfortable films, Fjord's "murky&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/alex-winter-primetime-robert-pattinson-to-catch-a-predator-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/primetime-alex-winter-interview.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Primetime's Alex Winter Says Robert Pattinson Is Taking Risks Other Movie Stars Won't
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Summary Collider's Steve Weintraub talks with Alex Winter for Primetime. Winter discusses how Primetime uses To Catch a Predator to spotlight today's media chaos and moral exploitation. He also talks about A.I.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/avengers-doomsday-hayley-atwell-peggy-carter-steve-rogers-makeover" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000011820.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hayley Atwell Admits Peggy Carter's Reaction To Steve Rogers' Makeover In 'Avengers Doomsday' Is Not A Favorable One
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Steve Rogers' redesign in Avengers: Doomsday may not sit well with everyone who sees it, including Hayley Atwell's Peggy Carter.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-studios-black-panther-reboot-arc" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/black-panther-reboot.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Studios Is Rebooting Black Panther With the Perfect Story Arc
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">David Jonsson's casting as T'Challa II sets up the perfect reboot for the Black Panther franchise in the MCU, and for the mantle of Black Panther in general. Black Panther is one of the most important and influential characters in the MCU.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-city-on-the-edge-of-never/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/star-trek-strange-new-worlds_lyji48.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: The City On The Edge Of Never Officially Brings Back Spock
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">You don't have to be a Star Trek acolyte to know Spock, a character whose distinctive looks and logical mentality have resonated far outside the dedicated fandom.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-walking-dead-aftermath-season-1-characters-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/andrew-lincoln-as-rick-grimes-in-the-walking-dead-episode-1x1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Walking Dead: Aftermath Officially Brings Back Rick Grimes And Daryl Dixon
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Airing from 2010 to 2022, The Walking Dead has been a constant companion of many of us growing up, with the hit post-apocalyptic horror show giving us 11 seasons and 177 episodes of blood, gore, heartache, and iconic moments.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/final-fantasy-9-roses-of-may-october-2026-psa/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/vivi-fireball-final-fantasy-9.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Final Fantasy 9: Roses Of May Officially Releases This Month
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Final Fantasy 9 is, for many, a point of contention. It isn't that the game is bad, but, indeed, the opposite: its status as one of the greatest RPGs of all time has seen it muster a flock of dogmatic devotees desperate to see it receive the remake t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/love-death-robots-netflix-masters-genre-switching/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/53e51dec-08b3-4ba3-b459-10b9c2b901ba.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Love, Death & Robots Masterfully Switches Genres
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s R-Rated Sci-Fi Series Masters The Art Of Switching Genres</div>
+      
+      
+      <div class="summary">Sci-fi should always push the boundaries of storytelling and imagination. Unfortunately, most modern sci-fi shows play it safe. Instead of featuring wildly ambitious worldbuilding and novel concepts, they stick to genre conventions and tropes.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/game-of-thrones-conquest-9th-anniversary-update-changes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/game-of-thrones-circle-flame.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Game of Thrones: Conquest Enters a New Era with Anniversary Update
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It's Officially A New Era For Game Of Thrones</div>
+      
+      
+      <div class="summary">The Game of Thrones franchise has grown significantly from its modest beginnings in George R.R. Martin's A Song of Ice and Fire novels and even from its eventual HBO series that would go on to become a global phenomenon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dungeon-crawler-carl-mobs-mordecai-november-2026-psa/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/carl-and-princess-donut-in-the-dungeon-crawler-carl-webtoon.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dungeon Crawler Carl: Mobs Of Mordecai Officially Releases Next Month
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Dungeon Crawler Carl really does continue to explode in popularity, with each passing day drawing in new fans and further adaptations that expand on the existing offering. It began as a web serial by author Matt Dinniman back in 2019, quickly amassin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/marvel-tokon-fighting-souls-new-phoenix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/marvel-t-kon_-fighting-souls-phoenix-cyclops-gameplay-trailer.png?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Tokon Adds Phoenix Cyclops as Season 1 DLC
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Officially Unveils Phoenix's Replacement</div>
+      
+      
+      <div class="summary">Cyclops is one of the most iconic characters in all of comics. Love him or hate him, Scott has legions of fans and detractors, and that's because they know his name and have seen countless exploits with him as the leader of the X-Men.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/full-metal-jacket-war-movie-stanley-kubrick-hbo-max-streaming-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/09/full-metal-jacket-1987.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Full Metal Jacket Remains One of the Best War Movies Ever Made
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 39 Years Later, HBO Max's Legendary War Movie Is Still One of the Best Ever Made</div>
+      
+      
+      <div class="summary">Many great directors have given their own views of the triumphs and tragedies of war – Steven Spielberg recreated the D-Day landings for Saving Private Ryan; Christopher Nolan took audiences to Dunkirk; and Francis Ford Coppola went deep into the jun&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/invisible-man-horror-empty-room.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2020/02/invisible-man-900x377.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Invisible Man (2020) Makes Empty Rooms Terrifying
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Sci-Fi Horror Movie That Makes Empty Rooms Terrifying</div>
+      
+      
+      <div class="summary">A woman escapes her abusive partner, then suspects he can reach her without being seen. This sci-fi horror movie turns vacant space into unbearable suspense. By Brent McKnight | Published 38 seconds ago The Invisible Man (2020). Image: Universal Pict&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-outposts-unknown-new-crew-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/young-captain-kirk-and-old-captain-kirk-in-star-trek.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek Is Officially Introducing A Brand-New Crew On October 20 In Outposts Unknown
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Star Trek has been around for 60 years, if you can believe it. From the classic tales with Captain Kirk all the way up to the present day and the spinoffs, the original series enjoyed a resplendent era of success through re-runs, and the rest is hist&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/naruto-boruto-two-blue-vortex-hidari-sasuke-death/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/11/hidari-and-sasuke.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Boruto: Two Blue Vortex May Kill Off Hidari
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It's Time To Say Goodbye To 1 Major Naruto Villain</div>
+      
+      
+      <div class="summary">With all the hot news surrounding the Naruto franchise hitting a fever pitch going into New York Comic Con, it's sometimes easy to forget that the star's son, Boruto Uzumaki, has a hit ongoing story of his own.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2277839/lg-b-vs-c-series-oled-tvs-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/lg-b-series-vs-c-series-how-do-the-oled-tvs-compare/l-intro-1791224621.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            LG B-Series Vs. C-Series: How Do The OLED TVs Compare?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">LG B-Series Vs. C-Series: How Do The OLED TVs Compare? Eric Broder Van Dyke/Shutterstock All TV manufacturers designate letters or numbers to their TV models and TV series. With LG OLED TVs, two of the most prominent series are the B and C models.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/underrated-mecha-anime-masterpieces/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/overman-king-gainer-king-gainer-attacks.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Underrated Mecha Anime That Are Considered Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anime caters to a wide range of genres, but there are certain stories that have become not just popular, but fundamental to the medium. Mecha series represent one of anime's earliest and most successful genres that is now a constant.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <span class="current">6</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/7.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

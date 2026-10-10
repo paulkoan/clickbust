@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-10 17:07 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>97 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>62 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>120 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>12 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/boston-blue-danny-will-reagan-family-reunion-story-details/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/blue-bloods_yjytri.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Blue Bloods' Major Reagan Family Union Gets New Story Details From CBS Showrunners
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Exclusive: Boston Blue season 2 is finally catching up with the Reagan family. Boston Blue, which follows Donnie Wahlberg's Danny Reagan as he relocates from New York to Boston to take on a new challenge, is bringing more original stars from the CBS &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/bloodaxe-show-release-date-prime-video-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/a-group-of-warriors-fighting-in-bloodaxe.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video’s Bloodaxe Series From Vikings Creatir Gets Official Release Date
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Prime Video's Bloodaxe finally has a premiere date. With elements that should appeal to Game of Thrones fans, the upcoming Prime Video Original marks a return for Vikings creator Michael Hirst.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/bloodaxe-prime-video-release-date-teaser/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/03/gaia-weiss-vikings.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's Bloodaxe Sets January 2027 Release Date
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video’s 8-Part ‘Vikings’ Replacement Officially Sets January Release Date</div>
+      
+      
+      <div class="summary">Historical dramas have made fighting for a crown look like a particularly dangerous career choice. Winning a battle rarely settles anything when relatives, allies, and neighboring rulers all have their own ideas about who should inherit the throne.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/one-mile-franchise-taken-tracker-replacement-paramount-plus-streaming-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/untitled-7.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            One Mile: Ryan Phillippe's Two-Part Action Thriller Tops Paramount+ Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Paramount's 2-Part Taken Meets Tracker Replacement Can't Be Stopped On Streaming</div>
+      
+      
+      <div class="summary">Taken and Tracker share some of the same DNA; both based around skilled individuals tracking down missing people.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/why-it-failed-the-mandalorian-and-grogu.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/10/GFR-Mandalorian-alternate-blue-droid.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Disney Destroyed Sci-Fi’s Savior
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">By Joshua H Tyler and Chris Sawin | Published 27 seconds ago Sci-fi was in trouble back in 2019. The big sci-fi franchises were all in decline. Entertainment quality in general was clearly degrading.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/wallace-and-gromit-voice-history-first-martin-freeman-casting/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/untitled-design-4-5.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Martin Freeman Narrates Wallace & Gromit Audiobook, Gromit Speaks for First Time
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Sherlock Alum Officially Makes History With Popular $421M Franchise</div>
+      
+      
+      <div class="summary">A fan-favorite, decades-old franchise will soon be adding a new story that marks a major break with tradition for one of its most popular characters—and incorporates a beloved Sherlock actor.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hbo-max-paramount-merger-leaves-behind-discovery/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/hbo-max-paramount.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO Max & Paramount+ Merger Leaves Major Streaming Service With 5M Subscribers Behind
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The mega-merger of Paramount Skydance and Warner Bros. Discovery will bring Paramount+ and HBO Max together under one roof, and the plan is for the two streaming platforms to eventually be rolled into one service. Meanwhile, the future of Discovery+ &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/matchbox-movie-fast-furious-replacement-apple-tv-streaming-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-four-supporting-stars-of-matchbox-in-formal-dress-in-front-of-a-sports-car-in-matchbox-the-movie.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Matchbox The Movie Becomes Apple TV's Most-Watched Film
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV’s New Fast & Furious Replacement Is Officially The Biggest Movie On Streaming</div>
+      
+      
+      <div class="summary">Apple TV just released a massive action comedy that is taking streaming by storm, and it could be Fast & Furious' replacement. Apple TV's slate of movies and TV shows has been a packed one this year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/avatar-seven-havens-missing-last-airbender-intro-episodes-1-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/aang-looking-scared-in-avatar-the-last-airbender-season-1-episode-20.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avatar: Seven Havens Drops Iconic Element Introduction from Opening Episodes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Paramount+ Officially Erases Major Avatar: The Last Airbender Tradition</div>
+      
+      
+      <div class="summary">Warning! This article contains major spoilers for Avatar: Seven Havens season 1, episodes 1–3.Avatar: The Last Airbender's sequel series, Avatar: Seven Havens, abandons an iconic franchise tradition in its opening episodes. Avatar: Seven Havens intro&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/star-trek-voyager-wise-janeway-quote/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/04/kate-mulgew-leaning-as-captain-janeway-in-star-trek-voyager.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            31 Years Later, Captain Janeway's Wisest Quote Remains Unparalleled in Star Trek History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When some of the wisest quotes from Star Trek Captains are talked about, it's often figures like Captain Kirk (William Shatner) or Captain Picard (Patrick Stewart) who are most commonly brought into the discussion.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-wars-princess-leia-of-the-rebellion-book-nycc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/02/star-wars-return-of-the-jedi-leia-unmasked-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Legendary Star Wars Author Officially Returns For 2027 Princess Leia Sequel
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Princess Leia is officially returning in a new Star Wars story set to release next year from author Claudia Gray. Carrie Fisher made the role of Leia Organa iconic nearly 50 years ago in 1977's Star Wars: Episode IV — A New Hope.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/vampire-the-masquerade-wake-in-hate-release-date-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/page_bg_raw.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Vampire: The Masquerade Sequel Officially Arrives With A Major Twist
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Following the chilling frights of Halloween, Vampire: The Masquerade has released a long-awaited sequel, but with a bit of an unexpected take.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-cyberleek-nude-jason-duvall-internet-archive-video-tank-cheat/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/05/screenshot-2026-05-18-at-11-38-25-am.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6 Leak Shows Naked Jason, Sparking Fan Debate
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'GTA 6' Fandom Is Officially Shook After The Nude Jason Leak</div>
+      
+      
+      <div class="summary">Grand Theft Auto 6 fans just learned that what is seen cannot always be unseen — but it sure may raise questions.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/dc-comics-absolute-justice-league-batman-superman-wonder-woman/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/absolute-justice-art.png?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DC Announces New Justice League Series 'Absolute Justice'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: DC Officially Unveils a New Justice League</div>
+      
+      
+      <div class="summary">DC Comics announced a new Justice League series at New York Comic-Con on Friday, and it's one fans have been eagerly awaiting.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/stephen-king-new-project-mike-flanagan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/stephen-king-doctor-sleep-book-signing.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stephen King Crowns the Official Best Adapter of His Work & Teases Major New Project
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Stephen King is one of Hollywood's best options for adaptations, and the prolific writer has had tens of films and TV shows based on his work. However, the author has just crowned Mike Flanagan as the best person to adapt his work.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/james-bond-comic-book-grant-morrison-nycc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/11/james-bond-007-1-cover.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            James Bond Returns in New Comic Series 'Sunbreaker' by Grant Morrison
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: James Bond Confirmed To Return With Massive Reboot Before Next Movie</div>
+      
+      
+      <div class="summary">The first name in espionage is undeniably James Bond. The suave MI6 agent's adventures have served as the foundation of spy fiction on the big screen for decades. Of course, the international man of mystery, otherwise known as 007, has been seen savi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/avatar-the-last-airbender-first-prequel-tv-series-kuruk/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/03_avatarkurukwaveofchaos_keyframe.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avatar: The Last Airbender Reveals First Look at Prequel Series 'Avatar Kuruk: Wave of Chaos'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Avatar: The Last Airbender Reveals First Look at Its First-Ever Prequel TV Series</div>
+      
+      
+      <div class="summary">Today is a great day to be an Avatar: The Last Airbender fan. As the beloved Nickelodeon franchise releases its latest TV entry, Avatar: Seven Havens, after over 10 years, Paramount+ has confirmed its first-ever prequel TV series, coming soon to the &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-studios-eleventh-original-villain-spider-man-brand-new-day" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/marvel-studios-introduces-its-11th-original-villain-in-spider-man-brand-new-day_.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Studios Introduces Its 11th Original Villain In Spider-Man: Brand New Day
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel Studios added a brand-new original villain to its ranks with Spider-Man: Brand New Day. The Marvel Cinematic Universe picks most of its heroes and antagonists straight from decades of comic book source material, but the studio also invents new&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/game-console-sales-down-ai-component-crisis-ram/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/06/assets_2024_08_1724246842_xbox-series-x_2tb-galaxy-black-special-edition_16x9_03_notext-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            High Console Prices Push Playstation and Xbox Sales to New Lows
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">As an ongoing component crisis continues to drive up console prices, gaming hardware sales are tanking. According to new U.S. retail data from Circana, Xbox hardware sales were down 33% year-to-date in August compared to this point in 2025.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2282465/movies-like-ben-affleck-animals/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/5-movies-to-watch-if-you-like-ben-afflecks-animals/l-intro-1791566484.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Movies To Watch If You Like Ben Affleck's Animals
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Movies To Watch If You Like Ben Affleck's Animals Static Media Ben Affleck's sixth feature-length directorial work, "Animals," has dropped on Netflix.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2280772/best-superhero-westerns-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/5-best-superhero-westerns-ranked/l-intro-1791416390.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Best Superhero Westerns, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Best Superhero Westerns, Ranked 20th Century Fox/Static Media There are enough great sci-fi Westerns to prove that both genres complement each other. Therefore, it shouldn't be surprising to learn that many awesome superhero movies also share DNA w&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2277253/new-liquid-cooled-ssd-future-data-center/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/these-new-liquid-cooled-ssds-might-be-the-future-of-data-center-computing/l-intro-1789513889.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            These New Liquid Cooled SSDs Might Be The Future Of Data Center Computing
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">These New Liquid Cooled SSDs Might Be The Future Of Data Center Computing Liquid cooling is typically used to offset the heat caused by powerful processors and graphics cards. However, Kioxia, a Japanese company focusing on flash-memory and storage, &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/crossed-teaser-trailer/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/crossed-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Perfect 'Walking Dead' Replacement Arrives in First Teaser for New Post-Apocalyptic Thriller
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There's always an appetite for fresh horror favorites, and a brutal new story is headed to screens to sate the hunger of horror audiences. Part The Walking Dead, part 28 Days Later, a brand-new zombie excursion is coming soon, and it may be the most &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-crime-books-since-1990-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/12/rosamund-pike-in-gone-girl.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 6 Best Crime Books Released Since 1990, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some crime novels leave you wanting to solve the case. But the ones you fall in love with beyond the average ones? They leave you wanting to call somebody at midnight and say, “You need to read this because I cannot be the only person carrying it aro&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/street-fighter-movie-animated-flashbacks-anime-inspiration/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/street-fighter-hand-drawn-2026-movie-1-14-screenshot.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Street Fighter Movie Officially Reveals Its Big Animated Twist
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The creators of the new Street Fighter movie have been sitting on a secret: A surprising amount of the film is told through traditional 2D animation, one of the film's many throwbacks to the '90s.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/avengers-doomsday-doctor-doom-nycc-marvel-merch-collection/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/avengers-doomsday.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Avengers: Doomsday’ Officially Takes Over NYCC With New Doctor Doom Collection
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After the release of Disney+'s VisionQuest on October 14, the rest of the MCU runway will be cleared for Doctor Doom. The franchise's next big crossover event, Avengers: Doomsday, is just over two months away from arriving in theaters and pitting gen&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/baldurs-gate-3-dark-horse-comics-nycc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/astarian-baldurs-gate-3-comic-lead-art.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Baldur's Gate 3 Comic Series Starring Astarion Announced
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New D&D Baldur's Gate 3 Series Stars Everyone’s Favorite Vampire Spawn</div>
+      
+      
+      <div class="summary">Larian Studios’ smash hit RPG Baldur's Gate 3 is packed with rich characters, but the clear fan favorite is the vampire spawn rogue Astarion Ancunín. The sassy undead heartthrob already got a prequel novel written by Nettle & Bone author T.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/witcher-3-remastered-restart-campaign-save-game-anxiety/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/tw3re_launch_meditation_pc_16x9_clean.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            I Really Want to Get Back into The Witcher 3 but I Have Save Game Anxiety
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">You know the feeling, I bet you do. There's a game you played and loved but never finished — or never felt you got closure on, in one way or another. And, suddenly, there's a compelling reason to go back, like a patch or visual refresh.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/star-wars-galactic-racer-easter-eggs/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/hibi-in-star-wars-galactic-racer.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 'Star Wars' Easter Eggs & References in 'Galactic Racer'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This year has been a great one for Star Wars video games, starting with Zero Company in August and followed shortly by Galactic Racer. Released on Oct. 6, 2026, Galactic Racer is a racing game set in the Star Wars universe and a spiritual sequel to 1&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/harry-potter-rpg-defenders-of-hogwarts-kickstarter/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/hogwarts-legacy-dragon.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Next Major Harry Potter RPG Is Officially Here
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The wait for Hogwarts Legacy 2 feels like we've gone into the vanishing cabinet for Borgin and Burke's alongside Montague, and we've been stuck here for months, if not years, with no sign of light at the end of the tunnel.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <span class="current">14</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/15.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

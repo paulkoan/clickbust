@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-10 17:07 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>97 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>62 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>120 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>12 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/fire-country-season-5-review-cbs/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/max-thieriot-fire-country.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Fire Country' Season 5 Proves the CBS Series Needs To Get Back to Basics | Review
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's Note: The following contains spoilers for Fire Country Season 5, Episode 1. The Edgewater saga and the adventures of Bode Leone (Max Thieriot) and Battalion 1408 continue in Fire Country Season 5. Season 4 ended on an uncharacteristically ha&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/strongest-black-clover-magic-types-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/asta-looks-determined-in-black-clover-season-2-episode-1.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Strongest Black Clover Magic Types, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Black Clover's magic is strangely uneven. Most mages are born with single attributes, from familiar elements like fire and water to rarer abilities like Darkness and Time Magic.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/scrubs-revival-disney-plus-streaming-success/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/disney-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Scrubs Revival Takes Over Streaming with 2-Part Season 2 Premiere
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney+ Officially Scores Big With 2-Part Revival Taking Over Streaming</div>
+      
+      
+      <div class="summary">Some sitcom revivals struggle to justify their existence more than others; nostalgia can get viewers through the door, but familiar faces and recycled jokes will only carry a series so far. Fortunately, Scrubs has a more compelling reason to return t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/the-exorcist-martyrs-trailer-mike-flanagan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/the-exorcist-martyrs-steps.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Scarlett Johansson's New Exorcist Movie Gets First Terrifying Trailer
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Exorcist: Martyrs was promising from the get-go, with horror master Mike Flanagan taking the helm as writer and director, accompanied by a star-studded cast. On Wednesday, we got a first look at Flanagan's The Exorcist: Martyrs with a short tease&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2277708/how-long-ram-last-pc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-long-does-ram-last-in-your-pc/l-intro-1791222326.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Long Does RAM Last In Your PC?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How Long Does RAM Last In Your PC? Vlado85rs/Getty Images We may receive a commission on purchases made from links. This is actually one of the more difficult questions to answer in the world of PC components.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-new-shonen-manga-of-2026-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/cannon-master-manga.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Best New Shonen Manga of 2026, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">If it feels like the anime world is crowded with new series, keep in mind that there are countless more manga coming out. With fewer people needed to work on them, they're comparatively far easier to start. Dozens of new manga are released every year&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/horror-films-perfect-start-to-finish/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/the-shining.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Horror Films That Are Perfect From Start to Finish
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Horror movies often do a lot more than just scare. The really good ones cause the viewer to think, to really contemplate, the issues addressed in them. The scariest horrors also tap into our most deep-seated fears, and exploit them in very clever way&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2277607/best-anker-accessories-for-home/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-anker-accessories-youll-want-to-keep-around-the-house/l-intro-1791219546.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Anker Accessories You'll Want To Keep Around The House
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Anker Accessories You'll Want To Keep Around The House Most of your digital life revolves around your daily drivers — your phone, computer, and maybe even a tablet.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/crunchyroll-anime-for-weekend-binge/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/crunchyroll-logo-and-background-behind-erased-and-takopi-s-original-sin-anime-featured-image.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Masterpiece Crunchyroll Anime That Can Be Binged In One Weekend
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A great anime binge doesn’t need five seasons or a hundred episodes. Some of the most memorable series tell complete stories in one cour, or even less, delivering a satisfying emotional arc without asking viewers to commit months of evenings.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/boston-blue-season-2-frank-reagan-tom-selleck-return-update-good/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/blue-bloods_iybt61-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Selleck's Blue Bloods Return In 2026 Status Is Fantastic News
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Though it's been one of the biggest questions about the future of the franchise since Boston Blue's debut, Tom Selleck's return to the world of Blue Bloods may not be as far off as it once seemed.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/6-years-after-extraction-its-director-has-found-the-perfect-new-action-franchise-with-john-cena/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/john-cena-running-in-matchbox-the-movie.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why Matchbox: The Movie Is The Perfect New Action Franchise For Extraction Director Sam Hargrave
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Six years after Extraction, Sam Hargrave is moving from Tyler Rake’s one-man missions to Matchbox: The Movie, an ensemble action movie led by John Cena. Cena plays Sean, an undercover CIA agent whose return home drags four childhood friends into a hu&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jessica-chastain-other-mommy-rotten-tomatoes-score-is-it-good/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/09/other-mommy-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Other Mommy: Jessica Chastain's New Horror Movie Gets 17% on Rotten Tomatoes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘IT’ Star’s New Horror Movie Is Officially Critics’ Worst Nightmare</div>
+      
+      
+      <div class="summary">Of all the great horror movies released so far this year — from underappreciated masterpieces like 28 Years Later: The Bone Temple to viral sensations like Backrooms — none have proven more successful both critically and commercially than Obsession.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/reason-wrath-of-khan-is-best-star-trek-movie-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/deforest-kelley-william-shatner-and-leonard-nimoy-from-star-trek-ii-the-wrath-of-khan.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Reasons Wrath of Khan Is Still the Greatest Star Trek Movie of All Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In the 60 years since Gene Roddenberry's universe warped into existence, Starfleet heroes have boldly gone on both big- and small-screen adventures. Except everything almost came to a full stop in 1982.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/arcade-games-better-than-pac-man/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/pac-man-ghost.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Masterpiece '80s Arcade Games Better Than Pac-Man
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When discussing video games in the '80s, one must not forget the peak of arcade games from that decade. An argument can be made that it all started with the 1980 release of Pac-Man, which became a cultural phenomenon that defined gaming for generatio&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/pokemon-winds-waves-water-starter-series-curse/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/02/poke-mon-presents-_-2-27-2026-23-35-screenshot.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Winds and Waves' Water Starter Breaks a Series Curse
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Every starter in a new Pokémon generation erects an army of staunch defenders, but like it or not, some monsters are loved more than others. And for a couple of decades now, it seems like fire-type starters and grass-type starters keep taking turns s&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2277556/how-much-xbox-game-pass-cost-2017-vs-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/heres-how-much-xbox-game-pass-cost-in-2017-vs-2026/l-intro-1791218664.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Here's How Much Xbox Game Pass Cost In 2017 Vs. 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Here's How Much Xbox Game Pass Cost In 2017 Vs. 2026 Miguel Lagoa/Shutterstock Xbox Game Pass allows both casual and veteran gamers to dive into titles spanning every Xbox generation across the Xbox One, Xbox Series X/S, and PC, from original Xbox ti&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/sean-connery-last-crusade-improvised-joke.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2020/11/1604161859_Sean-Connery-Indiana-Jones-and-the-last-crusade-and-the.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sean Connery Ad-Libbed The Funniest Line In Indiana Jones
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">By Britta DeVore | Published 27 seconds ago Although he has one of the most recognizable faces in Hollywood, Sean Connery’s accent may be an even bigger legend than the Bond actor himself.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/supernatural-fantasy-books-you-need-to-read/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/lismar-perez-1suqt__iplg-unsplash.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Supernatural Fantasy Books You Need To Read
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Supernatural fantasy brings the impossible into familiar worlds, transforming ordinary cities, historical settings, and seemingly respectable institutions into places where witches, ghosts, vampires, and ancient curses lurk beneath the surface.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/crunchyroll-new-manhwa-anime-partnership-hayate/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/04/sung-jinwoo-from-solo-leveling-in-front-of-the-crunchyroll-logo-anime-featured-image.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Crunchyroll Announces Massive 15 Anime Series Follow-ups To Solo Leveling
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Solo Leveling has changed the game for manhwa adaptations, and Crunchyroll clearly wants a lot more of that success. Sung Jinwoo's rise from the weakest hunter to an absolute powerhouse turned the series into a global hit, putting Korean webtoons fir&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/neuromancer-greatest-sci-fi-opening-line-unfilmable-cyberpunk/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/1f1aaeac-1618-4199-a80e-68e8a02d39f1-1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Greatest Sci-Fi Opening Line Is “Unfilmable” In Apple TV’s Cyberpunk Series
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of the greatest opening lines in the history of sci-fi is from William Gibson's Neuromancer. Since Apple TV is adapting the seminal cyberpunk book, the show, too, will have to deliver its own take of the line in question.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/family-guy-halloween-special-overtakes-avengers-endgame-streaming-success-disney-plus-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/steve-rogers-chris-evans-holds-mjolnir-avengers-endgame.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Family Guy’s 2026 Halloween Special Officially Defeats ‘Avengers: Endgame’
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Kieran Culkin’s nearly semi-satanic role in Succession has been hard to recover from. And now Culkin, roughly three years later, has literally played Satan in Seth MacFarlane’s new Halloween special, where the latter plays both Stewie Griffin and Bri&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sheriff-country-season-2-review-cbs/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/copy-of-collider-template-2026-04-10t074537-552.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Sheriff Country' Season 2 Can't Escape Its Biggest Plot Holes | Review
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's Note: The following contains spoilers for Sheriff Country Season 2, Episode 1.The first Fire Country spin-off, Sheriff Country, is back for its sophomore season, kicking off with the Season 2 premiere, "Cyclone.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/robin-hood-show-streaming-success-fantasy-mgm-plus-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/sean-bean-as-the-sheriff-of-nottingham-lauren-mcqueen-as-marian-ride-on-horseback-through-the-woods-in-robin-hood.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Robin Hood Series Surges on Streaming After Andrew Garfield's The Uprising
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Hit 10-Part Robin Hood Adventure Surges on Streaming Following Andrew Garfield’s Secret Movie</div>
+      
+      
+      <div class="summary">The fabled bowman is back... kinda. With Andrew Garfield's stealth Robin Hood movie, The Uprising, now playing in theaters, audiences are turning their attention to other films and television shows featuring the iconic folk hero, including one undera&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/sheriff-country-season-2-episode-1-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/matt-lauria-as-deputy-nate-boone-and-morena-baccarin-as-sheriff-mickey-fox-in-sheriff-country.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sheriff Country's Plot-Heavy Return Sets Up A Colossal Challenge For Morena Baccarin's Mickey | Review
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The return of the Fire Country spinoff Sheriff Country for its sophomore season builds on the twists of season 1’s explosive finale, setting up a challenge greater than ever before for Edgewater Sheriff Mickey Fox (Morena Baccarin).</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2279947/al-pacino-only-sci-fi-movie-predict-future-s1m0ne/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/in-2002-al-pacinos-only-sci-fi-movie-predicted-the-future-with-eerie-accuracy/s1m0ne-mightve-been-a-silly-satire-but-its-premonition-became-true-two-decades-later-1791382839.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Al Pacino's 2002 Sci-Fi 'S1m0ne' Predicted AI Actresses
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: In 2002, Al Pacino's Only Sci-Fi Movie Predicted The Future With Eerie Accuracy</div>
+      
+      
+      <div class="summary">In 2002, Al Pacino's Only Sci-Fi Movie Predicted The Future With Eerie Accuracy New Line Cinema Writer-director Andrew Niccol (who delivered one of the best sci-fis of 1997) may not have struck gold with his 2002 satire "S1m0ne," starring Al Pacino (&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/anime-if-you-love-dragon-ball-tournament-arcs/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/ultra-instinct-1-1-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Anime to Watch If You Love Dragon Ball's Tournament Arcs
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some of Dragon Ball's best moments happen when the story temporarily drops everything else and focuses on a thrilling battle between two characters. The World Martial Arts Tournaments turned new rivals into instant fan favorites.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-social-reckoning-biggest-questions/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/the-social-reckoning_ddckeu.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            9 Biggest Questions After 'The Social Reckoning's Ending, Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Aaron Sorkin's long-awaited follow-up The Social Reckoning recounts the real-world events surrounding the investigation and whistleblowing on the company formerly known as Facebook in the time leading up to and during the height of the COVID-19 pande&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/magic-the-gathering-marvel-darkhold-destiny-commander-decks/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/moon-knight-battles-mindless-ones-in-art-from-darkhold-destiny.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            MTG Officially Reveals 4 Epic New Marvel Commander Decks Coming in 2027
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Magic: The Gathering players have repeatedly complained that Universes Beyond sets feel too far removed from the game’s fantasy genre and original storytelling.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/mtg-darkhold-destinies-spoilers-marvel-universes-beyond/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/magic-darkhold-destiny-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Magic: The Gathering's 'Darkhold Destiny' Ushers in New Era for Universes Beyond
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It’s Officially the Dawn of a New Era for 'Magic the Gathering' Universes Beyond</div>
+      
+      
+      <div class="summary">Universes Beyond has always sat in direct opposition to Magic: The Gathering’s homegrown multiverse sets in several key ways.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/practical-magic-2-box-office-milestone-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/practical-magic-2-1.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 10 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Practical Magic 2 Leaves 2,100 Theaters After Box Office Disappointment
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Fantasy Sequel to a Cult Classic Masterpiece Officially Leaves 2,100 Theaters After Box Office Disappointment</div>
+      
+      
+      <div class="summary">Practical Magic was never a theatrical hit. The film only became beloved later, through two decades of home video rotations and October cable airings, which is precisely why Warner Bros. greenlit a sequel in the first place. So there's a certain iron&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <span class="current">8</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/9.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

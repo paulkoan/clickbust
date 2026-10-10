@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-10 17:07 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>97 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>62 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>120 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>12 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/avatar-the-last-airbender-new-avatar-kuruk-series-wave-of-chaos/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/mcdavaa_i8006-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Avatar: The Last Airbender’ Is Officially Expanding With New Animated Series
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When it comes to popular animated franchises, few have had the same staying power over the last 20 years as Avatar: The Last Airbender.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/avatar-seven-havens-renewed-seasons-3-and-4/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/avatar-seven-havens-korra.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Avatar’s New Era Officially Gets 4 Season Guarantee
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Avatar: The Last Airbender fans have had to endure plenty of controversy this year, but things are finally looking up for the future of the franchise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dragon-ball-super-beerus-episode-1-release-date-time/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/f039d596-5ad4-4659-ae2e-65c7b4fe452c-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dragon Ball Super: Beerus Episode 1 Release Date & Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After 8 years, Dragon Ball Super is finally back. The next major arc after the Tournament of Power, the Galactic Patrol Arc, is currently in development, but in the lead-up to that continuation, the remake of the original anime is coming in the form &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/video/carrie-allison-thornton-josie-totah-break-it-down/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/allison-thornton-josie-totah.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Carrie: Allison Thornton & Josie Totah Break It Down
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Mike Flanagan's Carrie gives its bullies a surprising new depth. Allison Thornton and Josie Totah reveal how the 2026 Prime Video series explores Chris's motivations, Sue's insecurities, and the emotional fallout of high school cruelty.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2282342/mac-mini-m6-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/mac-mini-m6-review-still-great-but-a-tougher-sell/l-intro-1791561723.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mac Mini (M6) Review: Still Great, But A Tougher Sell
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are two chip options when it comes to the 2026 Mac mini: the M6 and the M5 Pro. The M5 Pro is the more confusing of the pair, because Apple sells it in two configurations.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/reviews-ratings/carrie-show-review" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/carrie_show_review.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Carrie Show Review: Summer H. Howell Shines In Mike Flanagan's Latest Stephen King Adaptation
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">We're in a fantastic era, possibly the best yet, for Stephen King adaptations. The Outsider, the Mr. Mercedes series, The Long Walk, and both recent IT adaptations and IT - Welcome to Derry alone are exemplary adaptations of incredible quality.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/forgotten-thrillers-rival-gone-girl/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/amynick.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Forgotten Thrillers That Rival 'Gone Girl,' Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The best thrillers make you complicit before they make you afraid. You understand the lie. You can see why somebody tells it. Maybe you even think, for one terrible minute, that you would tell the same one.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/richard-garriott-ultima-creator-taking-his-back-copyright/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/4204051/ultima-underworld.0.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Legendary RPG Creator Is Officially Taking His Game Back from Electronic Arts
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Richard Garriott released the first Ultima game in 1981, launching a series that would come to define computer role-playing games. A decade later, he sold the series and his studio, Origin Systems, to Electronic Arts for $30 million.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-switch2-release-nintendo-boss-comments/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/lucia_caminos_07.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nintendo Boss Officially Comments on GTA 6 Coming to Switch
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The release of Grand Theft Auto 6, possibly the most highly anticipated game in over a decade, is just over a month away. Gamers are eager to jump into Rockstar's latest open-world adventure on Nov. 19 — that is, if they own a PlayStation 5 or Xbox S&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/ncis-new-york-paramount-plus-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/ll-cool-j-as-sam-hanna-and-scott-caan-as-nick-schaeffer-on-ncis-new-york.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            NCIS’ Rule-Breaking New Spinoff Is 1 of Streaming’s Most-Watched Shows After Just 1 Day
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The NCIS franchise is continuing to expand after 20 years, and it seems like its latest spinoff is doing just fine. Just one day after NCIS: New York’s premiere, the series is soaring on streaming. According to FlixPatrol, NCIS: New York is No. 6 on &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/jrd-lost-legion-john-rhys-davies-comic-book/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/07/gimli-getting-arrows-pointed-at-him-in-the-lord-of-the-rings.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Indiana Jones, Lord of the Rings' John Rhys-Davies Returns In Comic Book
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Behind every iconic lead actor in a beloved franchise, there is a supporting player who rarely gets the recognition that they deserve. Thus, it is always a joy to see the more underrated unsung heroes of pop culture receive their time in the spotligh&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/action-packed-westerns-for-fans-of-tombstone-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/03/tombstone-val-kilmer-kurt-russell.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Most Action-Packed Westerns Perfect If You Love Tombstone
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In 1993, Kurt Russell and Val Kilmer teamed up to make the most action-packed Western of all time in Tombstone, and there are some great movies to watch if you love it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/wardogs-season-2-patch-notes-gambling/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/06/wardogs-playtest-reactions.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wardogs Gambling Is Officially Here With Season 2 Update
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">At the start of Wardogs season 2, which launches next week, players will now be able to gamble on their own in-game performance. Wardogs operates with a cash-based economy, where every action rewards in-game money, and the new wager vendor will let p&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/scrubs-revival-carla-storyline-problem/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/183071_1282-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Scrubs' Original Character's New Storyline Confirms Its Biggest Revival Problem
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Season 2 of the Scrubs revival is now well underway, but one storyline has quickly highlighted the sitcom's biggest problem overall. Scrubs revival Season 2, Episode 3, "My Ex's Ex," has plenty of juicy moments.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/equalizer-2-denzel-washington-stream-pluto-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/denzel-washington-holds-a-couple-of-guns-in-the-equalizer-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Denzel Washington's 121-Minute John Wick-Esque Action Thriller Shoots Onto New Streaming Home
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Eight years after it consolidated Denzel Washington's status as an action star, one of the actor's most underrated movies has become a hit on free streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/keanu-reeves-constantine-2-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/keanu-reeves.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Keanu Reeves’ Cult-Classic Fantasy Thriller Sequel Is Still Officially Happening
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">You can tell some movies are destined to become cult classics from the moment they're released. Middling critical reviews and modest box office returns, but a small percentage of people come out of the multiplex convinced they've just seen their movi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2277013/iphone-hidden-feature-measure-app-furniture/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/your-iphone-has-a-hidden-feature-that-can-measure-furniture/l-intro-1791202439.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Your iPhone Has A Hidden Feature That Can Measure Furniture
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Your iPhone Has A Hidden Feature That Can Measure Furniture Pixel-Shot/Shutterstock When picking out a new sofa, you'll probably want to bring a tape measure to the store. Otherwise, you risk buying one that's too big or too small for your space.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/last-temptation-of-becky-trailer/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/niel-patrick-harris-in-last-temptation-of-becky.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Neil Patrick Harris Breaks Bad in Trailer for Final Installment in Tempting Action Thriller Franchise
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ever since its debut in 2020, Becky has become one of the most underrated action series out there. What started out as a 13-year-old girl going up against Neo-Nazis has now turned into a full-fledged franchise that sees the titular heroine take down &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/a-prayer-for-the-dying-johnny-flynn-released/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/a-prayer-for-the-dying-5-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New 'Shutter Island Meets Stephen King' Western Thriller From 'Harry Potter' Icon Officially Hits Theaters
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Western has quietly become one of the more adventurous spaces in American film, mostly because nobody really expects it to be a major box office force anymore.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/fortnite-chapter-7-season-4-power-hours-what-time/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/jlee_261009_1001_fn_spooky.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            What time are the Fortnitemares power hours in Fortnite Chapter 7 Season 4?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fortnitemares power hours are happening in Fortnite Chapter 7 Season 4 on Saturday, Oct. 10. During this set of power hours, the drop rate for Spooky Dash sprites, The Deer sprites, and Vampire sprites will be increased, so if you still need those fo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2276730/robot-vacuums-big-problem-with-privacy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/robot-vacuums-have-a-big-problem-with-privacy/l-intro-1791118782.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Robot Vacuums Have A Big Problem With Privacy
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Robot Vacuums Have A Big Problem With Privacy Choreograph (konstantin Yuganov)/Getty Images Twenty years ago, saying the sentence "your vacuum may be spying on you" would have made you look like a tin-foil-hat conspiracy theorist, but it's a genuine &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/mark-wahlberg-boogie-nights-leonardo-dicaprio.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2022/05/fear-mark-wahlberg.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mark Wahlberg's Breakout Role Was Meant For A Different Actor
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One film role turned Mark Wahlberg from a rapper with great abs into a Hollywood star, but it was actually meant for someone else entirely. By Nathan Kamal | Published 22 seconds ago Mark Wahlberg was already famous in 1997, but not for the reasons h&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2282214/lanterns-rumors-false/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/lanterns-rumors-that-turned-out-to-be-totally-false/l-intro-1791558228.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lanterns Rumors That Turned Out To Be Totally False
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Lanterns Rumors That Turned Out To Be Totally False VIDEO And so the inaugural season of "Lanterns," the first live-action show expressly made for the DC Universe (rather than inherited from the DC Extended Universe like "Peacemaker"), has wrapped up&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/american-primeval-better-action-yellowstone/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/01/taylor-kitsch-by-his-horse-in-the-netflix-western-series-american-primeval.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'American Primeval' Has Better Action Than 'Yellowstone'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget Taylor Sheridan, Netflix's 6-Part Western Gem Has Better Action Than 'Yellowstone'</div>
+      
+      
+      <div class="summary">Yellowstone didn’t become one of TV’s most popular Westerns by accident. It has many great qualities, such as flawed-yet-likable characters, great cinematography, and a rich plot that leaves you looking forward to more. However, it doesn’t fully deli&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/2020-season-49-sneak-peek-born-to-kill-abc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/image0.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ABC's '20/20' Enters a House of Horrors in Chilling New Season 49 Preview [Exclusive]
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Although they've been a sort of comfort entertainment for years, true-crime stories can often be more terrifying than anything in fiction.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/taylor-sheridan-the-madison-season-1-physical-release-out/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/elle-chapman-as-paige-mcintosh-in-the-madison-season-1-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan's 'The Madison' Season 1 Now Available on Blu-ray and DVD
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan's Former Yellowstone Spinoff Now Available in New Physical Release</div>
+      
+      
+      <div class="summary">Multiple Taylor Sheridan shows are coming back soon with new episodes. The Madison, which was initially a Yellowstone spinoff, found a new way to return before its upcoming Season 2. The series premiered on Mar. 21 this year, with a star-studded cast&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-anime-to-watch-if-you-love-reincarnated-as-a-sword/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/reincarnatedswprd2-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Anime to Watch If You Love Reincarnated As a Sword
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of fantasy anime's biggest trends over the past decade is isekai titles that don't just send ordinary individuals to a magical world, but reincarnate them into something radical.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/spider-man-brand-new-day-tony-stark-hulk-inhibitor-doomsday" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/spider-man_brand_new_day_hulk_inhibitor_tony_stark_doom.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spider-Man: Brand New Day Photo Reveals That Tony Stark Designed Hulk’s Inhibitor, Which Could Have Major Doomsday Implications
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Peter Parker has had his fair share of mentors in the MCU. Since he started his superhero career at the ripe age of 15, he has always needed help along the way, whether on the battlefield or in the lab.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/clair-obscur-expedition-33-charlie-cox-next-unannounced-sega-game/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/04/clair-obscur-expedition-33-gustave-close-up.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Expedition 33 Star Charlie Cox Officially Confirms Role in Unannounced Sega Game
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Clair Obscur: Expedition 33 was Daredevil: Born Again star Charlie Cox's first foray into video game voice work, and he's already finished up recording his next game. At New York Comic Con on Thursday, Cox told IGN that he'll star in an untitled upco&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-gothic-movies-of-all-time/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/johnny-depp-as-ichabod-crane-in-the-forest-in-sleepy-hollow.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 09 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Top 20 Gothic Movies: From Tim Burton Classics To Modern Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While the word Gothic once specifically referred to the cultural impact of the Goths from Northern Europe, it has evolved to encompass a subculture that keeps the Goths' name and cultural elements alive, even though they no longer exist as a distinct&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <span class="current">16</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/17.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>
