@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-17 15:04 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>4 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>10 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>129 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>12 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/unforgettable-netflix-detective-series-still-popular/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/ashanti-in-unforgettable-season-4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Unforgettable, the CBS Detective Series Canceled Twice, Now Streaming on Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Hit 4-Season Detective Series Now On Netflix Is The Show That Refuses To Die</div>
+      
+      
+      <div class="summary">Though the television landscape has rapidly evolved over the past few years, one thing remains the same: there will always be shows that get prematurely canceled.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/wishlister-october-16/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/machanarium-2-robots-in-canyon.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Newly Announced Games You Need to Add to Your Steam Wishlist
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Out of all the world premiere-filled gaming streams that happen throughout a year, The Triple-i Initiative has gradually become a personal favorite over time. The event, which focuses exclusively on independent games, is always an unpredictable watch&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/victorian-psycho-maika-monroe-behind-the-scenes-featurette/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/09/victorian-psycho-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Victorian Psycho: Maika Monroe's New Horror Movie Homages 'American Psycho' and 'The Shining'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Maika Monroe’s New Horror Movie Is an ‘American Psycho’ Meets ‘The Shining’ Nightmare [Exclusive]</div>
+      
+      
+      <div class="summary">Maika Monroe has spent enough time running from monsters. Between It Follows, Watcher, and Longlegs, Monroe has built a horror resume full of creatures and criminals who should never be allowed within 500 feet of her.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/clint-eastwood-unforgiven-better-than-tombstone/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/02/doc-holliday-val-kilmer-virgil-earp-sam-elliott-wyatt-earp-kurt-russell-and-morgan-earp-bill-paxton-in-tombstone.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Clint Eastwood's Unforgiven is a Better Western Than Tombstone
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When it comes to the best Hollywood movies of the last 50 years, Westerns have punched above their weight, leading to classics like Tombstone and Unforgiven.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dragon-ball-strongest-fusion-characters-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/04/dragon-ball-fighterz-super-saiyan-blue-vegito.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Strongest Dragon Ball Fusion Characters, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Dragon Ball has introduced plenty of ways for its characters to become stronger, but Fusion is far and away one of the franchise's most notable battle strategies. Fusion is a process in which two or more individuals pool together their strength and s&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/allen-netflix-teaser-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/allen-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's New Sci-Fi Movie Is Ridley Scott's 'Alien' Meets 'E.T.' in Glowing First Trailer
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In just a few weeks, Netflix is releasing an all-new sci-fi movie that flips the typical alien formula on its head, while homaging Ridley Scott's 1979 classic in the first trailer.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/legend-of-zelda-ocarina-of-time-new-trailers-dark-link/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/ns2_thelegendofzeldaocarinaoftime_scrn_15.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Zelda: Ocarina of Time Trailer Reveal Dark Link
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Nintendo's The Legend of Zelda: Ocarina of Time remake just received two new trailers, showing Nintendo still has surprises up its sleeve ahead of the remake's launch in a few weeks.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2282525/nokia-phones-we-wish-made-comeback/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-nokia-phones-we-wish-made-a-comeback-in-2027/l-intro-1791568871.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Nokia Phones We Wish Made A Comeback In 2027
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Nokia Phones We Wish Made A Comeback In 2027 Risto0/Getty Images We may receive a commission on purchases made from links. In its heyday, Nokia released some ingenious designs that were well ahead of their time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/chicago-fire-season-15-stella-kidd-kelly-severide-workplace-romance-problem-address/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/mixcollage-15-oct-2026-12-19-pm-2843.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Chicago Fire Forces Severide & Kidd To Address Their Longest-Running Issue
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: this article contains spoilers for Chicago Fire season 15, episode 2, "Rattle the Cage."Chicago Fire started season 15 by finally giving Severide his long-awaited promotion to Captain, and he had already settled into Boden's old office by th&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/arc-raiders-divided-quest-walkthrough-nomad-recordings/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/arc-raiders-divided-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Divided' quest walkthrough in Arc Raiders
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The "Divided" quest in Arc Raiders focuses on finding four separate nomad recordings, spread throughout Pendola Pass. This is the final quest of the Nomadic Envoy's line, introduced with the "Frozen Trail" update, and while it doesn't need to be comp&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/john-green-non-fiction-book-recommendations/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/stack-of-nonfiction-books-on-top-of-each-other.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            John Green's 8 Top Recommendations For Non-Fiction Books
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Author John Green is best known for The Fault in Our Stars. He also wrote the controversial Young Adult novel Looking for Alaska, and this year's buzzy hit Hollywood, Ending, as well as nonfiction books like The Anthropocene Reviewed and Everything I&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/avengers-doomsday-thor-odinforce-upgrade-doctor-doom" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/avengers-doomsday-thor-odinforce-mcu.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers: Doomsday Reveals Thor’s Odinforce Upgrade That Could Make Him Strong Enough to Fight Doctor Doom
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Avengers: Doomsday's latest poster unveiled the first look at Thor's new Odinforce power upgrade that may be pivotal in taking on Doctor Doom.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/control-resonant-just-1-million-copies-sold-remedy-fastest-selling-game/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/control-resonant.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Control Resonant Just Became Remedy’s Fastest-Selling Game of All Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Remedy Entertainment's latest mind-bending game, Control Resonant, is a massive sales success for the Finnish developer. Less than a month after the action RPG's release, the studio revealed the game has sold more than 1 million copies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/young-sherlock-season-2-solve-holmes-fake-death-mystery-silas/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/benedict-cumberbatch-as-sherlock-holmes-pointing-at-something-in-sherlock-season-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Guy Ritchie's New Sherlock Can Solve The Holmes Mystery The BBC Was Too Scared To
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Guy Ritchie’s new Sherlock Holmes TV show, Young Sherlock, took the world of streaming by surprise, and it could be the one to solve a huge Holmes mystery that the BBC’s show was too scared to address.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/marvel-upcoming-movies-list-release-dates/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/superheroes-assembled-on-the-poster-for-avengers-doomsday.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Upcoming Marvel Movies: MCU Phase 6 And Beyond (Release Dates & Details)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Although the rate of upcoming Marvel movies has slowed, there is still plenty to anticipate between the MCU Phase 6 release slate and other Marvel movies beyond the MCU. This release slate incorporates both films and shows, which will either air on D&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/transformers-one-stream-netflix-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/05/chris-hemsworth.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Officially Scores Chris Hemsworth's Near-Perfect 104-Minute Sci-Fi Action Epic
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">MCU co-stars Chris Hemsworth and Scarlett Johansson have not only saved the world as Thor and Black Widow (RIP) in the Avengers franchise, but the pair have also saved other planets in their hugely acclaimed, near-perfect reboot-slash-prequel of a be&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/dune-3-messiah-story-changes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/anya-taylor-joy-in-dune-part-two.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Dune 3' Images Officially Change the Original Story as Anya Taylor-Joy Takes the Stage
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Dune saga stands as one of the most monumental achievements in modern science fiction, adapting Frank Herbert's famously complex, multi-layered literary universe for a new generation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/cyberpunk-2077-movie-first-details-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/24052465/CyberpunkEdgerunners_3.jpg?q=49&fit=crop&w=220&h=124&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cyberpunk 2077 live-action film won't adapt the game's story, CD Projekt Red confirms
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Cyberpunk 2077' Movie First Details Officially Confirmed, Won’t Adapt Game 1:1</div>
+      
+      
+      <div class="summary">CD Projekt Red recently announced that Cyberpunk 2077 is getting a live-action film adaptation through Paramount Pictures. While initial details were sparse, we now know more about the movie's plot.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/whalefall-emotional-movie-op-ed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/austin-abrams-with-squid-tentacles-around-his-face-in-whalefall.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Not Going To Lie, I Wasn't Expecting Whalefall To Be Such An Emotional Rollercoaster
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The following contains spoilers for WhalefallWhalefall spends much of its runtime as a realistic and tense natural thriller, only to become a very different kind of story in the third act.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2288285/apple-tv-shows-watch-after-ted-lasso/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-apple-tv-shows-to-watch-after-ted-lasso/l-intro-1792096938.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Apple TV Shows To Watch After Ted Lasso
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Apple TV Shows To Watch After Ted Lasso Apple TV "Ted Lasso" has become the flagship comedy for Apple TV. The uplifting series follows the titular character, played by Jason Sudeikis, as he moves from the U.S. to England to coach a professional foo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/wisest-uncle-iroh-quotes-avatar-the-last-airbender/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/uncle-iroh-holding-a-steaming-cup-of-tea-in-avater-the-last-airbender.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Wisest Uncle Iroh Quotes From Avatar: The Last Airbender
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Uncle Iroh is undeniably the most influential character in Avatar: The Last Airbender, willing to share wisdom not just with Zuko but with anyone who needs a nudge in the right direction. He even inspires those who wish him harm.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/greatest-super-nintendo-snes-rpgs-vote-poll/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/chrono-trigger-snes-art.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Greatest Super Nintendo RPGs, As Ranked By Screen Rant Readers
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Super Nintendo Entertainment System may be best remembered for its incredible output of platforming titles, but its slew of RPGs are easily its greatest games.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/eternal-anima-rpg-preview-ps5-switch-2-pc-xbox/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/eternal-anima.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            One of the Most Intriguing RPGs of 2027 Plays With Time Brilliantly
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When Marvelous Entertainment showed off role-playing game Eternal Anima during a Nintendo Direct showcase in September, it had the familiar hallmarks of a retro JRPG.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/pokemon-returns-new-team-rocket-game-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/08/team-rocket-s-10-most-iconic-poke-mon-ranked.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Returns With New Team Rocket Game Coming November 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After decades of waiting, Pokémon fans can finally play as members of Team Rocket and try to defeat Gym Leaders as part of a new game, launching in November 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/avatar-seven-havens-zip-line-cut-from-story/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/avatar-seven-havens-pavi-jae-nisha.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avatar: Seven Havens Showrunner Cut a Zip-Line Element of the Story
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Before people in Avatar: Seven Havens walked, they zip-lined. That's right, an early concept for Avatar: Seven Havens involved zip-lines in the city of Ellora, one of the seven "havens" that make up the world after an apocalyptic event.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2284033/electronics-last-longer-than-phone/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/9-electronics-that-will-last-longer-than-a-modern-smart-phone/l-intro-1791821905.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            9 Electronics That Will Last Longer Than A Modern Smart Phone
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">9 Electronics That Will Last Longer Than A Modern Smart Phone Kulkann/Getty Images Old Nokia phones were famous for lasting forever, thanks to their simplicity and legendary durability. Things are very different now.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/smallville-25th-anniversary-superman/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/tcdsmal_ec178.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            25 Years Later, DC's Most Innovative Sci-Fi Show Changed Superheroes Forever
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Bringing Superman to weekly television has never been easy. Special effects rarely matched the movies, and a superhero who could fly presented some obvious budget problems. Then Smallville premiered on The WB on Oct. 16, 2001, and found an ingenious &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-wars-the-clone-wars-switches-genres-every-season/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/anakin-skywalker-and-ahsoka-tano-dueling-in-ahsoka-in-the-world-between-worlds.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Wars Switches Genres In Every Season Of Its 10/10 Show
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of the best Star Wars shows switches genres in every season. After the first movie was released in 1977, the franchise gradually began to make television series, beginning with the animated Droids and Ewoks series in the 1980s.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-dcus-batman-setup-officially-continues-in-next-weeks-r-rated-supervillain-movie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-batman-part-ii.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The DCU's Batman Setup Officially Continues In Next Week's R-Rated Supervillain Movie
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The DCU is continuing its Batman setup next week. James Gunn is taking his time introducing Batman into the DCU, wary of overlapping with Matt Reeves' Batman movies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-terminal-list-season-1-prime-video-streaming-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/sharedimages/2026/09/the-terminal-list-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Chris Pratt's The Terminal List Returns to Prime Video Top 10 Ahead of Season 2 Premiere
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Chris Pratt’s Prime Video Action Hit Blows Up on Streaming Days Before Return From 4-Year Break</div>
+      
+      
+      <div class="summary">The Terminal List, starring Chris Pratt, returns for its second season on Oct. 21, after a four-year hiatus. Ahead of its return, the series is back in the streaming charts, as fans catch up on what they may have forgotten over the past four years. C&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <span class="current">15</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/16.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

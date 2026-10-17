@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-17 15:04 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>4 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>10 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>129 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>12 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/gta-6-disney-world-parody/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/gta-6-lucia.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rockstar Confirms Disney World Parody Not in GTA 6
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: GTA 6 Disney World Parody Gets Official Update From Rockstar Games</div>
+      
+      
+      <div class="summary">We are just a couple of days away from the one-month countdown to the launch of Grand Theft Auto VI and what a ride it has been.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/horror-anthology-creepypasta-halloween-countdown/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/image-w1280-2.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Syfy's Channel Zero Season 4 'The Dream Door' Is a Creepypasta Anthology
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Stephen King Meets 'The Backrooms' in Syfy's Underrated 6-Part Anthology Series</div>
+      
+      
+      <div class="summary">Slender Man. Jeff the Killer. Eyeless Jack. These names all have one thing in common. They are extremely popular creepypasta monsters that embody deep-seated fears.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/nightborn-rupert-grint-blu-ray-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/seidi-haarla-in-nightborn.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rupert Grint's Horror Film 'Nightborn' Gets New Release Date
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Harry Potter' Icon's "Rage-Inducing" Fantasy Thriller Officially Scores New Release</div>
+      
+      
+      <div class="summary">Ever since the central Harry Potter trio left Hogwarts behind, they have attempted to redefine their careers away from the wizarding world.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sheriff-country-streaming-hit-paramount-plus-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/sheriff-country-catherine-mcnally.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fire Country Reaches 200-Day Streaming Milestone on Paramount+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: CBS’ New Crime Thriller Officially Becomes a Paramount+ Streaming Smash</div>
+      
+      
+      <div class="summary">The Max Thieriot-led and executive-produced Fire Country is one of the hottest procedurals on network television. Earlier this month, the fifth season of the series premiered in explosive fashion with the Ruben Garcia-directed, Eric Guggenheim-writte&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-1-starfleet-uniform-officially-changed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/the-starfleet-crew-in-star-trek-tng-season-2.jpeg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            IDW's Star Trek Comic Debuts New Starfleet Uniforms
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek Officially Replaces The Starfleet's Original Uniform For A Fresh Upgrade</div>
+      
+      
+      <div class="summary">The following contains spoilers for Star Trek #1, on sale now from IDW Publishing. Starfleet just got a major uniform upgrade for its next era, and the heroes of the future have never looked better.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/tv-shows-like-below-netflix-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/below-josh-hartnett.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Shows to Watch if You Loved Below on Netflix
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix's Below has become a global hit. The thriller series, which sees a sea monster menace a small community in Newfoundland, Canada, proved to be a perfect fit for spooky season, channeling creature features and small-town horror.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-movies-better-than-the-godfather-letterboxd-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/marlon-brando-as-vito-corleone-in-the-godfather-s-opening-scene.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Masterpiece Movies Better Than The Godfather, According to Letterboxd
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Francis Ford Coppola's The Godfather is one of the greatest movies ever made. There's no doubt about that. It is universally heralded as one of the finest achievements the cinematic medium has ever conjured, and, on sites like Letterboxd, it ranks am&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/abraham-lincoln-vampire-hunter-leaving-hbo-max-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/09/Benjamin-Walker-Abraham-Lincoln-Vampire-Hunter.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Abraham Lincoln: Vampire Hunter Leaving HBO Max at End of Month
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget ‘Blade,’ Tim Burton’s Wild Vampire-Hunting Epic Is Officially Leaving HBO Max</div>
+      
+      
+      <div class="summary">Of all the filmmakers who've made creative pivots in their career, few have had as drastic a turn as Timur Bekmambetov.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pokemon-colosseum-nintendo-switch-2-officially-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/pokemon-colosseum-key-art.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Colosseum Officially Confirmed For Nintendo Switch 2
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Released as a spin-off to the mainline Pokémon video game series, Pokémon Colosseum launched in the early 2000s for the GameCube.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-haunted-hotel-season-2-streaming-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/netflix.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Animated Series 'Haunted Hotel' Returns for Season 2
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget ‘Wednesday,’ Netflix’s Twisted Haunted House Series Is Officially Back From the Dead</div>
+      
+      
+      <div class="summary">It's officially the spooky season, and for many, the perfect time to dig into all things horror. Like every streamer around this time of year, Netflix stocked up on scary favorites heading into the month, from Mike Flanagan's divisive flick Oculus an&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/canceled-shows-needed-one-more-season/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/firefly-cast-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Cancelled TV Shows That Were One Season Away From Greatness
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some shows are cancelled far too soon. Even before the streaming era, TV shows had to compete for audiences and stay relevant to survive. Sometimes, though, the problem had little to do with the show itself.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2283383/first-samsung-galaxy-phone-storage-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-much-storage-did-the-first-samsung-galaxy-phone-have/l-intro-1791781956.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Much Storage Did The First Samsung Galaxy Phone Have?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How Much Storage Did The First Samsung Galaxy Phone Have? BINK0NTAN/Shutterstock Although Samsung's modern Galaxy flagships, like the Galaxy S26 Ultra and the Galaxy Z Fold 8 Ultra, feature up to a massive 1 TB of onboard storage, this wasn't always &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/ahsoka-season-2-fixing-sequel-trilogy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/star-wars-episode-viii-the-last-jedi_sgoamf.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ahsoka Season 2 Aims to Fix the Sequel Trilogy
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Wars' Next Release Is Officially Fixing The Sequel Trilogy</div>
+      
+      
+      <div class="summary">The next Star Wars project set to be released is going to tackle the big task of finally fixing the sequel trilogy, seven years after The Rise of Skywalker. Though the sequel trilogy of Star Wars movies were a big financial hit, they had their fair s&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/god-of-war-thor-2027-release-date-psa/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/11_remgow-02_1209x807_pdp_main_pc.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime 1 Studio's God of War Thor Statue Priced at $1,599, Arrives 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: God Of War: Thor Officially Arrives In $1,599 2027 Release</div>
+      
+      
+      <div class="summary">Starring in one of the most unique boss fights in gaming history — seriously, reviving Kratos back into the fight? Genius — Thor made quite an impact in 2022's God of War Ragnarök.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/garfield-alone/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/garfield-october-23-1989.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            In 1989, Garfield Ran a Horror Comic Strip Called 'Alone'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 37 Years Ago, 'Garfield' Suddenly Changed Genres With a Mind-Blowing Comic Strip</div>
+      
+      
+      <div class="summary">In 2012, Randall Munroe introduced the concept of "today's lucky 10,000" in his webcomic xkcd. He posits that any widely-known fact or idea spreads at a rate of roughly 10,000 people per day. There's really no such thing as something that "everyone k&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-goonies-streaming-hit-tubi-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/06/the-goonies.jpg?q=49&fit=contain&w=2160&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Goonies Is a Free Streaming Hit on Tubi After Inspiring Stranger Things
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The ’80s Adventure That Inspired ‘Stranger Things’ Is Officially a Free Streaming Hit</div>
+      
+      
+      <div class="summary">Since the dawn of the streaming wars, no show has had more of an impact on viewing culture than Stranger Things.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/gerard-butler-sci-fi-greenland-2-migration-streaming-success-hbo-max-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/01/greenland-2-migration-updated-2026-film-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Greenland 2: Migration Becomes a Streaming Hit on HBo Max After Box Office Flop
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Gerard Butler's $100M Sci-Fi Flop Officially Becomes a Streaming Smash Hit</div>
+      
+      
+      <div class="summary">In the last 25 years, Gerard Butler has smashed onto the scenes as one of the most iconic action stars of all time, but not all of his movies have been massive successes.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-studios-mcu-phase-7-sequel-first" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_thumbnail/1000011915.jpg?imgeng=/w_auto,280 280w" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Studios Confirms Marvel Zombies: The Fist of Khonshu as Phase 7's First Sequel
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Studios Officially Confirms MCU Phase 7's First Sequel</div>
+      
+      
+      <div class="summary">Phase 7 of the MCU just got its first official sequel put on the Marvel Studios calendar. Back in the franchise's early days, a Phase 7 would've sounded like a pipe dream, but in 2026, the start of a brand-new era is right around the corner.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tom-cruise-steven-spielberg-war-of-the-worlds-leaving-hbo-max-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/war-of-the-worlds.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spielberg's 'War of the Worlds' Is Leaving HBO Max Soon
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Steven Spielberg’s $604M Sci-Fi Sensation Is Officially Leaving HBO Max</div>
+      
+      
+      <div class="summary">Director Steven Spielberg made a long-awaited return to the sci-fi genre this year with Disclosure Day, an original movie that revolves around Spielberg's long-held obsession with extraterrestrials.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/whalefall-josh-brolin-heartbeat-austin-abrams-brian-duffield/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/the-dog-stars-josh-brolin-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Austin Abrams’ ‘Whalefall’ Is Much More Practical Than You Think It Is
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Summary Collider's Steve Weintraub talks with Austin Abrams and Brian Duffield for Whalefall. Duffield discusses the movie's practical sets and effects, and innovative filmmaking techniques.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-grinch-halloween-special-christmas-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-grinch-pointing-at-his-head-in-halloween-is-grinch-night.jpeg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Grinch's Obscure Halloween Special 'Halloween Is Grinch Night' Is a 25-Minute Nightmare
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: A Holiday Icon Has A Secret Halloween Special, And It's A 25-Minute Nightmare</div>
+      
+      
+      <div class="summary">An iconic holiday character has a secret Halloween special, and it is 25 minutes of strangeness that might only appeal to spooky season completionists. Even Halloween lovers have to admit that just because a show has the aesthetics of the season does&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/playstation-plus-free-open-world-6-times-bigger-than-skyrim/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2021/09/Edward-Kenway.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Assassin's Creed IV: Black Flag on PlayStation Plus Has a Map 6 Times Bigger Than Skyrim's
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: PlayStation Plus Free Open-World RPG Is 6 Times Bigger Than Skyrim</div>
+      
+      
+      <div class="summary">If there are any PlayStation Plus gamers out there who want to spend the Christmas break getting good and lost in a massive open world game, I've got a suggestion for you. There are, of course, tons of great games to play on PlayStation Plus. So many&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/buffy-the-vampire-slayer-season-5-episode-4-retrospective/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/buffy-spike.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Buffy the Vampire Slayer's 'Out of My Mind' Episode Started the Buffy/Spike Romance
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 26 Years Ago, 'Buffy the Vampire Slayer' Officially Launched Its Most Controversial Couple</div>
+      
+      
+      <div class="summary">It comes at the end of an episode that, for all intents and purposes, is pure setup. Spike (James Marsters) lounges morosely in his crypt, harmless after having a chip installed in his brain that prevents him from hurting humans.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/pokemon-go-bramblin-debut-fall-marathon-buddy-trek-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/10/Pokémon-Gengar-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bramblin Debutes in Pokémon GO During the Fall Marathon Event
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Pokémon Officially Debuts Its Creepy New Ghost Type for a Limited Time</div>
+      
+      
+      <div class="summary">Pokémon Scarlet and Violet introduced some unsettling additions to the Pokédex, even by the franchise’s standards. Paldea’s wildlife includes creatures whose appearances give very little indication of the stories attached to them.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dungeon-crawler-carl-deluxe-edition-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/screenshot-2026-10-16-152057.png?q=70&fit=crop&w=750&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dungeon Crawler Carl Deluxe Edition of Book 1 Releases November 17
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Next Dungeon Crawler Carl Book Officially Releases This Year (But It's Not Book 9)</div>
+      
+      
+      <div class="summary">Dungeon Crawler Carl fans have a lot to look forward to in the coming months, and as the series becomes more and more popular, it may be a good thing author Matt Dinniman's highly anticipated Book 9 is still a ways off.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/playstation-6-price-tag-concerns-gamers-react-consoles-over/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/07/ps5-state-of-play-image-3.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rumor Says Playstation 6 Could Cost $1,000, Raising Concerns Among Gamers
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: PlayStation 6 Price Tag Has Gamers Ready To Ditch Consoles Forever</div>
+      
+      
+      <div class="summary">With PlayStation and other console makers continuing to raise the price of the current generation of consoles, gamers everywhere are looking to the next generation with genuine concern that they might finally be priced out of a hobby they love.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-wars-genesis-dream-open-world-rpg/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/sw.png?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Wars: Genesis Mod for Starfield Offers a Massive Star Wars RPG Experience
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Wars Genesis Is The Open-World Star Wars RPG I Always Wanted</div>
+      
+      
+      <div class="summary">It's a heck of a time to be a Star Wars fan, isn't it? Over in the world of video games, we've got both Star Wars: Fate Of The Old Republic and Star Wars Jedi 3 on the horizon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-dark-time-travel-masterclass-sci-fi/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/05eba23e-0955-436e-9a40-08eb3b4f0c4d.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Dark Delivers a Masterclass in Time Travel
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s Sci-Fi Horror Masterpiece Delivers A Masterclass In Time Travel</div>
+      
+      
+      <div class="summary">Beyond the overly fantastical portrayal of time travel in pop culture, there is something truly eerie and horrifying about the sci-fi trope. The very idea of being caught in a causal loop where effect is tied to cause as much as cause is tied to effe&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pokmon-winds-waves-leak-7-new-monster-designs/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/pokemon-winds-waves-leak-price-increase.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Winds & Waves Leak Confirms 7 New Monster Designs
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">As hard as it might be for older gamers to accept, 2026 marks 30 years since Pokémon first kicked off. Of course, we're far from finished yet, because Pokémon is forever.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-100-netflix-most-watched-sci-fi-shows/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-expanse_9ok0wu-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 100 Is a 100-Episode Expanse Replacement and Netflix Sci-Fi Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 100-Episode Expanse Replacement Is One Of Netflix's Most-Watched Sci-Fi Shows</div>
+      
+      
+      <div class="summary">There is a 100-episode replacement for The Expanse available on Netflix, and it's one of the most-watched series on the streaming service. The Expanse is a Syfy network science fiction series that was brought to Amazon Prime in 2019, which gave the s&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <span class="current">4</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/5.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

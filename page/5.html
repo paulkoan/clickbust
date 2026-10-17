@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-17 15:04 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>4 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>10 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>129 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>12 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/fallout-5-official-announcement-gamers-react/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/fallout-meets-dungeons-dragons-end-of-world-rpg.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fallout 5 Officially Announced: Fans Discuss Desired Features
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Fallout 5 Official Announcement Has Gamers Asking For One Thing</div>
+      
+      
+      <div class="summary">Fallout 5 isn't only inevitable; it's been officially announced. As the Xbox brand attempts to reinvent itself this year, it's refocusing on its biggest franchises, and that involves moving Halo over to Activision and moving forward with multiple pro&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/ahsoka-season-2-dave-filoni-star-wars-story-change" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/ahsoka-season-change-filoni.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dave Filoni Defends Controversial Ahsoka Season 2 Story Change: 'You Have To Serve Both Sides' Of The Star Wars Fanbase
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While Star Wars fans would love nothing more than for a project to be so well-received by everyone that it brings the Star Wars fanbase together for good, Lucasfilm president Dave Filoni has other plans with Ahsoka Season 2, as he recently admitted t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/lord-of-the-rings-kings-gambit-2027-felowship-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/lord-of-the-rings-aragorn-with-crown.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Overview of Lord of the Rings Movies and TV Shows
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Lord Of The Rings: The King's Gambit Officially Brings Back The Fellowship In 2027</div>
+      
+      
+      <div class="summary">Movie(s) The Lord of the Rings (1978), The Lord of the Rings: The Fellowship of the Ring, The Lord of the Rings: The Two Towers, The Lord of the Rings: The Return of the King, The Hobbit: An Unexpected Journey, The Hobbit: The Desolation of Smaug, Th&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/stargate-atlantis-october-2026-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/zpmilluminatedshopcrop_1920x.webp?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stargate Atlantis Zero Point Module Light-Up Replica Now Available
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Stargate: Atlantis Officially Returns October 2026 In New Collection</div>
+      
+      
+      <div class="summary">Created as a spin-off series of Stargate SG-1 as part of the wider Stargate universe, Stargate Atlantis ran for five seasons and gave fans 100 episodes of non-stop action from 2004 to 2009.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/project-zomboid-meets-resident-evil-dead-frontier-free-game/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/dead-frontier-2-zombies.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dead Frontier 2: Open-World Horror MMO Inspired by Project Zomboid and Resident Evil
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Project Zomboid Meets Resident Evil In This Open-World Horror RPG</div>
+      
+      
+      <div class="summary">Project Zomboid and Resident Evil are some of the greatest horror video games ever made. Indeed, the former is so good that, despite being a standalone entry that's largely focused on single-player runs, it has managed to sustain a storied legacy thr&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/game-of-thrones-daenerys-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/emilia-clarke-as-daenerys-targaryen-in-season-1-of-game-of-thrones.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Game of Thrones: War for Westeros RTS Game Brings Back Daenerys in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Game of Thrones Will Officially Bring Back Daenerys in 2027's War For Westeros</div>
+      
+      
+      <div class="summary">You need only speak to me for a few minutes to know that I am a Daenerys Targaryen defender, and so I, alongside her dedicated fanbase, are over the moon to hear that the Mother of Dragons will be making a triumphant return in 2027, with players even&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/skyrim-meets-valheim-free-open-world-steam-rpg/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/ss_4ef4755de900ead9a3dcd204c7e5fc77f1a7c773-1920x1080.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Reign Of Guilds: Free Open-World RPG on Steam Inspired by Skyrim and Valheim
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Skyrim Meets Valheim In Free Open-World Steam RPG</div>
+      
+      
+      <div class="summary">A new free-to-play Steam game has landed, and this one looks like if Skyrim had a kid with Valheim and Runescape stepped in to help raise it. I feel like that's actually a pretty fitting description, if I do say so myself.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/clint-eastwood-gran-torino-john-wick-streaming-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/03/gran-torino0.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gran Torino: Clint Eastwood's 116-Minute Action Thriller
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Clint Eastwood Goes Full John Wick in This Epic 116-Minute Action Thriller</div>
+      
+      
+      <div class="summary">Keanu Reeves’ performance as John Wick was seen as a later-career reinvention for the actor, who was 50 at the time of the first film’s release. However, he’s practically a child compared to Clint Eastwood, who was 78 when he played a man taking on l&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/pokemon-pokopia-event-habitat-dex-pokedex-list-requirements-unlock/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/04/obs64_2026-04-28_14-23-15.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Event Habitat Dex and Pokédex list in Pokémon Pokopia
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pokémon Pokopia has limited-time events that occur for a few days before disappearing, though you can time travel back to them, if you miss out on any.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/pokemon-pokopia-event-schedule-holiday-dates/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/03/obs64_2026-03-31_14-18-22.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Pokopia event schedule
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pokémon Pokopia has limited-time events that feature unique items and Pokémon throughout the year. These events are only accessible on specific dates, but you don't need to fret too much about FOMO, as you can time travel to access these.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/pokemon-pokopia-pumpkaboos-sweet-surprises-gourgeist-habitats-items/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/pokopia_guide_pumpkaboo_lead.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Pokopia 'Pumpkaboo's Sweet Surprises' event guide
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The "Pumpkaboo's Sweet Surprises" is Pokémon Pokopia's first Halloween event, and it adds a whole list of items that you can use to add a spooky touch to each region. Before you can get your hands on them, you will need to trick your Pokémon friends &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/henry-cavill-mark-hamill-sci-fi-thriller-squadron-42/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/henry-cavill-in-the-movie-night-hunter-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Squadron 42 Video Game Stars Henry Cavill and Mark Hamill
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Henry Cavill And Mark Hamill Officially Star In Epic New Sci-Fi Thriller</div>
+      
+      
+      <div class="summary">Henry Cavill is one of the biggest names in genre filmmaking and TV production, especially when it comes to the likes of fantasy.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-mystery-tv-shows-worth-solving/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/the-killing-feature-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Perfect Detective Thrillers That Get More Intense With Every Episode
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Nothing hits quite like a good mystery. Whether it's a seemingly impossible murder, a missing person, or a conspiracy set against the backdrop of a small town, the best TV mysteries keep you guessing right up until the credits roll.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/sicario-3-update-josh-brolin/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/sicario-2-day-of-the-soldado-josh-brolin.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan's Sicario 3 Gets Update After 8-Year Wait
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan’s $160M Action Sequel Finally Gets Update After 8-Year Wait</div>
+      
+      
+      <div class="summary">A third Sicario movie is officially moving forward, with Taylor Sheridan set to reunite several stars of the original. This includes Josh Brolin, who has shared the latest update on the anticipated threequel.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/naruto-new-manga-baby-sarada-kishimoto-redesign/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/naruto-baby-kurama.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Naruto: Shadow Rising Manga Reveals Adorable Baby Sarada Redesign
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Naruto's Big Manga Return Includes Kishimoto's Most Adorable Redesign Since Baby Kurama</div>
+      
+      
+      <div class="summary">Over the 15 years of Naruto's original manga run, Masashi Kishimoto got plenty of opportunities to redesign his beloved characters for any occasion.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/chronicles-of-narnia-the-lion-the-witch-and-the-wardrobe-4k-blu-ray/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/the-chronicles-of-narnia-the-lion-the-witch-and-the-wardrobe-4k-uhd-blu-ray.jpeg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Chronicles of Narnia: The Lion, the Witch, and the Wardrobe Returns in 4K in 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Original Narnia Officially Returns With New 2026 Release Ahead of Divisive Reboot</div>
+      
+      
+      <div class="summary">The Chronicles of Narnia movie series will be rebooted in 2027. Netflix is producing a new movie from writer/director Greta Gerwig, but ahead of Narnia: The Magician's Nephew's debut, Narnia fans can revisit the first major Hollywood adaptation of C.&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/once-upon-a-time-in-hollywood-theaters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/cliff-booth-on-spahn-ranch-with-the-manson-family-in-once-upon-a-time-in-hollywood.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Once Upon a Time... In Hollywood Returns to IMAX Theaters Ahead of Sequel
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Quentin Tarantino's $394M Mega-Hit Officially Returns to Theaters Ahead of Sequel</div>
+      
+      
+      <div class="summary">Once Upon a Time . . . In Hollywood is heading back to theaters. The return is well-timed, coming just ahead of The Further Mis-Adventures of Cliff Booth. In a recent Twitter post from the official IMAX social media account, it was confirmed that Onc&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/crystal-lake-series-rewrites-friday-the-13th-opening-kill-scene/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/crystal-lake-danielle-kotch-phoenix-parnevik.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Crystal Lake’ Officially Rewrites ‘Friday the 13th’s Most Iconic Scene
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's note: The below contains spoilers for Crystal Lake. Every iconic horror movie franchise seems to be taking a stab at television these days.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2283071/weirdest-nokia-phones-you-didnt-know-existed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-of-the-weirdest-nokia-phones-you-probably-didnt-know-existed/l-intro-1791651220.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Of The Weirdest Nokia Phones You Probably Didn't Know Existed
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Of The Weirdest Nokia Phones You Probably Didn't Know Existed Sigit dan Flora Fauna/Shutterstock While the iPhone is a popular brand, despite what you might think, it isn't the best-selling mobile phone of all time; that honor goes to the Nokia 110&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/vampire-diaries-creeator-prime-video-tennis-series-rally/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/damon-elena-and-stefan-in-the-vampire-diaries.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Vampire Diaries Creator Julie Plec Returns with Prime Video Series 'Rally'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Vampire Diaries Creator Officially Returns With New Prime Video Series</div>
+      
+      
+      <div class="summary">The Vampire Diaries ended 11 years ago; the show’s co-creator is officially back with a brand-new Prime Video show, and this time, there aren’t any vampires. According to TheWrap, Prime Video has ordered Julie Plec’s tennis drama, Rally​​​​​, to seri&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/one-piece-plot-twists-better-on-a-rewatch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/shanks-unleashes-divine-departure-in-one-piece-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 One Piece Plot Twists That Hit Different on a Rewatch
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Eiichiro Oda is widely renowned for his foreshadowing and plot twists in One Piece. Although pacing may not be the series' strong suit, fans keep revisiting specific arcs. A rewatch completely recontextualizes moments that connect to the series' famo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-stephen-king-carrie-meets-euphoria-the-body/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/summer-h.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's The Body Blends Carrie and Euphoria in R-Rated Drama
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Stephen King’s Carrie Meets Euphoria In Netflix’s New R-Rated Coming-Of-Age Drama</div>
+      
+      
+      <div class="summary">Stephen King's Carrie and HBO's Euphoria are both coming-of-age stories. However, from a thematic standpoint, they are both significantly different.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2285347/which-android-phone-equivalent-to-iphone-air/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/which-android-phone-is-equivalent-to-the-iphone-air/l-intro-1791904578.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Which Android Phone Is Equivalent To The iPhone Air?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The iPhone Air wasn't as popular as the iPhone 17 models. BGR checked Apple's inventory from September to December 2025, finding that the iPhone Air was routinely available in stores, while the other variants were sold out. Apple didn't release a suc&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/goku-greatest-strength-weakness-dragon-ball/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/goku-looking-shocked-in-front-of-capsule-corps.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            It's Time To Admit That Goku's Greatest Strength Is Also His Greatest Flaw
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Goku is known for his relentless desire to grow stronger and surpass his limits in Dragon Ball. He constantly trains and takes part in combat to grow as a fighter, and along his journey, this has allowed him to overcome seemingly impossible odds.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/avatar-seven-havens-represents-seven-chakras/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/avatar-the-last-airbender-aang-avatar-state.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avatar: Seven Havens Makes Aang's 7 Chakras Essential
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 20 Years Later, Aang’s 7 Chakras Are Suddenly Essential to Avatar’s New Series</div>
+      
+      
+      <div class="summary">The following contains spoilers for Avatar: Seven Havens Season 1, Episode 6, "Night of the Afflicted," now streaming on Paramount+.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-first-far-side-comics-gary-larson-ever-drew/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/06/the-first-10-far-side-comics-gary-larson-ever-drew.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The First 10 Far Side Comics Gary Larson Ever Drew
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The first issues of The Far Side present an interesting look into the beginning of Gary Larson’s illustrious career. Each is revealing in its own way, and all provide sound entertainment. While not the incredible illustrations fans have come to expec&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-shudder-movies-watch-weekend-october-17/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/judy-greer-in-halloween-2018.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Best Horror Movies To Watch On Shudder This Weekend (October 17-18)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Our first horror movie recommendations for Shudder come with both recent releases and a classic from one of the biggest horror movie franchises of all time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/tracker-season-4-mel-mother-mystery-replace-colter/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/cassady-mcclincy-zhang-as-mel-day-in-tracker-season-4.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cassady McClincy Zhang's Mel Day Takes Over Tracker's Central Mystery in Season 4
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: CBS Confirms Justin Hartley's Replacement for Tracker Season 4</div>
+      
+      
+      <div class="summary">The following contains spoilers for Tracker Season 4, Episode 2, “Switchback,” which aired on CBS on Sunday, October 11, 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/jennifers-body-2-sympathetic-megan-fox/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/11/jennifer-s-body-demon.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jennifer's Body Sequel Confirmed, Filming to Start Imminently
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Megan Fox's 'Severely Underrated' Cult Classic Horror Is Finally Getting Its Sequel</div>
+      
+      
+      <div class="summary">The horror genre has long been especially prone to generating sequels, but there are some beloved cult classics which continue to serve as standalone films.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2283112/how-to-stream-ps5-games-steam-deck-chiaki4deck/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/the-steam-deck-can-play-ps5-games-but-not-the-way-you-might-think/l-intro-1791658798.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 17 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stream PS5 Games to Steam Deck Using Chiaki4deck Remote Play
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Steam Deck Can Play PS5 Games, But Not The Way You Might Think</div>
+      
+      
+      <div class="summary">The Steam Deck Can Play PS5 Games, But Not The Way You Might Think Tomohiro Ohsumi/Getty Images When you buy a Steam Deck, the beauty isn't just its portability; it's also that you don't have to be locked into playing directly on the ecosystem if you&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <span class="current">5</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/6.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

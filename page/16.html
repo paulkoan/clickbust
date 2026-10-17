@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-17 15:04 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>4 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>10 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>129 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>12 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.cbr.com/masterpiece-cyberpunk-shows-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/dichen-lachman-as-reileen-kawahara-from-altered-carbon.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Cyberpunk Shows That Are 10/10 Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The cyberpunk genre has almost always found a place in cinema and novels. While the flashy, neon-lit universes of these stories make it one of science fiction's most visually pleasing subgenres, cyberpunk also probes the depths of what it means to be&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/barbie-together-in-time-1-release-date-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/sharedimages/2025/09/margot-robbie-s-first-movie-since-barbie-looks-even-more-ambitious-therapeutic.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Barbie Confirmed To Return 3 Years Later After Greta Gerwig's Box Office Hit
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Greta Gerwig's 2023 film, Barbie, quickly became a cultural phenomenon shortly after its release, sparking countless Barbenheimer memes, earning numerous awards, and grossing $1.448 billion worldwide.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/visionquest-bring-back-familiar-ai-mcu-characters" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/visais.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            VisionQuest Could Bring Back 7 More Familiar A.I. MCU Characters
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel Studios' VisionQuest is finally streaming on Disney+, premiering a day earlier than planned with two episodes, "No Strings" and "Theseus." The show has wasted no time bringing together some of the most popular AIs in the MCU, just as its premi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2288662/amazon-bee-frontier-eclipse-ai-gadgets-price-features/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/amazons-new-gadgets-include-an-ai-assistant-thats-always-listening-to-you/l-intro-1792155560.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Amazon's New Gadgets Include An AI Assistant That's Always Listening To You
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Amazon's New Gadgets Include An AI Assistant That's Always Listening To You We may receive a commission on purchases made from links.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/passenger-57-4k-blu-ray-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/wesley-snipes-in-passenger-57-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            "Die Hard Meets Con Air" in 84-Minute Action Thriller That's Officially Set for New Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The '90s were an undisputed golden era for action cinema, birthing definitive genre masterpieces like John Woo's face-swapping sci-fi spectacle Face/Off, Michael Bay's explosive Alcatraz siege The Rock, and Harrison Ford's cat-and-mouse classic The F&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/bleach-strongest-captains-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/11/kenpachi-zaraki-smiles-widely.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Strongest Captains in Bleach, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The captains of the Gotei 13 represent the highest level of Soul Reaper combat in Bleach, but their strength comes in very different forms. Some overwhelm opponents through raw spiritual pressure, while others rely on terrifying Zanpakuto abilities, &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/swat-exiles-episode-4-mole-twist-shemar-moore/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/swat-exiles-shemar-moore.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘S.W.A.T. Exiles’ Star Shemar Moore Weighs In on Episode 4’s Shocking Mole Reveal and What’s Next
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's note: The following contains major spoilers for S.W.A.T. Exiles, Episode 4. Summary In the Starz spin-off 'S.W.A.T. Exiles,' Hondo leads a new team that's set up to fail and uncovers a mole among them.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/avengers-armageddon-5-preview-civil-war-question/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/civil-war-featured.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Avengers Officially Return the Civil War Question to the Marvel Universe
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While the most attention-getting aspects of Avengers: Armageddon #4 were the death of Bucky Barnes and the reveal that David Colton's powers came from an alternate reality version of Miracleman (why the Ultimate Universe had a version of Miracleman i&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/todays-wordle-hints-answer-october-16-2026-puzzle-1945/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/image-psd-18.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Today's Wordle Hints & Answer - October 16, 2026 (Puzzle #1945)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are multiple patterns in today's Wordle that can give you clues for the right answer, but this can make the structure confusing rather than easy to figure out.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/terminator-arnold-replacement-scarier-t-800/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-t-800-searches-for-john-connor-in-archie-vs-terminator-1.webp?q=70&fit=crop&w=750&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Archie vs Terminator's New Blond T-800 Is Scarier Than Arnold Schwarzenegger's Original
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Terminator’s Arnold Schwarzenegger Replacement Is Scarier Than The Original T-800</div>
+      
+      
+      <div class="summary">The Terminator's new T-800 looks less intimidating than Arnold Schwarzenegger's, but he's even deadlier. Part of the appeal of the Terminator franchise is all the questions it raises.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/greys-anatomy-disaster-story-gimmick-overused/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/ellen-pompeo-as-meredith-grey-in-grey-s-anatomy-season-23-episode-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ABC Runs Grey's Anatomy's Story Gimmick To The Ground
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! SPOILERS ahead for Grey’s Anatomy season 23, episode 1.The plane collision in Grey’s Anatomy season 23’s premiere stirred chaos at Grey Sloan Memorial, but it also made the medical drama’s biggest problem more evident.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/holly-black-cruel-prince-conspiracy-of-charming-monsters-early-preview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/a-conspiracy-of-charming-monsters.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ScreenRant Presents An Exclusive Excerpt From Holly Black's A Conspiracy of Charming Monsters (Coming November)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Holly Black is returning to the dangerous, dazzling realm of Faerie with A Conspiracy of Charming Monsters, a new illustrated short-story collection set in the worlds of The Folk of the Air and Modern Faerie Tales.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/penguin-colony-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/sharedimages/2026/10/penguin-colony-tag-page-cover-art.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Penguin Colony Review - Sliding, Not Soaring
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">H.P. Lovecraft's At the Mountains of Madness mentions penguins a few times. They exist only on the periphery of the story, wandering about the Antarctic with less intent than the human expedition at the center of the novella.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/halloween-resurrection-found-footage-alternate-cut-unseen-forgotten/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/michael-myers-looking-out-his-bedroom-window-in-halloween-kills-2021.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            There Is A Completely Official Found Footage Halloween Movie You've Never Seen
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Halloween franchise has an entirely official found footage entry that not even its fans talk about. The Halloween movie franchise has been endlessly rebooted and sequelized - to the point where it's tricky to remember which sequel belongs to whic&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/netflix-narnia-bigger-game-of-thrones/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/aslan-in-the-chronicles-of-narnia-prince-caspian.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Greta Gerwig's 'The Magician's Nephew' Gets Exclusive Theatrical Release on Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's New Epic Fantasy Saga Is Already Bigger Than Peak 'Game of Thrones'</div>
+      
+      
+      <div class="summary">Even before Game of Thrones concluded its eight-season run in 2019, every major streaming platform was looking for its own answer to the hit HBO fantasy series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/outlander-blood-of-my-blood-season-2-episode-5-deaths-showrunner-matthew-b-roberts/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/outlander-blood-of-my-blood-season-2-lauren-mcqueen-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Outlander: Blood of My Blood’ Showrunner Matthew B. Roberts Discusses Episode 5 Deaths and Twist
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Outlander: Blood of My Blood’ Showrunner Breaks Down Those Brutal Episode 5 Deaths and the Twist You Won’t See Coming</div>
+      
+      
+      <div class="summary">Editor's note: The following contains major spoilers for Outlander: Blood of My Blood Season 2, Episode 5. Summary In Episode 5 of 'Outlander: Blood of My Blood' Season 2, Julia's slow-burn hostage standoff with Seema ends when Julia is forced to tak&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/pokemon-go-sandile-hatch-day-october-2026-shiny-bonuses/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/screenshot-2026-10-14-at-12-07-32-pm.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Officially Reveals a 6-Hour Shiny Hunting Event Starting This Saturday
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Shiny hunting in Pokémon GO can turn a short walk into an afternoon of bargaining with a phone. Every encounter might be the one, and every ordinary-colored Pokémon feels slightly more personal after enough unsuccessful checks.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-narnia-magicians-nephew-greta-gerwig-adapt-lion-witch-wardrobe/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/digory-kirke-watching-narnia-be-born-in-narnia-the-magician-s-nephew.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Lion, The Witch, and the Wardrobe Must Be Greta Gerwig's Next Narnia Film
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After the release of the first trailer for Narnia: The Magician's Nephew, it's clear which novel Greta Gerwig needs to adapt next in Netflix's budding fantasy franchise. Over the last six decades, there have been several live-action adaptations of C.&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/naruto-shippuden-jin-4-cards-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/naruto-shippuden-kunai.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Naruto: Shippuden Returns This November With Jiraiya, Orochimaru & More
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">As it approaches its 25th anniversary, the Naruto franchise is entering a new era. Masashi Kishimoto's coming-of-age action drama starring the titular knuckleheaded ninja is on the verge of a major comeback, with new anime and gaming projects on the &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-fantasy-movies-ever-ranked-by-cbr-readers-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/viggo-mortensen-re-used-aragorns-sword-from-the-lord-of-the-rings-in-his-new-movie-the-dead-dont-hurt.webp?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Fantasy Movies Ever, Ranked By CBR Readers
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">For as long as stories have been told, humanity has been fascinated by the concepts of magic, monsters, and mysterious alternate realms. Fantasy therefore remains one of the most popular genres both in literature and on the big screen, producing some&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2288058/bgr-best-of-tech-awards-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/bgrs-best-of-tech-awards-2026/l-intro-1792101768.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            BGR's Best Of Tech Awards 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">BGR's Best Of Tech Awards 2026 Static Media We may receive a commission on purchases made from links. As we approach the final stretch of 2026, it's inevitable that we start thinking about the electronics that defined the year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/zelda-ocarina-of-time-remake-pre-order-bonus-n64-box/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/ocarina-of-time-chest.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zelda: Ocarina Of Time Remake Officially Unveils Gorgeous New Pre-Order Bonus
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 2026 remake of The Legend of Zelda: Ocarina of Time is full of surprises, but it seems like some select players may be able to snag a gorgeous new pre-order bonus that has just been confirmed for the game.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2282696/build-digital-photo-frame-instead-buying-smart-display/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/build-your-own-digital-photo-frame-instead-of-buying-another-smart-display/l-intro-1791575298.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Build Your Own Digital Photo Frame Instead Of Buying Another Smart Display
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Build Your Own Digital Photo Frame Instead Of Buying Another Smart Display Artem Khyzhynskiy/Getty Images Digital photo frames are a neat, convenient way to show off some of your best photos.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/how-old-were-the-golden-girls/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/the-golden-girls_sw0j4u.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Old Were The Golden Girls During The Show
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Golden Girls set itself apart from other shows by centering on single older women, but many people don't know the characters' ages and how they compare to the actors. Since its 1985 to 1992 run, The Golden Girls has stood the test of time, and it&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/masterplan-movie-2026-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/stanley-tucci-in-masterplan.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Masterplan Movie Review: An Unfunny Ocean's Eleven Riff That's All Style & No Substance
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Between selling Italian beer and making the greatest food TV shows of the modern age, Stanley Tucci is still a movie star, having already scored a big box office success this year with The Devil Wears Prada 2.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-shows-binge-weekend-october-17-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/the-diplomat-debora-cahn-interview.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Elite Series to Binge on Netflix This Weekend (Oct 17-18)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">At the same time as he stars in one of the big box office hits of the month, the Colleen Hoover adaptation Verity, Josh Hartnett also leads the biggest show currently on Netflix.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/hallowarrior-release-date-home-alone-horror-movie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/shudder-hallowarrior-2026.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Halloween Meets Home Alone In A New Horror Movie That's Now On Streaming
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There is something uniquely suited to horror about this time of year. As the air turns crisp, leaves rustle across the sidewalks, and autumn colors take over the landscape, Halloween decorations begin appearing on front porches and in windows, pumpki&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-first-contact-best-picard-quote-in-sci-fi-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/unbreakable-61-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek VIII Gives Picard the Best Quote in Sci-Fi Movie History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In the 30 years since the debut of Star Trek: First Contact, the Jonathan Frakes-directed film attained prestige as the peak of The Next Generation's feature film era.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2288325/crystal-lake-friday-the-13th-fans-furious-jason-voorhees-cockroach-dna/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/why-crystal-lake-is-leaving-friday-the-13th-fans-furious/intro-1792103456.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Crystal Lake Reveals Jason Voorhees Is a Genetic Experiment, Angering Friday the 13th Fans
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Why Crystal Lake Is Leaving Friday The 13th Fans Furious</div>
+      
+      
+      <div class="summary">Why Crystal Lake Is Leaving Friday The 13th Fans Furious Contains spoilers for "Crystal Lake" Season 1, Episode 8 — "The Final Chapter" The "Friday the 13th" prequel series "Crystal Lake" is out to make waves among the horror fandom.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-crazyhead-best-buffy-replacement-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/06/buffy-the-vampire-slayer-sarah-michelle-geller-series-finale-smiling.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix’s 100% RT Horror Series Is the ‘Buffy’ Replacement You Missed
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Many shows have tried, but only one reached the tone and campiness of Buffy the Vampire Slayer. The horror-comedy series of the late ‘90s spoke to a generation and redefined the genre as fans saw it.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <span class="current">16</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/17.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

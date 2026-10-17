@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-17 15:04 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>4 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>10 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>129 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>12 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://movieweb.com/inside-man-washington-ejiofor-streaming-starz-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/inside-man.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Denzel Washington & Chiwetel Ejiofor's 129-Minute Crime Thriller Officially Lands New Streaming Home
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Long before Chiwetel Ejiofor discovered another dimension in Backrooms and joined the MCU in Doctor Strange, he appeared alongside Denzel Washington in a top-notch crime thriller that just scored a new streaming home.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/playstation-plus-free-ubisoft-download-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/playstation-plus-1999-ps2-classic-one-week.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            PlayStation Plus Subscribers Treated To Bonus Free Download From Ubisoft
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">PlayStation Plus subscribers are often treated to fun bonus downloads, new games, and day-one releases. Of course, these aren't technically free, a perk generated from paying money to Sony every month, but are nevertheless appreciated on top of the t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/sylvester-stallone-tulsa-king-season-4-end-era-new-york/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/sylvester-stallone-as-dwight-manfredi-in-tulsa-king-episode-1-season-4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            It’s Officially The End Of An Era For Taylor Sheridan & Sylvester Stallone’s Tulsa King
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Tulsa King season 4 officially marks the end of Dwight Manfredi’s Oklahoma era before Sylvester Stallone’s hit crime series makes a major change in season 5.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/resident-evil-2-switch-2-impressions/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/resident-evil-2-switch-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Resident Evil 2 on Switch 2 Is My New Favorite Way to Play Capcom's Horror Masterpiece
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">I've tried playing Resident Evil 2 remake many times over the years and have never quite managed to finish the thing. It's good — very good — and I enjoy it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-zelda-likes-nobody-plays-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2025/04/ss_04ac7db623d3e88751134eb87f5c465c392fa108.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            9 Most Perfect Single-Player Zelda Clones Nobody Plays, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Every Zelda dungeon runs on the same promise: find a tool, open a door, find a better tool. A whole genre of games borrows that loop without Hyrule’s precise theme music, and every few years one of them, like Tunic or Death’s Door, breaks out and lan&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/new-movies-streaming-this-weekend-netflix-october-16-18/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/screenshot-2026-10-15-at-2-46-01-pm.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 New Movies to Watch This Weekend on Netflix, Prime Video, and HBO Max (October 16-18)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Happy weekend! There’s something for everyone at the movies this week, from genre fare like Street Fighter and Whalefall to corset romance, with the new adaptation of Jane Austen’s Sense and Sensibility. But if you don’t want to leave home, there’s a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-the-diplomat-season-4-streaming-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/the-diplomat-season-4-keri-russell.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix’s 4-Season Political Thriller Hits Streaming Top 3 After New Episodes Debut
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix's The Diplomat returned with all eight episodes of Season 4. Just one day after its release, the political thriller starring Keri Russell is already a streaming success. The Diplomat is currently the No. 3 most-watched Netflix show in the Uni&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/michael-forest-dead-97-star-trek-apollo/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/michael-forest-apollo-star-trek-who-mourns-for-adonais.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Michael Forest, Star Trek Actor, Dies at 97
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Oct 16, 2026, 4:57 PM EDT Jamie Lovett is a graduate of MTSU's Journalism program who followed his lifelong passion for comics and related media into a career writing about pop culture.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/true-detective-season-5-antonio-banderas/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/nicolas-cage-in-the-bad-lieutenant-port-of-call-new-orleans.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'True Detective' Season 5 Officially Confirms Nicolas Cage & Oscar-Nominated Actor in Lead Roles
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With every new season of the hit HBO Anthology series True Detective, anticipation builds over which high-caliber actors will sign on to the project.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/video/whalefall-how-do-you-film-someone-inside-a-whale/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/daniel-kraus-josh-brolin-png.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Whalefall: How Do You Film Someone Inside a Whale?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Whalefall author Daniel Kraus never thought his story about surviving inside a whale could actually become a movie. Now, alongside Josh Brolin, he explains why writing something seemingly impossible to adapt helped attract filmmaker Brian Duffield to&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/playstation-5-exclusive-january-2027-until-dawn-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/playstation-ps2-classic-2005-ps-plus.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            PlayStation's Next PS5 Exclusive Officially Arrives January 2027
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The PlayStation 5 era has had some strong exclusives, but it's also faced plenty of criticisms about the rate at which they arrive.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/law-and-order-reid-scott-vince-riley-death/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/law-and-order-season-26.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Law & Order Says Goodbye to Fan-Favorite Detective After 3 Seasons With Shocking Death
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This story contains major spoilers for Law & Order Season 26, episode 2, "Into the Mystic." Early into Law & Order Season 26, the procedural surprised viewers with a shocking death scene. It saw the end of a character's journey with an emotional fare&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2284037/ios-display-accessibility-features-you-should-try/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/ios-has-some-features-you-should-try-if-you-have-trouble-reading-your-screen/l-intro-1791821939.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            iOS Has Some Features You Should Try If You Have Trouble Reading Your Screen
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">iOS Has Some Features You Should Try If You Have Trouble Reading Your Screen lilgrapher/Shutterstock There's a lot to appreciate about Apple products and other smart devices for their wide array of features, and the many tasks and activities that can&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/keanu-reeves-speed-movie-leaving-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/keanu-reeves-posing-for-a-photo-on-the-sonic-the-hedgehog-3-red-carpet.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Keanu Reeves Action Thriller That Roger Ebert Gave A Perfect Score Is Driving Off Netflix
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Viewers have until the end of October to catch Keanu Reeves’ celebrated action thriller that earned one of cinema's most respected critics' highest possible ratings.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/upload-prime-video-black-mirror-meets-the-good-place/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/tinsley-in-upload-tv-show.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's 29-Episode Sci-Fi Show Is Black Mirror Meets The Good Place
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Prime Video is home to some of the best sci-fi TV shows of all time, but among them are also some underrated sci-fi gems, including a 29-episode show that is a mix of Black Mirror and The Good Place.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/you-can-see-everything-rotten-tomatoes-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/you-can-see-everything-nathan-fielder-elizabeth-holmes.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Haunting' New 3-Hour True Crime Film Earns 99% Audience Score After Enchanting Critics
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Nathan Fielder's A24 film is gaining universal praise. You Can See Everything, which he co-directed with Primetime's Lance Oppenheim, is a new documentary on Elizabeth Holmes, and critics and audiences can't get enough.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/spirited-away-live-on-stage-new-world-tour-debut-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/studio-ghibli-s-spirited-away-with-chihiro-and-no-face-on-a-train.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            It's Officially a New Era for Studio Ghibli's Spirited Away December 17
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Four years ago, Olivier Award-winning director John Caird (Les Misérables) introduced the world to his official stage adaptation of Studio Ghibli's beloved anime film, Spirited Away. Now, the producers are gearing up to take the hit show abroad with &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2283314/oled-tvs-cost-in-2016-vs-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/heres-how-much-oled-tvs-cost-in-2016-vs-2026/l-intro-1791635802.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Here's How Much OLED TVs Cost In 2016 Vs. 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Here's How Much OLED TVs Cost In 2016 Vs. 2026 Moneynetar/Shutterstock Organic Light-Emitting Diode (OLED) TVs make for absolutely gorgeous displays, with striking colors and inky blacks, but they've consistently been among the most expensive televis&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/event-horizon-pandemonium-advanced-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/event-horizon_b4gyc1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Event Horizon's Horrific New Sequel Is Here With Explosive New Lore Revelations
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Event Horizon’s horrific new sequel is coming soon, and with it come some shocking additions to the movie’s lore. Since its release nearly 30 years ago, Event Horizon has become a cult classic, despite the critical beating it took upon release.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pulp-fiction-movie-recast-2026-actors/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/pulp-fiction.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Recasting Pulp Fiction In 2026: 12 Actors Perfect For The Major Roles
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pulp Fiction is one of the best films of the 1990s and, while a remake feels unlikely, it is still interesting to reflect on what kind of contemporary cast would be ideal to take on the iconic roles in the story.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2289273/bgr-hiring-writers/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/bgr-is-hiring-writers/l-intro-1792176351.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            BGR Is Hiring Writers!
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Filo/Getty Images If you already spend a significant portion of your week keeping up with the latest tech news, this is your chance to turn that passion into a paycheck.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/cyberpunk-movie-paramount-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/06/cyberpunk-2077.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Near-Perfect Sci-Fi Action Series Gets a Paramount Movie With a Major Creative Shift
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Whatever else happened during Cyberpunk 2077's famously rocky launch, the franchise's smartest decision arguably happened on Netflix.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2283313/anti-drone-nets/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-anti-drone-tech-has-an-unintentional-impact-on-local-wildlife/l-intro-1791560536.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            This Anti-Drone Tech Has An Unintentional Impact On Local Wildlife
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This Anti-Drone Tech Has An Unintentional Impact On Local Wildlife Dmytro Falkowskyi/Shutterstock Warfare is a cycle of technological escalation. Currently, we are stuck in a battle between drones and the weapons that take them down.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/ncis-origins-season-3-reunion/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2024/06/mark-harmon-michael-weatherly-cote-de-pablo-sean-murray-as-leroy-gibbs-tony-dinozzo-ziva-david-tim-mcgee-in-ncis.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Original 'NCIS' Icons Officially Reunite in First Look Images 10 Years in the Making
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Oct 16, 2026, 4:16 PM EDT Richard is a writer/journalist from Oregon (by way of California) with a love of Marvel, Star Wars, DC, and all kinds of entertainment. He joined MovieWeb in January 2026 as a Movie & TV Writer/Editor.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/lanterns-hbo-dcu-record-breaking-josh-brolin-exit-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/josh-brolin-at-an-angle-looking-impassive-at-a-red-carpet-event.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Josh Brolin Explains Lanterns Exit After DCU Show’s Record-Breaking Success
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Josh Brolin finally addresses why things didn't work out with the hit HBO comic book adaptation, Lanterns, Brolin was originally offered the role of Hal Jordan, one of DC Comics' most recognizable Green Lanterns, before Kyle Chandler was officially c&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-dnd-beyond-partnered-content/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/d-d-beyond-logo-over-heliana-s-guide-to-monster-hunting.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Best Partnered Content Resources on D&D Beyond
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Dungeons & Dragons has grown more popular than ever before over the last 12 years, with D&D 5e taking the tabletop roleplaying game to a whole new level.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/jensen-ackles-rules-of-prey-bosch-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/jensen-ackles-from-countdown.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jensen Ackles’ Rules of Prey Perfect Titus Welliver’s Bosch Replacement
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Jensen Ackles is probably best known for playing Dean Winchester in the hit dark fantasy series Supernatural. Since then, Ackles has starred in shows like The Boys and Tracker and recently led Prime Video's 2025 crime drama, Countdown.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/percy-jackson-new-graphic-novel-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/walker-scobell-holding-his-sword-in-percy-jackson-and-the-olympians-season-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Percy Jackson Is Back With New Official Disney Release Out Now
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Disney brings back Percy Jackson's early adventures in a single release. Disney officially fast-tracked Percy Jackson and the Olympians season 3, which allowed the highly anticipated next season to secure a November 20, 2026, release date.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-trap-harlan-coben-replacement-netflix-streaming-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-trap-netflix-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's New Harlan Coben-Like Crime Thriller Series Is An Instant Streaming Sensation
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix's new crime thriller series has drawn some comparisons to a famous genre creator, and the dark show has instantly become a global streaming sensation. Netflix's slate of TV shows in 2026 has been led by crime thrillers so far.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/conversations-with-friends-sally-rooney-romance-hulu-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/05/jemima-kirke-conversations-with-friends-copy.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hulu’s Overlooked 1-Season Romance Is the Perfect Weekend Binge
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While Normal People's success may suggest that Sally Rooney can make romance distressing, Conversations with Friends offers a less satisfying take.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <span class="current">10</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/11.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

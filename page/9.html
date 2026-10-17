@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-17 15:04 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>4 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>10 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>47 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>129 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>12 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/friday-the-13th-jason-voorhees-unmasked-face/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/jason-has-a-bag-over-his-head-while-standing-in-the-woods-in-crystal-lake-season-1-episode-8.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Friday The 13th: Every Unmasked Jason Voorhees (In Chronological Order)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Jason Voorhees is the iconic hockey mask-wearing antagonist of the Friday The 13th franchise, though there are many times his headwear has been removed to show the gruesome face beneath. When anyone thinks of Jason Voorhees, the image of the iconic h&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/steven-spielberg-stanley-kubrick-ai-artificial-intelligence-streaming-peacock-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/steven-spielberg-posing-on-a-red-carpet-for-disclosure-day.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            A.I. Artificial Intelligence: Spielberg & Kubrick's Sci-Fi Pinocchio Returns to Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Steven Spielberg & Stanley Kubrick's 10/10 Sci-Fi Remake Of Pinocchio Is Officially Back On Streaming</div>
+      
+      
+      <div class="summary">Steven Spielberg and Stanley Kubrick’s sci-fi spin on Pinocchio has finally returned to streaming, giving audiences another chance to revisit one of the strangest, saddest, and most underrated movies associated with either filmmaker.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/character-povs-threshing-day-ranked-worst-to-best/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/threshing-day-by-rebecca-yarros-books-featured-image.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 13 Character POVs In Threshing Day, Ranked From Worst To Best
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Rebecca Yarros’ Threshing Day expands the Empyrean universe by revisiting the dangerous ceremony through the eyes of 13 familiar characters.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/avatar-seven-havens-pavi-nisha-energybending-aang-power/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/adult-aang-in-the-avatar-state-in-avatar-aang-the-last-airbender.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avatar: Seven Havens Brings Back One Of Aang's Most OP Bending Powers
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! This article contains spoilers for Avatar: Seven Havens season 1, episode 6. Avatar: Seven Havens has brought back one of Aang's and Korra's most impressive bending powers, but there's a catch. Seven Havens introduces a new era for the Avata&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/avengers-x-men-marvels-strongest-team-vote-poll/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/captain-america-and-cyclops-with-vs-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel's Strongest Superteam Of All Time, According to Screen Rant Readers
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel fans are constantly debating which team is stronger: the Avengers or the X-Men? In this article, we're throwing that question wide to our readers, but why stop there? Why not hold a vote to crown the strongest Marvel superteam EVER? In this ar&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hbo-the-white-lotus-season-4-first-look-images/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/the-white-lotus-season-3-logo-featured.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The White Lotus' Season 4 Officially Gets First Look From HBO
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Oftentimes, corporations become known for the signature service they deliver, making them instantly recognizable to their target audience.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/anime-strongest-armor-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/a-custom-image-featuring-armored-all-might-in-my-hero-academia-alphonse-elric-in-fma-brotherhood-and-loli-in-to-be-hero-x.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Strongest Anime Armor of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Many popular anime, like Fullmetal Alchemist and Mobile Suit Gundam, have characters who wear powerful suits of armor.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/harry-potter-characters-better-than-voldemort-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/ralph-fiennes-as-lord-voldemort-in-harry-potter-and-the-deathly-hallows-part-2.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Harry Potter Characters More Powerful Than Voldemort, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are few fantasy villains as feared as Harry Potter's terrifying central antagonist, Voldemort. The dark wizard left Harry with his iconic lightning bolt scar and became a force to be reckoned with as he attempted to take over the wizarding worl&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/red-rising-movie-adaptation-hunger-games-francis-lawrence-development/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/the-hunger-games_oeeeoc-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Francis Lawrence to Direct Red Rising Adaptation for Paramount
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Hunger Games Director Sets New Bestselling Dystopian Sci-Fi Adaptation</div>
+      
+      
+      <div class="summary">Published Oct 16, 2026, 6:22 PM EDT Adam has been writing in the entertainment news space for over a decade. Beginning his career of covering film and TV at CinemaBlend, he has also appeared on The Flash Podcast and done several radio spots.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/river-star-jessica-rothe-opens-up-about-the-extreme-terror-of-serial-killers-and-family-reunions" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/Article_thumb.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'River' Star Jessica Rothe Opens Up About the Extreme Terror of Serial Killers and Family Reunions (NYCC Exclusive)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Universal's River, a film that first premiered at TIFF this year in Toronto and Fantastic Fest in Texas, and is set to be the first massive horror movie in 2027—But what else would one expect when you have iconic scream queens Jessica Rothe and Jane &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/sacrifice-rt-score-netflix-movie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/sacrifice-anya-taylor-joy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Anya Taylor-Joy & Chris Evans’ 100-Minute Netflix Adventure Debuts With Divisive RT Score
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix has a new action-adventure movie starring Anya Taylor-Joy and Chris Evans. That should be a reason to celebrate, but critics who have seen Sacrifice aren't all that impressed. Sacrifice debuts Friday on Netflix, but its Rotten Tomatoes score &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-vampire-movies-since-2016-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/nosferatu-lily-rose-depp-1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Best Vampire Movies Since 2016, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Vampires are the most iconic, most legendary monsters to ever grace the silver screen, other than zombies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hardest-open-world-survival-games/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/player-holding-a-toarch-fighting-a-cowboy-theme-zombie-in-7-days-to-die.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Hardest Open-World Survival Games
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Surviving in an open world can be difficult enough without starving to death, freezing in the wilderness, or watching hours of hard work disappear overnight.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/henry-cavill-highlander-scottish-accent-karen-gillan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/henry-cavill.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Henry Cavill’s ‘Highlander’ Scottish Accent Is Officially "Bang On," Says Co-Star [Exclusive]
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Henry Cavill's next challenge might yet be his biggest ever. He's taken on the role of Superman, he's brought The Witcher to life, he's literally battled Tom Cruise to the death on the edge of a cliff, and he's even been Sherlock Holmes.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/below-streaming-success/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/below-joel-thomas-hynes.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix’s Near-Perfect New Mystery Thriller is One of the Biggest Shows of 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Several elements — a small town, a huge threat, a likable main character, and the claustrophobic feeling that escape is impossible — define any solid thriller. That includes a recent Netflix series that features a beloved star in a leading role and b&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-call-of-duty-games-missing-from-game-pass/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/vs-youtube-modernwarfare4pre-orderbonusinnercircuitm4blueprint-youtube-0-07.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Call of Duty Games Still Missing from Game Pass
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The franchise has slipped from its lofty perch in recent years, but there was a time when the launch of a new Call of Duty game was a huge event. The anticipation was never quite on the level of Grand Theft Auto 6, but the series reliably mattered in&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/video/whalefall-austin-abrams-destroyed-the-whale-stomach-set/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/brian-duffield-austin-abrams-1.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Whalefall: Austin Abrams Destroyed the Whale Stomach Set
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The whale stomach in Whalefall was a practical effects nightmare, and Austin Abrams and director Brian Duffield have the stories to prove it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/current-comic-books-better-than-absolute-batman-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/the-bat-on-absolute-batman-24-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Current Comic Books Better Than Absolute Batman
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Scott Snyder and Nick Dragotta's Absolute Batman is one of the freshest, most exciting takes on the legendary Dark Knight in decades, and it is easily one of the best superhero comic books releasing each month.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-movies-to-watch-if-cant-wait-for-highlander-reboot-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/henry-cavill-walking-in-highlander.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Movies To Watch If You Can't Wait for Henry Cavill's Highlander Reboot
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After his role in projects like The Witcher, Henry Cavill thrilled dark fantasy fans with news that he'd be starring in Amazon MGM Studios' reboot of Highlander.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-actors-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/there-will-be-blood-2007-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 25 Best Actors of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Selecting an assortment of the best actors of all time is foolish, perhaps more so than trying to be objective while tackling any other “all-time” related ranking. Still, it was worth a shot.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-prime-video-movies-watch-weekend-october-17-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/love-of-your-life-03.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Movies 'Love of Your Life' and 'Masterplan' Hit Prime Video This Weekend
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New Movies From ‘Reacher’ and ‘Lanterns’ Stars Officially Hit Prime Video This Weekend</div>
+      
+      
+      <div class="summary">An unlikely title is currently outperforming all the film competition on Prime Video, including the rom-com The Love Hypothesis, which started life as a Star Wars Kylo Ren x Rey fan fiction.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2284847/is-steam-deck-more-powerful-than-ps4/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/is-the-steam-deck-more-powerful-than-the-playstation-4/l-intro-1791830786.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Is The Steam Deck More Powerful Than The PlayStation 4?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Is The Steam Deck More Powerful Than The PlayStation 4? Serenko Natalia/Shutterstock The Steam Deck is one of the most popular handheld gaming PCs on the market, and it can handle AAA and indie games alike.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/fallout-success-doom-video-game-tv-adaptation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/copy-of-collider-template-43.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fallout's Success Makes DOOM TV Adaptation Inevitable
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Fallout’s Success Makes This Sci-Fi Franchise Impossible To Ignore</div>
+      
+      
+      <div class="summary">Video games are experiencing a bit of a moment right now. Multiple iconic franchises have received successful television adaptations, including Twisted Metal, Fallout, Devil May Cry, and The Last of Us. Others, like God of War and Mass Effect, are ac&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/man-of-tomorrow-directors-cut-screening/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/david-corenswet-in-superman-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            James Gunn Confirms Major 'Man of Tomorrow' Milestone 9 Months Ahead of Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">DC Studios may have had a bumpy road this past year, but the newly minted Skydance subsidiary seems to be finding a clear path forward.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2289375/tesla-roadster-wall-trick-flying-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/the-secret-behind-teslas-roadster-wall-trick-is-hiding-in-plain-sight/l-intro-1792186301.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Secret Behind Tesla's Roadster Wall Trick Is Hiding In Plain Sight
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Secret Behind Tesla's Roadster Wall Trick Is Hiding In Plain Sight Tesla did backflips throughout the automotive community on October 16 when it debuted its next sports car, the second-generation Tesla Roadster.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/red-rising-movie-director-francis-lawrence/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/red-rising.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Red Rising Movie Officially in the Works at Paramount With Veteran Sci-Fi Director
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Paramount has found its next big YA franchise, and it already has the perfect director attached. The Red Rising movie is officially in the works, and the director of The Hunger Games is taking the helm.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2289365/iphone-duo-pre-orders-delayed-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/want-an-iphone-duo-you-might-have-to-wait-until-2027-now/l-intro-1792185828.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Want An iPhone Duo? You Might Have To Wait Until 2027 Now
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Want An iPhone Duo? You Might Have To Wait Until 2027 Now Benjamin Fanjoy/Getty Images If you weren't one of the lucky ones to get in on the iPhone Duo preorders, you may now be waiting until 2027 to get the device.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2282933/best-horror-movies-haunted-houses-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/5-best-horror-movies-about-haunted-houses-ranked/l-intro-1791592003.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Best Horror Movies About Haunted Houses, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Best Horror Movies About Haunted Houses, Ranked Dimension Films/Static Media We may receive a commission on purchases made from links.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2285404/best-keychain-usb-drives-emergency-storage/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/the-best-keychain-usb-drives-for-emergency-storage/l-intro-1791905692.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Best Keychain USB Drives For Emergency Storage
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Best Keychain USB Drives For Emergency Storage Chayjitti Hongmanee/Shutterstock We may receive a commission on purchases made from links. Cloud storage is great until the Wi-Fi drops or a power outage bumps you offline.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/whalefall-biggest-questions/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/movie-web-sandbox-2026-10-16t161522-854.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 16 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Biggest Questions After 'Whalefall's Shocking Ending, Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Brian Duffield's captivating and claustrophobic new survival thriller Whalefall breaks new ground when it comes to seemingly impossible scenarios.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <span class="current">9</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/10.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>
