@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-24 21:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>101 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>43 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>123 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://movieweb.com/reindeer-games-ben-affleck-streaming-paramount-plus-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/reindeer-games.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ben Affleck's 104-Minute Retro Action Thriller Officially Confirms New Streaming Home
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">As Ben Affleck's new thriller Animals continues to find success on Netflix despite poor reviews, one of his forgotten action flops has just scored a new home.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/martial-arts-movies-greatest-finishing-moves/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/bruce-lee-in-big-boss-1971.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            11 Greatest Finishing Moves in Martial Arts Action Movie History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Every great martial arts fight combines talented actors executing impressive stunt choreography with directors finding bold ways to capture the action. Whether they use weapons or battle hand-to-hand, well-crafted fights tell a story.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tv-shows-more-groundbreaking-than-the-sopranos/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/the-sopranos-tony-soprano-1999-2007.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Only 5 TV Shows Are Even More Groundbreaking Than 'The Sopranos'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Before diving into looking at shows that might've been more groundbreaking than The Sopranos, it’s worth stressing that The Sopranos is well and truly deserving of its reputation for being unbelievably groundbreaking.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/law-order-svu-season-28-alex-cabot-stephanie-march-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/law-order_-svu-season-27-cast.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stephanie March Returns as Alexandra Cabot in Law & Order: SVU Season 28 After 8 Years
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 9-Season Law & Order: SVU Star Officially Returning After 8-Year Absence</div>
+      
+      
+      <div class="summary">Published Oct 23, 2026, 4:47 PM EDT Jennifer is a TV and Movie News Editor at ScreenRant. She started her journey in entertainment media in 2022 when she first joined Valnet at CBR before coming to ScreenRant. Jennifer loves TV, especially science fi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2289848/first-internet-chat-room-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/what-was-the-first-internet-chat-room/l-intro-1792373682.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            What Was The First Internet Chat Room?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">What Was The First Internet Chat Room? mapo_japan/Shutterstock In an internet era dominated by social media platforms and Subreddits dedicated to virtually every topic imaginable, it's difficult to imagine or remember a time in which only one social &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/resident-evil-movie-2026-box-office-review-record/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/sharedimages/2026/09/resident-evil-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            2026's Resident Evil Movie Is First in Franchise to Earn Both Strong Box Office and Positive Reviews
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Resident Evil Officially Achieves A Franchise First</div>
+      
+      
+      <div class="summary">2026's Resident Evil is the first movie since the film side of the series began to achieve one major milestone for the franchise, marking a major feat for the year and release alike.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-starfleet-academy-cancelation-robert-picardo-under-attack/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/robert-picardo-as-the-emh-doctor-in-starfleet-academy.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Robert Picardo Addresses Paramount+ Cancellation: 'Star Trek Is Under Attack'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 31-Year Star Trek Veteran Addresses Paramount+ Cancellation: "Star Trek Is Under Attack"</div>
+      
+      
+      <div class="summary">Star Trek will reach the end of an era as Star Trek: Strange New Worlds and Star Trek: Starfleet Academy conclude their runs. With no new Star Trek series on the horizon and Paramount+ under new management, the franchise's future is uncertain.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-netflix-movies-watch-weekend-october-24/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/chris-evans-wearing-a-suit-while-photographers-take-his-picture-in-sacrifice.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Best Movies To Watch On Netflix This Weekend (October 24-25)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The best movies to watch on Netflix this weekend will have subscribers scared, shocked, excited, and cheering, but maybe not all of those at the same time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/if-i-go-will-they-miss-me-digital-streaming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/j-alphonse-nicholson-in-if-i-go-will-they-miss-me.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Near-Perfect 95-Minute Movie Hailed as One of the Year's Best Officially Lands on Digital Streaming
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Oct 23, 2026, 4:42 PM EDT Marcos Melendez is an entertainment journalist who has been active since 2017. His past work can be read on Collider, Escapist, ScreenRant, CBR, and Full Circle Cinema. He is currently a News Editor for MovieWeb.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dutton-ranch-season-2-filming-dates-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/cole-hauser-as-rip-wheeler-and-kelly-reilly-as-beth-dutton-in-dutton-ranch.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Kelly Reilly Confirms 'Dutton Ranch' Season 2 Filming to Start Early 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan's Yellowstone Sequel Star Confirms Key Dates for Hit Series' Return</div>
+      
+      
+      <div class="summary">Taylor Sheridan's Yellowstone spinoff, Dutton Ranch, completed its first season in early July. Just ahead of the season finale, the series was renewed for Season 2, but no release date was given, and fans have been wondering when filming would start.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/top-fall-2026-anime-mid-term-ranking/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/japan-has-already-officially-crowned-its-top-anime-series-of-fall-202-6-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Best Fall 2026 Anime So Far, Ranked (And No. 1 Isn't Dragon Ball)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Fall 2026 anime season saw the return of major shōnen icons such as Goku, Takemichi Hanagaki and Ranma Saotome to the airwaves. Despite this, Japan's current favorite series stars a stoic young woman whose "weapon" of choice is her mind rather th&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-new-netflix-shows-to-binge-weekend-october-23-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/tv-binge-guide-28.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Best New Netflix Series To Binge-Watch This Weekend (October 23–25, 2026)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix has three must-watch series to binge this weekend, including a returning heist hit, an Emmy-nominated rom-com, and a celebrated sci-fi horror.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2289846/first-ever-cloud-storage-history-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/the-first-ever-cloud-service-gave-you-less-storage-than-most-floppy-disks/l-intro-1792372342.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            CompuServe's Internet Drive: The First Cloud Service with Only 128KB Storage
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The First-Ever Cloud Service Gave You Less Storage Than Most Floppy Disks</div>
+      
+      
+      <div class="summary">The First-Ever Cloud Service Gave You Less Storage Than Most Floppy Disks Nikada/Getty Images Cloud services very much seem like a modern invention.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/mobland-jan-killing-donnie-character-change-harry-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/tcdmobl_i8086.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            MobLand's Latest Shocking Death Officially Reverses An Entire Character Arc
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: Majors SPOILERS for MobLand season 2, episode 6. The latest episode of Tom Hardy’s MobLand has proven once again that this exhilarating gangster thriller isn’t going to pull any punches when it comes to gobsmacking plot twists.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/star-trek-most-powerful-line-deep-space-nine-kira-damar/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/star-trek-the-original-series-balance-of-terror-george-takei-william-shatner-james-doohan.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            This ‘Star Trek’ Line Still Perfectly Defines the Sci-Fi Franchise 60 Years Later
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">For 60 years, Star Trek has explored humanity's potential for a better future, even when its characters face the darkest parts of themselves.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/clayface-audience-score-dcu/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/tom-rhys-harries-as-matt-hagen-curled-up-in-a-clay-blob-in-a-tub-in-clayface.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Clayface' Officially Breaks DCU Record as Jaw-Dropping Audience Score Is Revealed
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Oct 23, 2026, 4:22 PM EDT Richard is a writer/journalist from Oregon (by way of California) with a love of Marvel, Star Wars, DC, and all kinds of entertainment. He joined MovieWeb in January 2026 as a Movie & TV Writer/Editor.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2295781/new-ai-worm-smart-home-devices/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/these-new-ai-worms-could-eventually-infect-your-smart-home-devices/l-intro-1792782778.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            These New 'AI Worms' Could Eventually Infect Your Smart Home Devices
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">These New 'AI Worms' Could Eventually Infect Your Smart Home Devices wk1003mike/Shutterstock Over at Anthropic, the company that owns Claude, researchers have completed a series of experiments that may suggest that small AI models are "months away" f&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/video/wildwood-the-cast-grew-up-before-the-movie-was-done/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/peyton-elizabeth-lee-and-jacob-tremblay.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wildwood: The Cast Grew Up Before the Movie Was Done
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Wildwood stars Peyton Elizabeth Lee and Jacob Tremblay discuss the unusual experience of growing up alongside their animated characters in LAIKA's 2026 stop-motion fantasy adventure.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hardest-castlevania-boss-fights-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/castlevania-vampire-killer.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Hardest Castlevania Boss Fights of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Castlevania series is notorious for containing some of the most challenging video games in history, especially in its early days, which extends to some brutal and unforgiving boss monsters.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/prime-video-fallout-shelter-trailer-release-date-january-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/01/fallout-season-2-walton-goggins-interview.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's First 'Fallout' Spin-Off Series Officially Debuts Trailer
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Prime Video has a wealth of massive series under its belt, from The Boys to The Lord of the Rings: The Rings of Power and Reacher, yet nothing has set the world on fire like Fallout.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/star-trek-darmok-language-paradox.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2024/03/star-trek-tng-darmok-900x506.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why Star Trek's 'Darmok' Episode Makes Less Sense Than Ever
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek Episode That Aged Best Makes Less Sense Than Ever</div>
+      
+      
+      <div class="summary">There’s also the lingering question of how–if the Tamarians of “Darmok” only speak in metaphors–they learn the individual words needed to construct those metaphors. For example, if a Tamarian says, “Temba, his arms wide,” they are communicating that &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/katee-robert-tarot-trials-book-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-tarot-trials-book-cover.jpg?q=49&fit=crop&w=749&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Tarot Trials: A New Fantasy Series with Deadly Competition and Political Alliances
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Dungeon Crawler Carl Meets Game of Thrones in This Brand-New Fantasy Series</div>
+      
+      
+      <div class="summary">With the next Dungeon Crawler Carl not yet set for release, and Winds of Winter seemingly never coming, readers are looking for similar stories to bridge the gap. Carl and Donut are tough to replace, but there are plenty of other books with fierce, d&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/new-tv-shows-streaming-this-weekend-netflix-october-23-25/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/the-terminal-list.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 New TV Shows to Watch This Weekend on Netflix, HBO, and Hulu (October 23-25)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Happy weekend! It’s a slow week for TV releases. Over the past month, shows like Carrie, Crystal Lake, and VisionQuest dropped, keeping many viewers busy. But things are picking up soon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/moana-live-action-disney-plus-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/the-rock-moana.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Live-Action 'Moana' Remake Becomes No. 1 on Disney+ After Box Office Disappointment
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney's $323M Adventure Remake Finds Redemption as the No. 1 Film Streaming</div>
+      
+      
+      <div class="summary">Moana is sailing again. After the live-action remake bombed at the box office, it finally learned how far it could go on streaming. The Moana franchise debuted in 2016, introducing the first Polynesian Disney Princess.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-movies-if-you-love-wicker-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/the-fisherwoman-and-the-wicker-husband-in-2026-wicker.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Movies To Watch If You Love Wicker
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Wicker has landed in theaters as a wonderful new romance story, making these similar movies a must-watch for fantasy fans.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/why-rookie-killed-off-jackson-west/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/titus-makin-jr-as-jackson-west-on-the-rookie-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why The Rookie Killed Off Jackson West
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">As promotional materials for The Rookie began to appear in the weeks leading up to the series' Season 4 premiere, fans noticed something was amiss. Without an explanation, Officer Jackson West, played by actor/musician Titus Makin Jr., was absent.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2289613/things-siri-can-do-with-phone-calendar/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-things-siri-can-do-with-your-calendar/l-intro-1792256878.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Things Siri Can Do With Your Calendar
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Things Siri Can Do With Your Calendar Marinel Sigue/BGR If there's one iOS 27 feature that's making the OS upgrade hard to resist, it's Siri AI.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/marvel-wonder-man-removed-from-hulu/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/simon-williams-and-trevor-slattery-standing-on-a-balcony-overlooking-la-from-wonder-man.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wonder Man Removed From Hulu 3 Months After Its Cancellation
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Series Removed From Hulu Just 3 Months After Cancellation</div>
+      
+      
+      <div class="summary">Hulu just lost a Marvel series. Wonder Man debuted in January and seemed to be a hit. Disney+ renewed the show for a second season. But this summer, Disney reversed course and canceled it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/young-sheldon-series-finale-annie-potts/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/06/jim-parsons-and-mayim-bialik-in-young-sheldon.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Annie Potts Calls Young Sheldon Finale Unsatisfying: 'It Was Like, Really?'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Young Sheldon Star Calls Out Unsatisfying Series Finale: 'It Was Like, Really?'</div>
+      
+      
+      <div class="summary">The first prequel to The Big Bang Theory, Young Sheldon, was a huge hit for CBS with a seven-season run. Still, for series star Annie Potts, it ended on a sour note thanks to a big scene in the finale.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-studios-kingpin-mcu-disney-plus-villain-next" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/photos/pal1.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Paladin Is the Next Big Villain in Marvel's VisionQuest on Disney+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Studios Unleashes Its Next Big MCU Disney+ Villain After Kingpin</div>
+      
+      
+      <div class="summary">Last week, Marvel Studios officially revealed to the world the next big bad on Disney+. From Agatha Harkness (Kathryn Hahn) in WandaVision to John Walker (Wyatt Russell) in The Falcon and the Winter Soldier, villains have always been essential to the&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <span class="current">15</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/16.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

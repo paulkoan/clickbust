@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-24 21:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>101 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>43 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>123 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/deep-space-nine-klingons-roddenberry-rule.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2024/04/deep-space-nine-klingons-way-of-the-warrior-900x506.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: Deep Space Nine Became Great by Ignoring Gene Roddenberry
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek’s Most Underrated Series Became Great By Ignoring Gene Roddenberry</div>
+      
+      
+      <div class="summary">The same DS9 episode that brought Worf into the show and made the Klingons enemies again, “The Way of the Warrior,” almost instantly proved how wise it was to ditch Roddenberry’s restrictive rules.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/dexter-greatest-series-quote-season-6-line/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/11/michael-c-hall-as-dexter-morgan-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dexter Morgan’s Greatest ‘Dexter’ Line Is Still One of TV’s Best 20 Years Later
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">20 years ago, Showtime delivered one of television's darkest dramas: Dexter. Based on Jeff Lindsay's novels, Dexter stars Michael C. Hall as Dexter Morgan, a forensic scientist who moonlights as a serial killer, hunting and stalking other serial kill&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/black-clover-season-2-episode-4-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/asta-uses-his-devil-union-form-to-protect-nacht-in-black-clover-season-2-episode-4.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Black Clover Season 2, Episode 4 Review
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After spending the previous episodes moving between several different battles, Black Clover Season 2, Episode 4 finally slows down and gives one character the spotlight.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-universally-loved-horror-movies-based-on-books-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/10/the-shining-1980-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Most Universally Loved Horror Movies Based on Books, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While originality will always be praised in the genre, it's impossible to ignore the fact that some of the greatest horror films of all time are based on books.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2294326/forgotten-tech-tried-replace-floppy-disk/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/14-forgotten-technologies-that-tried-to-replace-the-floppy-disk/l-intro-1792687286.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            14 Forgotten Technologies That Tried To Replace The Floppy Disk
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">14 Forgotten Technologies That Tried To Replace The Floppy Disk Herzstaub/Shutterstock The humble floppy disk — which, despite appearances, is rather aptly named — ruled the world of removable storage for decades.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/rambo-first-blood-leaving-streaming-tubi-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2024/07/sylvester-stallone-stars-as-john-rambo-in-first-blood.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            First Blood (Rambo) Is Being Removed from Tubi Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The "Greatest Action Film Ever Made" Is Officially Being Cut From Streaming</div>
+      
+      
+      <div class="summary">One of the greatest and most iconic action movies ever made, which spawned an iconic (and diminishing) franchise, is officially being removed from free streaming in the next few days. The 1980s were a golden age for action movies, especially action m&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/mistborn-best-quote-hope/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/vin-mistborn-the-hero-of-ages-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            20 Years Later, the Best ‘Mistborn’ Quote Is Still the Most Inspiring in Fantasy History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's been 20 years since the first Mistborn book was published, and Brandon Sanderson's series remains a staple of the fantasy genre. Its larger Cosmere connections keep it front of mind, as does the anticipation of Mistborn Era 3.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-not-scary-horror-games/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/7808383/Night_in_the_Woods_art.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 5 least-scary scary games for people who are scared of scary games
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">October is, unambiguously, the best time of year to love horror. Whether you lean toward horror movies, games, or both, there’s no shortage of ways to get scared this season.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/perfect-netflix-sci-fi-shows-that-hook-you-in-the-first-scene/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/dark-tv-series-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Near-Perfect Netflix Sci-Fi Shows That Hook You in the First Scene
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Not every great sci-fi show needs to start with a bang, but the best ones know how to grab your attention from the very first frame.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/lupin-part-4-netflix-return-omar-sy-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/10/lupin-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lupin Returns to Netflix for Part 4 After 3-Year Wait
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s Twisty Crime Thriller Officially Returns After a 3-Year Wait</div>
+      
+      
+      <div class="summary">Of course, none of us technically approve of crime, because crime is bad. But let's say, for argument's sake, that we approve of some of it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/genshin-impact-november-update-seven-nations-unite/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/key-art-en.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Genshin Impact’s Major November Update Finally Unites All 7 Nations for a Last Stand
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's another nail in Teyvat's coffin in Genshin Impact's next major update. Launching Nov. 4, 2026, Genshin Impact Version 7.2 will unite Teyvat's seven nations in a last-ditch effort to stop the Celestial Nails from bringing judgment upon the world.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2291252/3d-printers-owners-say-most-catastrophic-mistakes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/3d-printer-owners-say-these-are-the-most-catastrophic-mistakes-you-can-make/l-intro-1792457318.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3D Printer Owners Say These Are The Most Catastrophic Mistakes You Can Make
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">3D Printer Owners Say These Are The Most Catastrophic Mistakes You Can Make Stokkete/Shutterstock These days, 3D printers are capable of manifesting objects seemingly out of thin air with nothing more than heat, filament, and a digital 3D model — fro&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-thriller-movie-trilogies-all-time/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/sympathy-for-lady-vengeance.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Greatest Thriller Movie Trilogies of All Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Thrillers thrive on suspense and shocking twists, qualities that make them some of the most gripping movies in cinema. However, sustaining those qualities across multiple films is an enormous challenge.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/clint-eastwood-crime-masterpiece-mystic-river-leaving-tubi-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/12/mystic-river.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mystic River: Clint Eastwood's Crime Drama Loses Its Free Streaming Home
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Clint Eastwood's 138-Minute Crime Masterpiece Officially Loses Its Free Streaming Home</div>
+      
+      
+      <div class="summary">The twilight of Clint Eastwood's career as a filmmaker will be remembered mainly for the legend's attempts to make amends for some of his past work.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-steamy-shows-hulu/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/rivals-alex-hassell-bella-maclean-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Best Steamy Adult Series To Stream on Hulu
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A respectable dinner party becomes infinitely more interesting when two guests are having an affair, somebody else suspects it, and the host has just suggested everyone stay for another drink. I know exactly where the trouble is heading.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/video-games-2000s-amazing-start-to-finish/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/metroid-prime-remastered-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 2000s Games That Are Amazing From Start to Finish
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 2000s were one of the most profoundly transformational periods for gaming in the industry's history, a decade that shook and re-defined the very foundations of video games with the sixth and seventh generations of game consoles.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2295818/the-hunger-games-best-dystopian-sci-fi-movie-franchise-streaming-free/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/one-of-the-best-dystopian-sci-fi-movie-franchises-of-all-time-is-streaming-for-free/intro-1792784994.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 5 Hunger Games Movies Streaming Free on Fandango at Home
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: One Of The Best Dystopian Sci-Fi Movie Franchises Of All Time Is Streaming For Free</div>
+      
+      
+      <div class="summary">One Of The Best Dystopian Sci-Fi Movie Franchises Of All Time Is Streaming For Free The late 2000s and 2010s were the golden age of Young Adult (YA) novel adaptations in Hollywood. "The Twilight Saga" led the charge, exploding onto the scene with 200&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/fortnite-one-piece-confirmed-mini-season-teaser/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/fortnite-mini-season-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            One Piece Is Officially Coming to Fortnite
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fortnite's next mini-season is a week away. The minor teasers that have surfaced thus far have made it clear that the upcoming season's theme will be an anime-pirate mash-up, and its main focus will be treasure hunting. That's about it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/sylvester-stallone-tulsa-king-scarlet-stallone-casting-nepotism/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/scarlet-stallone-with-her-hand-under-her-chin-in-tulsa-king-season-4.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sylvester Stallone Defends Nepotism in Casting Daughter in 'Tulsa King'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Sylvester Stallone Defends Casting Daughter In Hit Taylor Sheridan Drama: 'Of Course It’s Nepotism'</div>
+      
+      
+      <div class="summary">Conversations about nepo babies have been the light of the 2020s, as many beloved stars introduced their children to the spotlight. So did Sylvester Stallone in Tulsa King.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-ds9-nog-quote-greatest-character-turn/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/nog-and-sisko-shake-hands.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nog's Passionate Quote in Star Trek: Deep Space Nine Season 3 Made Him One of the Show's Greatest Characters
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 31 Years Ago, This Passionate Quote Instantly Created One Of Star Trek: Deep Space Nine’s Greatest Characters</div>
+      
+      
+      <div class="summary">An impassioned quote in Star Trek: Deep Space Nine season 3 instantly elevated a supporting character, opening the door to him becoming one of the show's greatest. Typical of Star Trek series finding their way in the third season, Deep Space Nine tru&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/video/man-of-tomorrow-has-one-major-problem-to-avoid/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/clip-4-3.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Man of Tomorrow Crossover Event Could Diminish James Gunn's Superman Sequel
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Man of Tomorrow: Superman Could Lose His Movie Again</div>
+      
+      
+      <div class="summary">Man of Tomorrow is shaping up to be one of the DCU's biggest crossover events, but James Gunn's ambitious Superman sequel could be putting its most important characters at risk of getting lost in the crowd.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/red-dead-redemption-2-nemesis-system-mod-fan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/red-dead-redemption-2-companions.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Red Dead Redemption 2 Mod Adds Nemesis System-Like Features
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New Red Dead Redemption 2 Update Adds A Nemesis System</div>
+      
+      
+      <div class="summary">Red Dead Redemption 2 may not be as exhaustively enormous as, say, a game like The Elder Scrolls 5: Skyrim or The Witcher 3: Wild Hunt, but its story is rather long for an action-adventure game, averaging about ~50 hours in order to roll credits, and&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/high-plains-drifter-clint-eastwood-free-to-stream/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/mmdhipl_ec001.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            High Plains Drifter, Clint Eastwood's Most Intense Western, Free on YouTube
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Clint Eastwood's Most Intense Western Is Officially Streaming for Free on YouTube</div>
+      
+      
+      <div class="summary">Throughout the 1960s, Clint Eastwood made the difficult leap from being a supporting player in a TV show to starring in movies as a headliner.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/crime-thriller-movies-most-suspenseful/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/willem-dafoe-inside-man.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Most Suspenseful Crime Thriller Movies of the Last 25 Years, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 2020s have already delivered some terrific crime thrillers, and we're not even halfway through the decade.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tim-burton-edward-scissorhands-streaming-hit-disney-plus-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/10/edward-scissorhands.jpg?q=70&fit=contain&w=750&h=422&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tim Burton's 'Edward Scissorhands' Becomes a Halloween Streaming Hit on Disney+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tim Burton's Sci-Fi Fantasy Masterpiece Is Officially a Halloween Streaming Hit</div>
+      
+      
+      <div class="summary">Production has finally come to an end on Netflix's perfect spooky season series, Wednesday. Jenna Ortega's titular teen psychic has faced all manner of dangers in her first two years at Nevermore Academy, but will face her most chaotic mystery yet in&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/lupin-mystery-crime-thriller-netflix-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/05/lupin.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lupin Returns as Netflix's Most-Watched Show After 3-Year Wait
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: After a 3-Year Wait, Netflix's Hit Mystery Thriller Series Is the Most-Watched Show on Streaming</div>
+      
+      
+      <div class="summary">Mystery thrillers have been dominating streaming, and Netflix has released some of the biggest hits of the year. From His & Hers to Jo Nesbo's Detective Hole and The Chestnut Man, Netflix TV shows have been dominating the genre.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/yellowstone-should-switch-formats-after-marshals-dutton-ranch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/luke-grimes-as-kayce-dutton-1-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marshals and Dutton Ranch Contrast Formats in Yellowstone Universe
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Yellowstone Is Ready to Switch Formats for Good After Marshals & Dutton Ranch</div>
+      
+      
+      <div class="summary">Even though Taylor Sheridan’s Yellowstone came to an end in late 2024, its universe and beloved characters persist. The Paramount+ series, Dutton Ranch, follows Beth Dutton (Kelly Reilly) as she builds a life in Rio Paloma, Texas.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/street-fighter-1994-movie-coldest-villain-quote/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/bison-saying-tuesday.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            M. Bison's 'It Was Tuesday' Line from 1994 Street Fighter Still Unbeaten
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Street Fighter's Coldest Villain Line Still Has Not Been Beaten</div>
+      
+      
+      <div class="summary">Kitao Sakurai's new Street Fighter film is not the first time that Capcom's classic fighting game series has made its way to the big screen. In 1994, Steven E. de Souza directed a live-action Street Fighter adaptation starring Jean-Claude Van Damme.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-al-pacino-gangster-movies-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/the-godfather-part-ii-1974-4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 6 Best Al Pacino Gangster Movies, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Al Pacino might have won an Oscar for a movie that didn’t have anything to do with organized crime (Scent of a Woman, somehow, if you were wondering), but it’s that kind of movie he’s most often associated with, and for good reason.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/life-is-strange-adaptation-production-complete-prime-video/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/01/instar46146317.jpg?q=49&fit=crop&w=50&h=65&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's Life is Strange Live-Action Series Wraps Filming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video’s New Live-Action Series With Fourth Wing Star Advances To Key Milestone</div>
+      
+      
+      <div class="summary">Life is Strange is coming soon. The episodic narrative adventure series Life is Strange achieved major success as the various games within the franchise reached big milestones.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <span class="current">2</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/3.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

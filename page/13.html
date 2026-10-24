@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-24 21:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>101 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>43 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>123 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/henry-cavill-mission-impossible-fallout-streaming-success-paramount-plus-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/henry-cavill-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Henry Cavill and Rebecca Ferguson's Action Epic Is Officially a Top 10 Hit on Streaming
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">2026 has been a busy year for Henry Cavill so far after starring in two movies, but fans were only able to catch one of them on the big screen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/an-unfinished-life-paramount-plus-streaming-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/mcdunli_ec005-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            An Unfinished Life, Robert Redford's Western, Finds Streaming Success on Paramount+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Robert Redford's Star-Studded Western Finds Redemption on Streaming 21 Years After Flopping Hard</div>
+      
+      
+      <div class="summary">A 2005 film starring Robert Redford unexpectedly rose up in the streaming charts this week. On Paramount+, viewers were tuning into the neo-Western drama An Unfinished Life, placing the film in the streamer's Top 10. An Unfinished Life found a new li&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hardest-nes-rpgs-zelda-castlevania-final-fantasy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/nes-with-games-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Hardest NES RPGs of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Nintendo Entertainment System hosted many games across different genres, including numerous role-playing titles. The NES had more unbelievably hard RPGs than any other console, which is a remarkable feat considering these games are well over thir&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/rocky-7-script-sylvester-stallone/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2021/04/Creed-2-Sylvester-Stallone.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            At 80 Years Old, Sylvester Stallone Plots Rocky 7 and Shares Story Details
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Sylvester Stallone first debuted in his iconic role as Rocky Balboa a full five decades ago with the original Rocky film. After 50 years, he's eager to tell the next story in Rocky's journey. To promote his new memoir, The Steps, Stallone reflected o&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2290214/ev-brands-that-win-battery-health/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/the-ev-brands-that-win-when-it-comes-to-battery-health/l-intro-1792416925.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Study: Kia and Hyundai EVs Retain Most Battery Capacity After 62,000 Miles
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The EV Brands That Win When It Comes To Battery Health</div>
+      
+      
+      <div class="summary">The EV Brands That Win When It Comes To Battery Health Marioguti/Getty Images When it comes to buying an electric car, especially a used one, long-term battery health can be an important consideration.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/darkwing-duck-reboot-disney-plus/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/darkwingduck_2026_release_image_hd_updated_20260918-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Darkwing Duck Returns in New Disney Plus Series After 35 Years
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney's Officially Bringing Back a '90s Cartoon Icon After 35 Years</div>
+      
+      
+      <div class="summary">Disney is apparently still rummaging around in its animation vault, and this time it’s pulled out a duck who has spent the last 35 years waiting for another chance to fight a bunch of extremely ridiculous villains.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2289882/how-long-waze-map-updates-to-appear/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-long-do-waze-map-updates-take-to-appear/l-intro-1792389962.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Long Do Waze Map Updates Take To Appear?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How Long Do Waze Map Updates Take To Appear? Visuals6x/Shutterstock The Waze app offers drivers and navigators alike accessible, convenient software that not only possesses standard GPS functionality but also handy alerts and notifications implemente&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/sylvester-stallone-tom-hardy-paramount-plus-mob-series-crown/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/sylvester-stallone-as-dwight-manfredi-in-tulsa-king-episode-2-season-4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tulsa King vs. MobLand: Stallone and Hardy Battle for Paramount+ Crown
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Sylvester Stallone & Tom Hardy Square Off For Paramount+’s Mob Series Crown</div>
+      
+      
+      <div class="summary">Paramount+’s two biggest mob dramas battle for streaming supremacy as Sylvester Stallone and Tom Hardy lead rival crime hits that both drop every Friday for the rest of Fall 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/found-footage-horror-arctic-monster-hunt.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2013/04/Frank.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Found-Footage Horror That Hunts A Legendary Monster In The Arctic
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How does the found-footage story of a hunt for Frankenstein's monster hold up? By Nick Venable | Published 40 seconds ago The Frankenstein Theory (2013). Film still via Ain’t It Cool News. A documentary crew heads into the frozen wilderness to chase &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/monster-se7en-meets-zodiac-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/johan-liebert-1.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Monster: Netflix's 74-Episode Psychological Thriller Compared to Se7en and Zodiac
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Se7en Meets Zodiac in Netflix’s 74-Episode Psychological Thriller That’ll Keep You Hooked</div>
+      
+      
+      <div class="summary">David Fincher has made some incredible movies over the years, but when it comes to crime thrillers, few come close to Se7en and Zodiac. Both films understand that the scariest serial killers aren't always the ones with the highest body counts.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/clayface-matt-hagen-dc-comics-movie-character-changes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/04/matt-hagen-s-face-melting-in-clayface-trailer.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Biggest Changes Clayface Makes To DC Comics' Batman Villain
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! This post contains SPOILERS for Clayface (2026) Without a doubt, Clayface is one of Batman's most tragic and visually distinctive villains. However, he also has a pretty complex history, one that the new DCU does a solid job adapting with DC&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/carrie-season-2-renewed-prime-video-good/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/carrie_smiling_on_stage_at_prom_in_the_prime_video_carrie_series.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's Carrie Renewed for Season 2 After Just 2 Weeks
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video's 8-Part Stephen King Series Is So Good, It's Renewed After Just 2 Weeks</div>
+      
+      
+      <div class="summary">Mike Flanagan and Stephen King are a match made in horror heaven, and Prime Video has officially renewed Flanagan's adaptation of the iconic author's debut novel for a second season.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/steam-4-free-games-keep-forever-october-23/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/steam-logo-red-background.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Steam Officially Makes 4 New Games 100% Free To Download And Keep Forever (October 23)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Steam has just made four new games entirely free to download and keep as part of your collection forever, but you may want to snag them as soon as possible. Steam is the go-to platform if you’re looking for free new titles to play.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/star-trek-inner-light-best-episode/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/the-inner-light-of-star-trek-the-next-generation.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Patrick Stewart's Favorite 'Star Trek: TNG' Episode 'The Inner Light' Is a Masterpiece
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 34 Years Later, Patrick Stewart's Favorite Star Trek Episode Is a Standalone Sci-Fi Masterpiece</div>
+      
+      
+      <div class="summary">While Star Trek: The Original Series is the most iconic incarnation of the beloved science-fiction franchise, its spin-off, The Next Generation, may be its biggest breakout hit.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/silo-rebecca-ferguson-streaming-hit-600-days-apple-tv-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/juliette-silo-theory.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Silo, Starring Rebecca Ferguson, Crosses 600 Days as a Streaming Hit on Apple TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Rebecca Ferguson's Near-Perfect Sci-Fi Thriller Is Officially a 600-Day Streaming Smash Hit</div>
+      
+      
+      <div class="summary">While it was the Mission: Impossible franchise that put Rebecca Ferguson on everyone's radar, it was her appearance as Rose the Hat in Doctor Sleep that cemented her as a superstar.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/pokemon-go-minior-orionids-event-end-date-october-24/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/unnamed-7.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon GO Players Have Limited Time to Catch Minior During Meteor Events
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Pokémon Fans Officially Have Limited Time to Catch the Franchise’s Newest Addition</div>
+      
+      
+      <div class="summary">October has given Pokémon GO players plenty of reasons to keep checking the map. For collectors, though, adding a new Pokémon to the Pokédex is still one of the biggest draws. The trick is keeping track of which arrivals will stick around and which h&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/heath-ledger-10-things-i-hate-about-you-pluto-tv-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/heath-ledger-and-julia-stiles-in-paintball-scene-from-10-things-i-hate-about-you.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Things I Hate About You Now Streaming for Free on Pluto TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Heath Ledger's 97-Minute Cult Classic Lands on Free Streaming as Original Cast Reunites</div>
+      
+      
+      <div class="summary">10 Things I Hate About You is often held up as one of the greatest cult classics of all time, as well as the movie that launched the late Heath Ledger into superstardom. Almost 30 years later, the film is now available to stream for free for fans to &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/game-of-thrones-most-haunting-scene-arya-vs-night-king/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/maisie-williams-covered-in-blood-and-ash-as-arya-stark-in-game-of-thrones.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Arya Killing the Night King in Game of Thrones Remains Controversial and Hard to Watch
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Game of Thrones’ Most Haunting Scene Has Only Gotten Harder to Watch</div>
+      
+      
+      <div class="summary">Game of Thrones, arguably one of the greatest television shows ever, ended with a catastrophic final season that shocked and perplexed fans. Based on George R. R.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/red-rising-pierce-brown-sci-fi-movie-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/red-rising.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pierce Brown Gives Promising Update on Paramount's Red Rising Adaptation
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Pierce Brown Gives Promising Update on His Paramount "Star Wars Meets Hunger Games" Sci-Fi Epic</div>
+      
+      
+      <div class="summary">Paramount Pictures, which recently acquired the film rights to Pierce Brown's best-selling epic, Red Rising, is officially moving forward with an adaptation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2290304/android-phones-best-spam-call-protection/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/these-android-phones-have-built-in-spam-call-protection-that-actually-works/google-and-samsung-lead-on-built-in-spam-protection-1792172203.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Google Pixel and Samsung Galaxy Phones Offer Built-In Spam Call Protection That Works
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: These Android Phones Have Built-In Spam Call Protection That Actually Works</div>
+      
+      
+      <div class="summary">These Android Phones Have Built-In Spam Call Protection That Actually Works Elvard project/Shutterstock Two of the most notable Android phone makers offering built-in spam call protection are Google and Samsung. Each takes its own approach, but the o&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-anime-shows-perfect-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/_edward-elric-in-fullmetal-alchemist-brotherhood.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Anime Shows That Are 10/10 With No Weak Episodes, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When reviewing anything, it is most common for reviewers to rank the medium on a scale from one to ten, and in an era when everyone wants to share their opinion, scores are flying everywhere.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/avatar-seven-havens-stars-break-down-the-new-team-avatar-pavi-and-nishas-similarities-to-aang-and" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/Avatar-Seven-Havens-Article.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avatar: Seven Havens Stars Break Down the New Team Avatar & Pavi and Nisha's Similarities to Aang and Korra (NYCC)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Avatar: Seven Havens is the latest series in the smash hit Avatar: The Last Airbender franchise, putting the focus on a brand new time period, with two twin Avatars for the first time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/transformers-energon-universe-optimus-prime-classic-class-blokees-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/optimus-prime-and-megatron-in-the-transformers-the-movie-anime.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Transformers Officially Gives Optimus Prime Megatron's Arm in New Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Transformers fans can now claim their very own Optimus Prime from the Energon Universe, and he's packing plenty of extra heat. Popular model kit brand Blokees has opened pre-orders for the upcoming Transformers CC28 Energon Universe Optimus Prime Cla&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-new-stanford-prison-experiment-series-must-watch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-new-stanford-prison-experiment.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The New Stanford Prison Experiment: Netflix's 6-Part Series Is a Binge-Worthy Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s New 6-Part Prison Experiment Is So Good, You’ll Binge It In One Night</div>
+      
+      
+      <div class="summary">Netflix’s provocative new six-part social experiment sends 30 people into a real prison, creating an intense binge you can start and finish in just one night.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/pokmon-celebrates-30th-anniversary-with-9-new-collectible-sets-october-24/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/ash-pikachu-pokemon-journeys-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Celebrates 30th Anniversary With 9 New Collectible Sets October 24
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's been an unrivaled run for Pokémon. For the past 30 years, it's been a staple of video games and anime, and it doesn't look like it's ending any time soon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-prime-video-movies-watch-weekend-october-24-25/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/04/christian-bale-smiling-on-a-red-carpet-for-the-bride.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Best Movies To Watch On Prime Video This Weekend (October 24-25)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Prime Video subscribers have three exciting movies that were released recently on the streaming service to enjoy this weekend.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/alien-movie-aaron-guzikowski-writer/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/tv/IoFCPy0pLNeMnaT5qs3mlxZ6TdxsMV.jpg?q=70&fit=contain&w=420&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Alien Movie in the Works From Ridley Scott, Connecting to Prometheus and Covenant
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New 'Alien' Movie Officially Announced From Ridley Scott as 'Romulus' Sequel Status Is Confirmed</div>
+      
+      
+      <div class="summary">The revitalization of the Alien Franchise in recent years following the mixed reception to Ridley Scott's 2017 film Alien: Covenant was thanks in no small part to Fede Alvarez's 2024 film Alien: Romulus.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-the-mosquito-bowl-movie-first-reviews/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-mosquito-bowl-1.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Mosquito Bowl: Netflix's War Epic Divides Critics in First Reviews
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's New Star-Studded War Epic Divides Critics In First Reviews</div>
+      
+      
+      <div class="summary">Netflix is releasing another epic war movie this fall. Award season has now started, and Netflix is promoting its epic war movie, La Bola Negra, for consideration.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-classic-jrpgs-no-remake/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2025/12/suikoden-2.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Classic JRPGs That Are So Good They Never Need a Remake
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Remakes, remasters, and reimaginings are all the rage right now in video games. For the last several years, studios the world over have crafted new and vastly improved versions of all-time classic games, ranging from faithful modernizations like Capc&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/marvel-movies-tv-shows-post-credits-scenes-teases/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/25275429/mcu_dangling_threads.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Marvel Post-Credits Scene That Went Nowhere (So Far)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Over the past 18 years, Marvel Studios has focused as much on the continuity of its ongoing mega-story as it’s focused on the content of any given superhero film.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <span class="current">13</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/14.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

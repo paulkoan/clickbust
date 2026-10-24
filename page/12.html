@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-24 21:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>101 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>43 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>123 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.bgr.com/2290226/reasons-buy-usb-microphone-instead-of-gaming-headset/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-reasons-to-buy-a-usb-microphone-instead-of-another-gaming-headset/l-intro-1792419690.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Reasons To Buy A USB Microphone Instead Of Another Gaming Headset
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Reasons To Buy A USB Microphone Instead Of Another Gaming Headset SpecyReal/Shutterstock We may receive a commission on purchases made from links. Gaming headsets get a bad rap when it comes to their microphones, and rightfully so, as they haven't &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/star-trek-insurrection-body-horror.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2024/01/star-trek-insurrection-patrick-stewart-brent-spiner-900x507.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: Insurrection Is Secretly a Horror Film
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek's Most Underrated Movie Is Secretly A Horror Film</div>
+      
+      
+      <div class="summary">Additionally, while the franchise rarely emphasizes the possibility, Star Trek is a universe where countless people can undergo the wildest body modifications whenever they want.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-fix-liam-neeson-blu-ray-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/liam-neeson-in-the-fix.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Liam Neeson's 141-Minute Action Thriller Sets New Release After Flying Under the Radar
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Liam Neeson has spent the last two decades cementing his status as one of Hollywood's ultimate action icons.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/percy-jackson-and-the-olympians-season-3-release-date-disney-plus-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/tcdpeja_g5083-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Percy Jackson' Officially Returns in 4 Weeks
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Percy Jackson and the Olympians is approaching a milestone that readers have waited years to see. After adapting The Lightning Thief and The Sea of Monsters, the Disney+ series is moving into Rick Riordan’s third book, The Titan’s Curse.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/kayce-tate-therapy-marshals-season-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/09/yellowstone-john-dutton-iii.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan Finally Abandons Yellowstone’s John Dutton Playbook for Good in Marshals
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The following contains spoilers for Marshals Season 2, Episode 3, “Falling Sky,” which aired on CBS on Sunday, October 18, 2026. Marshals Season 2, Episode 3 shows how Kayce (Luke Grimes) differs from his father, John Dutton (Kevin Costner), as he tr&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/starship-troopers-sci-fi-leaving-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/casper-van-dien-as-johnny-shouting-with-a-large-gun-in-starship-troopers.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Starship Troopers, the Sci-Fi Cult Classic, Is Leaving Netflix on Nov. 1
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 129-Minute Sci-Fi Cult Classic Is Disappearing From Netflix</div>
+      
+      
+      <div class="summary">When it comes to space-based sci-fi, audiences often expect a tense thriller or a sprawling adventure. Starship Troopers offers viewers a different experience, one with sharp satirical wit and battles with giant bugs, and it's available to watch on N&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/2026-movies-better-than-the-odyssey-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/matt-damon-as-odysseus-in-christopher-nolan-s-the-odyssey.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 2026 Movies Better Than The Odyssey
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Christopher Nolan's epic fantasy adaptation of The Odyssey is widely considered one of the best movies of 2026, but there are some movies released this year that are arguably even better.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/florence-pugh-east-of-eden-netflix-streaming-success-october-2026-1-billion-minutes-watched/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/east-of-eden-florence-pugh-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Carrie and Below Lead Nielsen's Latest Streaming Charts
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s New Western Miniseries Is Officially a Certified Streaming Hit</div>
+      
+      
+      <div class="summary">Despite competition from two new heavy hitters, Netflix's old-fashioned literary adaptation delivered a stunning leap in its second week of release.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2293704/rocket-lab-solar-cell-solve-spacecraft-bottleneck/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/rocket-labs-new-solar-cells-could-solve-a-big-bottleneck-for-spacecraft/l-intro-1792516152.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rocket Lab's New Solar Cells Could Solve A Big Bottleneck For Spacecraft
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Rocket Lab's New Solar Cells Could Solve A Big Bottleneck For Spacecraft Long Beach–based space company Rocket Lab has launched a new space-grade solar cell that addresses a key supply chain bottleneck for spacecraft and satellites, while maintaining&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-action-anime-no-bad-episodes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/mikasa-ackerman-wielding-a-blade-in-attack-on-titan.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Action Anime With No Bad Episodes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Action anime can make almost anything exciting, from a sword fight in the middle of nowhere to a teenager losing control of powers he barely understands. Some series rely on huge battles for their hype, while others spend more time on characters and &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/the-witcher-geralt-returns-in-2026-with-new-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/24755996/The_Witcher_n_S3_E4_00_28_49_08.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Andrzej Sapkowski Confirms New Witcher Book Starring Geralt
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Witcher's Geralt Officially Returns for New Adventure</div>
+      
+      
+      <div class="summary">The Witcher fans have had a lot to look forward to, like a remaster of The Witcher 3, the Songs of the Past expansion, and The Witcher 4, expected sometime in 2028.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jason-statham-mechanic-resurrection-leaving-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/09/the-mechanic-jason-statham.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jason Statham's Mechanic: Resurrection Exits Netflix in 1 Week
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jason Statham’s Explosive Action Sequel Officially Exits Streaming in 1 Week</div>
+      
+      
+      <div class="summary">Jason Statham can do a lot of things well, and killing bad guys effortlessly is one of the things he is most talented at doing. What a guy.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/carrie-mike-flanagan-horror-series-negative/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/screenshot-2026-09-10-at-4-05-48-pm.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Carrie’ Signals an Even Bigger Issue With Mike Flanagan's Streaming Hits
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Nearly 50 years after the original movie premiered, Carrie finally returns for the streaming era. Based on Stephen King’s debut novel, Mike Flanagan’s Carrie largely follows the premise established by both the book and the Brian De Palma horror flick&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/apple-tv-bad-sisters-2-season-masterpiece-thriller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/bad-sisters-sarah-greene.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV’s 18-Episode Dark Comedy Thriller Is the Perfect ‘Big Little Lies’ Replacement
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When it comes to emotional depth, few things strike a chord quite like sisterhood. A prime example of this notion is Apple TV's stunning black comedy Bad Sisters.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/terry-mayor-of-kingstown-death-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/mayor-of-kingstown_hmhwsg.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Terry's Mayor Of Kingstown Death Explained (& If It Was Mike's Fault)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Though Terry is never seen in Mayor of Kingstown, his death plays a crucial role in the series, which delves into the gritty, complex world of Kingstown, Michigan, where the business of incarceration is the only thriving industry.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/space-1999-tv-version-of-2001-deserves-another-chance/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/space-1999_da09a95e.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Space:1999: The 48-Episode TV Series Panned by Isaac Asimov Deserves Another Chance
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The 48-Episode TV Version Of 2001: A Space Odyssey Panned By Isaac Asimov Deserves Another Chance</div>
+      
+      
+      <div class="summary">Stanley Kubrick’s2001: A Space Odysseyranks as one of the 20th century’s most extraordinary works of cinema, a towering masterpiece which has influenced not only countless filmmakers, but the modern sci-fi genre it helped to create.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/christian-bale-the-bride-streaming-prime-video-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/christian-bale.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Christian Bale's Gothic Monster Romance Is Officially Streaming on Prime Video
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After a lengthy break from the screen, Christian Bale is officially booked and busy in Hollywood once more.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/minx-leaving-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/01/minx-hero-image-photo-credit-lionsgate-television-1-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Minx, HBO Max's Raunchy Comedy, Is Leaving Netflix on Nov. 4
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Is Officially Losing HBO Max's Raunchy 18-Episode Comedy After Just 1 Year</div>
+      
+      
+      <div class="summary">Minx, HBO Max's raunchy, two-season comedy, is leaving Netflix. The show originally aired on HBO Max in 2022, before moving to Starz. Netflix then picked up both seasons in November 2025, and one year later, the show is scheduled to leave the streame&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/stephen-king-carrie-streaming-success-prime-video-october-2026-1-billion-minutes-watched/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/carrie-alison-thornton.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stephen King’s New Horror Hit Officially Passes Massive Streaming Milestone Ahead of Season 2
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Having unseated the blockbuster Prime Video series Reacher and Neagley from the top of the Prime Video streaming charts, Stephen King's new horror limited series has fended off competition from another heavy hitter.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/gundam-forward-08th-ms-team-30th-anniversary-international-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/04/mobile-suit-gundam-the-08th-ms-team-sitting-mobile-suit.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mobile Suit Gundam: The 08th MS Team Gets a 30th Anniversary Model Guide
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Gundam Turns Its Most Realistic War Anime Into a New Military-Style Model Guide</div>
+      
+      
+      <div class="summary">Hobby Japan is officially giving international Mobile Suit Gundam fans access to one of the most detailed new Gunpla guides of the year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2290320/budget-android-phone-performance-problem-storage/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/budget-android-phones-have-a-storage-problem-that-you-might-not-have-noticed/l-intro-1792422260.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Budget Android Phones Often Use Slower eMMC Storage Instead of UFS
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Budget Android Phones Have A Storage Problem That You Might Not Have Noticed</div>
+      
+      
+      <div class="summary">Budget Android Phones Have A Storage Problem That You Might Not Have Noticed Sweetbunfactory/Getty Images If you've got $200 or less to spend on an Android phone, there's one spec line you should be checking before any other: the storage.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/cartoon-network-toonami-anime-aged-like-fine-wine/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/sailor-moon-in-the-name-of-the-moon-i-will-punish-you.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Cartoon Network and Toonami Anime That Have Aged Like Fine Wine
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anime from the '90s and 2000s moved at their own pace. Shows back then let stories breathe, animation studios played by different rules, and every episode had a sense of surprise. A few still look incredible, while others keep getting deeper as the y&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/laikas-wildwood-is-a-modern-cinematic-feat-that-couldnt-have-done-this-one-simple-thing-ten-years" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/Wildwood_thumb.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Laika's Wildwood Bike Design Demonstrates New Stop-Motion Techniques Impossible a Decade Ago
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Laika's Wildwood Is a Modern Cinematic Feat That Couldn't Have Done This One Simple Thing Ten Years Ago: "They're Always Learning New Techniques"</div>
+      
+      
+      <div class="summary">Laika, a stop-motion animation studio known for legendary films such as Coraline and Kubo and the Two Strings, is finally back in theaters with another incredible flex of their creative and storytelling talent with the new movie Wildwood.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ridley-scott-alien-earth-streaming-success-hulu-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/ridley-scott.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ridley Scott’s Near-Perfect Sci-Fi Series Is Officially a Streaming Hit Before Season 2
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ridley Scott is one of the greatest sci-fi minds of all time, but in recent years, he’s focused more on historical war epics like Napoleon (starring Joaquin Phoenix) and the legacy sequel to Gladiator.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/clayface-movie-dcu-batman-setup-future/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/robert-pattinson-walking-away-from-the-batmobile-in-costume-in-the-batman.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Clayface Sets Up The DCU's Batman Movie & What We Know About The Character's Future
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! This article includes SPOILERS for Clayface.Clayface has been released in theaters, and the latest movie in the new DC Universe does a solid job setting up the franchise's first Batman movie through its use of Gotham City in live-action and &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/cyberpunk-edgerunners-2-ending-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/cyberpunk-edgerunners-2-d-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cyberpunk: Edgerunners 2 Ending And How The Series Connects To Season 1 Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Few 2026 anime have had as much hype as Cyberpunk: Edgerunners 2. The first season is regarded as one of Netflix's best anime and is often ranked alongside the greatest sci-fi anime of all time. Part of the reason for Edgerunners' overwhelmingly posi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hbo-thriller-shows-every-episode-masterpiece/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/true-detective-hbo-season-1-matthew-mcconnaughey-woody-harrelson-1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 HBO Thriller Shows Where Every Episode Is a Masterpiece
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Slow-burn stories, stomach-churning suspense, and life-or-death situations—those are just some of the components that make a thriller. For years, the genre has kept audiences on the edge of their seats as each episode slowly unravels the unsavory tru&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-gentlemen-season-3-news-updates-cast-changes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/tg_202_unit_02085_rt.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Gentlemen Season 3: Cast Changes, Filming Updates & Everything We Know
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix's The Gentlemen is officially returning for a third season, and the streaming platform has already announced some major changes to the series. Guy Ritchie's hit crime series, which premiered on Netflix in 2024, stars Theo James as Eddie Horni&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/legend-of-zelda-2027-end-of-era/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-legend-of-zelda-wilds-era-end-link-chin.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Legend of Zelda's Wilds Era Likely Ends in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Legend Of Zelda As We Know It Officially Ends In 2027</div>
+      
+      
+      <div class="summary">The Legend of Zelda franchise is likely coming to an end in 2027, at least in the way that we currently know it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/lord-of-the-rings-final-quote/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/1920x1080-image-format-36.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            71 Years Later, The Lord of the Rings' Final Line Is Still the Best 3 Words in Fantasy History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Over seven decades later, The Lord of the Rings is still the seminal piece of fantasy literature, and its undying excellence is summarized in its final line. Many readers will be familiar with J.R.R.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <span class="current">12</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/13.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

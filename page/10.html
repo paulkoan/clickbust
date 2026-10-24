@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-24 21:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>101 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>43 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>123 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://thedirect.com/article/lanterns-season-1-ending" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/photos/darklantern.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lanterns Showrunner Confirms Dark Lantern Battery is Infused with Fear
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Lanterns Showrunner Confirms What We Suspected About the Twist Ending</div>
+      
+      
+      <div class="summary">DC Studios and HBO's Lanterns Season 1 just had its finale twist clarified by showrunner Chris Mundy. After eight weeks of theories, rumors, and speculation, Lanterns has officially wrapped up on HBO, ending with Kyle Chandler's Hal Jordan dead and A&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/fallout-5-official-release-window-update-gamers-react/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/fallout-5-officially-announced-bethesda.jpg?q=49&fit=crop&w=100&h=67&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fallout 5 Still Early in Development, No Release Date Update
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Fallout 5 Official Release Date Update Leaves Gamers Torn</div>
+      
+      
+      <div class="summary">Despite being mentioned by Todd Howard himself back in 2022, with the Bethesda head revealing that it would be the next major project after the launch of The Elder Scrolls VI, Fallout 5 only entered pre-production back in July of this year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/stargate-pegasus-chronicles-fan-tribute/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/stargate-sg-1-characters.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stargate: Pegasus Chronicles Is A True Celebration Of The Series
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">I still vividly recall seeing Stargate in theaters when it was released, and I never could have expected it to have the fandom it has today.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/crunchyroll-near-perfect-isekai-worlds-finest-assassin-season-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-world-s-finest-assassin-season-2-poster-vertical.jpg?q=49&fit=crop&w=750&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The World's Finest Assassin Isekai Season 2 Returns January 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: After 5 Years, A Near-Perfect Crunchyroll Isekai Returns For Season 2 This January</div>
+      
+      
+      <div class="summary">When it comes to isekai anime, Crunchyroll can be counted on more than any other streaming service out there for new releases every season.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/mistborn-hero-of-ages-brandon-sanderson-fantasy-book-best-third-act/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/mistborn_-the-hero-of-ages-2008-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Hero of Ages Has the Best Third Act in Fantasy Books
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Masterpiece From Brandon Sanderson's Cosmere Has the Best Third Act in Fantasy Books</div>
+      
+      
+      <div class="summary">When it comes to writing a story, few things are more difficult to nail than the ending. It's not easy to wrap up a story in a way that leaves audiences feeling satisfied.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/resident-evil-leon-kennedy-switch-2-remake-collection-january-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/08/leon-kennedy-in-the-village-in-resident-evil-4.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Leon Kennedy Returns in Resident Evil Remake Collection for Switch 2 in January 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Resident Evil Legend Leon Kennedy Officially Returns January 2027</div>
+      
+      
+      <div class="summary">First appearing in 1998's Resident Evil 2, Leon Kennedy swiftly became one of the most iconic video game characters of all time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/cloverfield-jj-abrams-streaming-peacock-paramount-plus-pluto-tv/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/mcdclov_ec016.jpg?q=49&fit=contain&w=2700&h=1800&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cloverfield, J.J. Abrams' Found-Footage Monster Movie, Now Streaming on Peacock
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: J.J. Abrams’ Best Original Sci-Fi Movie Officially Finds a New Home on Streaming</div>
+      
+      
+      <div class="summary">In early 2006, J.J. Abrams was in the midst of a generational run. Alias was about to end, Lost had become a cultural phenomenon, and Abrams was traveling the world promoting his directorial debut with Mission: Impossible 3. Somehow, Abrams was just &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/from-tv-series-netflix-new-streaming-home-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/06/from-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'From' Seasons 1-3 Now Streaming on Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: One of the Decade's Greatest Thriller Shows Officially Lands on a New Streamer</div>
+      
+      
+      <div class="summary">One of the greatest horror thriller series of the decade has finally arrived on Netflix — just in time for Halloween — but there's a catch. Although the MGM+ hit From is currently in production on its fifth and final season, only the first three seas&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2290761/playstation-5-pro-accessory-users-cant-live-without/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-is-the-playstation-5-pro-accessory-users-say-they-cant-live-without/l-intro-1792434965.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DualSense Charging Station: Essential PS5 Pro Accessory for Gamers
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Is The PlayStation 5 Pro Accessory Users Say They Can't Live Without</div>
+      
+      
+      <div class="summary">This Is The PlayStation 5 Pro Accessory Users Say They Can't Live Without The PlayStation 5 Pro is for console gamers who want the most powerful hardware available.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-boys-deserve-credit-predicting-future/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/untitled-design-2026-09-17t195714-138.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Boys Deserves Kudos for Predicting Real-Life Events
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video's 5-Season Action Series Deserves Kudos For Predicting Real-Life Events</div>
+      
+      
+      <div class="summary">While Prime Video has got plenty of iconic shows in the streaming service’s roster, one of its biggest hits deserves special credit for seemingly predicting the future multiple times.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/marvel-cinematic-universe-weakest-supervillains-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/yon-rogg-closeup.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Weakest MCU Supervillains, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The villains of the Marvel Cinematic Universe have varied greatly in power level, ranging from cosmic gods to interchangeable mercenaries. Many of the MCU's antagonists have been ordinary humans who only posed a threat due to the resources at their d&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/pokemon-strongest-owned-by-ash-ketchum-rivals-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2022/05/Dynamax-Leons-Gigantamaxing-Charizard.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Strongest Pokémon Owned by Ash's Rivals, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">An important part of any anime is having villains and rivals who push the main character to become stronger. Pokémon kept pitting Ash Ketchum against new rivals during his journey to become a Pokémon Master.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/house-of-the-dragon-vhagar-history-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/10/House-of-the-Dragons-Season-1-Finale-Shows-the-True-Nature-of-Dragons-feature.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'House of the Dragon's Long History Behind Vhagar Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">House of the Dragon's fanbase has seen quite a bit of Vhagar, the oldest and strongest dragon alive in Westeros. She instills fear in her enemies and isn't above ignoring her rider when she sees fit (or simply disappearing for large periods of time).</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/avengers-doomsday-sandra-huller-role/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/sandrahullerprojecthailmaryupdated.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sandra Hüller Makes MCU Debut in Avengers: Doomsday
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Recruits Oscar Nominee for MCU Debut in Avengers: Doomsday</div>
+      
+      
+      <div class="summary">The gargantuan cast of Avengers: Doomsday is filled with familiar faces, bringing in a variety of actors from previous MCU and X-Men films. Coming into the mix amid all of the returning stars will be an Oscar-nominated actress officially making her M&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2290878/where-famous-nokia-tune-ringtone-comes-from-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/where-the-famous-nokia-tune-ringtone-actually-comes-from/l-intro-1792437292.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Where The Famous 'Nokia Tune' Ringtone Actually Comes From
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Where The Famous 'Nokia Tune' Ringtone Actually Comes From Bangla press/Shutterstock In the late 1990s and early 2000s, one sound dominated cafes, airports, malls, and even boardrooms. If a mobile phone rang, it was almost guaranteed to be playing on&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-harem-anime-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/04/urusei-yatsura-watanare-tenchi-muyo-feature-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Harem Anime Of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">For even the most casual observer of the anime fandom, few genres get quite as many side-eye glances as the harem genre. Simply put, it's the genre in which a single protagonist is pursued romantically by three or more prospective partners.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/bautista-god-of-war-kratos-respects-zack-snyder-vision/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/ab8ce1e8-c966-430e-8fe5-630a6ed5222a.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dave Bautista’s Kratos Casting In God Of War Respects Zack Snyder’s 5-Year-Old Vision
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Dave Bautista is all set to play Kratos in Prime Video's highly anticipated live-action adaptation of God of War. He undoubtedly seems a great fit for the role and his casting is a perfect reminder of how Zack Snyder envisioned him almost five years &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/apple-tv-flawless-servant-stephen-king-approved/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/lauren-ambrose-rupert-grint-and-toby-kebbell-in-servant.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Servant: Apple TV's Stephen King-Approved Horror Thriller Ran 4 Seasons
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV’s Stephen King-Approved Horror Thriller Delivered 4 Flawless Seasons</div>
+      
+      
+      <div class="summary">In the horror genre, few names are more controversial, at least in terms of legendary status, than M. Night Shyamalan. The veteran director consistently teeters between creating incredible masterpieces, like 1999’s The Sixth Sense, and silly, forgett&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/funniest-peanuts-comics-that-actually-feature-adults/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/01/10-funniest-peanuts-comics-that-actually-feature-adults.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Funniest Peanuts Comics That Actually Feature Adults
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When Charles M. Schulz created Peanuts, he planned to create a truly unique comic strip. His stars would be an ensemble consisting of babies and toddlers who had near-complete autonomy in their neighborhood.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2288284/ad-blocker-raspberry-pi-hole-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/you-can-build-an-ad-blocker-with-a-raspberry-pi-for-all-your-devices/l-intro-1792098364.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            You Can Build An Ad Blocker With A Raspberry Pi For All Your Devices
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">You Can Build An Ad Blocker With A Raspberry Pi For All Your Devices Daniel Chetroni/Shutterstock Browsing the internet without an ad-blocker is like walking through a minefield and hoping for the best.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/most-unplayable-nes-platformers-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/nes-console-with-controller.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Most Unplayable NES Platformers, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Platformers were some of the best games on the Nintendo Entertainment System. Landmark titles like Super Mario Bros. and Metroid are incredibly iconic, and the franchises they built are still releasing new games to this day.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/taylor-sheridan-wind-river-quote-better-than-yellowstone/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/wind-river.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wind River's Best Quote Surpasses Taylor Sheridan's Yellowstone Work
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 9 Years Later, Taylor Sheridan's Best Thriller Quote Beats Anything He Ever Did On 'Yellowstone'</div>
+      
+      
+      <div class="summary">Taylor Sheridan’s second act was one far different from the first. After leaving the fan-favorite series, Sons of Anarchy, in his role as Deputy Hale, he went on to create one of the most recognizable crime dramas of the decade.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/catherine-zeta-jones-the-phantom-the-mummy-streaming-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/09/kit-walker-billy-zane-riding-a-horse-in-the-phantom.jpg?q=49&fit=contain&w=1500&h=750&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Billy Zane's 'The Phantom' Returns to Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Catherine Zeta-Jones' 'The Mummy' Replacement Is Officially Back on Streaming</div>
+      
+      
+      <div class="summary">Before the debut of the MCU and DC Studios' new DC Universe, Billy Zane of Titanic and Zoolander fame starred in a big-budget live-action adaptation of the world's first costumed comic strip superhero, The Phantom.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/godwatch-dungeon-steam-winter-2026-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/godwatch-dungeon-title-card-with-text.png?q=49&fit=crop&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GODWATCH DUNGEON: A New Action Roguelike Coming to Steam in Winter 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Delicious in Dungeon Meets Sword Art Online in New Action Roguelike Coming to Steam</div>
+      
+      
+      <div class="summary">Delicious in Dungeon and Sword Art Online both take viewers on a journey where the main characters must be excellent fighters (and resourceful chefs) in order to survive.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/hokum-ending-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/screenrant-sandbox-2026-01-04t205744-542.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hokum Ending Explained: What's Haunting Ohm And How Does The Witch Factor Into It?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The following contains spoilers for HokumHokum's quietly emotional ending gives the haunted narrative a surprisingly happy ending. The Adam Scott-led horror film focuses on Ohm, a morose author who is haunted by memories and regrets.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dragon-ball-super-beerus-retcons-yamoshi-first-super-saiyan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/dragon-ball-super-first-super-saiyan-yamoshi.jpg?q=49&fit=crop&w=875&h=540&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dragon Ball Super: Beerus Retcons Yamoshi as First Super Saiyan
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 36 Years Later, Dragon Ball's New Anime Retconned The Series' First Super Saiyan Out Of Existence</div>
+      
+      
+      <div class="summary">Nailing down the canon status of the Dragon Ball series isn't so much about missable pockets of lore so much as its history being altered by later tweaks.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/street-fighter-loses-box-office-you-can-see-everything/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/elizabeth-holmes-close-up-in-you-can-see-everything.jpg?q=49&fit=contain&w=2860&h=1609&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Paramount's 'Street Fighter' Loses Box Office Crown to 'You Can See Everything'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Paramount's 119-Minute Action Hit Officially Loses Box Office Crown To The Highest-Rated Movie in History</div>
+      
+      
+      <div class="summary">Video game movies have gotten much better at opening big, but staying power is still a separate test, and Street Fighter may be running into that distinction already. Paramount's new take on the Capcom franchise opened on Oct.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-tubi-movies-watch-weekend-october-24/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/large-dinosaur-in-65.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Best Movies Streaming For Free This Weekend (October 24-25)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Those looking for movies streaming for free can find many exciting options on Tubi, and this weekend, subscribers better get ready for a superhero fan-favorite, one of the best movies of all time, and a live-action dinosaur movie not from the Jurassi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/aaron-sorkin-the-social-reckoning-removed-from-2000-theaters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/09/the-social-reckoning-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Social Reckoning Removed From 1,987 Theaters
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'The Social Network's Long-Awaited Follow-Up Officially Removed From Almost 2,000 Theaters</div>
+      
+      
+      <div class="summary">It's mad to think that the creation of the social media platform that your distant relatives use to share crudely constructed Minions memes, AI videos mistaken to be real, and accidentally putting people's names in their status bars was actually one &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/nathan-for-you-series-real-fake-facts-info/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2020/11/Nathan-For-You-What-About-The-Show-Is-Actually-Real.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nathan For You: What About The Show Is Actually Real (& 9 Other Questions, Answered)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Summary Nathan For You is a real show where Nathan Fielder plays an exaggerated version of himself, helping struggling businesses with bizarre ideas. Most of the show is improvised, with Nathan reacting to the genuine responses of the business owners&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <span class="current">10</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/11.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

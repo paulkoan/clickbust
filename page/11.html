@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-24 21:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>101 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>43 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>123 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.cbr.com/ebenezer-marketing-campaign-venmo/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/johnny-depp-in-ebenezer-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Johnny Depp's Ebenezer Trolls Fans Asking for Money in Most On-Brand Marketing Stunt Ever
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Hollywood legend Johnny Depp is back on the big screen next month with the release of Ebenezer, director Ti West's new adaptation of the Charles Dickens classic A Christmas Carol.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2290395/owners-say-galaxy-s26-users-need-key-accessory/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/owners-say-galaxy-s26-users-need-a-key-accessory/intro-1792425746.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Galaxy S26 Users Need a Charger That Supports Super Fast Charging
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Owners Say Galaxy S26 Users Need A Key Accessory</div>
+      
+      
+      <div class="summary">Owners Say Galaxy S26 Users Need A Key Accessory tinhkhuong/Shutterstock Buying a new phone these days can feel like a thankless transaction, especially if you're spending $800, $1,000, or more, even for some of the cheaper folding phones out there.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/paramount-plus-jane-wiseman-exit/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/paramount-plus-logo-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Paramount+ EVP of Originals Jane Wiseman Exits in Shakeup
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Paramount+'s Original Series Facing Major Change In New Shakeup</div>
+      
+      
+      <div class="summary">A new report has revealed a major shake-up behind the scenes at Paramount+ that will deeply affect its original series. Since the streaming service was launched in March 2021, many subscribers have watched movies on Paramount+.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/digimon-most-powerful-mega-evolutions-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/09/omnimon-vs-diaboromon-3.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Powerful Digimon Mega Evolutions, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Digivolution drives every Digimon story, since partners grow stronger with each new stage. The Mega level sits above Ultimate, and fans have obsessed over this upgrade for decades across anime, games and manga.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/studio-ghibli-my-neighbor-totoro-japanese-new-year-stamps-images/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/totorostamp20271.avif?q=70&fit=contain&w=421&h=526&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Studio Ghibli Launches My Neighbor Totoro New Year Stamp Collection
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Studio Ghibli’s 10/10 Fantasy Masterpiece Officially Returns for New Release</div>
+      
+      
+      <div class="summary">More than 38 years after My Neighbor Totoro was released in Japan on April 16, 1988, written and directed by Hayao Miyazaki, its titular character is still just as relevant.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/shogun-hulu-remake-nbc-miniseries-successful/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/shogun_1foega.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hulu's Shōgun Remake Outperforms Original Miniseries
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Hulu Deserves Kudos For Successfully Remaking One Of The Most-Watched Miniseries In TV History</div>
+      
+      
+      <div class="summary">Remaking beloved classic TV shows is no easy task, but Hulu did something spectacular with a 2024 adaptation that respectfully outperformed its predecessor. This has all happened in the age of remakes and reboots, which has become rather fatiguing fo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/klara-and-the-sun-ending-explainer/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/jenna-ortega-in-klara-and-the-sun.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Klara And The Sun Ending Explained: Does Klara Survive, And What Really Happens To Josie?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! This post contains SPOILERS for Klara and the Sun.Taika Waititi's dystopian sci-fi film Klara and the Sun has finally arrived in theaters, and although reviews of the movie haven't quite been glowing, and the movie's Rotten Tomatoes scores a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hacks-hbo-max-record-breaking-comedy-rewatch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/hacks-5-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hacks: HBO's Emmy-Record Comedy Is Perfect Weekend Binge
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO’s Ambitious History-Making 5-Season Comedy Is the Perfect Weekend Binge</div>
+      
+      
+      <div class="summary">There are sitcoms you throw on for background noise, and then there’s Hacks — a show that somehow gets sharper, sadder, and funnier every time you come back to it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jake-gyllenhaal-the-day-after-tomorrow-streaming-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/04/the-day-after-tomorrow.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Day After Tomorrow, Starring Jake Gyllenhaal, Gets New Streaming Home
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jake Gyllenhaal's $552 Million Disaster Thriller Officially Finds a New Streaming Home</div>
+      
+      
+      <div class="summary">Jake Gyllenhaal is among the most versatile actors in the industry, with thriller roles like Prisoners, Donnie Darko, Zodiac, and Nightcrawler; sleek action flicks like the Road House remake and In The Grey, and blockbusters like Spider-Man: Far From&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/underrated-crime-movies-you-havent-seen-before/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/03/Armored-Car-Robbery.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Underrated Crime Movies You Probably Haven't Seen Before
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The crime genre has always been and remains one of the most exciting and varied in the medium of film. Some of the most beloved films of all time fall within the crime genre, like The Godfather Part 1 and 2, and many of Martin Scorsese's gangster cla&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ryan-reynolds-the-proposal-streaming-success-apple-tv-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/03/betty-white-ryan-reynolds-sandra-bullock-the-proposal.jpg?q=49&fit=contain&w=3000&h=1500&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Proposal, Starring Ryan Reynolds and Sandra Bullock, Hits Apple TV Top 10
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ryan Reynolds’ Fan-Favorite Rom-Com Officially Hits Apple TV’s Top 10</div>
+      
+      
+      <div class="summary">Ryan Reynolds does his best work in the comedy genre. Fans are always excited to see his fast-talking, wisecracking antics with each character.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2290606/how-long-will-samsung-smart-tv-get-software-updates/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-long-will-your-samsung-smart-tv-get-software-updates/l-intro-1792430531.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Long Will Your Samsung Smart TV Get Software Updates?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How Long Will Your Samsung Smart TV Get Software Updates? monticello/Shutterstock Smart TVs are like phones. Essentially, you want to preserve the hardware and update software as long as possible, until it makes the most sense to upgrade.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-steam-next-fest-demos-play-right-now/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/untitled-design-5.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Steam Next Fest Demos You Can Play Right Now
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The October edition of Steam Next Fest is happening right now. Unfortunately, discussion surrounding the event centers on the abundance of AI slop games dominating through sheer quantity. For every game that’s actually an indie title, 10 hastily made&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/disney-encanto-2-not-happening/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/04/encanto-payoff-courtyard-1s-v8-0-mech6-fs.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Encanto Won't Get a Sequel, Producer Confirms
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: One of Disney’s Best Movies in Recent Years Isn’t Getting a Sequel</div>
+      
+      
+      <div class="summary">Disney Animation and Pixar are actively returning to major properties including but not limited to Frozen, Zootopia, The Incredibles, and Coco and in the midst of that one absence has especially become noticeable.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-roguelike-games-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/melinoe-in-hades-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Best Roguelikes of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The roguelike subgenre of video games was born with the 1980 ASCII text-based computer game Rogue, a landmark title in gaming history.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-andromeda-strain-ridley-scott-worse-than-book/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/10/instar54113653.jpg?q=49&fit=crop&w=50&h=65&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ridley Scott's The Andromeda Strain Miniseries Disappoints Compared to Book
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ridley Scott's Prometheus-Like Miniseries Is A Shadow Of The Sci-Fi Book It's Based On</div>
+      
+      
+      <div class="summary">Ridley Scott's Prometheus-like miniseries is a shadow of the incredible sci-fi book that it takes its inspiration from. Scott's best movies have seen the director immerse himself in various sci-fi worlds, creating stories that have stood the test of &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/nobody-wants-this-stream-netflix-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2024/10/kristen-bell-adam-brody-nobody-wants-this.jpeg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'Nobody Wants This' Season 3 Is the #1 Show in the US
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's New Steamy R-Rated Hit Is Already the #1 Show on Streaming</div>
+      
+      
+      <div class="summary">One of Netflix's steamiest series just returned for a new season, and it's already a global sensation. Netflix has been releasing some surprisingly scandalous shows over the past few years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/hbo-best-crime-thrillers/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/kaley-cuoco-the-flight-attendant.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 HBO Crime Thrillers That Are 10/10, No Notes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">An HBO crime thriller will always have three big elements: smart twists and turns, solid character development, and an elevated quality that makes it much more impressive than most streamer or network shows. HBO has told unforgettable stories in pret&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-super-mario-bros-galaxy-movie-coming-to-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/yoshimarioluigigalaxymovie.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Lands 'The Super Mario Galaxy Movie' Starring Anya Taylor-Joy
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Officially Lands Anya Taylor-Joy's 98-Minute Space Adventure</div>
+      
+      
+      <div class="summary">Anya Taylor-Joy's billion-dollar space adventure is headed to Netflix. The Super Mario Galaxy Movie is headed to Netflix in November. The Super Mario Galaxy Movie will debut on Netflix on Nov. 30, after streaming exclusively on Peacock.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/demon-slayer-characters-stronger-than-kokushibo/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/demon-slayer-s-upper-moon-1-kokushibo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Demon Slayer Characters Stronger Than Kokushibo
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Kokushibo is the Upper Rank One demon and the strongest of the Twelve Kizuki in Demon Slayer. This makes Kokushibo the overall second-strongest demon in the series, just below the main villain, Muzan Kibutsuji.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-below-faithful-cosmic-horror-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/josh-hartnett-as-calvin-penney-in-below.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'Below' Is a Cosmic Horror Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's New 6-Part Creature Feature Is the Smartest Cosmic Horror of the Decade</div>
+      
+      
+      <div class="summary">Opening to strong critical reviews, sitting at 87% on Rotten Tomatoes at the time of writing, Netflix’s Below has earned its place among the streamer’s impressive selection of creature features.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hbo-war-tv-show-succession-replacement-season-2-renewed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/war-hbo-sienna-miller-dominic-west.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO's 'War' Renewed for Season 2 Ahead of Premiere
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO's 'Succession' Replacement Is So Good, It Already Got Renewed for Season 2</div>
+      
+      
+      <div class="summary">The Succession-sized hole in HBO's lineup has had a few contenders circling it since 2023, but War might be the show with the clearest parallel. It's got the obscene wealth, the tailored suits. It's even got the sterile high-rise offices where people&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jason-statham-thriller-shelter-streaming-success-prime-video-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/03/shelter-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Shelter, Jason Statham's Action Thriller, Returns to Prime Video Top 10
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jason Statham's 2026 Action Thriller Officially Returns to Streaming Charts</div>
+      
+      
+      <div class="summary">Over the years, actor Jason Statham has built a solid fan base with numerous action roles. He is celebrated worldwide for his slick stunts and stoic characters as he crafts a niche for himself.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2290599/phone-satellite-imaging-busting-farmers-winter-manure-spreading/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-tech-used-in-your-phone-is-busting-farmers-for-spreading-manure-illegally-heres-how/satellites-can-monitor-agriculture-and-so-much-more-1792430321.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Google Earth Engine Is Used to Detect Illegal Manure Spreading on Farms
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Tech Used In Your Phone Is Busting Farmers For Spreading Manure Illegally - Here's How</div>
+      
+      
+      <div class="summary">This Tech Used In Your Phone Is Busting Farmers For Spreading Manure Illegally - Here's How oticki/Shutterstock It's unfortunately common for livestock to be kept in cramped confinement in America's rural farmland, especially during cold winter month&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/shrinking-season-4-harrison-ford-new-era-time-jump/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/shrinking_wusu72.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Shrinking Season 4 Begins New Era with Time Jump
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Harrison Ford’s Hit Apple TV Series Officially Begins A New Era</div>
+      
+      
+      <div class="summary">We knew Harrison Ford's Apple TV hit, Shrinking, was headed into a new, unexpected stage of storytelling, but it's now clear that season 4 will essentially launch a brand-new show.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-anime-tournament-arcs-all-time-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/06/my-hero-academia-sports-festival-students-crowding-around-bakugo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Greatest Anime Tournament Arcs of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There is a good reason why tournament arcs in anime have been one of the most reliable storytelling devices for years. They create a natural way to bring large casts together, introduce new rivals, and reveal hidden abilities.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2290530/pixel-vs-galaxy-vs-iphone-support-promises/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-long-will-your-phone-really-last-support-policies-compared/l-intro-1792428512.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Long Will Your Phone Really Last? Support Policies Compared
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How Long Will Your Phone Really Last? Support Policies Compared Dragonimages/Getty Images Imagine you hear a familiar but terrifying 'thwap,' and swivel your head to find a phone on the ground.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/contagion-thriller-hbo-max-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/11/kate-winslet-in-contagion.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Contagion, Matt Damon's 106-Minute Thriller, Is One of the Most-Watched Movies Worldwide
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget The Odyssey, Matt Damon’s 106-Minute Thriller Is 1 of the Most-Watched Movies Worldwide</div>
+      
+      
+      <div class="summary">Matt Damon starred in one of 2026's biggest movies, Christopher Nolan's epic adaptation of The Odyssey, but Damon's 15-year-old pandemic thriller is nearing the top of the streaming chart. Contagion is one of the most-watched movies on streaming worl&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/avengers-doomsday-mlb-crossover/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/hnrskgmxmaauuvu-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers: Doomsday Makes Its Way Into Major League Baseball In Unexpected Crossover
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The MCU brings Avengers: Doomsday into another universe in an exciting crossover with the MLB. Doomsday is the fifth installment in the Avengers film series. The new chapter serves as a follow-up to 2019's Avengers: Endgame.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-nintendo-games-of-all-time/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/super-mario-bros-nes-key-art.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Universally Beloved Nintendo Games of All Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Nintendo has a long and storied history. It started in 1889 as a humble hanafuda production company, nearly a century before it became a dominant player in the video game industry. Since then, in its capacity as a first-party developer, Nintendo has &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <span class="current">11</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/12.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

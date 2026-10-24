@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-24 21:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>101 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>43 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>123 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.looper.com/2295769/clayface-dc-comics-versions-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/every-version-of-clayface-in-dc-comics-explained/l-intro-1792784044.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Version Of Clayface In DC Comics Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Every Version Of Clayface In DC Comics Explained VIDEO With its October 23 premiere, "Clayface" brings body horror into the DC Universe courtesy of actor Matt Hagen (Tom Rhys Harries) and his descent into the titular, shapeshifting creature.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/klara-and-the-sun-jenna-ortega-taika-waititi-removed-from-1000-theaters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/08/time-bandits-season-1-episode-2-taika-waititi.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jenna Ortega's New Sci-Fi Film Officially Dropped From 1,000 Theaters
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Taiki Waititi was once considered one of the new filmmaking Kings of Hollywood following a hit Marvel movie, an Oscar-winning World War II film, and an upcoming Star Wars flick (although that project has reportedly been put on hold). How the mighty c&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2289553/tiny-pocket-gadget-speedtest-pulse-ookla-wifi-problems/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-tiny-pocket-gadget-can-help-diagnose-problems-with-your-wi-fi/intro-1792235985.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ookla Speedtest Pulse Pocket Device Diagnoses Wi-Fi Problems
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Tiny Pocket Gadget Can Help Diagnose Problems With Your Wi-Fi</div>
+      
+      
+      <div class="summary">This Tiny Pocket Gadget Can Help Diagnose Problems With Your Wi-Fi We may receive a commission on purchases made from links.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-world-war-ii-movies-watch-netflix-weekend-oct-24/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/12/the-ministry-of-ungentlemanly-warfare-henry-cavill.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Best World War II Movies To Watch on Netflix This Weekend (Oct 24-25)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">War is hell, and countless movies prove it. Still, for all its hardship and horror, the war genre is extremely popular with audiences, with many of cinema's all-time greatest efforts belonging to this occasionally harrowing genre.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sanda-bullock-practical-magic-2-fantasy-sequel-removed-from-3900-theaters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/practical-magic-2-nicole-kidman-sandra-bullock.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Warner Bros. Officially Removes Sandra Bullock’s Fantasy Sequel From 3,900 Theaters
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warner Bros. has effectively ended the theatrical run of its recent legacy sequel, having debuted the film on the PVOD market a week ago. The studio seemingly overestimated the film's worth, giving it a humongous release in more than 4,000 theaters n&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/brad-pitt-heart-of-the-beast-removed-from-1200-theaters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/heart-of-the-beast-1-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brad Pitt’s New Action Thriller Officially Removed From Nearly 1,200 Theaters
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A month into a stellar box-office run, Paramount's new survival thriller is finally making way for new releases. The movie received excellent reviews from critics and audiences alike, fending off competition and holding its ground week after week.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2295732/theranos-founder-elizabeth-holmes-documentary-streaming-hbo-max/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/an-acclaimed-documentary-about-theranos-founder-elizabeth-holmes-surges-on-streaming/intro-1792782639.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alex Gibney's 'The Inventor: Out for Blood in Silicon Valley' Surges on Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: An Acclaimed Documentary About Theranos Founder Elizabeth Holmes Surges On Streaming</div>
+      
+      
+      <div class="summary">An Acclaimed Documentary About Theranos Founder Elizabeth Holmes Surges On Streaming Philip Pacheco/Getty Images Elizabeth Holmes and Theranos have come up quite a lot over the past few weeks, especially with "You Can See Everything," the new A24 doc&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/delicious-in-dungeon-season-2-first-look-characters-netflix-fantasy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/delicious-in-dungeon-s-art-of-falin-kabru-mithrun-and-thistle.jpeg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Delicious in Dungeon Returns With First Look At Season 2
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 2 Years Later, Netflix's Best Fantasy Series Returns With First Look At Season 2</div>
+      
+      
+      <div class="summary">The most anticipated Netflix fantasy series this month teases its release with a new glimpse at its characters. Netflix is one of the best hubs for streaming fantasy, with massive phenomena like Stranger Things and One Piece.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/one-piece-genre-switch-grand-gourmet/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/luffy_00000.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            One Piece Franchise Officially Switches Genres In New Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One Piece is one of the most popular pieces of media ever created, period. It started strong with its manga run, then got off to a slow start internationally, but eventually it was off to the races.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/video/alien-sequel-what-did-brian-duffield-actually-do/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/clip-3-3.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alien Sequel: What Did Brian Duffield Actually Do?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Brian Duffield has finally addressed the rumors surrounding his involvement in the Alien franchise, but his explanation raises a fascinating new question about the future of the Xenomorph universe.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/godless-accuracy-netflix-series-western/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/godless_tdlgok-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Godless Miniseries Is Shockingly Historically Accurate
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's 7-Part 'Clint Eastwood Meets Deadwood' Masterpiece Is Shockingly Accurate</div>
+      
+      
+      <div class="summary">From gunslinging cowboys to vigilante justice in small frontier towns, the Western genre tends to romanticize its period in history, leaving even some of the greatest Western TV shows of all time far from accurate.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/carrie-thriller-stream-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/mark-hamill-in-the-prime-video-series-carrie.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's 8-Episode Revenge Thriller Remains No. 1 in the World as Amazon Announces New Season
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While Prime Video continues to make its mark in the action genre, the streamer's recently released revenge thriller continues to soar on the charts and remains No. 1 worldwide.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/clayface-easter-eggs-references/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/clayface-references.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 DC Easter Eggs & Batman References in 'Clayface'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Spoiler Alert: This article contains spoilers for Clayface.After an eventful 2026, which included the box-office disappointment Supergirl and the critical and HBO hit Lanterns, the DCU is closing its slate with Clayface.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-new-villain-officially-replaces-q/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/star-trek-holo-ween-ii-3-cover-a-full.jpg?q=49&fit=contain&w=702&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: Holo-ween II #3 Introduces a New Villain to Replace Q
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek's New Villain Officially Replaces Q For A New Era</div>
+      
+      
+      <div class="summary">The Star Trek universe is finally meeting its next Q replacement, and she is far more horrifying than anyone could have imagined.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-1980s-action-movie-no-one-remembers-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/john-pankow-and-william-petersen-in-to-live-and-die-in-l-a.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Forgotten Action Movie Masterpieces From the 1980s
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The action genre peaked in the 1980s, dominating the box office for much of the decade. Stars like Sylvester Stallone, Bruce Willis, and Arnold Schwarzenegger rose to the top and established some of the most successful action franchises of all time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2295709/clayface-movie-jarring-scenes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/the-jarring-clayface-scenes-no-one-saw-coming/intro-1792781714.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Surprising and Jarring Scenes from DC's 'Clayface' Horror Movie
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Jarring Clayface Scenes No One Saw Coming</div>
+      
+      
+      <div class="summary">The Jarring Clayface Scenes No One Saw Coming Static Media Contains spoilers for "Clayface" DC Studios is taking a big swing with "Clayface." Only two other movies have been released so far: "Superman" and "Supergirl.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/sega-genesis-new-physical-release-toki-port/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/toki-mega-drive-neo-geo-amiga-aga.jpeg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Toki Gets Brand-New Physical Release for Sega Genesis 37 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Sega Genesis Gets Brand-New Physical Release 37 Years Later</div>
+      
+      
+      <div class="summary">The Sega Genesis has long been in the annals of retro gaming, but that's not stopping a 37-year-old arcade classic from coming to the 16-bit console with a brand-new physical release.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/nathan-fillion-lanterns-hbo-max-streaming-charts-rise-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/nathan-fillion-in-lanterns.jpg?q=49&fit=contain&w=3840&h=2160&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nathan Fillion's Lanterns Regains Ground on HBO Max
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Nathan Fillion's New Sci-Fi Series Regains Ground On Streaming In Surprise Resurgence</div>
+      
+      
+      <div class="summary">Nathan Fillion's new sci-fi series instantly became a streaming hit when it was released two months ago, and when it looked like the genre TV show was about to go out, it has found new life to regain ground on HBO Max in the United States.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/final-fantasy-resonance-esper-locations/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/final-fantasy-resonance-espers.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Esper locations in Final Fantasy Resonance
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Final Fantasy Resonance's Espers give Fina an extra edge in combat, or sometimes they're just convenient decoys to bait the enemy into attacking them and not your party. However you use them, Espers are definitely worth the MP it costs to summon them&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/miami-vice-85-michael-b-jordan-set-videos/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/04/michael-b-jordan-in-without-remorse.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Michael B. Jordan Is Locked & Loaded in an Intense New Look at Miami Vice '85
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Miami Vice '85 is the latest buzz in Hollywood's reboot category — reimagining the iconic Miami-Dade vice detectives "Sonny" (Austin Butler) and "Rico" (Michael B. Jordan) for a feature film format inspired by the original 1980s Miami Vice series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/slow-horses-season-6-finale-questions-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/jack-lowden-as-river-cartwright-and-olivia-cooke-as-sidonie-baker.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Biggest Questions After Slow Horses Season 6, Episode 6's Ending
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Slow Horses season 6 features one of the most devastating and surprising finales of the series so far, with a lot of fates left up in the air.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-studios-professor-x-secret-cameo-speechless" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/photos/christopher_abott_vs_real_billy_evans.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Christopher Abbott Cameos in A24's You Can See Everything
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Studios' New Professor X Actor Just Made a Secret Cameo That Left Audiences Speechless</div>
+      
+      
+      <div class="summary">One of Marvel Studios' upcoming X-Men stars just made a major movie cameo almost two years ahead of his MCU debut.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/young-sheldon-finale-jim-parsons-annie-potts-reaction/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/636457812983426072-111193-wb-0074bc.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Young Sheldon’ Star Officially Calls Out Jim Parsons’ “Dreaded” Finale Scene 2 Years Later
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Two years after the finale aired, Young Sheldon still looms large in the wider Big Bang Theory universe.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/mass-effect-5-leaked-plot-details-john-wick-james-bond-in-space/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/malequarian.JPG?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mass Effect 5 Pitched as 'John Wick and James Bond' in Space, Report Says
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">More details keep emerging about Mass Effect: Universe, the planned fifth mainline entry in the Mass Effect franchise that BioWare was developing before EA closed the studio on Wednesday. EA laid off BioWare staff and canceled what fans have long cal&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/westworld-coming-true-in-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/westworld_zctmyy.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jonathan Nolan's Westworld Is Becoming Reality in 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jonathan Nolan's 36-Episode Dystopian Masterpiece Is Coming True In 2026</div>
+      
+      
+      <div class="summary">It's equally terrifying and thrilling when a dystopian plot from a science fiction TV show comes true in real life.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-wars-novelization-differences-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/star-wars.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Biggest Lore Changes in the Original Star Wars Books
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Aside from The Mandalorian and Grogu, every theatrically released Star Wars film has received a novelization retelling the story in written form.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/final-fantasy-resonance-best-visions/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/final-fantasy-resonance-best-visions.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Best Visions to use in Final Fantasy Resonance
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There's so many to choose from that deciding on the best Visions in Final Fantasy Resonance often feels more than a little overwhelming. While every Vision has something that makes them worth using in certain circumstances, there is a set of them tha&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/lotr-rings-of-power-season-3-dark-wizard-sauron-alliance/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/rings-of-power-dark-wizard.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Rings of Power Season 3 Trailer Reveals Dark Wizard Joining Sauron
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Lord of the Rings Is Giving Sauron a Dark New Upgrade That Gandalf Can't Beat</div>
+      
+      
+      <div class="summary">Prime Video recently released a trailer for the third season of The Lord of the Rings: The Rings of Power. It revealed little new information, instead expanding on scenes already shown in previous trailers. However, it included an important revelatio&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/forgotten-island-removed-from-2000-theaters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/forgotten-island-h-e-r-liza-soberano-intv-site-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DreamWorks' Epic Fantasy Adventure Officially Exits 2,000 Theaters
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Poised to debut on the PVOD market this coming week, along with the psychological thriller Verity and the sci-fi flop The Dog Stars, a new DreamWorks animated film is eyeing a further reduction in its theater count.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2292471/chronicles-of-narnia-books-in-order/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/how-to-read-all-7-chronicles-of-narnia-books-in-order/l-intro-1792539045.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 23 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How To Read All 7 Chronicles Of Narnia Books In Order
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How To Read All 7 Chronicles Of Narnia Books In Order Static Media C.S. Lewis' "The Chronicles of Narnia" is best known for "The Lion, the Witch and the Wardrobe." That story was the first book published in the series and the first movie adapted by W&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <span class="current">16</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/17.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-24 21:08 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>50 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>101 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>43 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>123 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/best-mystery-thriller-books-true-crime-fans/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/books-are-lined-up-in-a-dimly-lit-area.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Mystery & Thriller Books For True Crime Fans
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some of the most exciting mystery and thriller books incorporate true crime elements that make them perfect for fans of the genre. The true crime genre has been around since the 16th century, but it really boomed in 2014, when the podcast Serial laun&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/guy-ritchie-capital-crime-trilogy-complete/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/matthew-mcconaughey-and-charlie-hunnam-in-the-gentlemen.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Capital Completes Guy Ritchie's Unofficial Crime Trilogy
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Guy Ritchie's Unofficial Crime Trilogy Is Officially Complete</div>
+      
+      
+      <div class="summary">Guy Ritchie's TV crime duology will become a trilogy with the premiere of his latest series. Ritchie has been a major figure in movies for decades now, extending all the way back to 1998 when he came roaring onto the scene with Lock, Stock and Two Sm&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/yaga-stream-amc-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/sharedimages/2026/10/yaga-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Carrie-Anne Moss's Crime Thriller 'YAGA' Is One of the Biggest Shows on AMC+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'The Matrix' Star's Near-Perfect 8-Part Crime Thriller Is Already One of the Biggest Shows on Streaming</div>
+      
+      
+      <div class="summary">After just one day, The Matrix star's new folklore-inspired crime thriller is already one of the biggest shows on streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-books-cozy-horror-fall-season/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/my-best-friends-exorcism.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Cozy Horror Books to Read This Fall That Are Perfect From Start to Finish
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Autumn feels cozy and nostalgic, even as the spooky season rolls in. Horror can be an unlikely source of comfort during colder months, and cozy horror books are no exception.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/dark-nature-prime-video-streaming-success-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/prime-video-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dark Nature: Prime Video's Psychological Survival Horror Film Is a Perfect Halloween Watch
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video’s Terrifying Wilderness Nightmare Is Officially Your Next Halloween Watch</div>
+      
+      
+      <div class="summary">Prime Video has the perfect Halloween binge for fans of psychological survival horror, and it is quietly trending four years after its premiere.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/men-horror-leaving-hbo-max-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/sharedimages/2024/04/a24-men-keyartvrt-rgb.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alex Garland's 'Men' Leaving HBO Max on Nov. 1
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO Max Is Losing 1 of the Weirdest Horror Movies of the Last Decade</div>
+      
+      
+      <div class="summary">Alex Garland's most divisive film, the controversial horror Men, is about to leave its streaming home. However, there is still time to watch. 2022's Men is officially less than one week away from making its exit from the HBO Max streaming library on &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-movies-better-than-the-dark-knight-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/the-dark-knight-rises-1.avif?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Masterpiece Movies Better Than The Dark Knight
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Christopher Nolan's 2008 masterpiece, The Dark Knight, changed mainstream movies forever. It is, without a doubt, one of the single most important blockbusters ever made, and it stands as one of the very best comic book movies of all time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/prime-video-fourth-wing-filming-timeline-report/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/07/book-cover-imagery-from-the-fourth-wing.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's Fourth Wing Adaptation's Filming Timeline Reportedly Revealed
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Oct 24, 2026, 4:51 PM EDT Rianna is the Movie News Editor for ScreenRant. After earning her BA in Film Studies, she began her career as an entertainment writer, contributing to several publications before joining ScreenRant.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2291255/internet-search-engines-that-no-longer-exist/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-internet-search-engines-that-no-longer-exist/l-intro-1792457201.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Internet Search Engines That No Longer Exist
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Internet Search Engines That No Longer Exist Adene Sanchez/Getty Images Today's internet is dominated by a handful of search engines, but in the early days of the internet, you had dozens of options to choose from.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/911-nashville-season-2-ryan-phillippe-rogue-villain/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/untitled-design-2026-10-23t101000-231.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            9-1-1: Nashville Makes It Harder To Accept Ryan Phillippe’s Rogue
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: This post contains spoilers from 9-1-1: Nashville season 2, episode 2, "Boys and Boils."9-1-1: Nashville season 2, episode 2, "Boys and Boils," delivers another traumatic, deadly plague, and Ryan Phillippe's Detective Rogue Kelly arrives at &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dungeons-and-dragons-fan-fantasy-movie-must-watch-dorc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/d-orc-1-cover-of-d-orc-looking-shocked.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            D'Orc Movie Adaptation Is a Must-Watch for D&D Fans
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Next Must-Watch Fantasy Movie For D&D Fans Is Closer Than You Think</div>
+      
+      
+      <div class="summary">A fantasy film that seems like a perfect watch for Dungeons & Dragons fans is on the horizon following its movie license being acquired, setting the stage for another release that delves into the infinite potential of fantasy stories.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/long-bright-river-streaming-recommendation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/amanda-seyfried-long-bright-river.jpg?q=49&fit=crop&w=875&h=540&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Long Bright River: The Best Crime Thriller Since True Detective Season 1
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Greatest Crime Thriller In 12 Years Is an 8-Part Sleeper Hit You Can Binge in a Weekend</div>
+      
+      
+      <div class="summary">In January 2014, HBO's thriller anthology series True Detective premiered, introducing the world to Detective Martin "Marty" Hart (Woody Harrelson) and Rustin Spencer "Rust" Cohle (Matthew McConaughey).</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/laika-next-movies-travis-knight-piranesi-night-gardener-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/wildwood-travis-knight-peyton-elizabeth-lee-jacob-tremblay-interview.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Travis Knight Reveals LAIKA’s Next Movies Will Be “Unlike Anything” It’s Done Before [Exclusive]
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Wildwood is a major undertaking even by LAIKA’s standards. Director Travis Knight confirmed that the movie features more puppets, practical sets, locations, and visual effects than any of the studio’s previous productions.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/wicker-alexander-skarsgard-rotten-tomatoes-audience-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/alexander-skarsgard-as-the-wicker-husband-embracing-olivia-colman-as-the-fisherwoman-in-the-town-square-in-wicker.jpg?q=49&fit=contain&w=3000&h=1688&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alexander Skarsgård's 'Wicker' Gets 94% Audience Score on Rotten Tomatoes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Alexander Skarsgård’s Raunchy Fantasy Film Is Magic With Audiences on Rotten Tomatoes</div>
+      
+      
+      <div class="summary">Making a strong first impression at Sundance earlier this year, Wicker has emerged as one of the most playful premises on screen for 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dragon-ball-super-toyotarou-replacing-toriyama/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/b377f666-db9e-4400-9ad5-6e6e14e0d715-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dragon Ball Officially Begins a New Era Under Toyotarou
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After 40 years, Akira Toriyama’s Dragon Ball is over; it’s Toyotarou’s time now. Dragon Ball has now confirmed, through various new artwork and changes to the God of Destruction Beerus Arc remake, that the entire franchise will be following Dragon Ba&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/lotr-rings-of-power-s1-s2-physical-release-4k-blu-ray/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/05/image-2.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lord of the Rings Officially Returns in November with 3 Releases
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Lord of the Rings is coming back to physical media in a big way this fall, giving fans another chance to bring a piece of Middle-earth home just as the franchise prepares for its next major chapter.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/jag-ncis-forerunner-model-military-procedural-tv-show/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/david-james-elliott-s-harm-and-catherine-bell-s-mac-looking-emotional-and-laying-next-to-each-other-in-jag.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            R. Scott Gemmill's JAG Is Still the Gold Standard for Military TV Procedurals
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Pitt Creator’s 227-Episode NCIS Predecessor Is Still The Gold Standard For Military TV Procedurals</div>
+      
+      
+      <div class="summary">While R. Scott Gemmill is now best known for the urgent, acclaimed HBO medical drama The Pitt, his NCIS predecessor set the gold standard for military procedural shows over three decades ago. With an ingenious premise that blends 24 and E.R., HBO’s T&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/10-warner-bros-movies-paramount-subscribers-will-love/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/heath-ledger-as-the-joker-in-the-dark-knight.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Warner Bros. Movies For Paramount+ Subscribers, Including The Dark Night
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Paramount+ subscribers have a reason to start looking through Warner Bros.’ movie library, even if their subscription does not include those films yet. According to SkyDance, Paramount completed its acquisition of Warner Bros.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-far-side-comics-real-world-events/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/screenshot-3374.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Far Side Comics That Referenced Real Events
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Far Side is best known for finding bizarre humor in everyday encounters, animal behavior, and other aspects of life. Gary Larson also looked toward history, drawing inspiration from real people and events that carried their own recognizable stori&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/fall-of-the-house-of-usher-stephen-king-praise/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/carla-gugino-the-fall-of-the-house-of-usher.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stephen King Praises Netflix's 'The Fall of the House of Usher'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's 8-Part Gothic Horror Series Was So Good, Even Stephen King Gave It Kudos</div>
+      
+      
+      <div class="summary">Netflix has many great horror offerings, and Mike Flanagan is behind some of its best shows in the genre. From The Haunting of Hill House to Midnight Mass, Flanagan's work is acclaimed and incredibly rewatchable.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/matt-damon-contagion-streaming-hit-hbo-max-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/01/anna-jacoby-heron-and-matt-damon-in-contagion.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Contagion: Matt Damon's Pandemic Thriller Makes a Streaming Comeback on HBO Max
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Matt Damon's Star-Studded Sci-Fi Epic Officially Makes a Major Streaming Comeback</div>
+      
+      
+      <div class="summary">After years of being Christopher Nolan's bridesmaid but never his bride, featuring in ensemble roles in the likes of Interstellar and the Best Picture-winning biopic Oppenheimer, Matt Damon finally got the chance to take the spotlight for the directo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/strongest-he-man-villains-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/02/masters-of-the-universe-movie-2026-skeletor.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Strongest He-Man Villains, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Masters of the Universe was not only one of the most successful toy lines of the 1980s, it also spawned one of the most popular cartoon series of the decade.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/inde-navarrette-taylor-sheridan-call-of-duty-movie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/wp9496146-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Inde Navarrette Eyes Role in Taylor Sheridan's 'Call of Duty' Movie
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: After X-Men Casting, Obsession Star Eyes Taylor Sheridan Adaptation: 'I'm a Big Fan'</div>
+      
+      
+      <div class="summary">Inde Navarrette has quickly become one of the most talked about actors of the year after her standout performance in the smash-hit horror film Obsession.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/mariska-hargitay-law-order-svu-season-28-premiere-cornell-7/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/mariska-hargitay-as-captain-olivia-benson-on-law-order-svu.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mariska Hargitay Explains How Law & Order: SVU Season 28 Premiere Addresses a 'Universal Problem'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The following contains mentions of sexual assault. Law & Order is known for ripping from the headlines, and sometimes those headlines can hit a little too close to home. Mariska Hargitay explains how the Season 28 premiere of Law & Order: SVU address&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2291256/nintendo-gamecube-discs-big-problem-compatibility/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/the-gamecube-had-one-big-disc-problem-that-nobody-could-ignore/l-intro-1792457789.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The GameCube Had One Big Disc Problem That Nobody Could Ignore
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The GameCube Had One Big Disc Problem That Nobody Could Ignore Pakito/Shutterstock If you've ever used a Nintendo GameCube, then you are already aware that the system didn't use typical 4.7 GB DVD discs for its games, but rather a proprietary disc fo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/clayface-aaron-paul-dc-cameo-explained-james-watkins/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/clayface-2026-movie.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Clayface’s Blink-And-You’ll-Miss Cameo Officially Explained By Director
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">WARNING: This article includes spoilers from Clayface.James Gunn's DC Universe has expanded once more, while also taking a trip down the horror genre.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/how-to-watch-game-of-thrones-shows-in-order/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/game-of-thrones_87d55f-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How To Watch All Game Of Thrones Series In Order
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Game of Thrones franchise continues to expand, though it isn't necessarily doing so in order. Author George R.R. Martin constructed a massive fantasy world and accompanying lore, beginning with his central A Song of Ice and Fire book series and c&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/perfect-sci-fi-anime-no-bad-episodes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/07/untitled-2.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Perfect Sci-fi Anime With No Bad Episodes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Science fiction has always served as anime's ultimate playground, pushing the boundaries of imagination through breathtaking worldbuilding and profound existential questions.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-terminal-list-season-2-rotten-tomatoes-rating/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/chris-pratt-the-terminal-list-season-2.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Chris Pratt's 'The Terminal List' Season 2 Earns 88% Audience Score on Rotten Tomatoes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Chris Pratt's Hit Action Thriller Series Scores Big With Audiences on Rotten Tomatoes</div>
+      
+      
+      <div class="summary">Long before staking his claim in action cinema with Zero Dark Thirty, Chris Pratt spent nearly a decade cutting his teeth in television and romantic comedies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/a24s-elden-ring-budget/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/04/untitled-design-17-2.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 24 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            A24's 'Elden Ring' Adaptation Reportedly Costs $200 Million, Its Most Expensive Film
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: A24's George R.R. Martin Fantasy Epic Is Reportedly Its Most Expensive Movie Ever With a Jaw-Dropping Budget</div>
+      
+      
+      <div class="summary">A24 is known for championing bold, auteur-driven, and unconventional films, particularly those from independent filmmakers. The studio has produced box-office hits and cult classics such as Spring Breakers, Uncut Gems, and Room.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    <span class="disabled">&laquo; Newer</span>
+  
+
+  
+    
+      <span class="current">1</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/2.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>
