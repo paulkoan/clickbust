@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-31 14:06 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>44 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>103 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>13 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>58 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>113 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/beastars-netflix-zootopia-dark-twist/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/nick-wilde-and-judy-hopps-are-hugged-by-gary-de-snake-in-zootopia-poster.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Beastars: Netflix's 3-Season Anime Series Is a 10/10 Masterpiece
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Zootopia Gets A Dark Twist In The 3 Season Netflix Series That's A Pure 10/10 Masterpiece</div>
+      
+      
+      <div class="summary">A three-season Netflix series reimagines Zootopia as an animated show for an adult audience. To say that Zootopia is one of Disney's biggest animated successes would be an understatement. The original 2016 movie grossed more than $1.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/elden-ring-hardest-boss-battles-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2023/03/elden-ring-hardest-boss-fights-ranked.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Elden Ring: 15 Hardest Boss Battles, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Developed by FromSoftware, Elden Ring is a critically acclaimed title that is effectively a successor to the Dark Souls series, inheriting many of its signature features, including the developer's penchant for difficult boss fights. Created in collab&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-sydney-sweeney-movies-shows-streaming-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/sydney-sweeney-in-the-housemaid.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Best Sydney Sweeney Movies & TV Shows To Stream In November 2026, Including Euphoria
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Sydney Sweeney’s characters have a habit of making a bad situation worse. You might spend an entire episode yelling at one of them to stop before she hurts herself or someone else, but Sweeney makes her desperation believable enough that you keep hop&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/dexter-resurrection-season-2-release-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/10/dexter-resurrection-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dexter: Resurrection Season 2 Premieres Today on Paramount+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 420 Days Later, ‘Dexter’ Officially Returns With New Release Today</div>
+      
+      
+      <div class="summary">The rise of serial killer franchise TV shows in the last few years can largely be attributed to the popularity of Dexter, the iconic 2000s slasher comedy starring Michael C. Hall.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-rom-hacks-better-than-original/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/05/rom-hacks-that-make-it-hard-to-go-back-to-the-original-game.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            20 Rom Hacks That Make It Hard To Go Back To The Original Game
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">ROM hacks have been around for decades, with hacks for Nintendo games having been some of the most popular over the years. Most are made for retro games on consoles like the NES, SNES, and Game Boy.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/narnia-voyage-of-the-dawn-treader-coming-to-peacock-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/chronicles-of-narnia-voyage-of-the-dawn-treader-prince-caspian-ben-barnes.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Chronicles of Narnia: The Voyage of the Dawn Treader Coming to Peacock and HBO Max
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Peacock Lands 113-Minute Fantasy Adventure Based on 74-Year-Old Book Ahead of Netflix Reboot</div>
+      
+      
+      <div class="summary">There's a lot of buzz around The Chronicles of Narnia right now as Netflix preps Greta Gerwig's cinematic reboot, Narnia: The Magician's Nephew​​​​​​. Before then, Peacock (and HBO Max) is getting another Narnian adventure: The Chronicles of Narnia: &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-ps1-rpgs-flawless-start-to-finish-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/10/ps1-with-jrpgs.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 PS1 RPGs That Are 10/10, No Notes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">RPGs exploded in popularity thanks to the PS1. While the genre had been fairly niche throughout the '90s, games like Final Fantasy 7 brought it into the mainstream thanks to visuals that were cutting-edge for the time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/beloved-fantasy-books-with-failed-adaptations-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/1359207-kingkiller-chronicle-book-name-wind-patrick-rothfuss-1.webp?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Beloved Fantasy Book Series Stuck in Adaptation Limbo for Years
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It seems like a new film or TV book adaptation is announced every day, especially this year in 2026. Project Hail Mary, The Odyssey, the upcoming HBO Harry Potter series, and Netflix's The Magicians Nephew are just some of the many adaptations that s&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2303151/patrick-stewart-star-trek-x-men-actor-hollywood-tributes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/hollywood-pays-tribute-to-star-trek-and-x-men-actor-patrick-stewart-after-his-death/l-intro-1793402190.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hollywood Pays Tribute To Star Trek And X-Men Actor Patrick Stewart After His Death
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Hollywood Pays Tribute To Star Trek And X-Men Actor Patrick Stewart After His Death VIDEO Star Trek and X-Men icon Sir Patrick Stewart's death at 86 has quite understandably sent Hollywood reeling.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jon-bernthal-the-accountant-2-streaming-success-prime-video-200-days-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/the-accountant-2-jon-bernthal.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Accountant 2 Reaches 200 Days in Prime Video Top 10
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jon Bernthal’s $100M Action Thriller Officially Hits 200 Days of Streaming Dominance</div>
+      
+      
+      <div class="summary">2026 has been a benchmark year for Jon Bernthal, so much so that it will likely be remembered as one of the most important years of his career.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/2026-global-box-office-best-year-since-2019/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/peter-parker-in-spider-man-brand-new-day.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            2026 Global Box Office Is Headed For Its Best Year Since 2019
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The box office is bouncing back. The worldwide box office is showing major signs of recovery, with 2026 now projected to become the most successful year for theatrical releases since 2019.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/lord-of-the-rings-rings-of-power-season-3-updates/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-lord-of-the-rings-the-rings-of-power_uulzkt-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Lord Of The Rings: Rings Of Power Season 3 - Everything We Know
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Amazon Prime Video triumphantly returned to Middle-earth in 2024 with season 2 of The Lord of the Rings: Rings of Power, and now their epic J.R.R. Tolkien adaptation has scored a third season.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/final-fantasy-10-official-return-tidus-yuna-figures/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/yuna-final-fantasy-10-remaster-render.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Final Fantasy 10 Yuna Prize Figure Releasing November 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Final Fantasy 10 Officially Returning November 2026 With New Release</div>
+      
+      
+      <div class="summary">Final Fantasy 10 is an iconic RPG, and decades later, its legendary status hasn't diminished. While it hasn't benefited from the ambitious remakes that recently propelled FF7 to even greater popularity, the original game stands the test of time perfe&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-prime-video-movies-watch-weekend-october-31/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/chris-pratt-sitting-with-tech-gauntlet-on-the-tomorrow-war.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Best Movies To Watch On Prime Video This Weekend (October 31-Nov 1)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Prime Video subscribers can watch an intense selection of movies this Halloween weekend on the streaming service, ranging from horror to sci-fi and thriller offerings.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-star-trek-next-generation-episodes-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/startrektng.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Best Star Trek: The Next Generation Episodes, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of the great things about Star Trek: The Next Generation is that you never quite knew what kind of adventure you were going to get. One week, the Enterprise might be facing an enemy capable of destroying the Federation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/mechanic-resurrection-jason-statham-stream-free-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/zz-10.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mechanic: Resurrection Starring Jason Statham Now Free to Stream
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jason Statham's 98-Minute Non-Stop Action Thriller Shoots Onto New Free Streaming Home</div>
+      
+      
+      <div class="summary">Action icon Jason Statham has become well-renowned for flying the flag for old-school genre fare, and there is nothing more old-school than the action thriller sequel that's now headed for free streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/dexter-resurrection-harrison-cop-twist/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/movieweb-featured-image-template-2026-10-30t180655-797.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Dexter: Resurrection' Season 2 Officially Puts a New Spin on a 20-Year-Old Storyline
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! Spoilers ahead for Dexter: Resurrection Season 2, Episode 1, "Risky Business."Dexter: Resurrection has 20 years of lore to play with, and while things could get stale if the series starts dipping into the past too frequently, the balance is &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/old-action-thriller-shows-unwatchable/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2024/05/lee-majors-as-steve-austin-the-six-million-dollar-man.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Old-School Action Thriller Shows That Are Now Unwatchable
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Action thrillers from the 1970s and 1980s had a charm that's hard to replicate. Police detectives chased criminals through neon-lit streets, undercover agents took down dangerous organizations, and crime-fighting heroes relied on fast cars, fists, an&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/jason-statham-mechanic-resurrection-stream-free-action-thriller-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/05/mechanic-resurrection-1.jpg?q=49&fit=crop&w=100&h=67&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jason Statham's 'Mechanic: Resurrection' Heads to Free Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jason Statham's 98-Minute Non-Stop Action Thriller Shoots Onto New Free Streaming Home</div>
+      
+      
+      <div class="summary">Action icon Jason Statham has become well-renowned for flying the flag for old-school genre fare, and there is nothing more old-school than the action thriller sequel that's now headed for free streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/star-trek-online-patrick-stewart-tribute/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/01/star-trek-the-next-generation-i-borg-patrick-stewart-3.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fans Pay Tribute to Patrick Stewart in Star Trek Online
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek Fans Officially Give Sir Patrick Stewart The Perfect Send-Off</div>
+      
+      
+      <div class="summary">For generations of Star Trek fans, Sir Patrick Stewart was the person you wanted sitting in the captain’s chair.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2300731/samsung-upgrade-sleep-apnea-tracking-limited-devices/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/samsung-galaxy-watches-are-getting-a-big-upgrade-for-sleep-disorders-but-you-cant-use-it-yet/l-intro-1793276232.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Samsung Galaxy Watches Are Getting A Big Upgrade For Sleep Disorders, But You Can't Use It Yet
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Samsung Galaxy Watches Are Getting A Big Upgrade For Sleep Disorders, But You Can't Use It Yet Wongsakorn 2468/Shutterstock Samsung's Galaxy Watches come with plenty of sleep tracking features users need to try, and now certain models will be able to&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-tv-show-casts-2010s-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/game-of-thrones-cast-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Best TV Casts of the 2010s, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">As recently as the 1990s, there was a widespread view that an actor transitioning from film to television for a performance constituted an act of career suicide.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/pokemon-new-eeveelutions-gba-game-download/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2025/06/eevee-grove-key-art.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fan Game Pokémon Oops! All Eevees Adds Hundreds of New Eeveelutions
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New Pokémon Release Brings Hundreds of New Eeveelutions</div>
+      
+      
+      <div class="summary">With eight official Eeveelutions, fans of the beloved normal-type Pokémon aren't hurting for options — yet paradoxically, they're also one of the most neglected segments of the fandom. After all, it's been 13 years since Game Freak introduced a new E&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-series-every-episode-is-perfect/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-queens-gambit_un6jlw-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Netflix Series with 10/10 Episodes, Including Mindhunter
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 6 Netflix Series Where Every Episode Is A 10/10 (#1 Has A Rare 100% RT Score)</div>
+      
+      
+      <div class="summary">Perfect TV shows are hard to come by. In fact, it would be downright impossible to find a show that absolutely every person would categorize as a ten out of ten.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/josh-hutcherson-upcoming-movies-tv-shows/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/the-hunger-games-josh-hutcherson-peeta-mellark.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All Upcoming Josh Hutcherson Movies & TV Shows, Including Mister Miracle
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">If you watched Bridge to Terabithia as a kid, there's a good chance Josh Hutcherson was responsible for one of your first devastating movie experiences. It seemed like a fun fantasy adventure about two kids creating an imaginary world, until that hea&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/criminal-minds-crime-series-ending-after-20-seasons/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/1920x1080-image-format-18.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Criminal Minds Officially Ending After 20 Seasons
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: One of the Biggest Crime Series on TV Is Officially Ending After 20 Seasons</div>
+      
+      
+      <div class="summary">There are a lot of iconic, long-running crime series out there — many of which have been solving cases since the early 2000s and steadily aging into their 10th or even 20th seasons. Law & Order is filming its 26th season, NCIS is currently in its 24t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/bloodborne-movie-director-writer-update-sean-mcloughlin/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/bloodborne.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jacksepticeye's Bloodborne Film Progress Update Revealed
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New 'Elden Ring' Replacement Officially Gets Major Update</div>
+      
+      
+      <div class="summary">FromSoftware has come along way from its cult classic first "Soulslike" action-RPG title, Demon's Souls.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/video-game-flops-you-should-play/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/okami.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Flop Video Games You Should Actually Play
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's certainly easy to define video games as an art form by their overwhelming success stories, with the industry being larger than most other media industries combined and constantly breaking records in terms of growth and scale with each new genera&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/black-clover-season-2-dethrone-naruto-best-anime-fight-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/08/black-clover-best-fights-magna-swing.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Black Clover Season 2's Magna vs Dante Fight Could Surpass Naruto's Kakashi vs Obito
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 12 Years Later, One Shonen Anime Is Dethroning Naruto With 2026's Biggest Anime Fight</div>
+      
+      
+      <div class="summary">Although it may have taken close to six years, Black Clover has finally returned with Season 2, becoming the biggest release of Fall 2026, if not 2026 as a whole.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/scream-tv-series-reboot-franchise-deserves-revisit/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/12/scream-the-tv-series-2015-poster.jpg?q=70&fit=contain&w=480&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Scream's 30-Episode TV Series from 2015 Deserves Another Look
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: $1.1 Billion Horror Franchise’s Forgotten 30-Episode TV Show Deserves Another Chance</div>
+      
+      
+      <div class="summary">While one horror franchise has earned an astounding $1.1 billion at the box office, that has not stopped MTV's small-screen spinoff series from being unfairly forgotten in the 11 years since its 2015 release.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <span class="current">8</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/9.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

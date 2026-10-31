@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-31 14:06 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>44 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>103 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>13 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>58 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>113 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/dexter-resurrection-season-2-intro-opening-credits-original-show/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/dexter-resurrection-s2-011.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Dexter: Resurrection’ Quietly Revives a Missing Piece of the Original Show's Formula
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's note: The below contains minor spoilers for Dexter: Resurrection Season 2. Ever since Dexter premiered back in 2006, viewers have actually rooted for the titular character (Michael C. Hall) to rid the world of some of the worst criminals (De&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/pokemon-mega-rayquaza-new-february-12-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2020/10/Rayquaza.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Brings Back Mega Rayquaza With New February 12 Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Rayquaza is one of the most popular Legendary Pokémon of all time, and its Mega Evolution is one of the strongest creatures in the entire franchise. Now, following the grand return of Mega Evolution in Pokémon Legends: Z-A, Mega Rayquaza is making it&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/hollywood-buys-actress-digital-replacement.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2014/07/robin-wright-the-congress-2.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The Congress': Sci-Fi Film Where Hollywood Buys a Star's Face and Replaces Her
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Sci-Fi Movie Where Hollywood Buys A Star’s Face And Replaces Her</div>
+      
+      
+      <div class="summary">By Brent McKnight | Published 51 seconds ago The opening shot of Ari Folman’s (Waltz With Bashir) The Congress is the single best part of the movie. Harvey Keitel’s silver-tongued Hollywood agent Al talks off screen while the camera focuses solely on&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/klara-and-the-sun-jenna-ortega-movie-cancels-international-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/jenna-ortega-in-klara-and-the-sun.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jenna Ortega's 'Klara and the Sun' Cancels International Release After Box Office Flop
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jenna Ortega’s New Dystopian Sci-Fi Movie Cancels International Release After Box Office Flop</div>
+      
+      
+      <div class="summary">While 2026 is shaping up to be a historic year for the post-pandemic box office, for every good movie we get, there is usually another that totally misses its mark. Jenna Ortega's latest sci-fi expedition, Klara and the Sun, being the much more unfor&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/nbc-law-and-order-replacement-great-gatsby-reboot-detective-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/law-order-organized-crime-benson-stabler-meloni-hargitay.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            NBC Officially Announces New 'Law & Order' Replacement
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Law & Order is on of NBC's most beloved series and their latest show feels like a perfect replacement for the procedural. In January of 2021, F. Scott Fitzgerald's novel The Great Gatsby entered into the public domain.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2298286/classic-paul-newman-movies-unwatchable-today/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/5-classic-paul-newman-movies-that-are-unwatchable-today/l-intro-1793112737.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Classic Paul Newman Movies That Are Unwatchable Today
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Classic Paul Newman Movies That Are Unwatchable Today Static Media It's staggering to take a step back and process the enormity of the career Paul Newman had as an actor. Any performer would be elated to have just one movie as iconic as "Cool Hand &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/anthony-mackie-avengers-doomsday-timeline-mcu-problem" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/mackietimeline.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Anthony Mackie’s New Avengers: Doomsday Timeline Reveal Creates a Major MCU Problem
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Avengers: Doomsday star Anthony Mackie left fans puzzled about the MCU timeline. 7 years after Chris Evans' Steve Rogers handed him the shield in Avengers: Endgame, Mackie's Sam Wilson will finally get his chance to star as Captain America in a major&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2298509/matthew-perry-zac-efron-fantasy-movie-17-again-streaming-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/matthew-perrys-beloved-fantasy-movie-is-a-netflix-gem-you-shouldnt-miss/l-intro-1793119965.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            17 Again: Matthew Perry's Body-Swap Comedy Is a Netflix Gem
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Matthew Perry's Beloved Fantasy Movie Is A Netflix Gem You Shouldn't Miss</div>
+      
+      
+      <div class="summary">Matthew Perry's Beloved Fantasy Movie Is A Netflix Gem You Shouldn't Miss New Line Cinema Certain movies follow a well-proven formula so strictly and diligently that you can practically call every single plot beat long before it happens.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/video/the-mosquito-bowl-skarsgrd-found-football-harder-than-war-set-stories/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/collider-set-stories-the-mosquito-bowl.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Mosquito Bowl: Skarsgård Found Football Harder Than War | Set Stories
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Mosquito Bowl: Why Football Was Harder Than War. Bill Skarsgård, Nicholas Galitzine, Tom Francis, and Ray Nicholson reveal how intense football training, chaotic battle sequences, and director Peter Berg's unconventional filmmaking approach shape&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/christmas-at-the-kringles-rotten-tomatoes-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/sharedimages/2026/10/christmas-at-the-kringles-poster-1.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Christmas at the Kringles' Lands 0% on Rotten Tomatoes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New R-Rated 98-Minute Action Movie Officially Lands a Rare 0% on Rotten Tomatoes</div>
+      
+      
+      <div class="summary">Maintaining a permanent 0% rating on Rotten Tomatoes is a rare feat — especially for older films that have had years to pick up a single contrarian, positive review to bump up their score.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/clayface-box-office-number-one-43-million-supergirl-dc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/clayface-tom-rhys-harries-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            After ‘Supergirl,’ DC’s Much Cheaper Horror Gamble Is Already Paying Off
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When James Gunn was first announced as the new head of DC Studios back in 2022, there were high hopes for his new cinematic universe.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/harry-potter-hbo-tv-show-recasts-ghosts-sorting-hat/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/msdhapo_ec016.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO's Harry Potter Officially Casts Its New Sorting Hat and Ghosts
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">HBO's new Harry Potter TV show is just two months away, but key roles are still being cast — or at least officially announced — for the series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-relaunch-voyager-sequel-renaissance/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/seven-of-nine-leads-her-team-in-star-trek-voyager-poster.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Star Trek Comic 'Star Trek' Brings Back Seven of Nine from Voyager
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Voyager's Sequel Series Is Here, And It Proves The Star Trek Renaissance Is Here To Stay</div>
+      
+      
+      <div class="summary">Voyager’s sequel series has arrived, and it is proof the Star Trek renaissance is far from over. Last month, IDW Publishing, who have been producing Trek tie-in comics since 2006, released the first issue of the third volume of its adjective-less Sta&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/great-british-spy-movies-that-arent-james-bond/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/movieweb-image-62.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            11 Best British Spy Movies That Aren’t James Bond
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">James Bond may have some of the most quotable lines in spy cinema, but he is far from Britain's only great secret agent. Several British spy films have contributed to the espionage genre in ways well worth anyone's time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/nocturne-streaming-hit-apple-tv-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/nocturne.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            In 1 Day, Apple TV's New 10-Episode "Silence of the Lambs Meets True Detective" Thriller Is a Streaming Smash
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It didn't take long for Apple TV’s new psychological thriller to make a big impact on streaming. Less than 24 hours after its release, the ten-episode series is already one of the biggest hits in the world thanks to a chilling performance from one of&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/lord-of-the-rings-most-powerful-gandalf-spells-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/gandalf-concerned.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gandalf's 5 Most Powerful Spells in The Lord of the Rings, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Gandalf from J. R. R. Tolkien's The Lord of the Rings defined the modern conception of a wizard, but compared to later examples from the fantasy genre, his uses of magic were usually subtle.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-marvel-heroes-without-live-action-movie-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/nova-flies-flies-into-danger-to-help-fend-off-the-symbiote-attack.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Marvel Heroes Who Have Never Been In A Live-Action Movie
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Marvel Cinematic Universe has allowed some of Marvel Comics' most engaging and iconic heroes to come to life on the big screen like never before, but for as many legendary heroes who have received their very own live-action adaptations, there are&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dexter-resurrection-season-2-rotten-tomatoes-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/dexter-resurrection-glasses.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dexter: Resurrection Return Hailed 'Best Season of Dexter We've Gotten in Years' in First Reviews
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The new season of Dexter: Resurrection has debuted just in time for Halloween, more than a year after the first season wrapped up. Like Season 1, Season 2 is coming in hot, as the first reviews are very strong.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2297417/how-long-smart-home-sensors-last-lifespan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-long-do-smart-home-sensors-last/l-intro-1793038616.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Long Do Smart Home Sensors Last?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How Long Do Smart Home Sensors Last? Vladimka production/Shutterstock Smart home sensors make your devices even smarter, allowing them to track things like movement and air quality.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/heart-of-the-beast-brad-pitt-sleeper-hit-survival-thriller-removed-from-1800-theaters-box-office/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/heart-of-the-beast-1-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brad Pitt’s New Survival Thriller Officially Removed From 1,800 Theaters as $200M Milestone Looms
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With younger audiences flocking to movies such as You Can See Everything, Clayface, and Street Fighter, a counter-programmer targeted at older crowds has emerged as the biggest hit of them all. The movie in question has now spent more than a month in&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/reacher-66-million-views/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/reacher-alan-ritchson-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Reacher' Season 4 Officially Hits 66 Million Viewers as Alan Ritchson Films Season 5
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">2026 has been a benchmark year for Alan Ritchson, who has fully come into his own as one of the biggest action stars in all of Hollywood. At the start of the year, Ritchson took his talents to Netflix to star in the fan-favorite sci-fi thriller, War &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/hellraiser-new-comic-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/hellraiser-original-pinhead.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hellraiser Comic Series 'Hellbound Hearts' Begins New Era in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 40 Years Later, Hellraiser Returns For Big New Era</div>
+      
+      
+      <div class="summary">Clive Barker's Hellraiser first shocked audiences nearly forty years ago when it hit movie screens in the fall of 1987. In 2027, the franchise is celebrating the anniversary of that milestone debut by launching "a new era of suffering.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-monster-horror-books/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/best-monster-and-cryptid-horror-books.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Monster & Cryptid Horror Books
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The monster horror genre stretches far and wide with everything from underwater creatures to demons, and these ten books represent the best that the genre has to offer. Monsters and cryptids have captivated readers for centuries, reflecting our deepe&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/princess-and-the-frog-special/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/02/walt-disney-studios-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Princess and the Frog Gets New Animated Special with Original Cast
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney's Best Forgotten Classic Returns With Streaming Spin-Off 17 Years Later</div>
+      
+      
+      <div class="summary">Published Oct 30, 2026, 1:39 PM EDT Richard is a writer/journalist from Oregon (by way of California) with a love of Marvel, Star Wars, DC, and all kinds of entertainment. He joined MovieWeb in January 2026 as a Movie & TV Writer/Editor.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-hunchback-soul-paris-trailer-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/movie/4BQjI3Qxr0EyBgmebhLjCu4yiuBHDg.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Releases First Trailer for Live-Action 'The Hunchback, Soul of Paris'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Resurfaces a Disney Classic in Epic First Trailer for Live-Action Remake</div>
+      
+      
+      <div class="summary">Published Oct 30, 2026, 1:32 PM EDT Marcos Melendez is an entertainment journalist who has been active since 2017. His past work can be read on Collider, Escapist, ScreenRant, CBR, and Full Circle Cinema. He is currently a News Editor for MovieWeb.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-haunted-hotel-season-3-renewal/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/hi-res-netflix-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Renews Haunted Hotel for Season 3 Following 89% RT Score
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Renews Hit Animated Supernatural Series With 89% RT 3 Weeks After New Episodes</div>
+      
+      
+      <div class="summary">Season 2 of Netflix’s Haunted Hotel debuted earlier this month, on Oct. 9, and the series became an instant streaming hit. Now, it’s been confirmed that the show will return for more. Netflix officially renewed Haunted Hotel for a third season.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/1883-season-1-finale-elsa-dutton-death-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2022/05/Elsa-death-1883-Tim-McGraw-Faith-Hill.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why 1883 Killed Off Elsa Dutton
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Spoilers for 1883 ahead! The finale of the 19th-century Yellowstone prequel killed off its most important character, but many viewers still wonder why Elsa Dutton dies in 1883.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/zelda-switch-2-console-easter-egg-preorder-controller-case-pixel-art/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/the-legend-of-zelda-40th-anniversary-direct-9-8-2026-59-36-screenshot.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Switch 2 Consoles Quietly Hide A Perfect 'Zelda' Homage
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Lucky Nintendo fans who secured a pre-order for The Legend of Zelda: Ocarina of Time Switch 2 are starting to open the boxes containing their swanky new consoles — and are receiving a nice, unexpected surprise. The new hardware, which was officially &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-apothecary-diaries-season-3-episode-5-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/the-white-lady-in-the-apothecary-diaries-episode-53.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Apothecary Diaries Changes the Villain Formula With the White-Snake Immortal | Review
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Each episode in The Apothecary Diaries Season 3 has been slowly laying the foundation for Maomao's next greatest mystery. With smaller mysteries keeping her skills sharp, Episode 53, "The White-Snake Immortal," finally gave her a mystery she could si&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/witchs-ghost-best-scooby-doo-movie-ever/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/ben-ravencroft-reading-spellbook.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Scooby-Doo! and the Witch's Ghost Still Stands as a Cozy Horror Classic
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 27 Years Later, Tim Curry's Masterpiece Cozy Horror Movie Still Hasn't Been Beaten</div>
+      
+      
+      <div class="summary">Ever since its debut in 1969, Scooby-Doo has been one of the most enduring cartoon franchises, constantly reinventing itself to leave its mark on a new generation of young viewers. Though best known for television shows, there have also been several &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <span class="current">12</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/13.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

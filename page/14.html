@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-10-31 14:06 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>44 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>103 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>13 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>46 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>58 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>113 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://movieweb.com/the-green-mile-tom-hanks-free-stream-october-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/tom-hanks-is-a-prison-guard-in-the-green-mile.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Green Mile Starring Tom Hanks Remains No. 1 on Free Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Hanks' 186-Minute Fantasy Thriller Masterpiece Remains the No. 1 Movie on Free Streaming</div>
+      
+      
+      <div class="summary">Nearly three decades after its theatrical release, one of the most captivating movies of the '90s starring Tom Hanks has become the biggest title on streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/dexter-resurrection-new-york-ripper-theory/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/movieweb-featured-image-template-2026-10-28t124711-617.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Dexter: Resurrection' Theory Claims Season 1's Biggest Reveal Was a Lie
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! Spoilers ahead for Dexter: Resurrection Season 2, Episode 1, "Risky Business."When Dexter: Resurrection Season 1 premiered last year, it was the first real exploration of what happened to Michael C. Hall's character after the divisive ending&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2302400/iphone-duo-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/iphone-duo-review-the-first-foldable-phone-id-actually-switch-to/l-intro-1793380016.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            iPhone Duo Review: The First Foldable Phone I'd Actually Switch To
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">iPhone Duo Review: The First Foldable Phone I'd Actually Switch To Connor Jewiss/BGR Apple's first foldable phone is here. It costs $1,999 in the U.S. for 256 GB of storage, which is $100 more than the Galaxy Z Fold 8, and it's roughly double the cos&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/wishlister-oct-30/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/community-tree.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Steam Games Coming Soon That Belong on Your Wishlist
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Even though Steam Next Fest is over, we’re still sorting through all the games it put on our radar. While Steam’s recurring free demo event was invaded by generative AI games, it still featured plenty of human-made projects that cut through the slop.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-last-king-of-faerie-shadowhunters-sneak-peek-excerpt-james-marsters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/copy-of-collider-template-2026-10-30t081235-104.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            19 Years Later, Cassandra Clare’s ‘Shadowhunters’ Saga Officially Begins Its Final Trilogy
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Readers are spoiled for choice when it comes to YA fantasy books, from the classic Harry Potter novels to The Hunger Games, An Ember in the Ashes, and Throne of Glass. However, few have been as long-enduring as Cassandra Clare's The Shadowhunters Chr&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/why-it-failed-jason-x.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/10/Jason-X-—-Why-It-Failed-alternate-thumbnail-385x200.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jason X: Why the Friday the 13th Space Sequel Failed
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: They Sent A Horror Icon Into Space, It Blew Up In Their Face</div>
+      
+      
+      <div class="summary">Jason X sent Friday the 13th into space. Our latest Why It Failed revisits the sci-fi horror sequel that crashed instead of launching a new era. By Chris Snellgrove | Published 7 seconds ago In 2002, an insane sci-fi movie nearly killed the greatest &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/prime-video-everyone-in-my-family-has-killed-someone-full-cast/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/everyone-in-my-family-has-killed-someone-by-benjamin-stevenson.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Everyone in My Family Has Killed Someone Adds 8 Cast Members at Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video's New Murder Mystery Based on a Bestselling Book Moves Forward With 8 New Members</div>
+      
+      
+      <div class="summary">Prime Video is working on the TV adaptation of Everyone in My Family Has Killed Someone, a bestselling murder mystery novel and the first in the Ernest Cunningham mystery series written by Benjamin Stevenson.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/chatgpt-open-ai-sam-altman-youtube-interview-vram-supply-cost-data/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/altman2.JPG?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            OpenAI Billionaire: PCs Are 'Terrible' When Data Centers Need More Memory
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Here's a fun fact: from now until 2029, OpenAI owns 40% of the world's supply of Dynamic Random Access Memory (DRAM), which powers cell phones, video game consoles, and artificial intelligence.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dc-my-adventures-with-superman-season-4-future-hbo-update-peter-safran/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/lex-luthor-s-gang-leaving-his-plane-in-the-arctic-in-superman.jpg?q=49&fit=crop&w=100&h=67&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            My Adventures with Superman Season 4 on Hold, DC Boss Confirms Green Lantern Spinoff
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO Max’s Hit 3-Part Superman Series Gets Official Future Update From DC Boss</div>
+      
+      
+      <div class="summary">Published Oct 30, 2026, 11:51 AM EDT Abdullah Al-Ghamdi joined Screen Rant in August 2019 and is now one of the leading contributors of the TV News team.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/solo-leveling-ragnarok-webtoon-november-5-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/21fd4451-812e-4555-9992-541c5d21a1ac.jpeg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Solo Leveling: Ragnarok Returns Next Week With 3 New Episodes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Solo Leveling Officially Returns Next Week With 3 New Episodes</div>
+      
+      
+      <div class="summary">Solo Leveling’s sequel series, Solo Leveling: Ragnarok, is returning with a simultaneous 3-episode release next week.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dungeon-crawler-carl-new-actor-casting-reponse-jeff-hays/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/dungeon-crawler-carl-and-princess-donut-with-dinosaur.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Seth MacFarlane's Live-Action Dungeon Crawler Carl Series' New Carl Casting Addressed By OG Actor
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Oct 30, 2026, 11:48 AM EDT Grant Hermanns is a TV News Editor, Interview Host and Reviewer for ScreenRant, having joined the team in early 2021. He got his start in the industry with Moviepilot, followed by working at ComingSoon.net.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2296948/how-legacy-satellite-isps-are-surviving-starlink/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/legacy-satellite-isps-are-struggling-to-survive-since-starlink-took-over/l-intro-1793027876.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Legacy Satellite ISPs Are Struggling To Survive Since Starlink Took Over
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Legacy Satellite ISPs Are Struggling To Survive Since Starlink Took Over Nicoelnino/Getty Images Starlink is the satellite internet service provided by SpaceX, and its success is pushing longtime satellite internet service providers out of business.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/stick-season-2-apple-tv-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/owen-wilson-in-stick-season-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stick Season 2: Owen Wilson's Golf Dramedy Barely Makes The Cut | Review
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Apple TV's golf-themed dramedy series Stick returns on November 4, 2026, with a 2-part premiere that continues the comeback story of former PGA superstar Pryce Cahill, played by Owen Wilson.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-rookie-north-set-up-for-success-cast-good/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/nathan-fillion-s-john-in-the-rookie-season-8.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Rookie: North Spinoff Gets Official Update from ABC
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ABC Poises The Rookie's New Spinoff For Success After Official Update</div>
+      
+      
+      <div class="summary">Although The Rookie’s upcoming spinoff was always going to be exciting, the show’s latest update is great news for anyone who was worried about the series failing to find its feet.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/stephen-king-the-green-mile-movie-leaving-tubi-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/04/michael-clarke-duncan-as-john-coffey-holding-prison-bars-in-the-green-mile.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Green Mile Being Removed from Free Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Best Stephen King Movie Of The Last 30 Years Is Officially Being Removed From Free Streaming</div>
+      
+      
+      <div class="summary">One of the best Stephen King movies of the last few decades is available to stream right now - but time is running out fast. Everybody has their favorite Stephen King movie, from the eternally moving Stand by Me to horror classics like The Shining an&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/margot-robbie-neighbours-microdrama-first-ai-tv-reboot/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/margot-robbie-as-donna-freeman-in-neighbours.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Margot Robbie's Neighbours Role to Be Rebooted as AI Microdrama
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 15 Years Later, Margot Robbie’s 355-Episode Role Becomes TV’s First AI Reboot</div>
+      
+      
+      <div class="summary">A decade and a half after she got her big break in Hollywood, Margot Robbie is now starring in the first official AI reboot in television history.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/harry-potter-hbo-cast-sorting-hat-house-ghosts/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/harry-potter-hbo-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Harry Potter' Reboot Officially Recasts 5 Unsung Characters From Original Movies
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Oct 30, 2026, 11:42 AM EDT Richard is a writer/journalist from Oregon (by way of California) with a love of Marvel, Star Wars, DC, and all kinds of entertainment. He joined MovieWeb in January 2026 as a Movie & TV Writer/Editor.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-haunted-hotel-season-3-renewed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/haunted-hotel-season-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Haunted Hotel Season 3's Fate Officially Decided By Netflix
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Oct 30, 2026, 11:37 AM EDT Jordan is the Senior Editor for Movies & TV News at Screen Rant. She graduated from the University of Oregon with a B.A. in Psychology and a minor in Media Studies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/avengers-doomsday-seven-marvel-characters-full-avengers-first-time" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/doomaves.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers: Doomsday Will Make 7 Marvel Characters Full Avengers for the First Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Avengers: Doomsday is set to dramatically expand Earth's Mightiest Heroes as familiar faces from three universes collide with Robert Downey Jr.'s Doctor Doom.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/starcrash-star-wars-space-fantasy.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2024/04/Starcrash-1978-900x506.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Starcrash: The Nutso Star Wars Rip-Off Made One Year After A New Hope
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Best Star Wars Rip-off Is A Nutso Trip Made One Year After A New Hope</div>
+      
+      
+      <div class="summary">The film’s cast includes some particularly noteworthy actors. Marjoe Gortner, an evangelical preacher turned actor, plays Akton, while the beautiful Caroline Munro stars as Stella Star.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/disney-the-princess-and-the-frog-special-original-cast-returning/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/tiana_almostthere.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Princess and the Frog Gets New Special With Original Cast Returning
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney's 17-Year-Old Fantasy Classic Gets New Special With Original Cast Returning</div>
+      
+      
+      <div class="summary">Following the success of Moana, which received a sequel and a live-action remake, another Disney Princess is getting the same treatment: Tiana.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-mosquito-bowl-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/sharedimages/2026/10/the-mosquito-bowl-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'The Mosquito Bowl' Review: Football and WWII Collide with Mixed Results
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s New WWII Action Thriller Is ‘Friday Night Lights’ Meets ‘Band of Brothers’ | Review</div>
+      
+      
+      <div class="summary">Filmmaker Peter Berg is undeniably crafty within the bounds of his skill set, and for that reason, The Mosquito Bowl will win favor from his intended audience.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-ghostbusters-night-shift-animated-sequel/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/ghostbusters-night-shift-screenshot.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ghostbusters: Night Shift Animated Series Coming to Netflix in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Is Changing Ghostbusters' Rules for How Sequels Work</div>
+      
+      
+      <div class="summary">More than 40 years after its debut, Ghostbusters remains one of the highest-grossing comedy franchises of all time. The first two films are considered horror-comedy classics, highlighting the comedic talents of Bill Murray, Harold Ramis, Dan Aykroyd,&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/james-mcavoy-taron-egerton-thriller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/taron-egerton-in-smoke.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taron Egerton Joins Forces With James McAvoy for New Conspiracy Thriller
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's always exciting to see big-name actors work together on a project for the first time. Leonardo DiCaprio and Brad Pitt in Once Upon a Time in Hollywood, Susan Sarandon and Geena Davis in Thelma & Louise, Humphrey Bogart and Katharine Hepburn in T&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/star-wars-fan-game-fate-of-the-galaxy-free-space-2-mod/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/star-wars-rogue-squadron-n64-cover-art-cropped.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Star Wars Fate of the Galaxy' Officially Released for Free
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Never doubt the tenacity of Star Wars fans. After close to 20 years of development, a group of volunteers is finally releasing Fate of the Galaxy, a Star Wars space combat game built on FreeSpace 2’s open-source engine.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/playstation-5-free-metro-upgrade-no-ps-plus/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2021/09/Metro-Redux-Screenshot.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Metro 2033 Redux and Metro: Last Light Redux Get Free PS5 Upgrades
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: PlayStation 5 Gamers Officially Given Bonus Free Download For October 2026, No PS Plus Needed</div>
+      
+      
+      <div class="summary">PlayStation 5 owners have another reason to revisit their game libraries this October as not one, but two familiar post-apocalyptic shooters are getting free next-gen upgrades, giving players a chance to return to the underground tunnels of Moscow wi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-the-mosquito-bowl-movie-rotten-tomatoes-score-records/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/bill-skarsga-rd-as-bob-bauman-in-the-mosquito-bowl.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's The Mosquito Bowl Debuts with Low Rotten Tomatoes Scores
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's New Bestselling World War II Adaptation Sets Multiple Rotten Tomatoes Records</div>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.Netflix's brand-new war film The Mosquito Bowl just set some shocking records on Rotten Tomatoes.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2302246/astronomers-make-discovery-mega-earth/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/astronomers-just-made-a-huge-discovery-about-these-distant-mega-earths/intro-1793370367.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Astronomers Find Mega-Earths May Be Less Massive Than Thought
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Astronomers Just Made A Huge Discovery About These Distant 'Mega-Earths'</div>
+      
+      
+      <div class="summary">Astronomers Just Made A Huge Discovery About These Distant 'Mega-Earths' Getty Images/Getty Images Two astronomers at McGill University say that a handful of the heaviest rocky planets we know about might not be nearly as heavy as astronomers thought&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dragon-ball-villains-stronger-than-goku-black-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/6751539.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Dragon Ball Villains Stronger Than Goku Black
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Goku Black is a unique villain in Dragon Ball. He's from a different timeline where Zamasu makes a wish to essentially steal Goku's body, mixing Zamasu's divine nature with Goku's incredible abilities.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/disney-princess-and-the-frog-special-original-cast-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/03/princess-and-the-frog.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 30 Oct 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Disney Officially Confirms New Princess & The Frog Release With Original Cast Returning
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The beloved world and characters from The Princess and the Frog are returning nearly 17 years later. Often regarded as one of the best Disney animated movies, The Princess and the Frog has continued to captivate viewers since it was released on Decem&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <span class="current">14</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/15.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>
