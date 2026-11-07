@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-07 14:04 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>130 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.cbr.com/stardew-valley-meets-diablo-emberville-rpg/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/11/what-s-new-in-stardew-valley-s-sneaky-1-6-9-update.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Emberville: New Dark Fantasy RPG Blending Stardew Valley and Diablo Releases January 7
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Stardew Valley Meets Diablo in New Dark Fantasy RPG Coming January 7</div>
+      
+      
+      <div class="summary">Cygnus Cross is releasing a new dark fantasy role-playing game (RPG) on January 7, 2027, called Emberville. Emberville features a 2D pixel art style that gives it the feeling of older, classic games from the Super Nintendo Entertainment System (SNES)&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/stephen-king-1408-sequel-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/10/john-cusack-in-1408-looking-at-a-noose.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stephen King's 1408 Is Officially Getting a Sequel, Finally Revealing Which Ending Is Canon
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Nearly two decades ago, John Cusack and Samuel L. Jackson starred in 1408, the supernatural horror flick based on a Stephen King story. Cusack and Jackson are now set to reunite for a sequel to the film, which will finally answer a lingering question&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/pokemon-misses-out-tv-tokyo-fy2027-top-spot/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/ash-and-pikachu-from-the-pokemon-anime-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Officially Fails to Crack the Top 3 in New 2026 Global Anime Ranking
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pokémon holds the record for being the highest-earning anime franchise ever. However, the title was unable to rank in the top three in the latest financial earnings report of Japanese broadcaster TV Tokyo.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2296756/spotify-subscription-cost-2016-vs-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-much-did-a-spotify-subscription-cost-in-2016-vs-2026/l-intro-1793021856.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Much Did A Spotify Subscription Cost In 2016 Vs. 2026?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How Much Did A Spotify Subscription Cost In 2016 Vs. 2026? em113/Shutterstock Spotify is arguably the biggest music streaming service globally. It was launched in 2008 in select markets and took nearly three years to reach the United States.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/video/wild-horse-nine-parker-posey-steve-buscemi-on-90s-films/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/parker-posey-steve-buscemi.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wild Horse Nine: Parker Posey & Steve Buscemi on '90s Films
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Parker Posey and Steve Buscemi revisit the golden age of '90s indie cinema while discussing their new movie, Wild Horse Nine.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/masterpiece-anime-better-than-code-geass/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/lelouch-plays-chess-in-code-geass-season-1-episode-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Masterpiece Anime Better Than Code Geass
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Code Geass remains one of the greatest anime of the 2000s because of its fantastic protagonist, unexpected twists, and mind-blowing ending. Lelouch Lamperouge's intelligence and his battle with the Holy Britannian Empire make him one of the most intr&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/three-reasons-for-revenge-dervla-mctiernan-tv-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/three-reasons-for-revenge-dervla-mctiernan-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dervla McTiernan's 'Three Reasons for Revenge' Heads to TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘What Happened to Nina?’ Author’s #1 Bestseller Officially Heads to TV</div>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.The streaming era has paved the way for a much wider selection of books to reach the screen, whether as films or tele&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/sword-art-online-creator-new-series-devils-crest/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/kirito-and-asuna-from-sword-art-online-in-front-of-the-capsules-in-the-devils-crest-opening.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sword Art Online Creator Reki Kawahara Returns With New Survival Anime Devils' Crest
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Sword Art Online Creator Returns With New Survival Series That's The Complete Opposite Of His Biggest Hit</div>
+      
+      
+      <div class="summary">Although not without its critics, few anime series have managed to exert as much influence on the medium and the isekai genre as Sword Art Online.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/godzilla-versions-eras-differences-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2023/09/the-different-godzillas.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 11 Versions Of Godzilla (& How They're All Different)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It has been 72 years since the iconic character of Godzilla was created. In that time, there have been several iterations of the monster, too - and many of them differ from each other in more ways than one.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/godzilla-minus-zero-box-office/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/movie-web-sandbox-2026-11-04t223723-777.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Godzilla Minus Zero Stomps Past Highest-Rated Movie at Box Office
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New 135-Minute Sci-Fi Thriller Officially Stomps Past the Highest-Rated Movie in History at the Box Office</div>
+      
+      
+      <div class="summary">For three weeks, the most unlikely hit in recent memory has been running the table in North America. You Can See Everything, the Nathan Fielder and Lance Oppenheim documentary about Elizabeth Holmes, became the highest-rated feature film in Letterbox&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/harry-potter-movies-pansy-parkinson-recast-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/11/pansy-parkinson-was-recast-4-times-in-the-harry-potter-movies.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why Pansy Parkinson Was Recast 4 Times in the Harry Potter Movies
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Harry Potter world is rich, complex, and full of many original characters that impact Harry's journey in one way or another.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/10-times-superman-went-too-far-in-dc-comics/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/superman-flies-in-front-of-the-justice-league-in-dc-s-new-52-comics.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Times Superman Went Too Far in DC Comics
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Superman is widely regarded as the moral centre of the DC Universe, standing for truth, justice, and the protection of those unable to defend themselves.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2304112/keys-building-quiet-pc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-keys-to-building-a-quiet-pc/l-intro-1793302053.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Keys To Building A Quiet PC
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Keys To Building A Quiet PC Daryadanik/Getty Images We may receive a commission on purchases made from links. One of the most irritating things about using a PC can be the loud noises it makes.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/arcane-netflix-best-fantasy-series-peak-animation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/arcane-season-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Arcane: All 18 Episodes Deliver Peak Animation on Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: All 18 Episodes Of Netflix's Best Fantasy Series Deliver Peak Animation</div>
+      
+      
+      <div class="summary">Netflix has asserted itself as a serious competitor across a variety of genres, but their best fantasy series stands out for a number of reasons. Fantasy is a genre that is particularly challenging to get right.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/godzilla-minus-zeros-team-explores-the-movies-monsters-and-new-journeys" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/godzilla_minus_zero_review_blQXktI.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Godzilla Minus Zero's Team Explores The Movie's Monsters and New Journeys
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Toho hit Oscar gold three years ago with Godzilla Minus One, Takashi Yamazaki's poignant drama that also features the King of the Monsters himself.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/prime-video-shows-binge-november-7-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/04/elizabeth-olsen-and-kelly-marie-tran-in-sorry-for-your-loss.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Elite Prime Video Series to Binge This Weekend (Nov 7-8)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's been a strong year for Prime Video, packed with some of the most must-see new and returning shows.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/brandon-sanderson-anne-mccaffrey-dragonriders-of-pern/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/02/brandon-sanderson.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brandon Sanderson Says Dragonriders of Pern Got Him Into Fantasy
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brandon Sanderson Shares The Series That Got Him Into Fantasy</div>
+      
+      
+      <div class="summary">Bestselling author Brandon Sanderson started his journey with another fantasy icon's book series. Few modern fantasy writers have been as successful as Brandon Sanderson.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-games-ranked-metacritic-scores/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/grand-theft-auto-5-gta-key-art.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every GTA Game, Ranked by Metacritic Score
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It’s almost time. After more than a decade since Grand Theft Auto 5 was released, GTA 6 is mere days away from launching on PlayStation 5 and Xbox Series X. To mark the auspicious occasion, we’re looking back on the critical legacy of the Grand Theft&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2303294/hardest-subscription-to-cancel-not-gym-membership/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/these-are-the-hardest-subscriptions-to-cancel-other-than-gym-memberships/l-intro-1793468358.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            These Are The Hardest Subscriptions To Cancel (Other Than Gym Memberships)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">These Are The Hardest Subscriptions To Cancel (Other Than Gym Memberships) Kmpzzz/Shutterstock We may receive a commission on purchases made from links. The modern world runs on subscriptions.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/trigun-manuscript-novel-release-winter-vash-stampede/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/04/trigun-stampede-tv-poster.jpg?q=70&fit=contain&w=480&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Trigun Returns with New Novel 'Trigun Manuscript'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Legendary 31-Year-Old Space Western Officially Returns With New Release</div>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/zombie-movie-wrestling-legends-prison.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2014/01/Pro-Wrestlers-vs-Zombies.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pro Wrestlers vs. Zombies Traps Wrestling Legends in Prison
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Zombie Movie That Traps Wrestling Legends In A Prison From Hell</div>
+      
+      
+      <div class="summary">By Nick Venable | Published 11 seconds ago Here at GFR, we have seen all manner of fictional characters facing off against zombies. We’ve seen rock bands fighting them. We’ve seen Dolph Lundgren fighting them. And we’ve even seen the world’s biggest &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/rings-of-power-elrond-broter-elros-aragorn-connection-role-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-lord-of-the-rings-the-rings-of-power_uulzkt-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Elros Explained: Aragorn's Ancestor And His Rings Of Power Season 3 Role
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Lord of the Rings: The Rings of Power season 3 is preparing to introduce the character of Elros in the flesh. This is a character of great significance in Tolkien's legendarium, though the upcoming installment in the Prime Video fantasy series wi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/mass-effect-5-petition-canadian-government-rescue/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/mass-effect-characters.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mass Effect 5 Officially Has A Small Shot At Life
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Mass Effect fans have been given the slightest sliver of hope that the series may not be well and truly dead. Just a few weeks ago, Mass Effect developer BioWare was shut down by parent company Electronic Arts (EA).</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-one-shot-take-action-movie-sequences-all-time/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/03/chow-yun-fat-as-tequila-pointing-a-gun-and-holding-a-baby-in-hard-boiled.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Greatest One-Shot Action Movie Sequences Of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Filmmaking is an art form, and directors use countless tools and techniques to make scenes more exciting. It goes without saying that some powerful movie moments don't need stylish camera work or editing flair to work.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/12-12-12-stream-apple-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/apple-tv-12-12-12-heist-thriller-streaming.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV's Heist Thriller '12 12 12' Drops in One Week
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Before 'Heat 2,' Apple TV's New 8-Part Heist Thriller Drops on Streaming in Just One Week</div>
+      
+      
+      <div class="summary">Michael Mann's Heat is finally getting a sequel! But who cares? Because that movie is still years away. In the meantime, Apple TV is about to drop the perfect Heat 2 replacement, and it's just over a week away.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/scrubs-jd-elliot-bad-match/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/movieweb-featured-image-template-2026-11-06t123548-016.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Biggest 'Scrubs' Moments That Prove JD & Elliot Were Always a Bad Match
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! Spoilers ahead for the Scrubs revival Season 2, Episode 7, "My Story."JD (Zach Braff) and Elliot (Sarah Chalke) were always framed as the will-they-won't-they couple in Scrubs, upholding a sitcom tradition that was already decades old by the&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/planet-of-the-apes-sci-fi-reboot-best-movie-saga/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/woody-harrelson-in-glasses-behind-bars-in-war-for-the-planet-of-the-apes.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Planet of the Apes Reboots: A Modern Sci-Fi Masterpiece
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Planet of the Apes Is the Greatest Movie Saga of All Time</div>
+      
+      
+      <div class="summary">The modern reboot movies of the Planet of the Apes franchise are now available to stream on HBO Max, giving you the chance to watch one of the greatest sci-fi movie sagas in cinema history.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-forgotten-90s-kids-series-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/two-brothers-ride-a-bike-at-night-while-looking-scared-in-eerie-indiana.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 '90s Kids Shows Nobody Remembers
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">From TGIF to Saturday morning cartoons, the ‘90s offered some of the best kids’ television, including Batman: The Animated Series, Mighty Morphin Power Rangers, Full House, and DuckTales.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/video/i-play-rocky-anthony-ippolito-on-becoming-stallone/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/anthony-ippolito.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            I Play Rocky: Anthony Ippolito on Becoming Stallone
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anthony Ippolito reveals how he approached playing a young Sylvester Stallone in I Play Rocky, focusing on the man before he became a Hollywood legend.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-video-game-remakes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/legend-of-zelda-ocarina-of-time-remake.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 11 Best Video Game Remakes of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The act of remixing and remaking a previously beloved work of art has been pervasive in all different mediums and forms of entertainment, yet there are distinct elements of video games as a medium that make their respective remakes different from oth&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <span class="current">6</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/7.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

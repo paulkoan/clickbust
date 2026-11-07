@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-07 14:04 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>130 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://movieweb.com/greatest-kung-fu-stars-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/05/jackie-chan-in-the-fearless-hyena-1979.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Greatest Kung Fu Movie Stars, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Kung fu cinema has many icons. Bruce Lee, Jackie Chan, and Donnie Yen brought the genre into the spotlight, especially for American audiences. Studios like Shaw Brothers and Golden Harvest built their action legacy by saving the best final fights in &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/video/rings-of-power-s3-what-the-5-year-jump-changes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/robert-aramayo-cynthia-addai-robinson-daniel-weyman.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rings of Power S3: What the 5-Year Jump Changes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Rings of Power Season 3 changes everything for Elrond, Queen Míriel, and Gandalf after a five-year time jump.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/antimemetics-division-author-confirms-sequel-fate/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/there-is-no-antimemetics-division-by-qntm-book-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Antimemetics Division Author Officially Reveals the Future of the Franchise After Book 1
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Finally getting the recognition it deserves in science fiction, There Is No Antimemetics Division is one of the most popular books in the niche sub-genre of cosmic horror at the moment.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/all-of-us-are-dead-season-2-release-year-netflix-lee-jq/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/all-of-us-are-dead-netflix-k-drama-s1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All of Us Are Dead Season 2 Returning in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's Long-Delayed Zombie Hit Is Seemingly Returning In 2027</div>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.Netflix's long-awaited zombie hit is finally nearing its return after nearly five years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-under-siege-8-part-true-story-hostage-crisis-1985-watch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/under-siege-netflix-series.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Under Siege: Netflix’s New 8-Part Thriller Revisits The 1985 Hostage Crisis
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix's new 8-part thriller revisits a real hostage crisis on the 41st anniversary of the devastating events & is a must-binge series this weekend.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-end-of-oak-street-hbo-max-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/movieweb-featured-image-template-2026-08-15t101841-329.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Anne Hathaway's 'The End of Oak Street' Officially Confirms Streaming Release Date
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anne Hathaway seemed to be everywhere on film in 2026. The Academy Award-winning actress headlined some of the year's biggest titles, including The Odyssey and The Devil Wears Prada 2. Her latest movie, Verity, opened at number 1 on its opening weeke&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2305620/godzilla-king-ghidorah-versions-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/godzilla-every-version-of-king-ghidorah-ranked-including-minus-zero/l-intro-1793902715.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Godzilla: Every Version Of King Ghidorah, Ranked (Including Minus Zero)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Godzilla: Every Version Of King Ghidorah, Ranked (Including Minus Zero) Static Media Contains spoilers for "Godzilla Minus Zero" No other monster has faced off against and challenged Godzilla more times than King Ghidorah.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2305974/james-bond-daniel-craig-sci-fi-horror-movie-the-invasion/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/after-james-bond-daniel-craig-starred-in-a-sci-fi-horror-movie-about-an-alien-invasion/intro-1793740552.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Invasion: Daniel Craig's Sci-Fi Horror Movie About Alien Invasion
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: After James Bond, Daniel Craig Starred In A Sci-Fi Horror Movie About An Alien Invasion</div>
+      
+      
+      <div class="summary">After James Bond, Daniel Craig Starred In A Sci-Fi Horror Movie About An Alien Invasion Warner Bros. Pictures Daniel Craig is no stranger to alien invasion movies, but his haven't exactly set the world on fire. "Cowboys vs.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-the-original-series-most-forgettable-episode-mark-of-gideon/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/kirk-with-an-alien-on-the-enterprise-in-star-trek.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: The Original Series' Most Forgettable Episode Is The Worst Of Kirk's Era
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The first season of Star Trek: The Original Series gave the world classics such as "The Enemy Within," "Arena," and "Space Seed," and season 2 continued that hot streak thanks to the likes of "Amok Time" and "The Trouble with Tribbles.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/video/the-cat-in-the-hat-3-art-styles-created-a-huge-problem-set-stories/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/collider-set-stories-cat-in-the-hat-02.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Cat in the Hat: 3 Art Styles Created a Huge Problem | Set Stories
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Bill Hader, Quinta Brunson, Giancarlo Esposito, Xochitl Gomez, America Ferrera, and Tiago Martinez take us behind the scenes of The Cat in the Hat (2026), revealing the creative freedom, unexpected voice techniques, and personal connections that help&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dragon-ball-villains-stronger-than-super-saiyan-2-gohan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/02/31-years-later-this-dragon-ball-z-scene-is-still-the-greatest-moment-in-the-series.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Dragon Ball Villains Stronger Than Super Saiyan 2 Gohan
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Super Saiyan 2 Gohan was once considered the strongest hero in Dragon Ball Z. His transformation during the Cell Games gave him enough strength to defeat Perfect Cell, who had previously defeated everyone who stood against him.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/black-doves-season-2-spy-thriller-netflix-streaming-success-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/keira-knightley-in-black-doves.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Black Doves Season 2: Keira Knightley's Netflix Spy Thriller Takes Over the World After 1 Day
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: After Just 1 Day, Netflix's 2-Part Keira Knightley Spy Thriller Is Taking Over the World</div>
+      
+      
+      <div class="summary">Season 2 of Keira Knightley's Netflix spy thriller Black Doves debuted on Nov. 5, and in just one day, the show has become a streaming hit. All six episodes of the season dropped at once, allowing viewers to binge the entire season. Currently, Black &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/todays-wordle-hints-answer-november-6-2026-puzzle-1966/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/image-psd-5.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Today's Wordle Hints & Answer - November 6, 2026 (Puzzle #1966)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some Wordle puzzles are not concerned with hiding its overall pattern, but are rather satisfied with making players mess up on one part over and over again. Today's game takes this approach, giving players easy clues, but a final answer that is outsi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/clint-eastwood-american-sniper-netflix-new-streaming-home/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/mcdamsn_ec018.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Removes Clint Eastwood's American Sniper
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Officially Removes Clint Eastwood’s R-Rated War Thriller</div>
+      
+      
+      <div class="summary">While Clint Eastwood is often associated with the Dirty Harry franchise and Westerns such as The Good, The Bad and The Ugly, The Outlaw Josey Wales, and Unforgiven, as a director, he's frequently explored stories of war.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-penelope-cruz-movies/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/penelope-cruz-dancing-with-soldiers-in-la-bola-negra.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Penélope Cruz Movies Of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Penélope Cruz can arrive halfway through a movie and make you forget who the lead is. Just watch Vicky Cristina Barcelona. The movie is ticking along quite nicely until Cruz appears as María Elena and turns a pleasantly steamy romantic comedy into an&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/zelda-ocarina-of-time-first-time-newcomers/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/the-legend-of-zelda-ocarina-of-time-deku-tree.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Playing Ocarina of Time for the First Time in 2026 Feels Like Living a Fairy Tale
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It shouldn’t be possible to feel nostalgic for a memory that isn’t yours. But playing Nintendo’s remake of The Legend of Zelda: The Ocarina of Time for the first time in 2026 feels like remembering a long-forgotten childhood adventure.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-far-side-comics-about-hell/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/far-side-wide-eyed-man-against-a-backdrop-of-flames.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Far Side Comics About Hell That Prove Gary Larson Had a Twisted Sense of Humor
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ask Gary Larson, and he'd tell you it was definitely better to "laugh with the sinners than cry with the saints," in the immortal words of Billy Joel. And we suspect Larson would probably pick "reign[ing] in hell" over "serv[ing] in heaven," to parap&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-rings-of-power-season-3-gandalf-sauron-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/the-lord-of-the-rings-the-rings-of-power-season-3-gandalf.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Rings of Power Finally Contrasts Gandalf and Sauron’s Power In Season 3
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Gandalf is no longer a stranger to himself in The Lord of the Rings: The Rings of Power Season 3. Following two seasons traveling with Harfoots, being mentored by Tom Bombadil, and uncovering his identity, Gandalf (portrayed by Daniel Weyman in the P&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/essential-crime-books-beginners/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/the-postman-always-rings-twice.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Essential Crime Books for Beginners
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A man walks into a liquor store with a gun. We know what he is. There are also preconceived notions. We think we know who he is as well.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/death-by-lightning-streaming-recommendation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/matthew-mcfadyen-in-death-by-lightning.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Death by Lightning: Netflix's Historical Epic with 90% RT Takes Under 5 Hours to Binge
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s Greatest Historical Epic With 90% on Rotten Tomatoes Takes Less Than 5 Hours to Binge</div>
+      
+      
+      <div class="summary">Netflix knows how to make history feel anything but dusty. Its best historical thrillers turn royal corridors, political rivalries, and forgotten scandals into gripping television, blending grand spectacle with the messy emotions that make the past f&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/x-men-97-rogue-gambit-audiobook-lenore-zann-aj-locascio/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/x-men-97.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            X-Men '97 Stars Narrate 'Rogue x Gambit' Audiobook Releasing 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ’X-Men ‘97’ Stars Officially Return for New 2027 Rogue and Gambit Release</div>
+      
+      
+      <div class="summary">For all the trouble Rogue and Gambit can get into on an X-Men mission, sitting close enough to hold hands is still one of the riskier things they could do. Rogue can take someone’s memories, powers, or even their life with a touch, and Remy has never&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/batman-the-kiiling-joker-batgirl-romance-regretted-by-dc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/michael-keaton-as-batman-with-kim-bassinger.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Years Later, Batman's Worst Romance Is Still Regretted By DC
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">"Romantic" has rarely, if not ever, been a word used to describe the story of Batman. Of course, that is not to say that Bruce Wayne has not had his fair share of experiences with love and with a few different women.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/stuntnuts-matt-damon-action-movie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/chris-hemsworth-extraction-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Chris Hemsworth's Stuntnuts Action-Comedy Includes Matt Damon Cameo
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Chris Hemsworth Officially Joins Forces With Matt Damon in Daring New Action Movie</div>
+      
+      
+      <div class="summary">One of Chris Hemsworth's most unconventional upcoming movies just recruited a major Hollywood icon to its star-studded crew. Hailing from Matthew Vaughn, it was originally positioned as a spin-off of his Kick-Ass universe.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/playstation-game-officially-shut-down-may-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/ps2-with-controller.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ratchet & Clank: Ranger Rumble Will Shut Down May 1, 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: PlayStation Game Will Officially Shut Down May 1, 2027</div>
+      
+      
+      <div class="summary">The PS2 introduced the world to many of the most beloved video game franchises of all time. Jak and Daxter, Sly Cooper, Kingdom Hearts, Devil May Cry, and God of War all began here, and even the modern version of Grand Theft Auto that most fans know &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2309446/fitbit-air-vs-fitbit-edge-which-affordable-tracker-to-buy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/fitbit-air-vs-fitbit-edge-which-affordable-fitness-tracker-should-you-buy/l-intro-1793990165.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fitbit Air Vs. Fitbit Edge: Which Affordable Fitness Tracker Should You Buy?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fitbit Air Vs. Fitbit Edge: Which Affordable Fitness Tracker Should You Buy? For fitness enthusiasts, Google's Fitbit line offers a range of devices to match a user's needs, but choosing the best fit may not always be easy.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-legend-of-tarzan-hbo-max-streaming-success-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/the-legend-of-tarzan-margot-robbie.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Margot Robbie's The Legend of Tarzan Becomes Biggest Streaming Movie in the World
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Margot Robbie's 110-Minute Adventure Epic Becomes Biggest Streaming Movie in the World</div>
+      
+      
+      <div class="summary">Margot Robbie's The Legend of Tarzan has unexpectedly risen to the top of the streaming charts, ten years after its release. The movie just came out on HBO Max in select regions on Nov. 6 and almost instantly became the top film. Per FlixPatrol, The &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/father-joe-al-pacino-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/father-joe-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Father Joe: Al Pacino's Action Thriller from Luc Besson Gets Release Update
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Al Pacino's New Action Thriller From 'Taken' Team Gets Release Update</div>
+      
+      
+      <div class="summary">Luc Besson has spent decades running what amounts to the movie business's most reliable second-act factory.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tim-allen-shifting-gears-season-3-release-date-january-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/08/tcdshge_ab020-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tim Allen’s ‘Shifting Gears’ Officially Confirms 2027 Return Date
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.Tim Allen's return to sitcoms has been marked by a bumpy road, it's certainly fair to say.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/will-trent-season-5-release-date-january-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/wt.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Will Trent’ Officially Sets 2027 Return Date
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-rookie-north-spin-off-release-date-january-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/the-rookie-nolan.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The Rookie: North' Spin-Off Sets 2027 Premiere Date
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ’The Rookie’s Second Spin-Off Officially Sets 2027 Release Date</div>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <span class="current">10</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/11.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

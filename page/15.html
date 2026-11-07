@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-07 14:04 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>130 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.polygon.com/mtg-star-trek-prerelease-guide-limited-draft-sealed-frustrating/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2025/09/captain-kirk-boldly-going.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Magic's Star Trek Already Feels a Lot More Frustrating than Reality Fracture
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A mere six weeks have passed since the release of Reality Fracture, one of the best-received Magic: The Gathering sets in recent years, and players are already primed to enter warp speed with Star Trek.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-shows-binge-weekend-november-7-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/black-doves-andrew-buchan.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Elite Netflix Series to Binge This Weekend (Nov 7-8)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The most-watched show on American Netflix is, once again, a piece of non-fiction, as viewers from across the country explore the life and loss of Friends favorite Matthew Perry.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/tristes-tropiques-trailer-action-thriller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/qq-1.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tristes Tropiques Trailer: Park Hoon-jung's Assassin Thriller Unleashes a Gang of Young Killers Out for Blood
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Goodbye John Wick, New Assassin Action Thriller Trailer Unleashes Gang of Baba Yagas Out for Blood</div>
+      
+      
+      <div class="summary">With Keanu Reeves' hitman icon John Wick now seemingly dead and buried (though he will now officially return for a prequel), it's time to find a new assassin action thriller fix.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dcu-robin-casting-mason-thames-dynamic-duo/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/dick-grayson-robin.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DC's Dynamic Duo Robin Casting Needs to be DCU Canon
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">DC Studios finally found its Robin in the upcoming animated feature film Dynamic Duo, and the casting is so good that James Gunn needs to bring the actor into DCU canon and allow him to play Robin for years to come.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sci-fi-shows-watch-before-apple-tv-neuromancer/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/neuromancer.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Best Sci-Fi Shows to Watch Before Apple TV’s ‘Neuromancer,’ Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There's still nearly three months to go before Neuromancer premieres on Apple TV, but science fiction fans have plenty of other shows to hold them over in the meantime.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-further-mis-adventures-of-cliff-booth-trailer-netflix-brad-pitt/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/02/mcdonup_ec187-cropped.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brad Pitt Returns in The Further Mis-Adventures of Cliff Booth Trailer
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brad Pitt Exposes Hollywood’s Darkest Secrets In The Further Mis-Adventures Of Cliff Booth</div>
+      
+      
+      <div class="summary">Published Nov 6, 2026, 8:21 AM EST Rianna is the Movie News Editor for ScreenRant. After earning her BA in Film Studies, she began her career as an entertainment writer, contributing to several publications before joining ScreenRant.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2308654/what-happened-hunger-games-characters-after-mockingjay/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/what-happened-to-every-major-hunger-games-character-after-mockingjay/l-intro-1793915365.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            What Happened To Every Major Hunger Games Character After Mockingjay?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">What Happened To Every Major Hunger Games Character After Mockingjay? Static Media This article contains discussions of addiction and mental health.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/supergirl-james-gunn-milly-alcock-fix" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000012216.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            James Gunn Is Officially Fixing Milly Alcock's Supergirl
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">DC Studios co-CEO James Gunn is putting in the effort to fix one of DC's most powerful heroines, Supergirl.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/mephisto-new-sinister-six-team-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/mcu-sinister-six.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Officially Announces New Sinister Six Roster with All New Members and Powers
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Officially Announces Major Revamp of Classic Team, All New Members and Powers</div>
+      
+      
+      <div class="summary">Marvel just announced that the demonic Mephisto has assembled his own Sinister Six roster, unleashing them against the Avengers in upcoming issues of the newly launched Avengers Volume 10.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/x-men-new-dazzler-costume/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/rogue-leans-on-a-pinball-machine-in-x-men-art-by-alexander-lozano.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dazzler's New Costume Modernizes Her 45-Year-Old Design
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: X-Men Hero’s New Costume Modernizes A 45-Year-Old Design</div>
+      
+      
+      <div class="summary">Marvel finally designs the perfect modern take on one X-Men hero's most iconic costume. Despite being so perfectly designed from the beginning, the X-Men have received several inspired redesigns throughout the decades.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/greys-anatomy-season-23-richard-webber-chief-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/james-wolk-as-seth-norton-in-grey-s-anatomy-season-23.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Grey's Anatomy Paves Way for Richard Webber's Return as Chief
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ABC Paves The Way For Grey’s Anatomy’s Forgotten Best Chief’s Return To Power</div>
+      
+      
+      <div class="summary">Warning! SPOILERS ahead for Grey’s Anatomy season 23, episode 4.Grey Sloan Memorial Hospital has had its fair share of chiefs of surgery, but its best one may finally return thanks to one development in Grey’s Anatomy season 23, episode 4.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/yakuza-best-spinoff-like-a-dragon-gaiden/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/24858610/adventure_slide2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Now Is the Perfect Time to Play Like a Dragon Gaiden: The Man Who Erased His Name
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Right Now Is the Perfect Time to Play the Quietly Best Yakuza Spinoff</div>
+      
+      
+      <div class="summary">When Like a Dragon Gaiden: The Man Who Erased His Name was released in 2023, the Yakuza series was in a strange position. The team at Sega's Ryu Ga Gotoku Studio was gearing up to give a heroic sendoff to longtime protagonist Kazuma Kiryu.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/inde-navarrette-saturday-night-live-ratings-season-record/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/obsession-2025.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Inde Navarrette Breaks SNL Viewership Records After 'Obsession'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ’Obsession’s Breakout Star Is Officially Breaking Records Again</div>
+      
+      
+      <div class="summary">There are few names that had a bigger breakout year in 2026 than Inde Navarrette. From being relatively unknown last year to one of the hottest names in Hollywood right now, Navarrette's rise to the top has been quick and justified.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/dexter-resurrection-season-2-episode-2-michael-c-hall-brian-cox-cast-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/dexter-resurrection-s2-e1-whole-cast-site.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Dexter: Resurrection’s Michael C. Hall Teases a Dark New Twist to Dexter’s Formula
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor’s Note: The following contains spoilers for Dexter: Resurrection Season 2, Episode 2 Summary In an interview with Collider, Michael C. Hall reveals that Dexter questions his legacy and craves recognition, making Charley's dangerous offer espec&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/zelda-totk-secrets-of-the-zonai-delay-march-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/the-legend-of-zelda-tears-of-the-kingdom-secrets-of-the-zonai-hero-edition.jpg?q=49&fit=crop&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Legend of Zelda: Tears of the Kingdom – Secrets of the Zonai Book Delayed to March 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New Legend of Zelda Release Delayed Until March 2027</div>
+      
+      
+      <div class="summary">Nintendo's remake of Ocarina of Time is finally here, but another The Legend of Zelda release has been delayed to 2027.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-3-body-problem-genre-season-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/jack-rooney-john-bradley-looks-at-a-headset-in-shock-in-netflix-s-3-body-problem.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Is Changing 3 Body Problem's Genre in Season 2
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some huge changes are being made to 3 Body Problem in the sci-fi series' upcoming second season on Netflix. Based on Liu Cixin's 2008 novel The Three-Body Problem and adapted for the screen by David Benioff, D.B.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/rock-em-sock-em-robots-reboot-release-date-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/img_4128.WEBP?q=70&fit=crop&w=750&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rock 'Em Sock 'Em Robots Graphic Novel 'We're Gonna Need a Bigger Bot' Coming August 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Classic 1960s Toy Finally Makes Rebooted Return For A Modern Era</div>
+      
+      
+      <div class="summary">Nostalgia can be an incredible tool to spark enthusiasm for a particular franchise, and it is not uncommon for decades-old characters and stories to receive reboots that allow newer generations to appreciate them. From the Easy-Bake Oven to Barbie, n&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/brandon-sanderson-stormlight-herald-announced/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/stormlight-war-for-roshar-surgebinder-image.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brandon Sanderson's Stormlight: Herald Pledge Tier Now Available
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brandon Sanderson's Stormlight: Herald Officially Releases November 2027</div>
+      
+      
+      <div class="summary">Fans have been waiting patiently for the return of Brandon Sanderson's The Stormlight Archive, but the wait for the next chapter of Roshar's story is finally starting to inch its way closer.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/godzilla-minus-zero-final-trailer/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/04/godzilla-in-water-in-godzilla-minus-zero.jpg?q=49&fit=crop&w=100&h=67&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Godzilla Minus Zero Final Trailer Released on Day of Debut
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: On Day of Release, Record-Breaking Sci-Fi Thriller Hailed as One of the Year's Best Gets Final Trailer</div>
+      
+      
+      <div class="summary">Published Nov 6, 2026, 7:55 AM EST Manuel Demegillo is a writer at MovieWeb with recent experience at CBR, covering movie and TV news. A fan-first critic of sitcoms and serialized shows, he's old enough to have seen some of his favorites transition f&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2300032/can-you-move-video-doorbell-new-home/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/you-can-move-your-video-doorbell-to-a-new-home-heres-how/l-intro-1793209441.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            You Can Move Your Video Doorbell To A New Home - Here's How
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">You Can Move Your Video Doorbell To A New Home - Here's How voronaman/Shutterstock If you're planning to move to a new home, it's a good idea to bring your previously installed video doorbell with you. As a homeowner, there are many perks of installi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/fantasy-books-even-better-than-harry-potter/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/harry-potter-and-the-sorcerers-stone-daniel-radcliffe-1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Fantasy Books Better Than Harry Potter
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Harry Potter showed us how magical it feels to grow up alongside characters you love. These six books capture different parts of that experience, from discovering worlds you never knew existed to facing dangers that change who you are. And the worlds&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/twilight-midnight-sun-animated-series-two-seasons/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/edward-cullen-twilight.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix’s Animated Twilight Adaptation Confirmed for Two Seasons
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Love it or hate it, you've probably encountered the Twilight series at some point in your life. And the popularity of the vampire romantic drama is not over yet: Netflix is taking Midnight Sun, a 2020 novel that retells Twilight from Edward Cullen's &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-crime-thriller-opening-scenes-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/pulp-fiction-tim-roth.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 8 Greatest Crime Thriller Opening Scenes, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">You only get one chance to make a good first impression, and it's particularly true in crime thriller cinema. The opening scene of any film allows it to establish the stakes, story, and setting, but it is also an opportunity to completely shatter or &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/homeland-streaming-success-itunes-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/slow-horses-season-6-finale-jack-lowden.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Homeland' Returns to Streaming: 8-Part Spy Thriller Resurrected
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget ‘Slow Horses’, an 8-Part Spy Thriller Is Officially Being Resurrected on Streaming</div>
+      
+      
+      <div class="summary">A host of new spy-thriller shows have been dominating the streaming charts in recent years, with some of them emerging as critically acclaimed gems. Apple TV has found a platform-defining hit in Slow Horses, which recently concluded its sixth season &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/game-of-thrones-jon-snow-greatest-fantasy-quote-song-of-ice-fire/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/kit-harington-as-jon-snow-in-game-of-thrones.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jon Snow's 'Different Roads Sometimes Lead to the Same Castle' Quote from Game of Thrones
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jon Snow's Wisest Game of Thrones Quote Is Still the Greatest in Fantasy History</div>
+      
+      
+      <div class="summary">Jon Snow may not be as clever as Tyrion Lannister or as strategic as Robb Stark, but he may have an acute wisdom that many of the other characters in A Song of Ice and Fire lack. George R.R.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/zelda-ocarina-of-time-remake-setting-change-jump/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/ocarina-of-time-hyrule-field.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zelda: Ocarina Of Time Remake Players Need To Change This Setting Before Doing Anything Else
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fiddling around in a settings menu isn't necessarily what comes to mind first when thinking about The Legend of Zelda: Ocarina of Time, but when it comes to the remake, long-time Nintendo fans might benefit from giving it a go.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/solo-leveling-season-3-release-crunchyroll-streaming-service-anime-dragon-ball-vermilion-mask" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000012215.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Solo Leveling Season 3' Won't Release On Crunchyroll's Streaming Service Until After The Debut Of 9 Anime Like Dragon Ball Super: Beerus and The Vermilion Mask
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Solo Leveling Season 3 is in a holding pattern, while a variety of other anime are debuting or are actively being released on Crunchyroll's streaming service. Solo Leveling, based on Chugong's South Korean web novel, was first slated for 2023 but got&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/crime-shows-like-the-sopranos/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/sopranos-james-gandolfini-pilot.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Crime Shows That Are Perfect Replacements for 'The Sopranos'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Sopranos is the most influential and groundbreaking television show of all time, and there are not many popular culture pundits who would disagree with that.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/walking-dead-aftermath-glenn-maggie-reunion/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/twd-dbd-glenn-maggie.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Glenn and Maggie Reunite in The Walking Dead: Aftermath Game
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Walking Dead Officially Reunites Glenn And Maggie In Aftermath</div>
+      
+      
+      <div class="summary">Glenn and Maggie managed to find love and keep their romance alive through a literal apocalypse, cementing their relationship as an all-time fan favorite in The Walking Dead canon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2308657/best-tv-shows-watch-after-off-campus-prime-video/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-best-tv-shows-to-watch-after-prime-videos-off-campus/l-intro-1793917215.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Best TV Shows To Watch After Prime Video's Off Campus
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Best TV Shows To Watch After Prime Video's Off Campus Sabrina Lantos/HBO Max Amazon Prime Video's hockey drama "Off Campus" is yet another popular addition to the streamer's growing young adult lineup.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <span class="current">15</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/16.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

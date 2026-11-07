@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-07 14:04 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>130 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/books-longest-record-bestseller-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/inaki-del-olmo-nijueqw0rkg-unsplash.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Books That Spent Longest On The Bestseller List
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While the New York Times bestseller list is easy to reference, finding out which (fiction) novels hold the record for longest on it is less simple than you may expect.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/superman-the-animated-series-episodes-watch-before-man-of-tomorrow/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/david-corenswet-as-clark-kent-in-superman-2025.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Superman: The Animated Series Episodes To Watch Before Man Of Tomorrow
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After the success of 2025's Superman, Man of Tomorrow will be an especially big release for the DCU, which continues to divide fans.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/avatar-seven-havens-season-2-time-jump" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/avatar-seven-havans-season-2-theory.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avatar: Seven Havens Creators Officially Respond to Major Season 2 Time Jump Theory
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Following the finale of Avatar: Seven Havens Book 1, fans have been wondering whether the next season might include a time jump that ages up the twin Avatars, Pavi and Nisha.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/clay-movie-disney-animation-style-2028/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/disney-animation-clay-movie.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Disney's 'Clay' Will Feature a New Claymation-Inspired CG Art Style
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney Is Officially Changing Its Award-Winning Animation Formula for Upcoming Movie</div>
+      
+      
+      <div class="summary">Disney has spent generations establishing an animation style that audiences can recognize before a character even says a word. That history also makes every departure interesting, especially when a new movie offers the studio an opportunity to experi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/idris-elba-exiles-mi6-spy-series-may-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/mollys-game-idris-elba.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Collider Quiz: Which Action Hero Is Your Perfect Partner?
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Idris Elba’s New MI6 Spy Series Officially Arrives in 2027</div>
+      
+      
+      <div class="summary">00:10Live Five channelsOne partner Collider · Action Heroes Which Action Hero Would BeYour Perfect Partner? Ten questions · five legends · one partner Five legends.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/fantasy-books-with-greatest-worlds-ever-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/11/lord-of-the-rings-roleplaying-cover.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Fantasy Books With the Greatest Worlds
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The fantasy genre has the magical power of transporting readers to dense, exotic worlds. That is why the genre remains the ultimate form of escapism for fans worldwide.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2306385/john-wayne-box-office-flops-everyone-watch-once/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/5-john-wayne-box-office-flops-that-every-fan-has-to-watch-at-least-once/l-intro-1793801227.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 John Wayne Box Office Flops That Every Fan Has To Watch At Least Once
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 John Wayne Box Office Flops That Every Fan Has To Watch At Least Once Universal Throughout his career, John Wayne appeared in more than 150 films — and by the law of averages, some of them didn't turn out quite as well as the others.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2303670/how-long-anker-soundcore-speakers-last-full-charge/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-long-do-anker-soundcore-speakers-last-on-a-full-charge/l-intro-1793625402.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Long Do Anker Soundcore Speakers Last On A Full Charge?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How Long Do Anker Soundcore Speakers Last On A Full Charge? Anker Soundcore is easily one of the top Bluetooth speaker brands buyers turn to for both indoor and outdoor listening.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/avengers-doomsday-tony-stark-doctor-doom-variant-theory-debunked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/doctor-doom-standing-in-front-of-sentinels-in-avengers-doomsday.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            One Of The Biggest Theories About RDJ's Doctor Doom Was Debunked 7 Years Before Avengers: Doomsday
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A highly popular theory regarding Robert Downey Jr.’s Doctor Doom in Avengers: Doomsday appears to have been debunked over seven years ago.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/nobody-wants-this-season-4-renewal/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/nobody-wants-this.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Renews 'Nobody Wants This' for Season 4
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Fate of 'Nobody Wants This' Confirmed by Netflix After 3 Seasons</div>
+      
+      
+      <div class="summary">Published Nov 6, 2026, 12:16 PM EST Marcos Melendez is an entertainment journalist who has been active since 2017. His past work can be read on Collider, Escapist, ScreenRant, CBR, and Full Circle Cinema. He is currently a News Editor for MovieWeb.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-complete-action-anime-21st-century/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/02/mixcollage-02-feb-2025-01-55-am-3369.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Complete Action Anime of the 21st Century
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The action anime genre encompasses some of the best anime of all time, many of which possess titles that can be recognized even by people who do not usually watch anime.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/disney-plus-marvel-sci-fi-series-masterpiece-wandavision/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/wanda-80s.jpg?q=49&fit=contain&w=2800&h=1575&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'WandaVision' Takes Less Than 6 Hours to Binge on Disney+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney+’s 9-Episode Sci-Fi Masterpiece Takes Less Than 6 Hours To Binge</div>
+      
+      
+      <div class="summary">Disney’s marriage with Marvel had a monumental effect on streaming and ultimately led to one of the most masterful contributions to the superhero brand. In 2021, Marvel dipped a toe in the television pool, which led to a sci-fi masterpiece that has n&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/long-island-bank-robber-thriller-taylor-kitsch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/09/tcdteli_zu032.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Kitsch to Star in Real-Life Heist Thriller 'The Long Island Bank Robber'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'The Terminal List' Star Taylor Kitsch Breaks Bad in New Real-Life Heist Thriller</div>
+      
+      
+      <div class="summary">One of The Terminal List's biggest stars is about to take on a different kind of role. The actor will star in an upcoming movie inspired by the downfall of a once-successful Wall Street trader whose life completely unraveled after he lost his job.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/best-steampunk-sci-fi-ranked.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2026/11/LIST-Steampunk-5.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 14 Best Steampunk Sci-Fi's Of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Airships, wild inventions, clockwork gears, and steam-powered technology: we rank the 14 best steampunk sci-fi movies and shows. By Jonathan Klotz | Published 17 seconds ago Science fiction often involves looking into the future.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/godzilla-movie-series-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/godzilla-minus-zero-2026-poster-crop-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Godzilla Movie, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are so many Godzilla movies at this stage, and if you're a fan of the series and know that the exact number is 39, and that’s come up in conversation (somehow… you'll find a way, probably), then you’ve probably surprised someone by telling them&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/its-almost-singing-how-godzilla-minus-zero-brought-king-ghidorah-to-life-like-never-before/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/mcdgomi_ec019.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Godzilla Minus Zero' Officially Fixes King Ghidorah Canon in 1 Brilliant Way
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Godzilla Minus One was a primordial blast of pure kaiju energy, calling back to the 1954 original while pushing the limits of storytelling and special effects in the monster movie genre.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/godzilla-minus-zero-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/godzilla-minus-zero-kaiju.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Godzilla Minus Zero Review: An Epic Sci-Fi War Thriller
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New "Terminator 2 Meets Oppenheimer" Sci-Fi War Thriller Is the Most Epic Movie of 2026 | Review</div>
+      
+      
+      <div class="summary">Godzilla Minus One broke new ground for the longest-running movie franchise in history. Now, Godzilla Minus Zero has arrived to prove that its success was no fluke and can be repeated.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/x-files-scully-smart-quote/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/the-x-files-scully.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            32 Years Later, Scully’s Greatest 'X-Files' Quote Is Still the Smartest In Sci-Fi History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Dana Scully (Gillian Anderson) offers several thought-provoking observations throughout all 11 seasons of The X-Files, but one quote is particularly brilliant. Compared to her partner, Fox Mulder (David Duchovny), who constantly jokes around, Scully &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/big-city-greens-season-5-first-look-clip-steve-schirripa/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/the-sopranos.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Steve Schirripa Voices a Mobster in 'Big City Greens' Season 5
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘The Sopranos’ Star Steve Schirripa Officially Returns to His Mobster Roots</div>
+      
+      
+      <div class="summary">Next year will mark the 20th anniversary of The Sopranos' infamous finale, yet all these years later, the HBO megahit still looms large.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/image-comics-the-darkness-30-anniversary-details/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/the-darkness-10-cover.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Darkness Celebrates 30 Years With Limited-Edition Exclusives
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Legendary Dark Fantasy Anti-Hero Series Celebrates 30 Years With Limited-Edition Exclusives</div>
+      
+      
+      <div class="summary">Image Comics is ready to celebrate thirty years of The Darkness in style. The publisher has announced massive celebrations, including two brand-new stories on the way.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-portal-fantasy-movies-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/the-children-wear-large-fur-coats-in-a-snowy-narnia-in-the-chronicles-of-narnia-the-lion-the-witch-and-the-wardrobe.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Greatest Portal Fantasy Movies Of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Everyone has stared off into space, wishing another world was just the touch of a magical portal away. While that may not happen in real life, there’s a whole universe of portal fantasy films that let audiences play out every "what if" scenario.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2309223/steelseries-apex-pro-tkl-gen-3-ltd-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/steelseries-apex-pro-tkl-gen-3-ltd-review-dual-threat-keyboard/l-intro-1793982818.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            SteelSeries Apex Pro TKL Gen 3 LTD Review: Dual Threat Keyboard
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">SteelSeries Apex Pro TKL Gen 3 LTD Review: Dual Threat Keyboard Andy Zahn/BGR We may receive a commission on purchases made from links.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/ea-classic-games-rerelease-wing-commander-remaster-ultima/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/wing-commander-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            EA Restores 25 Classic PC Games on Steam and GOG
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: EA Officially Brings Back 25 PC Classics With Huge Sale</div>
+      
+      
+      <div class="summary">Electronic Arts is not in players’ good graces right now. On Oct. 21, the publisher announced that it was closing BioWare, the beloved studio behind games like Mass Effect, Dragon Age, and Star Wars: Knights of the Old Republic.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2303034/every-fitbit-feature-behind-paywall/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/these-5-major-fitbit-features-hide-behind-a-paywall/l-intro-1793394476.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            These 5 Major Fitbit Features Hide Behind A Paywall
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">These 5 Major Fitbit Features Hide Behind A Paywall Google Under Google ownership since 2021, Fitbit has delivered a few new wearables in the last year, including the Fitbit Air and Fitbit Edge.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/tombstone-best-final-quote-western-ever/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/tombstone-kurt-russell-1993-ph_-john-bramley-_-c-buena-vista-pictures-_-everett-collection.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tombstone's Final Quote Is the Greatest 3 Words in Western History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">More than 30 years later, Kurt Russell and Val Kilmer's 1993 Western epic, Tombstone, remains one of the most quotable movies the genre has ever seen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-best-final-destination-movie-becomes-a-global-streaming-hit/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/05/william-bludworth-final-destination-bloodlines-cropped.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Final Destination Bloodlines Becomes a Global Streaming Hit 1 Year Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Best Final Destination Movie Becomes a Global Streaming Hit 1 Year Later</div>
+      
+      
+      <div class="summary">One of the best horror franchises in the history of the genre returned in explosive fashion in 2025. Final Destination has certainly seen its fair share of struggles with some of its sequels underperforming after the original movie took the world by &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/ratchet-and-clank-ranger-rumble-canceled-delisted/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/07/ratchet-clank-ranger-rumble.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Ratchet & Clank Game Officially Cancelled by Sony
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Sony's next Ratchet & Clank game has been scrapped before receiving a full release. On Friday, Sony Interactive Entertainment and developer Oh BiBi announced Ratchet & Clank: Ranger Rumble will be pulled from storefronts this month, and fully shut do&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/pokemon-go-wild-area-gigantamax-machamp-research/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/jlee_261106_1001_pogo_gmaxmachamp.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Go Wild Area Gigantamax Machamp Timed Research and rewards
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 2026 Pokémon Go Wild Area in-person events are kicking off in Sendai, Japan and Mexico City, which means that even us global players not attending get a treat: a Gigantamax Machamp Timed Research set.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2303551/consumer-reports-picks-best-gps-pet-trackers/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/worried-about-losing-your-dog-or-cat-here-are-5-consumer-reports-approved-gps-trackers/l-intro-1793605342.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Worried About Losing Your Dog Or Cat? Here Are 5 Consumer Reports Approved GPS Trackers
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Worried About Losing Your Dog Or Cat? Here Are 5 Consumer Reports Approved GPS Trackers Peter Blottman Photography/Getty Images We may receive a commission on purchases made from links.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/resident-evil-streaming-vod-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/mv5bnjexmzriyzmtm2q4yi00m2jilwe4mmytywuwnme5odewzdu5xkeyxkfqcgc-_v1_.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Resident Evil Reboot Becomes No. 1 Movie on Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New Near-Perfect 95-Minute Action Thriller Reboot Officially Becomes the No. 1 Movie on Streaming</div>
+      
+      
+      <div class="summary">In a day and age where legacy sequels and reboots are all the rage, it isn't often that one of them manages to become both a critical and commercial success. Usually it's one or the other, like in the case of Masters of the Universe and Mortal Kombat&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <span class="current">12</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/13.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

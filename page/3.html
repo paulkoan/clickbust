@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-07 14:04 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>130 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.bgr.com/2304279/nvidia-gpu-truly-affordable-in-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/are-any-nvidia-gpus-really-affordable-in-2026-its-complicated/l-intro-1793641770.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Are Any Nvidia GPUs Really Affordable In 2026? It's Complicated
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Are Any Nvidia GPUs Really Affordable In 2026? It's Complicated Adnan Ahmad Ali/Getty Images We may receive a commission on purchases made from links.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/legend-of-zelda-ocarina-remake-dlc-reminder/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/thelegendofzeldaocarinaoftime_19-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Legend Of Zelda: Ocarina Of Time Remake Official DLC Incoming
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">At the time of writing, The Legend of Zelda: Ocarina of Time Remake is finally out on the Nintendo Switch 2, and what a journey it has been.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/megan-2-leaving-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/megan-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'M3GAN 2.0' Is Officially Being Removed From Streaming
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">2026 has been a good year for sci-fi movies, but not every new sci-fi film that hits theaters finds the box office success studio executives were hoping for.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/steven-spielberg-disclosure-day-streaming-success-prime-video-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/steven-spielberg.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Disclosure Day: Steven Spielberg's Sci-Fi Thriller Is a Prime Video Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Steven Spielberg's New Sci-Fi Thriller Is Officially the King of Prime Video</div>
+      
+      
+      <div class="summary">The biggest sci-fi event of 2026 is closer than ever. On December 18, Denis Villeneuve will complete his trilogy of once-thought "unfilmable" adaptations with Dune: Part Three, and the film-watching world will flood into theaters in the millions.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tim-curry-the-rocky-horror-picture-show-streaming-success-prime-video-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/tim-curry.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Rocky Horror Picture Show: Tim Curry's Iconic Role Becomes Prime Video Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tim Curry’s Most Iconic Role Officially Becomes One of Prime Video’s Biggest Hits</div>
+      
+      
+      <div class="summary">Halloween weekend has reminded the world of one of the late Tim Curry's most iconic performances. In August, it was announced that Curry had passed away at the age of 80, and the world mourned the devastating loss of one of cinema's very best perform&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/club-kid-ending-jordan-firstman-reggie-absolom/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/club-kid-jordan-firstman-reggie-absolom-interview.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Club Kid' Almost Had a Very Different Ending, According to Jordan Firstman
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This interview contains spoilers for Club Kid. Summary Jordan Firstman and Reggie Absolom reveal what's on their shared playlist. Firstman discusses working with Emmy-winning cinematographer Adam Newport-Berra to establish the film's visual language.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-sci-fi-tv-shows-to-watch-if-you-love-hbos-lanterns/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/john-stewart-aaron-pierre-looks-down-at-the-green-lantern-ring-he-is-wearing-in-lanterns.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Sci-Fi Series To Watch If You Love HBO's 'Lanterns'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">HBO's Lanterns more than delivered when it comes to being both a great comic book series and a great piece of television.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/sherlock-best-live-action-version-biggest-book-change/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/gemma-chan-in-sherlock-2010.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Best Live-Action Sherlock Made The Biggest Change To Arthur Conan Doyle's Character
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While there are countless screen versions of Arthur Conan Doyle’s iconic super sleuth, only the BBC’s iconic adaptation of Sherlock Holmes made the change that was needed to redefine the character for a new generation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/uncle-max-calvin-hobbes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/calvin-and-hobbes-yukon-ho.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            38 Years Later, Calvin and Hobbes' Lost Character Remains Bill Watterson's Biggest Failure
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The author Lois McMaster Bujold has said that “the writer should always reserve the right to come up with a better idea.” That's a useful guideline for any reader to keep in mind.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sylvester-stallone-creed-streaming-success-pluto-tv-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/sylvester-stallone.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Quiz: Which Action Hero Is Your Perfect Partner?
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Sylvester Stallone’s 10/10 Action Reboot Is Officially a Knock-Out Hit</div>
+      
+      
+      <div class="summary">00:10Live Five channelsOne partner Collider · Action Heroes Which Action Hero Would BeYour Perfect Partner? Ten questions · five legends · one partner Five legends.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/ludwig-murder-mystery-series-clever/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/mark-bonnar-in-ludwig-season-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ludwig: 12 Episodes of the BBC's Clever Murder Mysteries
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 12 Episodes Of The BBC's Murder Mystery Series Deliver The Cleverest Whodunnits On TV</div>
+      
+      
+      <div class="summary">Dipping your toe into British murder-mystery TV can be intimidating, but fortunately, one of the genre's most recent additions is also one of the best.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-frog-netflix-k-drama-psychological-thriller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/d6f135f8-92ef-4290-a953-e358a8ca4cc5.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Frog: Netflix's Thriller Miniseries Offers Psychological Horror
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: All 8 Episodes Of Netflix's R-Rated Thriller Miniseries Deliver Peak Psychological Horror</div>
+      
+      
+      <div class="summary">Some of the greatest thrillers carefully transcend the screen and invade a viewer's personal space. They introduce audiences to such bizarre yet intimate scenarios that it becomes hard not to wonder if their hard-hitting terrors could someday happen &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-federation-fleet-whoopi-goldberg-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/whoopi-goldberg-in-star-trek-generations-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Whoopi Goldberg Returns As Guinan In Magic: The Gathering's Star Trek: Federation Fleet
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Whoopi Goldberg Officially Returns As Guinan In Star Trek: Federation Fleet</div>
+      
+      
+      <div class="summary">Guinan has long been one of Star Trek's most beloved supporting characters, with Whoopi Goldberg's portrayal of the mysterious El-Aurian earning her a special place among longtime fans.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-shows-only-watch-once/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/when-they-see-us_rmphnn-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Great Netflix Shows You Can Only Watch Once
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">These seven Netflix shows are some of the best the streamer has to offer, but you'll probably only ever watch them once. There's a long history of TV shows that you would only ever want to watch once.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dungeon-crawler-carl-allies-enemies-november-2026-release-reminder/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/this-inevitable-ruin-dungeon-crawler-carl-ebook-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dungeon Crawler Carl: Allies & Enemies Officially Releases This Month
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of the biggest breakout stars in the world of literature in the last few years is Dungeon Crawler Carl. Matt Dinniman's fantasy series started life as a self-published passion project in 2019, but was subsequently picked up by Amazon and blew up &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/from-sci-fi-mystery-box-storytelling-masterpiece/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/64377056-14d8-40a4-a251-a3846569a773.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            From: A 40-Episode Sci-Fi Masterclass In Mystery Box Storytelling
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 40-Episode Sci-Fi Masterpiece Delivers A Masterclass In Mystery Box Storytelling</div>
+      
+      
+      <div class="summary">The golden era of sci-fi was packed with brilliant mystery box shows like Lost, Fringe, and Twin Peaks. Even in the era that followed, compelling additions to the sci-fi genre, like The OA, Dark, and Westworld, mastered the art of mystery box storyte&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/steam-free-turn-based-game-november-2026-last-gambit/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/steam-logo-red-background.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Steam Makes Last Gambit 100% Free Until November 13
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Steam Officially Makes 2026 Turn-Based Roguelike 100% Free Until November 13</div>
+      
+      
+      <div class="summary">Steam is forever deeply discounting the wealth of available games on the platform and, occasionally, slashing prices by 100%. Indeed, the sheer number of free games on Steam is monumental at this point, with users capable of building massive librarie&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/ahsoka-season-2-the-mandalorian-the-acolyte-disney-plus-lucasfilm-star-wars" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000012226.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Report: Ahsoka Season 2 Release Strategy May Change On Disney+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Report: Ahsoka Season 2 Is No Longer Expected To Release On Disney+ With Lucasfilm's Live-Action Star Wars TV Streaming Rollout Used For The Mandalorian & The Acolyte</div>
+      
+      
+      <div class="summary">Star Wars fans could see Disney+ completely change the way it releases new Star Wars content on the streaming platform, beginning with Ahsoka Season 2.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/brandon-sanderson-mistborn-return-reminder-psa/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/mistborn-handbook-brandon-sanderson-release-2026-vin.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mistborn: The Well of Ascension Expansion For The Deckbuilding Game Releases This Month
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brandon Sanderson's Mistborn Officially Returns This Month</div>
+      
+      
+      <div class="summary">In the eternal avalanche of Brandon Sanderson books, Mistborn remains special. While the scope of the story isn't as enormous as The Stormlight Archive and the prose isn't as flavorful as Tress of the Emerald Sea, Vin's journey and all the reveals th&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/person-of-interest-masterpiece-deserve-another-season/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/amy-acker-s-caroline-in-person-of-interest.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Person of Interest: The 5-Season Sci-Fi Masterpiece That Deserved Another Season
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Isaac Asimov Meets Minority Report' Series Is The 5-Part Masterpiece That Deserved Another Season</div>
+      
+      
+      <div class="summary">Although the show only received five seasons, one underrated cult hit that mixed Isaac Asimov with Minority Report still deserves to be revisited in 2026. While the Blade Runner franchise means that the author Philip K.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/star-wars-starfighter-luke-skywalker" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/star-wars-starfighter-luke-skywalker.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Star Wars Starfighter' Officially Revives a 49-Year-Old Luke Skywalker Tradition
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">49 years ago, George Lucas introduced the world to Luke Skywalker, played by Mark Hamill, and his sprawling Star Wars universe. The franchise went on to become a phenomenon thanks in part to one exciting tradition that stuck with fans who saw A New H&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/bosch-tv-series-perfect-book-adaptation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/madison-lintz-s-maddie-bosch-in-bosch.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Michael Connelly's 68-Episode Detective Show Perfects The Art Of Adapting Books For TV
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While there are plenty of great book to TV adaptations, Prime Video’s four-show franchise has been a standout of the detective drama genre since its debut in 2014.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/game-of-thrones-house-of-the-dragon-legends-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/emma-d-arcy-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            House Of The Dragon Officially Returns November 19 In Special Event
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">House of the Dragon's latest season proved to be an improvement over its predecessor, offering climactic spectacle and intriguing character development that has helped pave the way for what will undoubtedly be an intense and exciting final season.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-ascendancy-final-frontier-release-psa/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/mixcollage-06-aug-2026-10-35-pm-4439.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek Ascendancy: The Final Frontier Officially Announced
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">2026 marks the 60th anniversary of Star Trek, celebrating six decades of one of science fiction's most influential franchises.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/fantasy-movie-flops-misunderstood-masterpieces/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/stardust-michelle-pfeiffer.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Fantasy Movie Flops That Are Actually Misunderstood Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It can be soul-crushing when creatives put their all into a movie, and it bombs at the box office. Sometimes, this is deserved if the movie was made to chase a trend, but it can also be due to studio interference that warps the plot, poor marketing c&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/avengers-doomsday-characters-how-old-thor-yelena" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/avengers-doomsday-marvel-characters.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Old Every Marvel Character Is In 'Avengers Doomsday' — From Thor to Yelena
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Figuring out the ages of everyone suiting up for Avengers: Doomsday takes some serious birthday math. Marvel Studios' next crossover event is prepping to open in theaters on December 18, and a new look at the movie was just paired with the MLB World &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jake-gyllenhaal-prisoners-denis-villeneueve-apple-tv-streaming-hit-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/prisoners-detective-jake-gyllenhaal.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Forget 'Se7en,' Jake Gyllenhaal's Apple TV Thriller 'Prisoners' Is Even Better
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A 150-minute-plus, dark-as-night kidnapping thriller isn't an instant recipe for box office success, yet Denis Villeneuve's 2013 film Prisoners handily made almost three times its budget back, while also landing on numerous year-end Top 10 lists.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/narnia-books-ending-susan-absence-last-battle/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/12/the-chronicles-of-narnia.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Narnia’s Most Debated Ending Isn’t the Problem Fans Think It Is
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Anyone who has thoroughly read through C.S. Lewis' The Chronicles of Narnia series will probably know the basics of the story and how religion played a big role in shaping it. They will also be aware that the final novel, The Last Battle, is missing &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/steam-free-games-november-7-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/steam-logo-purple.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Steam Officially Drops 5 More Free Games You Can Keep Forever (November 7)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Steam is the best friend to any gamer on a budget. The platform doesn't offer just games that are cheap, it also has a slew of totally free titles for anyone curious to try.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2304132/how-much-would-it-cost-to-build-gaming-pc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-much-would-it-cost-to-build-a-high-end-gaming-pc-in-2026/l-intro-1793372541.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Much Would It Cost To Build A High-End Gaming PC In 2026?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How Much Would It Cost To Build A High-End Gaming PC In 2026? Om.Nom.Nom/Shutterstock When people talk about a high-end gaming PC, the definition of that can be surprisingly vague.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <span class="current">3</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/4.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

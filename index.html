@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-07 14:04 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>130 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/todays-wordle-hints-answer-november-7-2026-puzzle-1967/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/image-psd-6.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Today's Wordle Hints & Answer - November 7, 2026 (Puzzle #1967)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are pros and cons to figuring out today's Wordle, as the puzzle uses a familiar pattern to try and trick players into making bad guesses. Thankfully, sharp-eyed players can look past this deception, and discover clues meant to aid their efforts&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/superheroes-dont-need-secret-identities/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/iron-man-and-aquaman-featured-image.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Superheroes Who Prove Secret Identities Are Completely Overrated
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Secret identities across superhero comics have always been a longstanding tradition, allowing the heroes to protect their loved ones and continue living normal lives without drawing unwanted attention.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/essential-dungeon-crawler-carl-book-floor-guide/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/cover-art-for-the-butcher-s-masquerade-by-matt-dinniman-dungeon-crawler-carl.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Essential Dungeon Crawler Carl Floor Guide
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Whether you're new to the series or on your umpteenth re-read, keeping track of exactly which floors are covered in each Dungeon Crawler Carl book isn't as straightforward as one might think.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/fast-and-furious-spy-racers-sequel-unrealistic/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/vin-diesel-as-dom-toretto-looking-at-something-skeptically-in-furious-7.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Fast & Furious Spy Racers: The 52-Episode Animated Series That Outdoes the Movies
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's 52-Episode Fast & Furious Sequel Makes Dom Toretto Look Like An Amateur</div>
+      
+      
+      <div class="summary">The Fast & Furious franchise is known for its ridiculous action sequences and borderline superhuman characters, all of which are perfectly embodied by Dom Toretto.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/playstation-6-ps6-release-date-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/playstation-5-dualsense-battery-life-fix.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            PlayStation 6: Sony Has Not Yet Finalized a Release Date
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: PlayStation 6 Gets Official Release Date Update</div>
+      
+      
+      <div class="summary">It seems like just yesterday that the PlayStation 5 launched, but with it swiftly approaching its sixth anniversary, it is almost time for the next iteration to be released.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/ballard-streaming-recommendation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/10/maggie-q-in-ballard.jpg?q=49&fit=crop&w=875&h=540&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ballard: Prime Video's Detective Thriller with 100% RT, Binge in One Night
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video’s Best Detective Thriller Has a 100% on RT and You Can Binge It In One Night</div>
+      
+      
+      <div class="summary">Sometimes it feels like if you've watched one thriller about a police officer or investigator, you've seen every possible version. There's the strong-willed, clever main character who exchanges banter with a colleague they may or may not have romanti&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dungeon-crawler-carl-officially-gets-2-new-releases-this-november/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/dungeon-crawler-carl-manga-cover-carl-with-a-cat-on-his-shoulder-with-fiery-background.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dungeon Crawler Carl Officially Gets 2 New Releases This November
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Dungeon Crawler Carl is one of the hottest intellectual properties in years. What started as a series of fun books has expanded into so much more, becoming one of the most beloved franchises around in less than a decade.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/fantasy-movies-like-ramayana-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/ranbir-kapoor-as-lord-rama-in-ramayana.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Fantasy Movies With the Epic Scale of Ramayana
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With a reported budget of approximately $500 million across two films, Nitesh Tiwari's Ramayana is among India's most ambitious cinematic projects.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/6-great-movies-with-hardly-any-dialogue-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/robert-redford-steering-a-boat-in-a-storm-in-all-is-lost-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Great Movies With Hardly Any Dialogue, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Cinema is often associated with brilliant screenplays and dialogue that audiences can quote for decades. Whether razor-sharp comedy or emotionally devastating monologus, the spoken word has played an enormous role in shaping some of the medium's grea&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/alarum-streaming-hit-prime-video-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/12/alarum-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sylvester Stallone's 'Alarum' Gets a Second Chance on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Sylvester Stallone’s R-Rated Action Thriller Officially Gets a Second Chance on Prime Video</div>
+      
+      
+      <div class="summary">A Taylor Sheridan series is never far from the streaming summit, and his latest big hit is the indulgent Tulsa King. Since its Season 4 premiere, the show has continued to dominate the competition on Paramount+, only losing out on the top spot to the&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-fantasy-shows-with-flawless-worldbuilding/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/shadow-and-bone-netflix.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Netflix Fantasy Shows With Flawless Worldbuilding
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix has delivered some of the best fantasy TV shows of all time, and a key part of the success of many of them is their flawless worldbuilding. While Netflix is still better known for its licensed content, it now stands out the most for its origi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pokemon-winds-waves-new-starter-pokemon-teaser/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/pokemon-winds-waves-regional-starters.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Winds & Waves Officially Shares New Monster Designs For 30th Anniversary
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pokémon has been going for 30 years now, but we're far from done, so sit back down and get ready for more.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/clint-eastwood-steven-spielberg-flags-of-our-fathers-paramount-plus-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/clint-eastwood-attending-the-changeling-press-conference.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Flags of Our Fathers: Clint Eastwood and Steven Spielberg's WW2 Film Gets New Streaming Home on Pluto TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Clint Eastwood & Steven Spielberg's WW2 Box Office Bomb Officially Gets A New Streaming Home</div>
+      
+      
+      <div class="summary">Clint Eastwood and Steve Spielberg collaborated on a woefully undervalued World War II movie that is free to watch on streaming. Clint Eastwood has enjoyed one of Hollywood's most remarkable careers, establishing himself as an iconic actor before bec&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/keanu-reeves-john-wick-chapter-4-streaming-success-prime-video-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/keanu-reeves.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Take Our Quiz to Find Your Perfect Action Hero Partner
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Keanu Reeves' R-Rated Action Masterpiece Officially Surges on Streaming</div>
+      
+      
+      <div class="summary">00:10Live Five channelsOne partner Collider · Action Heroes Which Action Hero Would BeYour Perfect Partner? Ten questions · five legends · one partner Five legends.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/forgotten-fantasy-movies-masterpieces/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/10/the-adventures-of-baron-munchausen-still.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Forgotten Fantasy Movies That Are 10/10 Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some of the strangest fantasy films ever made spent years passed around on old VHS tapes, discovered on late-night TV, or recommended by that one movie-obsessed friend. They were packed with peculiar creatures, elaborate handmade sets, and frightenin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/disney-doctor-who-cancellation-sci-fi-fumble/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/david-tennant-as-the-doctor-in-the-girl-in-the-fireplace-from-doctor-who.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Disney’s Doctor Who Strategy Will Go Down as 1 of Sci-Fi's Most Historic Fumbles
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After a tumultuous few years, Disney's intervention in Doctor Who promised good things, but it has now ended with some of sci-fi television's worst mistakes. Doctor Who premiered in November 1963, making it the longest-running sci-fi TV series in his&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/goodfellas-movie-recast-actors-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/joe-pesci-as-tommy-devito-with-ray-liotta-as-henry-hill-in-goodfellas.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Recasting Goodfellas In 2026: All 7 Major Roles
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Tell someone you're replacing Joe Pesci in Goodfellas, and see how quickly a perfectly pleasant conversation turns into an argument.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/underrated-video-games-bangers/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/alien-isolation.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Underrated Video Games That Are Bangers From Start to Finish
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With the upcoming release of Grand Theft Auto VI, it puts into perspective just how popular video games are, becoming a worldwide medium that everyone can enjoy.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2309945/most-disappointing-2026-streaming-movies/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/5-most-disappointing-streaming-movies-of-2026/l-intro-1793983700.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Most Disappointing Streaming Movies Of 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Most Disappointing Streaming Movies Of 2026 Netflix The theatrical movie made a fantastic comeback in 2026, with box office numbers and the number of cinematic cultural events both skyrocketing. In contrast, the streaming movie landscape has had a &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/alien-ridley-scott-sci-fi-movie-streaming-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2025/09/msdalie_fe002.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ridley Scott's Alien Leaving Netflix on Dec. 1
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ridley Scott’s R-Rated Sci-Fi Masterpiece is Officially Being Cut From Netflix</div>
+      
+      
+      <div class="summary">Ridley Scott has directed some of the most iconic science fiction movies of all time, from Blade Runner to The Martian. However, few have had the same lasting impact as his 1979 sci-fi horror classic Alien.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-family-movies-film-history-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/10/Paddington-with-Knuckles-in-Paddington-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Best Family Movies in Film History, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A good family movie isn’t the same as a kids’ movie. The ones on this list work for a seven-year-old and for the parent sitting next to them, and sometimes the parent ends up crying more. They manage that by being funny, scary, and sad in the right a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/rachel-bilson-the-oc-hart-of-dixie-reboot-possibilities/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/copy-of-collider-template-2026-10-28t153130-532.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            23 Years Later, Rachel Bilson Is Officially Ready to Return to ‘The O.C.’
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Rachel Bilson has built an entire career as a queen of comfort television. She burst onto the scene as part of the iconic Fox teen drama The O.C.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/denzel-washington-training-day-perfect-crime-thriller-streaming-on-tubi/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/denzel-washington-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Denzel Washington's 'Training Day' Is Finally Streaming for Free
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 25 Years Later, Denzel Washington’s 10/10 Crime Thriller Is Finally Streaming for Free</div>
+      
+      
+      <div class="summary">With a million streaming services and nothing to watch, it is a joy when a certifiable classic hits a free platform. Denzel Washington continues to have mass appeal, but his early work in Antoine Fuqua’s Training Day remains one of the best crime dra&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/mobland-season-2-episode-8-anson-boon-eddie-maeve-gina/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/mobland-anson-boon.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘MobLand’ Star Confirms Eddie Will Become a “Monster” in Season 2's Final Episodes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With just two more episodes left, MobLand has hit a fever pitch. The Harrigans are at each other's throats, there are enemies coming at them from every direction, and it feels like there's no one fit to take over for Conrad (Pierce Brosnan) as his he&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/last-man-standing-orphan-x-gregg-hurwitz-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/reacher-season-4-trailer-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Orphan X, Reacher's Biggest Rival, Returns with New Book in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Reacher's Biggest Rival Officially Returns in 2027</div>
+      
+      
+      <div class="summary">It's been about two months since Reacher wrapped its fourth season on Prime Video, and Season 5 is closer than ever, with production scheduled for this year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/unforgiven-leaving-streaming-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/03/untitled-design-21-1.jpg?q=49&fit=crop&w=875&h=540&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Unforgiven: Clint Eastwood's Western Masterpiece That Inspired Logan Leaves Streaming in 24 Hours
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Clint Eastwood's Western Masterpiece That Inspired 'Logan' Is Being Cut From Streaming in 24 Hours</div>
+      
+      
+      <div class="summary">The Clint Eastwood Western masterpiece that had such an influential reach it even inspired Hugh Jackman's (at the time) final outing as Wolverine in 2017's Logan is being cut from free streaming soon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/tulsa-king-guy-ritchie-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/01/sylvester-stallone-in-tulsa-king-1.jpg?q=49&fit=crop&w=875&h=540&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan's Tulsa King Beats Guy Ritchie's MobLand on Paramount+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan’s Near-Perfect Crime Thriller Beats Guy Ritchie At His Own Game</div>
+      
+      
+      <div class="summary">Guy Ritchie doesn’t just make crime thrillers; he makes them in style. From the razor-sharp chaos of Lock, Stock and Two Smoking Barrels and the diamond-fueled mayhem of Snatch to the velvet-gloved brutality of the Netflix series The Gentlemen, Ritch&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/izombie-all-5-seasons-streaming-prime-video-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/izombie.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 5 Seasons of iZombie Now Streaming on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Ghosts’ Meets ‘Veronica Mars’ in a 5-Part Zombie Series Officially on Prime Video</div>
+      
+      
+      <div class="summary">Around 10 years ago, everyone wanted to make their own zombie series after The Walking Dead. Now, some went for outright horror, others leaned into romance, and this one series decided that the best thing a zombie could possibly do with their unusual&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/absolute-batman-jim-lee-nick-dragotta-clay-mann-art-whatnot-sale/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/absolute-batman-by-jim-lee.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jim Lee Absolute Batman Art Featuring All-Star Collaborators Sells For Jaw-Dropping Amount
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The following article contains spoilers for Absolute Batman #25. The ways in which Absolute Batman has revolutionized comic books are nothing short of astonishing.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/babygirl-thriller-coming-to-hulu-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/01/babygirl-movie-review-nicole-kidman-jpeg-pagespeed-ic-jvi1r7m-va.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 07 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Babygirl: Nicole Kidman's Steamy R-Rated Thriller Gets New Streaming Home on Hulu
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Nicole Kidman's Steamy R-Rated Thriller Gets New Streaming Home After Being Cut From HBO Max</div>
+      
+      
+      <div class="summary">Nicole Kidman's 2024 erotic thriller Babygirl is getting a new streaming home. After previously being available on HBO Max, the critically acclaimed movie is now on Hulu. Hulu recently revealed its full November lineup of movies and TV shows, with Ba&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    <span class="disabled">&laquo; Newer</span>
+  
+
+  
+    
+      <span class="current">1</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/2.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

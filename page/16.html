@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-07 14:04 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>130 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://movieweb.com/fists-on-a-plane-wings-of-dread-trailer-streaming-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/foap-still-1340x754-1.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fists on a Plane: Wings of Dread Action Thriller Headed to Streaming This Month
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: "The Raid Meets Con Air" in New 87-Minute Action Thriller Headed To Streaming This Month</div>
+      
+      
+      <div class="summary">Martial arts icons collide in a new non-stop action thriller that smashes together the modern masterpiece The Raid with the likes of Con Air and Air Force One in an effort to deliver a high-altitude crowd-pleaser.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pokemon-new-eeveelution-espeon-design-30th-anniversary/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/eevee-with-several-pokemon-eeveelutions-behind-them.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Unveils New Espeon Ornament for 30th Anniversary
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Pokémon Officially Unveils New Eeveelution Design For 30th Anniversary</div>
+      
+      
+      <div class="summary">Pokémon Winds and Waves officially arrives in 2027, but 2026 marks 30 years since Pokémon was first introduced to the world, and the celebrations have been non-stop. There's been a huge amount of brand-new merch released to pay tribute to three decad&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/buffy-vampire-slayer-once-more-with-feeling-musical-25-years-james-marsters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/mv5bowvlzdrmytytmzzlmc00ntvjlwi2owutmmeyzjkzmdzmotazxkeyxkfqcgc-_v1_.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Buffy's 'Once More, With Feeling': 25 Years Later, Still a Brilliant Masterpiece
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 25 Years Later, Buffy's Riskiest Episode Is Still a Brilliant Masterpiece That Changed the Show Forever</div>
+      
+      
+      <div class="summary">On Nov. 6, 2001, Buffy the Vampire Slayer made TV history. Again. The Emmy-winning series was already deep into its seven-season run when creator Joss Whedon came up with perhaps his most ambitious idea yet: a musical episode.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/hanna-action-thriller-stream-tubi-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/sharedimages/2024/05/hanna-2011-saoirse-ronan-holding-a-bow.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hanna Is Now Streaming Free
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Eric Bana's 111-Minute 'Bourne' Substitute Action Thriller Is Officially Streaming Free</div>
+      
+      
+      <div class="summary">One of the most shamefully unsung revenge action thrillers of recent years is now officially streaming free, and offers a unique twist on the genre icon Jason Bourne.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/24-anniversary-streaming-recommendation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/lioness-zoe-saldana.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            24 Remains a Masterpiece 25 Years After Its Premiere
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget 'Lioness': The Counterterrorism Thriller That Changed TV Remains a Masterpiece After 25 Years</div>
+      
+      
+      <div class="summary">The most remarkable aspect of Taylor Sheridan's Lioness is how it honors unsung female heroes during the 2003 Iraq War. The espionage thriller is loosely based on Team Lioness, the U.S.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/dakota-johnson-verity-streaming-success-itunes-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/verity-movie-dakota-johnson.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dakota Johnson's Thriller Verity Hits No. 1 on Streaming Charts
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Dakota Johnson’s New Thriller Officially Hits No. 1  After Being Removed from 1,700 Theaters</div>
+      
+      
+      <div class="summary">After a month-long run in theaters, a new psychological thriller based on a beloved bestseller has made a smashing debut on the PVOD market. It's almost as if audiences were waiting for the film to hit home video, because it certainly fell short of b&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-x-men-movies-watch-before-avengers-doomsday-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/hugh-jackman-wolverine.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Essential X-Men Movies To Watch Before Avengers: Doomsday
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With the X-Men gearing up for a much-anticipated return in Avengers: Doomsday, these movies starring the mutant team are essential viewing over the next month.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/funniest-far-side-comics-rethink-nature/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/04/10-funniest-far-side-comics-that-ll-make-you-rethink-nature.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Funniest Far Side Comics That'll Make You Rethink Nature
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Gary Larson's The Far Side is a unique comic strip that focuses on every aspect of life. One panel can feature office workers, another can showcase the depths of hell, another shows off outer space, and another can settle on an idyllic field with bea&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/70s-sitcoms-too-strange-to-last/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/quark.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 '70s Sitcoms Too Strange to Last, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Each decade of television builds on what came before, adding new ideas and fresh talent while adapting to an ever-changing world. The 1970s proved to be an adventurous and progressive time for sitcoms.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-trek-tng-cast-knew-patrick-stewart-ill-jonathan-frakes-confirm/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/picard-and-rker-on-uss-titan-bridge.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jonathan Frakes Confirms Star Trek: TNG Cast Knew Patrick Stewart Was Ill: “It Was Not A Shock”
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Star Trek: The Next Generation's cast was aware of Patrick Stewart's illness, Jonathan Frakes confirms. Sir Patrick Stewart died at 86 on October 28, 2026, “following a brief and poignant journey with Alzheimer’s Disease and Lewy Body Dementia," acco&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/fantasy-books-better-than-fourth-wing/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/the-fourth-wing.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Fantasy Books Better Than 'Fourth Wing'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fantasy novels have no shortage of magical schools, whether they're training young wizards, aspiring warriors, or, in Fourth Wing, dragon riders.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2281261/xbox-series-x-more-powerful-than-steam-machine/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/is-the-xbox-series-x-more-powerful-than-the-steam-machine/l-intro-1791475717.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Is The Xbox Series X More Powerful Than The Steam Machine?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Is The Xbox Series X More Powerful Than The Steam Machine? vfhnb12/Shutterstock The console wars rage on as Valve's latest device, the Steam Machine, joins the competition. Microsoft launched the Xbox Series Xin 2020.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/lord-of-the-rings-books-ranked-goodreads/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/the-lord-of-the-rings-the-return-of-the-king-book-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Lord of the Rings Book, Ranked by Goodreads
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">J.R.R. Tolkien's The Lord of the Rings is the most significant work of fantasy literature in the 20th century, and possibly all time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/sony-playstation-5-digital-blackout-failure-financial-records-confirm/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/god-of-war-e3-2016-gameplay-trailer-_-ps4-5-28-screenshot.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            It's Official: The PlayStation Blackout Protest Did Nothing
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Disgruntled players tried to boycott Sony in August after the company announced it would discontinue physical media. However, it seems that the PlayStation Digital Blackout protest was a bust.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/alice-in-borderland-netflix-battle-royale-show/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/97266454-306b-4e95-b33a-c89141b41e09.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alice in Borderland Delivers Peak Battle Royale Storytelling
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 22 Episodes Of Netflix's Best Japanese Show Deliver Peak Battle Royale</div>
+      
+      
+      <div class="summary">While looking for compelling new action thrillers, it becomes impossible to ignore battle royale stories. There is something truly fascinating about the gamification of survival stories where only one last man will remain standing.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/avatar-aang-the-last-airbender-blu-ray-release-m-night-shyalaman-mistake/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/mcdavaa_i8010-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Avatar Aang: The Last Airbender’ Officially Returns With New Release, But There’s a Catch
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of the most anticipated animated projects is getting another physical release, but its marketing has already suffered a few blunders.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2303270/obscure-charging-playstation-5-gadgets/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-charging-gadgets-for-your-playstation-5-you-may-not-know-exist/l-intro-1793460748.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Charging Gadgets For Your PlayStation 5 You May Not Know Exist
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Charging Gadgets For Your PlayStation 5 You May Not Know Exist Wongsakorn 2468/Shutterstock We may receive a commission on purchases made from links. Out of the box, even a base-model PlayStation 5 comes with everything you need to get the console &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/frontier-crucible-western-streaming-prime-video-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/11/frontier-crucible-feature.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Frontier Crucible Is More Brutal Than The Good, the Bad and the Ugly
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video's New Western Is More Brutal Than 'The Good, the Bad and the Ugly'</div>
+      
+      
+      <div class="summary">Though there's been a renewed interest in Westerns in recent years, an excellent neo-Western that rarely gets discussed (outside RedLetterMedia) is Bone Tomahawk.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sci-fi-miniseries-perfect-no-notes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/_jamie-bamber-and-katee-sackhoff-in-battlestar-galactica-2004.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Sci-Fi Miniseries That Are 10/10, No Notes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Miniseries are shows that tell a complete, self-contained story over the course of a predetermined, limited number of episodes without any intention of returning for future seasons.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/legend-of-zelda-wind-waker-hd-new-port-fan-made/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2017/05/The-Legend-of-Zelda-Wind-Waker-HD-Wii-U.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wind Waker HD Gets Fan-Made PC Port ZeldaWWHDRecomp
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Legend Of Zelda: Wind Waker HD Is Getting The Port It Deserves</div>
+      
+      
+      <div class="summary">The Legend of Zelda is a wonderful series for many reasons, but for me, the legendary Nintendo franchise is best represented by The Wind Waker. I understand that may be a fairly spicy take, but I think it's a delight.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/hidemaro-fujibayashi-zelda-ocarina-of-time-botw-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/the-legend-of-zelda-ocarina-of-time-sheik-with-harp.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zelda: Ocarina of Time Producer Doesn’t Want Nintendo’s Next Generation To Rely on BotW’s Ideas
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Nintendo’s Legend of Zelda series has remained relevant for 40 years, a streak that the Switch 2’s new Ocarina of Time remake is already set to continue.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/star-trek-undiscovered-country-4k-blu-ray-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/william-shatner-in-star-trek-the-undiscovered-country.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek VI: The Undiscovered Country Gets 4K Blu-ray for 35th Anniversary
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Star Trek's Iconic Cold War Thriller Sets New Release 35 Years After the Crew's Final Voyage</div>
+      
+      
+      <div class="summary">The Star Trek franchise first beamed onto the television in 1966, capturing the imagination of a generation with its bold vision of the future and interstellar discovery.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/1923-yellowstone-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/yellowstone-luke-grimes-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            1923: Taylor Sheridan's Yellowstone Prequel with 94% RT Score Boasts a Better Cast than Yellowstone
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget ‘Yellowstone,’ Taylor Sheridan’s Western Epic With 94% on Rotten Tomatoes Has An Even Better Cast</div>
+      
+      
+      <div class="summary">For all the praise Taylor Sheridan has gotten for writing the dramatic series Yellowstone, the stellar cast deserves credit for bringing the words and storylines to life.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/christopher-nolan-interstellar-streaming-success-apple-tv-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/tenet-christopher-nolan.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Interstellar Is Now One of Apple TV's Most-Watched Movies
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV Officially Resurrects Christopher Nolan’s 169-Minute Sci-Fi Masterpiece</div>
+      
+      
+      <div class="summary">It's been another remarkable year for this century's defining filmmaker, Christopher Nolan. The third-highest-grossing director of all time produced yet another ambitious feat of filmmaking for viewers across the world to indulge in, as he adapted Ho&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/toxic-avenger-vs-noxious-offender-2-preview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/09/screenshot-2025-09-03-at-15-01-12-cropped.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Toxic Avenger vs. The Noxious Offender #2: First Appearance of the Noxious Offender
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Toxic Avenger Continues 'Wildest' Story Yet That Also Delivers First-Ever Appearance of Major Villain</div>
+      
+      
+      <div class="summary">Of all the superheroes who did not originate from their own comic book, The Toxic Avenger, surprisingly, might be the most famous.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/jackie-chan-the-shadows-edge-perfect-action-movie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/the-shadow-s-edge-jackie-chan.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jackie Chan's The Shadow's Edge is a Action Masterpiece
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Jackie Chan is a cinema icon, and while he might be slowing down slightly as he enters the latter stage of his career, he is nonetheless more than capable of creating an action classic.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/cbs-marshals-bison-wolf-symbolism/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/luke-grimes-as-kayce-dutton-in-marshals-season-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marshals Replaces Kayce Dutton's Yellowstone Wolf Tradition with a Bison
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: CBS Is Replacing 1 of Kayce Dutton's Most Important Yellowstone Traditions in</div>
+      
+      
+      <div class="summary">A new chapter began for Kayce Dutton (Luke Grimes), the former Yellowstone veteran-turned livestock commissioner, when he took on the role of a U.S. Marshal in the CBS hit show Marshals. The series shed some of its Yellowstone storytelling in favor o&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/henry-cavill-video-game-mustache-protocol/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/henry-cavill-smoking-a-cigar-as-wolverine-in-deadpool-wolverine.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Henry Cavill Releases Mustache Protocol Game for Movember Charity
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Henry Cavill Is Officially Releasing His Own Video Game</div>
+      
+      
+      <div class="summary">What can't Henry Cavill do? The man has played iconic characters such as Superman, Sherlock Holmes, Geralt of Rivia and will soon be leading the charge in Warhammer 40K. Oh, and he's about to star as Connor MacLeod in the upcoming Highlander movie.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-universally-beloved-80s-cult-classic-movies/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/blade-runner-1982-5.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Most Universally Beloved '80s Cult Classic Movies
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 1980s produced several of the greatest, most important, and most universally beloved cult classic films in the history of the entire cult cinema phenomenon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pokemon-ruby-sapphire-emerald-collection-2027-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2022/07/Screenshot-2022-07-12-102305.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bandai Namco Releases Pokémon Ruby, Sapphire & Emerald Figures in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Pokémon Ruby, Sapphire & Emerald Collection Officially Releasing In 2027 With Pre-Orders Open Now</div>
+      
+      
+      <div class="summary">Pokémon fans are having a pretty big year in 2026, with the 30th Anniversary giving us a veritable mountain of brand-new releases to make the wait for Pokémon Winds & Waves' 2027 release a little bit easier.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <span class="current">16</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/17.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

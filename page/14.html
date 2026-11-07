@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-07 14:04 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>45 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>100 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>9 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>48 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>130 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>14 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://movieweb.com/bass-x-machina-recommendation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/bass-x-machina-2026.jpg?q=49&fit=crop&w=875&h=540&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Animated Series 'Bass X Machina' Is a Perfect Binge You Can Finish in One Day
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s New “Ridley Scott Meets Taylor Sheridan” Series Is a Perfect Binge You Can Finish in One Day</div>
+      
+      
+      <div class="summary">On Nov. 3, 2026, Netflix unveiled an exciting new TV series that blends Ridley Scott's sci-fi aesthetic with Taylor Sheridan's neo-Western tropes. The six-episode adult animated series follows a familiar antihero tasked with protecting his family in &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/welsh-shedar-episodes-1-2-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/welsh-shedar_ep1_screenshot_6.png?q=49&fit=contain&w=2559&h=1439&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Fantasy Anime 'Welsh & Shedar' Now Streaming for Free
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Avatar Meets Delicious in Dungeon in New Fantasy Anime Now Streaming for Free</div>
+      
+      
+      <div class="summary">Welsh & Shedar is the brand-new fantasy anime from the creators of Dofus and Wakfu. Set in the World of Twelve, part of the French-created fantasy universe of Krosmoz, the 12-episode animated series follows two young protagonists from vastly differen&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/jake-gyllenhaal-ambulance-thriller-streaming-home-peacock-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/ambulance-2.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jake Gyllenhaal's 'Ambulance' Heads to Peacock in November
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jake Gyllenhaal's R-Rated Action Thriller From Transformers Director Heads to Peacock</div>
+      
+      
+      <div class="summary">One of the most underrated Jake Gyllenhaal movies of the 2020s is officially getting a new streaming home. Starting this month, a whole new audience will be able to check out his epic action-thriller, Ambulance.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-marianne-essential-folk-horror-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/emma-larsimon-with-a-cross-in-marianne.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'Marianne' (100% RT) Is an Essential Folk Horror Binge
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's 8-Part Folk Horror Series With 100% RT Just Became an Essential Binge</div>
+      
+      
+      <div class="summary">Folk horror has seen a resurgence in recent years, with the latest to join the fold being AMC+’s Yaga. Like many others in the genre, the saucy 8-parter modernizes a classic myth, adding and twisting elements to create a relevant tale that taps into &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/absolute-batman-superman-wonder-woman-25-exciting-moments/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/09/absolute-universe-mark-spears-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Massive Moments From DC's Absolute Milestone Comics That Have Me Excited About the Future
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The following contains spoilers for Absolute Batman #25, Absolute Superman #25, and Absolute Wonder Woman #25. Like many readers, I can thank DC's Absolute Universe for reinvigorating my love affair with the comic book medium.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-mcu-films-after-doomsday-disney-upfront-27" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/doommovies.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Confirms 4 MCU Films Releasing After Avengers: Doomsday At Disney Upfront 27 Event
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel Studios officially revealed the four MCU movies set to release after Avengers: Doomsday (one of which is important to the franchise's future).</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jimmy-stewart-biopic-global-base-buyout-details/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/jimmy-exclusive.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jimmy Stewart Biopic Officially Honors Service Members and Veterans With New Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">KJ Apa may have missed out on Marvel’s new X-Men project, but he’s officially back in theaters with the long-awaited Jimmy Stewart biopic this weekend.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2303594/consumer-reports-best-premium-soundbar-lg-sound-suite-h7/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/consumer-reports-calls-this-premium-soundbar-one-of-the-best-in-its-class/l-intro-1793618369.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Consumer Reports Calls This Premium Soundbar One Of The Best In Its Class
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Consumer Reports Calls This Premium Soundbar One Of The Best In Its Class DimasGermany/Shutterstock We may receive a commission on purchases made from links.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/keanu-reeves-return-john-wick-animated-prequel/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/19938695/john_wick_3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Keanu Reeves Officially Returning as John Wick in New Movie
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Though John Wick seemingly met his end in John Wick: Chapter 4, Keanu Reeves isn't done with his stylish assassin character just yet. A fifth John Wick live-action movie is in development, and director Chad Stahelski is also working on an animated pr&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/chicago-med-season-12-trudy-platt-treat-better-than-pd/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/mixcollage-05-nov-2026-10-49-am-7624.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Chicago Med Gives Chicago P.D.'s Trudy Platt Better Role Than Her Own Show
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Chicago Med Treats A Criminally Overlooked One Chicago Original Star Better Than Their Own Show</div>
+      
+      
+      <div class="summary">Warning: this article contains spoilers for Chicago Med season 12, episode 5, "Baptism by Fire."NBC shook up Chicago Med early on in season 12 by adding Sharon Goodwin to the ED, and the switch in chiefs from Archer to Ripley complicated everything f&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hellboy-official-return-new-christmas-release-coming-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/hellboy-feature.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hellboy: The Advent Calendar Game Announced for 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Hellboy Officially Returns With New Christmas Release Coming 2026</div>
+      
+      
+      <div class="summary">Hellboy's comic debuted in 1993, and the character has since starred in countless adaptations, including tabletop role-playing games like GURPS Hellboy and the B.P.R.D. and Hellboy: The Roleplaying Game.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/outlander-blood-of-my-blood-season-2-episode-8-murtagh-grace-rory-alexander/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/outlander-blood-of-my-blood-season-2-rory-alexander-01.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Outlander: Blood of My Blood’ Star Hints at What’s Next After That Shocking Cliffhanger
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's note: The following contains major spoilers for Outlander: Blood of My Blood Season 2, Episode 8. Summary In Season 2 of 'Outlander: Blood of My Blood,' Murtagh finds tender, unexpected romance with Grace and finally feels truly wanted.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-literary-classics-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/the-odyssey-matt-damon-looking-up.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Greatest Literary Classics Of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When considering literature, there are some books that stand out as the best in each of their respective countries. Then, there are those that stand out even within a continent, and finally, some are even able to draw attention on a worldwide scale.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/stranger-things-other-worlds-teaser/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/stranger-thigns-other-worlds.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Releases First Teaser for 'Other Worlds: A Stranger Things Adventure' Prequel
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Stranger Things' Officially Returns in First Teaser for Live-Action Prequel Series</div>
+      
+      
+      <div class="summary">It's official: Stranger Things is back with a new live-action series that takes place decades before the events of the original sci-fi phenomenon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/stranger-things-day-new-series-other-worlds-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/stranger-things-s5.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Other Worlds: A Stranger Things Adventure Live-Action Series Coming in 2028
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Stranger Things Officially Returns in 2028 With New Series</div>
+      
+      
+      <div class="summary">Netflix is bringing back Stranger Things in 2028 with a new live-action series, the company announced Friday.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/daredevil-born-again-season-3-redesigns-characters-wilson-bethel-bullseye-vincent-donofrio" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000012220.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Daredevil: Born Again Season 3 Unveils Major Redesigns For 3 Main Characters — Including Wilson Bethel's Bullseye And Vincent D'Onofrio's Kingpin
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Daredevil: Born Again Season 3 is set to highlight major costume redesigns for its core trio of characters, showcasing brand-new looks for Vincent D'Onofrio's Wilson Fisk, Wilson Bethel's Bullseye, and Charlie Cox's Matt Murdock.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/stranger-things-other-worlds-live-action-prequel-series-2028/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/01/stranger-things-season-5-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stranger Things Prequel Spin-Off 'Other Worlds' Set for 2028 on Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Stranger Things’ Officially Returns to Netflix in 2028</div>
+      
+      
+      <div class="summary">In the last 10 years since becoming the biggest streaming service in the world, Netflix has released dozens, if not hundreds of popular sci-fi shows. However, the one that trumps them all is Stranger Things, which aired five full seasons over the cou&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/weakest-pokemon-ash-caught-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/07/torterra.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Weakest Pokémon Ash Ever Caught, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pokémon's anime has produced over 1300 episodes, with the majority of those focusing on Ash's humble adventures as a Pokémon Trainer.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-new-stranger-things-show-other-worlds/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/sharedimages/2025/11/eleven-with-cables-all-over-her-head-in-stranger-things-season-4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stranger Things Prequel 'Other Worlds' Coming to Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Officially Resurrects Stranger Things With New Live-Action Series</div>
+      
+      
+      <div class="summary">Netflix has officially unveiled a new live-action Stranger Things series. Titled Other Worlds: A Stranger Things Adventure, the show serves as a prequel to the flagship title and is set in the 1950s. The announcement came with a short teaser featurin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/netflix-best-detective-thrillers/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/detective-hole-tobias-santelmann.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Greatest Netflix Detective Thrillers You Can Binge in a Weekend
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix Netflix has quietly assembled a sharp lineup of detective thrillers. Rain-soaked Nordic investigations, twist-heavy whodunits, politically linked crimes, and tightly wound family sagas turn “one more episode” into a sunrise regret.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/edge-of-tomorrow-tom-cruise-stream-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2024/12/tom-cruise-edge-of-tomorrow.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Cruise's 'Edge of Tomorrow' Becomes Streaming Sensation
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Cruise's 113-Minute "Aliens Meets Groundhog Day" Sci-Fi Thriller Becomes Streaming Sensation</div>
+      
+      
+      <div class="summary">As Tom Cruise faces the aftermath of his latest project Digger failing to captivate audiences, one of his best films has resurfaced as a streaming hit.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/smallville-25th-anniversary-al-gough-miles-millar-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/tom-welling-as-clark-kent-in-smallville-season-7-with-a-red-cape.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Smallville 25th Anniversary Interview: How Al Gough & Miles Millar Reimagined Superman For A New Era
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">"Every story has a beginning." Those were five simple but pivotal words in the early marketing for Smallville, as The WB brought the journey of DC's most iconic superhero to the small screen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/sydney-sweeney-housemaid-stage-adaptation-biggest-test-without-her/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/sydney-sweeney-in-the-voyeurs.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sydney Sweeney's The Housemaid Faces Its Biggest Test With New Stage Adaptation
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Sydney Sweeney's erotic R-rated thriller is about to face a big test without her. While some of Sydney Sweeney's movies have struggled to find an audience (Madame Web, Ron Howard's Eden), she's also scored major hits too.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/marshals-seal-team-replacement-recommendation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/max-thieriot-in-seal-team.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marshals: SEAL Team's Spiritual Sequel Is TV's Most-Watched Show
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: SEAL Team's Spiritual Sequel Is TV's Most-Watched Show</div>
+      
+      
+      <div class="summary">While the David Boreanaz vehicle SEAL Team might have wrapped up in 2024 after seven seasons, Taylor Sheridan’s biggest TV hit is a perfect replacement for the procedural series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/outlander-blood-of-my-blood-season-2-episode-8-lord-lovat-tony-curran/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/outlander-blood-of-my-blood-season-2-tony-curran-01.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tony Curran Discusses Lord Lovat in 'Outlander: Blood of My Blood' Season 2
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: We Have ‘Blood of My Blood’s Most Despicable Villain To Thank for Eight Seasons of ’Outlander’</div>
+      
+      
+      <div class="summary">Editor's note: The following contains spoilers for Outlander: Blood of My Blood Season 2, Episode 8. Summary In Season 2 of 'Outlander: Blood of My Blood,' Lord Lovat is peacocking, relishing royal favor and social climbing.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/owen-wilson-stick-vs-ted-lasso-apple-tv-charts-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/06/stick-apple-tv-3.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stick Season 2 Overtakes Ted Lasso for Apple TV's No. 1 Spot
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Owen Wilson Takes Apple TV's No. 1 Spot From Ted Lasso Just 24 Hours After Season 2 Premiere</div>
+      
+      
+      <div class="summary">Owen Wilson has swung big with the new season premiere of his hit golf comedy show Stick. The Season 2 drop managed to quickly overtake the veteran Ted Lasso to secure #1 on the Apple TV charts.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/marvel-spider-man-most-controversial-story-finally-reversed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/spider-man-one-more-day.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spider-Man: One More Day Is Finally Getting Reversed
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fans of Spider-Man have been living in a perpetual state of frustration and dread ever since J. Michael Straczynski and Joe Quesada's storyline, One More Day, released all the way back in 2007.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-first-contact-best-patrick-stewart-picard-movie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/unbreakable-61-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: First Contact is Patrick Stewart's Best Star Trek Movie
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With the passing of Patrick Stewart, the world is rediscovering his powerful legacy as Star Trek: The Next Generation's Captain Jean-Luc Picard. After the series came to an end, he reunited with the cast for four movies, including the widely beloved &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-good-daughter-release-date-peacock-karin-slaughter/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/img_2221-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Karin Slaughter's 'The Good Daughter' Debuts on Peacock Next Week
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Karin Slaughter's New 5/5 Thriller Series Officially Debuts Next Week</div>
+      
+      
+      <div class="summary">Karin Slaughter is back with another suspenseful thriller adapted for television, officially debuting next week.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2303296/how-to-install-apps-android-phone-outside-play-store/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/your-android-phone-can-install-apps-outside-the-play-store-heres-how/l-intro-1793470964.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 06 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Your Android Phone Can Install Apps Outside The Play Store – Here's How
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Your Android Phone Can Install Apps Outside The Play Store – Here's How Framesira/Shutterstock Every time you need an Android app for a very specific purpose — like logging your daily walks or creating short vlogs, you probably hop on the Play Store.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <span class="current">14</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/15.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>
