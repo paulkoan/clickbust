@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-14 22:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>44 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>117 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.bgr.com/2311468/how-get-best-battery-life-motorola-phone/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-to-get-the-best-battery-life-out-of-your-motorola-phone/l-intro-1794256324.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How To Get The Best Battery Life Out Of Your Motorola Phone
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How To Get The Best Battery Life Out Of Your Motorola Phone Kryvosheia Yurii/Shutterstock It's never a good feeling when you're out and about and you notice your phone's battery has almost completely drained.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hyped-up-modern-anime-everyone-already-forgot/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/akira-enjoying-his-life-to-the-fullest-while-a-hoarde-of-zombies-follow-him-in-zom-100.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Hyped-Up Modern Anime Everyone Already Forgot About
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Today, it’s easier than ever for upcoming anime series to generate excitement through social media discussions and international marketing campaigns.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-rainmaker-suits-replacement-legal-drama/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/10/suits-gabriel-macht-patrick-j-adams.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Rainmaker: Peacock's New Legal Drama Is a Worthy Successor to Suits
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Peacock Officially Replaces 'Suits' With a Legal Drama That Can't Be Beat</div>
+      
+      
+      <div class="summary">The USA network has tried for years to come up with a worthy successor to their hit legal drama, Suits. The nine-season series, which ran from 2011 to 2019, managed to capture the cutthroat, yet fascinating world of high-powered lawyers in New York C&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2308293/how-much-would-it-cost-buy-power-bank-2016-vs-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/heres-how-much-it-would-cost-to-buy-a-power-bank-in-2016-vs-2026/l-intro-1793905283.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Here's How Much It Would Cost To Buy A Power Bank In 2016 Vs. 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Here's How Much It Would Cost To Buy A Power Bank In 2016 Vs. 2026 Natali-Natali love/Shutterstock If you want to charge your smartphone, laptop, or tablet on the go, consider a power bank.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/disney-christmas-carol-new-scrooge-mcduck-story/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/disney-mickey-s-christmas-carol.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel's Uncle Scrooge: A Christmas Carol Comic Gets First Look
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney Drops First Look At New Christmas Carol Adaptation With Perfect Scrooge For The Lead</div>
+      
+      
+      <div class="summary">Unlike the latest Johnny Depp vehicle adapting A Christmas Carol, many adaptations of one of Charles Dickens' most beloved classics are well-loved and garnered no shortage of critical acclaim.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/law-order-svu-hiatus-episode-600/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/christopher-meloni-as-elliot-stabler-and-mariska-hargitay-as-olivia-benson-law-order-svu.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Law & Order: SVU Goes on Hiatus After 600th Episode's Major Reunion
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Law & Order: SVU went all out for its milestone 600th episode by delivering a long-awaited reunion. Unfortunately, the series is going on a brief hiatus now.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/ron-swanson-parks-and-rec-iconic-line/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2018/03/nick-offerman2.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            15 Years Later, Ron Swanson's Best Parks & Rec Line Is Still the Funniest Quote in Sitcom History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When Parks and Recreation first aired in 2009, few could have predicted how deeply it would root itself in the cultural consciousness.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-calvin-and-hobbes-comics-at-the-dinner-table-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/06/the-best-calvin-and-hobbes-comics-at-the-dinner-table.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Best Calvin and Hobbes Comics at the Dinner Table, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Calvin and Hobbes portrays the adventures and imagination of a six-year-old boy. As such, comics often take boring, everyday occurrences and stretch them, turning them into something fun, fantastical, or thought-provoking.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/darkwing-duck-reboot-update-seth-rogen/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2020/08/DuckTales-Scrooge-McDuck.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Seth Rogen Addresses Major Casting for Scrooge McDuck in Darkwing Duck Reboot
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A new take on Darkwing Duck is in development with Mark Hamill taking on the voice of the iconic Disney superhero. After years of slow movement, the reboot series is finally coming together with other exciting casting news teased to be imminent.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2311990/unexpected-benefits-phone-always-on-display/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-unexpected-benefits-of-your-phones-always-on-display/l-intro-1794320939.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Unexpected Benefits Of Your Phone's Always-On Display
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Unexpected Benefits Of Your Phone's Always-On Display miss.cabul/Shutterstock Displays have evolved tremendously over the years. Tiny 1.5-inch liquid crystal displays, such as those in the iconic Nokia 3310, dominated the early 2000s.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/oblivion-tom-cruise-sci-fi-beautiful-empty.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2023/03/tom-cruise-oblivion-jack-rifle.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Oblivion: Tom Cruise Sci-Fi Movie That Made the End of the World Look Too Good
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Tom Cruise Sci-Fi Movie That Made the End of the World Look Too Good</div>
+      
+      
+      <div class="summary">But it sure looks purty. By Brent McKnight | Published 22 seconds ago Olga Kurylenko as Julia in Oblivion (2013). Film frame via Universal Pictures. “All style, no substance” is the refrain that ran through my head watching writer/director Joseph Kos&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-arcade-games-cant-play-on-modern-consoles/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2017/04/star-wars-arcade-1983.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Arcade Games You Still Can't Play on Modern Consoles
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Arcade games are truly classic because they have a sense of nostalgia attached to them. They might have been at the birth of the gaming industry, but more so, they are integral to the player's individual experience. That's why fans are so determined &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/sailor-moon-inner-guardians-bandai-figure-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/sailor-moon-officially-redesigns-its-4-original-guardians-for-november-2026-debut-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sailor Moon S.H.Figuarts Figures Redesign Original Guardians for November 2026 Debut
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Sailor Moon Officially Redesigns Its 4 Original Guardians for November 2026 Debut</div>
+      
+      
+      <div class="summary">Sailor Moon fans have four exciting new designs to look forward to this November. Bandai's Tamashii Nations has officially announced brand-new figures of Sailor Mercury, Sailor Mars, Sailor Jupiter and Sailor Venus, bringing the beloved Sailor Guardi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/brandon-sanderson-cosmere-fantasy-universe-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/shadows-for-silence-in-the-forests-of-hell-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Cosmere Explained: Everything To Know About Brandon Sanderson’s Shared Fantasy Universe
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fantasy literature is more popular than ever, and the medium is always changing. Previously, it was considered "for nerds" and was a fairly niche community.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/matt-damon-saving-private-ryan-ww2-streaming-free-pluto-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/rainmaker-matt-damon.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Saving Private Ryan Remains Matt Damon's Greatest Film 28 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Matt Damon’s WWII Masterpiece Is Still His Greatest Movie 28 Years Later</div>
+      
+      
+      <div class="summary">There have been many high points in Matt Damon’s filmography, from soaring epics like The Odyssey to tense dramas such as The Departed, as well as action spectaculars like the Bourne franchise. One movie made relatively early in his career, however, &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/james-gunn-dcu-exit-people-vs-gorilla-grodd-problem/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/10/david-corenswet-s-superman-smiling-as-he-flies-into-the-camera-in-superman-2025.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            James Gunn's DC Exit Puts 'The People Vs. Gorilla Grodd' Spin-Off in Jeopardy
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: James Gunn's DCU Exit Deals A Huge Blow To Upcoming Superman Series</div>
+      
+      
+      <div class="summary">After a massive shake-up, it has been confirmed that both James Gunn and Peter Safran have exited from their leadership roles at DC Studios.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/final-fantasy-9-melodies-of-life-music-box-announced/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/final-fantasy-9-melodies-of-life-music-box-announced.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Final Fantasy 9: Melodies Of Life Officially Announced
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Square Enix has officially announced a new Final Fantasy 9 release called Melodies of Life, and fans of what is arguably the best single-player entry in the series may want to make sure they can obtain it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2311853/amd-cpu-how-hot-is-too-hot-amd-guidance/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-hot-is-too-hot-for-an-amd-cpu-the-official-answer-might-surprise-you/intro-1794264619.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            AMD CPUs Can Safely Run at 95°C, According to Official Specs
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: How Hot Is Too Hot For An AMD CPU? The Official Answer Might Surprise You</div>
+      
+      
+      <div class="summary">How Hot Is Too Hot For An AMD CPU? The Official Answer Might Surprise You PJ McDonnell/Shutterstock If you're monitoring the temperature of your AMD processor, you might wonder what's too hot to be running safely.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/most-unwatchable-sci-fi-anime-all-time/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/big-order-rin-and-kagekiyo-looking-over-their-shoulders.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Unwatchable Sci-Fi Anime of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Science fiction is one of the most expansive genres in anime, covering everything from space operas to cyberpunk dystopias and time travel puzzles. The genre has produced landmark series that still continue to define the medium.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/demon-slayer-best-hashira-designs-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/06/kyojuro-rengoku-talks-happily-in-demon-slayer.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Best Hashira in Demon Slayer, Ranked by Design
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of the reasons Demon Slayer resonated so strongly with fans was because of Koyoharu Gotouge's stunning character designs. Every character in Demon Slayer, from the Upper Moons to the Demon Slayer Corps, has strong designs, with details that refle&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/two-and-a-half-men-charlie-sheen-pluto-streaming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/05/two-and-a-half-men-ending-explained.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Two and a Half Men to Stream Free on Pluto TV Starting November 20
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Charlie Sheen’s Two & A Half Men Is Officially Beginning A New Era</div>
+      
+      
+      <div class="summary">Two and a Half Men is entering a new chapter in its history, which will give viewers a fresh way to watch the iconic sitcom. Between 2003 and 2015, 12 seasons of Two and a Half Men aired on CBS as the series became one of the most successful sitcoms &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2310557/common-issues-with-third-party-app-stores-android/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-risks-of-installing-apps-from-third-party-android-app-stores/l-intro-1794232090.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Risks Of Installing Apps From Third-Party Android App Stores
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Risks Of Installing Apps From Third-Party Android App Stores Dimarik/Getty Images One reason that Google and Apple run their own app stores is so that users have a secure source to download apps.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-multiplayer-games-of-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/03/world-of-warcraft-pandaren-monk.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Multiplayer Games of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Gaming has become more global, and players are gaming with each other now more than ever. Multiplayer games have become such an integral part of the medium, and there are countless great ones out there from many different franchises. There is a multi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/james-bond-casting-robert-pattinson-batman-role" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/bondisson.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            James Bond Casting Report Reveals What Happens To Robert Pattinson’s Batman If He Lands Bond Role
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A new casting report has revealed what could happen to Robert Pattinson's Dark Knight if the actor gets the green light to become 007.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/apple-tv-pluribus-season-2-samba-schutte/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/rhea-seehorn-as-carol-sturka-and-karolina-wydra-as-zosia-on-pluribus.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV's Pluribus Gets a Cast Shakeup for Season 2 as Filming Begins
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The second season of Pluribus is finally coming soon. But just as filming kicks off on the Apple TV hit, the cast is getting a bit of a shakeup. According to The Hollywood Reporter, Samba Schutte is being upped to series regular for the upcoming seas&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/ghost-soldier-ending-explained-how-jim-caviezels-fitz-destroys-blackstone/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/ghost-soldier-2026-trailer-image.avif?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ghost Soldier Ending Explained: How Jim Caviezel's New Action Hero Destroys Brownstone
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In 2023, actor Jim Caviezel (best known for playing Jesus Christ in Mel Gibson’s The Passion of the Christ) starred in Angel Studios’ Sound of Freedom. The film was a surprise smash hit at the box office and with audiences, putting Angel Studios on t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/clayface-removed-from-1000-theaters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/batman-standing-rooftop-looking-at-camera.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Clayface, DC's R-Rated Batman Spin-Off, Removed From 1,000 Theaters
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: DC’s R-Rated Batman Spin-Off Officially Removed From 1,000 Theaters</div>
+      
+      
+      <div class="summary">Having recently passed what is likely its final box-office milestone, DC's new R-rated horror movie is on its way out of theaters. The movie will reportedly debut digitally after the first week of December, which gives it around three weeks to make t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/lotr-rings-of-power-fantasy-prime-video-success-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/the-lord-of-the-rings-the-rings-of-power-anarion.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Lord of the Rings: The Rings of Power Becomes No. 1 on Prime Video in America
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Lord of the Rings Prequel Becomes No. 1 on Streaming in America</div>
+      
+      
+      <div class="summary">Prime Video has one streaming series to rule them all in the United States. The Lord of the Rings: The Rings of Power is the No. 1 streaming series on the Amazon-owned service following its Season 3 premiere.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-space-opera-anime-21st-century-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2018/12/Legend-of-Galactic-Heroes-Die-Neue-These.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Greatest Space Opera Anime of the 21st Century, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Space opera anime expand sci-fi stories to galactic empires, far-reaching colonies, powerful militaries and different political ideologies. They have so much more to offer than just exciting space battles.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/terminal-list-prime-video-action-thriller-streaming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/the-terminal-list-season-2-constance-wu.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Terminal List Surges 307% to Become No. 1 Streaming Original on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video's 2-Season Action Thriller Just Surged 307% To Become the No. 1 Streaming Original</div>
+      
+      
+      <div class="summary">When it comes to the host of action thrillers that you can find on Prime Video, none have made quite the waves that The Terminal List has.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <span class="current">10</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/11.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

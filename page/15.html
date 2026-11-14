@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-14 22:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>44 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>117 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.cbr.com/disney-lorcana-card-rarity-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/disney-lorcana-tcg-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Disney Lorcana Card Rarity, Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Disney's Lorcana cards have numerous symbols and measurements detailing various pieces of information critical to gameplay. This information can be overwhelming for first-time players and newcomers, who don't fully understand what these symbols mean &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-wars-50th-anniversary-movies-merch-events/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/star-wars-50th-anniversary-poster.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Wars 50th Anniversary Celebration Plans Announced by Disney
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Disney has officially unveiled its plans to celebrate Star Wars' 50th anniversary in 2027. Those plans include a new Disney+ documentary, new art for the theatrical re-release of the original 1977 Star Wars, and new merchandise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/brandon-sanderson-favorite-fantasy-books-recommended/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/brandon-sanderson.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Near-Perfect Fantasy Books, Recommended by Brandon Sanderson
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Brandon Sanderson is one of the most popular authors in the fantasy genre right now, yet he never misses a chance to pay his success forward. Sanderson has made headlines for steering the publishing industry itself and advocating for other writers al&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/day-1s-tv-show-paramount-plus-ted-lasso-rival-matthew-vaughn-damian-lewis/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/jason-sudeikis-ted-smiling-while-looking-over-his-shoulder-in-ted-lasso-season-4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Matthew Vaughn to Direct Paramount+ Soccer Series 'Days 1s'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Paramount+ Sets New Ted Lasso Rival Series With Kingsman Director</div>
+      
+      
+      <div class="summary">Filmmaker Matthew Vaughn is shifting from the Kingsman universe to a new Ted Lasso competitor series for Paramount+. Apple TV’s Ted Lasso has cemented itself as one of the best TV shows of the 2020s.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/planeswalker-netflix-first-look-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/06/netflix-logo-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Magic: The Gathering Series 'Planeswalker' Reveals First Look
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's Long-Awaited Fantasy Adaptation Finally Unveils First Look After 7 Years</div>
+      
+      
+      <div class="summary">It's not often that a streaming project spends years in development and actually makes it to the screen. Projects announced with splashy press releases tend to vanish quietly a few years later, and for a long stretch it looked like Netflix's Magic: T&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/avengers-doomsday-marvel-confirms-new-team-lineup/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/avengers-doomsday-thor.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Officially Confirms New Avengers Team for Doomsday
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Marvel Cinematic Universe's Avengers lineup has been a bit muddled since the events of Captain America: Civil War, which broke up the team of besties.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/cyberpunk-2077-compact-edition-trauma-team-psycho-squad/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/keanu-reeves-in-cyberpunk-2077.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cyberpunk 2077 Finally Brings Back The Trauma Team For A New Comics Era
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">What is more important to a gamer: playability or story? Either way, anyone would agree that the best kinds of video games are just as fun to play as they are fascinating to follow narratively, such as Cyberpunk 2077.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-one-hundred-years-of-solitude-fantasy-drama/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/edwin-zamorano-looks-in-shock-in-one-hundred-years-of-solitude.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 16-Part One Hundred Years of Solitude Is Modern Fantasy at Its Best
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s 16-Part ‘Unadaptable’ Epic Is Modern Fantasy at Its Absolute Best</div>
+      
+      
+      <div class="summary">Gabriel García Márquez's One Hundred Years of Solitude was thought to be unadaptable by television standards for a long time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-movies-like-goosebumps-stories-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/10/mixcollage-23-oct-2024-02-12-am-3644.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Masterpiece Movies That Feel Like Lost Goosebumps Stories
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When thinking of escapist horror mysteries, few names come to mind as quickly as R.L. Stine's Goosebumps franchise, and some masterpiece movies are perfect for fans. A series that has tackled everything from eerie swamp monsters to classic cryptids, &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/disney-hexed-movie-thanksgiving-release-billion-dollar-streak/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/hexed.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Disney's 'Hexed' Aims to Continue $1 Billion Thanksgiving Box Office Streak
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney's Next Movie Faces An Impossible Task In Keeping A Major Movie Streak Alive</div>
+      
+      
+      <div class="summary">Each holiday season, around Thanksgiving and Christmas in the United States, Disney typically has a big movie release in theaters. This time, it's Avengers: Doomsday). But Before Doomsday, however, Disney has another film set to debut — Hexed.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/transport-fever-3-logistics-city-builder-game/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/02/transportfever3.JPG?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Transport Fever 3 Finally Here, Better than Expected as Cities: Skylines Alternative
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Cities: Skylines' Best Replacement Is Finally Here and Better than Expected</div>
+      
+      
+      <div class="summary">2026 is the year I got massively into city builders, and by massively I mean I played Cities: Skylines more than anything else for the first half of the year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/new-tv-shows-streaming-this-weekend-netflix-november-13-15/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/tcdbody_zx012.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 New TV Shows to Watch This Weekend on Netflix, Prime Video, and HBO (November 13-15)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It’s a big weekend for new TV. VisionQuest has concluded its first season, including a post-credits scene with big implications for Avengers: Doomsday.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/marvel-paladin-mcu-future/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/todd-stashwick-visionquest.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Goodbye 'VisionQuest,' Marvel's Paladin Knows Where He Should Appear Next In The MCU
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning - this article contains spoilers for the 'VisionQuest' finale.Marvel Studios finished off its third and final Disney+ program of the year, VisionQuest, with the show's final episode on Nov. 10, 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/best-new-movies-watch-streaming-now/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/copy-of-feature-images-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Best New Movies to Watch on Streaming Right Now
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Nearly every streaming service now offers a wide range of high-quality titles. But while it's easy to spend days binge-watching shows, sometimes only a great movie will do. In between catching the latest movies in theaters, there are plenty of option&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-rings-of-power-season-3-sauron-one-ring-forging/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/copy-of-collider-template-2026-11-13t135749-623.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘The Rings of Power’ Season 3 Confirms Sauron Forging the One Ring
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘The Rings of Power’ Officially Confirms the Moment Fans Have Waited 3 Seasons to See</div>
+      
+      
+      <div class="summary">For two seasons, The Lord of the Rings: The Rings of Power has been meandering a bit while getting to the most pivotal moment in the history of Middle-earth.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/12-12-12-heist-series-apple-tv-success-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/12-12-12.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Anthony Mackie's Apple TV Heist Series 12 12 12 Debuts as One of the Most-Streamed Shows
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: MCU Star's New 8-Part Apple TV Heist Series Debuts as 1 of the Most-Streamed Shows in America</div>
+      
+      
+      <div class="summary">Apple TV’s brand-new heist series is climbing the charts. 12 12 12, starring the MCU’s own Anthony Mackie, is officially one of the most-streamed shows in the country. According to FlixPatrol, 12 12 12 is No. 5 on Apple TV for TV shows, coming in jus&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2316418/biggest-problems-tesla-cybertruck-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/the-5-biggest-problems-tesla-cybertrucks-faced-in-history/l-intro-1794597441.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 5 Biggest Problems Tesla Cybertrucks Faced In History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 5 Biggest Problems Tesla Cybertrucks Faced In History Iv-olga/Shutterstock Tesla's polygonal-shaped Cybertruck has never had any problem getting people's attention.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/blood-of-dawnwalker-update-new-game-plus-announced/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/the-blood-of-dawnwalker-how-long-to-beat.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Blood of Dawnwalker Finally Gets Its Most Requested Feature Next Week
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's been just over two months since The Blood of Dawnwalker was released and fans have been clamoring for one missing feature for basically that long. Now developer Rebel Wolves is set to appease that demand with the upcoming update 1.2.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/costco-pokemon-30th-anniversary-etb-booster-bundle-stock-price-when-locations/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/pikachu-025-thumbnail.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Costco’s New 'Pokémon' 30th Anniversary Online TCG Bundle Is Unbelievable
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warehouse retailer Costco is determined to blow its competitors out of the water when it comes to selling Pokémon Trading Card Game products. A couple of months after debuting the best Pokémon deal of 2026, the members-only retailer is back with anot&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2316408/google-nest-changed-speaker-sounds-overnight/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/your-google-nest-speakers-quietly-updated-overnight-heres-what-changed/l-intro-1794597726.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Your Google Nest Speakers Quietly Updated Overnight - Here's What Changed
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Your Google Nest Speakers Quietly Updated Overnight - Here's What Changed Vantage_DS/Shutterstock If your Google Home or Nest speaker is making sounds it didn't before, a new update that arrived for users seemingly in the middle of the night may be t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/edward-scissorhands-streaming-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/007_the-ghost-of-christmas-present-andrea-riseborough-stares-menacingly-with-completely-white-pupils-at-mr-scrooge-johnny-depp-in-ebenezer-2026-_2560x1440-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Johnny Depp's Edward Scissorhands Officially Sets Netflix Release
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget 'Ebenezer,' Johnny Depp's Near-Perfect 105-Minute Gothic Fantasy Officially Sets Netflix Release</div>
+      
+      
+      <div class="summary">Johnny Depp's Hollywood comeback continues this weekend with the release of Ebenezer. Thus far, the new interpretation of Charles Dickens' A Christmas Carol has yet to win over critics, as it debuted to just a 51% rating on Rotten Tomatoes from 59 re&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-sci-fi-books-read-this-weekend-november-14/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/poor-things-book-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Best Sci-Fi Books To Read This Weekend (November 14-15)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Science fiction is among the most popular genres around, and for good reason. Rich in worldbuilding and dealing with themes of oppression, ambition, liberation, and the advancement of the human race, sci-fi is an enduring part of most media, but it's&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/the-game-awards-2026-nominees-announcement-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2025/11/tga_key_art_side.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Game Awards 2026 Nominees Announcement Confirmed for Nov. 17
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Game Awards 2026 is approaching, and this year's award nominees are set to be announced on Tuesday, Nov. 17.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/boruto-chapter-39-kawaki-moment-of-peace/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/03/kawaki.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Boruto Chapter 39 Preview Gives Kawaki a Rare Moment of Peace
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The next chapter of Boruto: Two Blue Vortex arrives this November. The one-page preview for Chapter 39 reveals a surprisingly wholesome moment involving one of the series' most emotionally damaged characters.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/free-games-right-now-steam-epic-ps-plus-nov-13-19/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/knightica-steam.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Free Game You Can Keep on Steam, Epic, PlayStation Plus, and Xbox (Nov. 13-19)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Next week the world will stop for many players with the launch of Grand Theft Auto 6. If you've already preloaded GTA 6, then you'll be ready to hit "Play" as soon as it becomes available on Nov. 19. In the meantime, you have to find a game that'll k&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/avengers-doomsday-deadpool-star-marvel-studios-movie" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/photos/dopinder-deadpool.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Deadpool Star Karan Soni Won't Appear in Avengers: Doomsday, New Promo Confirms
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: One Deadpool Movie Star Didn’t Make the Cut for Avengers: Doomsday, New Promo Confirms</div>
+      
+      
+      <div class="summary">Marvel Studios gave Fox's X-Men universe a proper send-off in Deadpool & Wolverine by showing a montage of behind-the-scenes footage from various superhero productions. And then the company turned right around and brought back most of the cast from t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/thriller-miniseries-perfect-no-notes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/chernobyl-hbo-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Thriller Miniseries That Are 10/10, No Notes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With its unique ability to let a story unfold over the course of multiple hours while still delivering a succinct resolution that viewers don’t have to wait over the course of multiple seasons to see, the miniseries format has emerged as an outstandi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/fairytale-in-new-york-aaron-pierre-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2024/09/aaron-pierre-in-netflix-s-rebel-ridge.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Aaron Pierre Returns to Netflix for Action Thriller 'Fairytale in New York'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Rebel Ridge' Star Aaron Pierre Returns to Netflix for New Action Thriller</div>
+      
+      
+      <div class="summary">Published Nov 13, 2026, 3:03 PM EST Richard is a writer/journalist from Oregon (by way of California) with a love of Marvel, Star Wars, DC, and all kinds of entertainment. He joined MovieWeb in January 2026 as a Movie & TV Writer/Editor.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/video/boston-blue-season-2-episode-6-donnie-wahlberg-clip/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/donnie-wahlberg-sonequa-martin-green-in-boston-blue-206.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Donnie Wahlberg Rescues An Infant In New Boston Blue Clip
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">EXCLUSIVE: ScreenRant presents a clip from tonight's Boston Blue, in which Danny desperately attempts to perform CPR on a baby as Lena looks on.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/video/wolverine-jeremy-allen-white-could-bring-back-classic-logan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/clip-4-1.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wolverine: Jeremy Allen White Could Bring Back Classic Logan
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Jeremy Allen White as Wolverine: Could It Work? The Bear star has reportedly met with Marvel about a role in its upcoming X-Men reboot, sparking speculation that he could become the MCU's next Logan. But how much of the rumor is actually confirmed?</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <span class="current">15</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/16.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

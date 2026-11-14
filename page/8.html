@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-14 22:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>44 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>117 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/rings-of-power-season-3-jamie-campbell-bower-celeborn-casting/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/copy-of-collider-template-2026-11-13t150130-414.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘The Rings of Power’ Considered Hundreds of Auditions Before Casting Celeborn
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Going from the Upside Down to Middle-earth might sound like a pretty significant career change, but if anybody can make the transition look effortless, it's probably Jamie Campbell Bower.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/harry-potter-golden-trio-romantic-relationships-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/goldentrio_harrypotter.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 5 Romantic Relationships From Harry Potter’s Golden Trio, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Harry Potter, Ron Weasley, and Hermione Granger are three friends who form the famous "Golden Trio" from Harry Potter. Together, they faced down countless adversaries, solved mysteries, suffered losses, and even saved a few people along the way.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2315993/marvel-comics-avengers-doomsday-ending/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-marvel-comics-that-could-reveal-how-avengers-doomsday-ends/l-intro-1794585830.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Marvel Comics That Could Reveal How Avengers: Doomsday Ends
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Marvel Comics That Could Reveal How Avengers: Doomsday Ends Static Media It's hard to say just how dark things might get for Earth's Mightiest Heroes by the end of "Avengers: Doomsday." Reports say the movie was described as "too dark" at test scre&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/god-of-war-outlander-replacement-ronald-d-moore/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/outlander_4gwl3x.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ronald D. Moore's God of War Adaptation Coming to Prime Video in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ronald D. Moore Has Found The Perfect Outlander Replacement</div>
+      
+      
+      <div class="summary">For almost 12 years, Ronald D. Moore’s epic romantic fantasy series Outlander has been the mainstay of his TV career. Now that the show has drawn to a conclusion, however, he’s already found a replacement for it, against a different historical backdr&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pokemon-tcg-delta-reign-kyogre-groudon-new-looks/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/pokemon-groudon-kyogre-cover-scuffle-of-champions-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Officially Brings Back Kyogre & Groudon With All-New Designs
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pokémon has so much lore; it's staggering. And I don't just mean the journey of Ash or Red in the TV series and the games, respectively.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/rings-of-power-season-3-nazgnagol-vs-nazgul-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/fellowship-nazgul.avif?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rings of Power Just Changed the Nazgul in 1 Terrifying Way: ‘They Still Have a Human Side’
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Lord of the Rings: The Rings of Power season 3 sees Sauron begin to recruit the nine lieutenants that will one day become the Nazgûl, or Ringraiths. While details in J.R.R.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/knock-knock-streaming-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/knock-knock.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ana de Armas' 'Knock Knock' Pulled From Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ana de Armas' (Very) R-Rated 99-Minute Thriller Remake Is Officially Being Pulled From Streaming</div>
+      
+      
+      <div class="summary">Before Ana de Armas joined Keanu Reeves' John Wick franchise as ballerina and assassin Eve MaCarro, the two starred together in a racy 2015 thriller that's officially being pulled from streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/station-eleven-dystopian-world-building/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/station-eleven.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO's 'Station Eleven' Is a Masterclass in Dystopian World-Building
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO's Near-Perfect Sci-Fi Miniseries Is a Masterclass in Dystopian World-Building</div>
+      
+      
+      <div class="summary">When thinking about the most vivid dystopian sci-fi TV series in recent years, shows like Silo, Fallout, and The Last of Us come to mind. Their worlds feature well-established laws and universal rules that embrace traditional post-apocalyptic tropes &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/fallout-season-3-thomasin-mckenzie-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/fallout-season-3-ella-purnell-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Thomasin McKenzie Teases a Major New Acting Challenge in ‘Fallout’ Season 3
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After a handful of small roles, including a walk-on part in Peter Jackson’s The Hobbit trilogy, New Zealand actress Thomasin McKenzie earned her place on the roster in several independent films. Just as we were entering the 2020s, McKenzie’s career s&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2312292/how-to-reduce-electricity-costs-home-server/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/your-cheap-home-server-could-be-costing-you-in-energy-bills-heres-how-to-fix-it/l-intro-1794332118.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Your Cheap Home Server Could Be Costing You In Energy Bills — Here's How To Fix It
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Your Cheap Home Server Could Be Costing You In Energy Bills — Here's How To Fix It Miniseries/Getty Images Running a cheap home server to cut down on subscriptions isn't something that requires a beefy PC to power all the self-hosted applications you&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/mass-effect-new-figures-announced/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/mass-effect-5-character.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Youtooz Announces New Mass Effect Figures After ME5 Cancellation
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New Mass Effect Release Officially Confirmed Following ME5 Cancellation</div>
+      
+      
+      <div class="summary">The effects of Mass Effect 5's sudden cancellation are still affecting fans worldwide; the loss of such a great franchise is likely to leave a significant hole in the industry for some time to come.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-when-does-it-come-out-ps5-pro-crossplay-countdown-preorder-preload/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/jason_and_lucia_20-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6 Release Day: Everything To Know To Be Ready On Day One
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Grand Theft Auto 6 is less than a week away, which means there's not much time to prepare for the biggest gaming launch of 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/alan-ritchson-reacher-fan-criticism-tripwire-fight-scenes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/reacher-featured-alan-ritchson.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alan Ritchson Has the Perfect Response to Fans Complaining About 'Reacher'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">If there's one thing audiences know about Jack Reacher, it's that getting into a fight with him is generally a terrible idea.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2316419/pride-and-prejudice-netflix-series-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/pride-and-prejudice-everything-we-know-about-the-netflix-series/l-intro-1794530052.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pride And Prejudice: Everything We Know About The Netflix Series
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pride And Prejudice: Everything We Know About The Netflix Series Static Media Yes, you read that right: "Pride and Prejudice" is getting another adaptation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2311968/ultra-thin-oled-tvs-worth-buying/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-ultra-thin-oled-tvs-that-are-actually-worth-buying/l-intro-1794321073.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Ultra-Thin OLED TVs That Are Actually Worth Buying
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Ultra-Thin OLED TVs That Are Actually Worth Buying 8th.creator/Shutterstock We may receive a commission on purchases made from links. Thin TVs aren't exactly anything new. However, we've seen them get extremely thin over the past few years, especia&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-tv-serial-killers-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/michael-c-hall-in-dexter-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Greatest TV Serial Killers of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Television has always had a complicated relationship with its monsters. A movie gets two hours with a killer before the lights come up, but a TV series asks viewers to spend entire seasons with them. Over that time, audiences get to see how they oper&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-hunting-wives-tie-in-novel-release-november-17/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/malin-akerman-as-margo-banks-smiling-in-the-hunting-wives-season-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Netflix Tie-In Edition of The Hunting Wives Book Released One Week Before Season 2
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Hunting Wives Officially Returns One Week Before Season 2 Drops On Netflix</div>
+      
+      
+      <div class="summary">The Hunting Wives is one of the best thriller TV shows currently streaming on Netflix and is generating a lot of buzz ahead of the season 2 premiere.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/matt-dinniman-confirms-dungeon-crawler-carl-book-9-structure-change/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/cover-art-for-the-butcher-s-masquerade-by-matt-dinniman-dungeon-crawler-carl.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Matt Dinniman Confirms Dungeon Crawler Carl Book 9 Officially Breaks An 8-Book Tradition
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Dungeon Crawler Carl fans are quite eager to get their hands on the series finale, which will be released in two massive volumes starting with Book 9, currently titled The Beautiful Place.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/legend-of-zelda-switch-2-more-remakes-teased/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/the-legend-of-zelda-wilds-era-end-link-chin.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nintendo Hints at More Legend of Zelda Remakes Following Ocarina of Time Success
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Next Legend Of Zelda Remake Officially Teased By Nintendo</div>
+      
+      
+      <div class="summary">To nobody's surprise, the recent launch of The Legend of Zelda: Ocarina of Time Remake has been an instant hit.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/wobbledogs-3d-pet-sim-steam-overwhelmingly-positive/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/wobbledogs-rec-body.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wobbledogs Has Over 12,000 Overwhelmingly Positive Reviews on Steam
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This 3D Pet SIM You Never Played Has Over 12,000 ‘Overwhelmingly Positive’ Reviews</div>
+      
+      
+      <div class="summary">Have you ever wanted to raise your own genetically mutated pup? Well, there's a Steam game focused on exactly that, and it probably deserves more success than it's managed in the four years since it launched.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-accountant-2-jon-bernthal-streaming-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/the-accountant-2_tio06h.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jon Bernthal's 'The Accountant 2' Cut From Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jon Bernthal's 132-Minute "John Wick Meets Equalizer" Action Thriller Is Officially Being Cut From Streaming</div>
+      
+      
+      <div class="summary">Jon Bernthal returns bigger and badder than ever in a near-perfect action thriller that’s officially being cut from streaming later this month. Premiering in 2025, the film served as the long-awaited follow-up to a 2016 sleeper hit that also starred &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/daniel-radcliffe-hbo-harry-potter-reboot-may-never-watch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/10/harry-potter-and-the-sorcerer-s-stone.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Daniel Radcliffe Officially Admits He May Never Watch HBO's 'Harry Potter' Reboot
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">For an entire generation, Daniel Radcliffe is Harry Potter. The British star spent a decade bringing J.K. Rowling's famous wizard to life across eight movies, growing up alongside Emma Watson and Rupert Grint as the franchise became a global phenomen&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-wars-rebels-better-than-star-wars-movies/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/07/star-wars-the-rise-of-skywalker.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Wars Rebels: The 4-Season Show That's Better Than the Movies
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The 4-Season Star Wars Show That's Better Than the Movies in Every Way</div>
+      
+      
+      <div class="summary">The Star Wars machine has always been too big to fail, but there has been some time since a feature film in the universe has hit home for fans. This may be due to the surge of shows that have given the big-budget features a run for their money.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/keanu-reeves-greatest-action-movies-of-all-time-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/keanu-reeves-as-john-wick-in-john-wick.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Keanu Reeves' 10 Greatest Action Movies of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">For three decades, Keanu Reeves has been the defining face of American action cinema. His career is basically a timeline of how the genre evolved, from bringing wire-fu to Western blockbusters in the late 90s to perfecting tactical "gun-fu" in recent&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-far-side-comics-about-superman-and-other-heroes-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/07/gary-larson-s-10-best-far-side-comics-about-superman-and-other-heroes-ranked.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gary Larson's 10 Best Far Side Comics About Superman and Other Heroes, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Being one of the most popular newspaper cartoons for nearly fifteen years, there are few topics Gary Larson didn't touch on in The Far Side. Throughout the cartoon's history, there are many examples of The Far Side referencing other cartoons such as &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ridley-scott-last-duel-leaving-tubi-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/ridley-scott-on-set-of-gladiator-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ridley Scott's 'The Last Duel' Removed From Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ridley Scott’s 153-Minute Historical Thriller Officially Removed From Streaming</div>
+      
+      
+      <div class="summary">Ridley Scott is coming off a major setback in the form of The Dog Stars, his first sci-fi movie in nearly a decade. The film underperformed at the box office, grossing around $40 million worldwide against a reported budget of around $100 million.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/godzilla-1998-free-streaming-pluto-tv-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/screenshot-2026-09-13-at-8-35-03-am.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            1998's 'Godzilla' Gets New Streaming Release
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The ‘Godzilla’ Movie That Divided Fans Is Officially Getting a New Streaming Release</div>
+      
+      
+      <div class="summary">By the time Madison Square Garden becomes the most dangerous building in New York in Roland Emmerich’s Godzilla, the military has spent much of the movie trying to find one enormous animal. Then the eggs hatch, and Matthew Broderick has to get out of&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-sci-fi-shows-shorter-than-20-episodes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/adam-baldwin-alan-tudyk-nathan-fillion-and-gina-torres-in-firefly-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Best Sci-Fi Shows With Less Than 20 Episodes, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Nineteen episodes or fewer. That's all it has taken several of the greatest sci-fi TV shows in history to join the ranks of the best the genre has ever delivered on the small screen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2312274/what-to-do-with-old-belkin-wemo-smart-home/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/what-to-do-with-your-old-and-discontinued-wemo-smart-home-gadgets/l-intro-1794322080.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            What To Do With Your Old And Discontinued Wemo Smart Home Gadgets
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">What To Do With Your Old And Discontinued Wemo Smart Home Gadgets We may receive a commission on purchases made from links. At the start of 2026, Belkin decided to shut down the cloud services and app that controlled its smart home gadgets from the W&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/how-to-rob-a-bank-endings-meaning-nicholas-hoult-anna-sawai-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/how-to-rob-a-bank-interviews-nicholas-hoult-anna-sawai-rhenzy-feliz-john-c-reilly-site.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nicholas Hoult Filmed 2 Different Endings for His ‘How to Rob a Bank’ Character
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Summary Collider's Steve Weintraub talks with the cast of How to Rob a Bank. Nicholas Hoult reveals why he had no idea how his character's story ended while filming. Hoult, John C.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <span class="current">8</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/9.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

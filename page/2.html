@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-14 22:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>44 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>117 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/movies-like-you-can-see-everything/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/you-can-see-everything-2026-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Movies To Watch if You Loved ‘You Can See Everything’
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It’s cool to see how much You Can See Everything has been resonating and achieving popularity-wise, since it doesn’t really scream “hit movie.” It’s a nearly three-hour-long documentary about Elizabeth Holmes, at least at first. It does more beyond t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2312376/lightweight-power-banks-you-can-carry-in-trouser-pockets/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-lightweight-power-banks-you-can-carry-in-your-pocket/l-intro-1794335350.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Lightweight Power Banks You Can Carry In Your Pocket
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Lightweight Power Banks You Can Carry In Your Pocket Lana Milanovic/Shutterstock We may receive a commission on purchases made from links.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2314851/alien-franchise-creatures-scarier-xenomorph/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-alien-franchise-creatures-that-are-even-scarier-than-the-xenomorph/l-intro-1794499202.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Alien Franchise Creatures That Are Even Scarier Than The Xenomorph
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Alien Franchise Creatures That Are Even Scarier Than The Xenomorph Static Media It's widely regarded as one of the most original and outright frightening creatures in science fiction, but despite its long reputation, there are other creatures from &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/solo-leveling-strongest-shadows-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/02/solo-leveling-monarch-jin-woo.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Strongest Solo Leveling Shadows, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Most Solo Leveling hunters spend their whole lives trying to kill monsters. Sung Jinwoo has a much better solution, as he turns the monsters into soldiers and makes them fight alongside him.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/brandon-sanderson-books-changes-after-dungeon-crawler-carl/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/the-cover-of-words-of-radiance.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brandon Sanderson’s Teases Upcoming Book Change Because Of Dungeon Crawler Carl
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Brandon Sanderson is taking inspiration from Dungeon Crawler Carl. Two of the biggest names in genre fiction right now are Brandon Sanderson and Matt Dinniman. On the surface, the authors couldn’t be more different.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/most-iconic-primes-transformers-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/optimus-prime-with-his-arms-at-the-ready-for-a-fight-in-transformers.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Iconic Primes in Transformers History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Transformers universe has introduced numerous figures who carry the title of Prime, all tied to Cybertronian mythology, Autobot leadership, and wars fought across eras and generations.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/video/the-mummy-4-imhotep-may-destroy-brendan-fraser-s-happy-ending/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/clip-6.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Mummy: Book of the Dead May Destroy Brendan Fraser's Happy Ending
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Mummy 4: Imhotep May Destroy Brendan Fraser’s Happy Ending</div>
+      
+      
+      <div class="summary">The Mummy 4: What the New Title Really Means. The Mummy: Book of the Dead is bringing Brendan Fraser and Rachel Weisz back to the franchise, and its newly revealed title could be the biggest clue yet about where the story is heading.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/rings-of-power-sauron-make-one-ring-reason-galadriel/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/a-masked-rider-in-black-on-a-horse-from-the-rings-of-power-season-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Rings Of Power Season 3 Rewrites The Reason Sauron Creates The One Ring
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Although Prime Video’s Lord of the Rings prequel series, The Rings of Power, has maintained a lot of lore from Tolkien’s original texts, the decision to change Sauron’s motivations for creating the One Ring make a massive alteration to the show’s sto&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/animal-crossing-meets-wow-loftia-life-sim-mmo/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/12/a-town-square-in-a-screenshot-from-loftia-narrow-roads-snake-between-grassy-tree-lined-planting-plots-while-several-player-characters-stand-talking-beneath-a-small-orange-hot-air-balloon-at-the-center-of-the-scene.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Loftia: A Cozy Multiplayer Life Sim Now in Early Access
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Animal Crossing Meets World Of Warcraft In 9/10 Life Sim You Can Play Now</div>
+      
+      
+      <div class="summary">Over the years, particularly during the pandemic, there was an often-expressed desire that Animal Crossing: New Horizons had more to do with friends, which would make it more of a multiplayer experience, rather than just hitting each other with nets &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/zelda-ocarina-time-first-nintendo-kids-game/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/zelda-ocarina-of-time-great-deku-tree-and-link.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Zelda: Ocarina of Time Is Actually the Perfect Way to Introduce Kids to Nintendo
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Walk into The Legend of Zelda: Ocarina of Time’s Kokiri Forest, and it feels like you’re walking into a picture book. Especially in the remake, everything is moss-green and dappled with light. Fairies flit about. Kokiri children are rhythmically atte&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/broadchurch-leaving-streaming-roku-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/david-tennant-in-broadchurch.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            David Tennant's Crime Thriller 'Broadchurch' Leaving Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: David Tennant's Near-Perfect 3-Part Crime Thriller Is Officially Being Cut From Streaming</div>
+      
+      
+      <div class="summary">He might be best known as Doctor Who, but David Tennant's three-season crime thriller is far better, and it's about to be removed from streaming. Tennant's career exploded when he took over from Christopher Eccleston as the Tenth Doctor in 2005.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/person-of-interest-deserves-reboot/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/michael-emmerson-from-person-of-interest.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Person of Interest: Jonathan Nolan's Cyberpunk Series Feels Like a Documentary, Ripe for Reboot
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jonathan Nolan's 103-Episode Cyberpunk Series Feels Like a Documentary & It's Ripe For a Reboot</div>
+      
+      
+      <div class="summary">Jonathan Nolan is one of the most-acclaimed science-fiction writers working today. After collaborating with his brother Christopher Nolan on iconic films like Memento, The Dark Knight, and Interstellar, the youngest Nolan sibling has reshaped big-bud&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/percy-jackson-season-3-the-titans-curse-disney-plus-november-20/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/178553_1342_c74fd1df.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Percy Jackson’ Officially Returns Next Week With Its Darkest Adventure Yet
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When Grover calls for help at the beginning of The Titan’s Curse, Percy Jackson has a sword, friends who can handle a fight, and one problem none of his demigod powers can solve. He needs his mom to drive him.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/bruce-willis-the-fifth-element-tubi-success-sci-fi-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/10/the-fifth-element_ovzdli.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Fifth Element: Bruce Willis' 29-Year-Old Sci-Fi Classic Is a Free Streaming Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget Die Hard, Bruce Willis' 29-Year-Old Sci-Fi Classic Is a Free Streaming Hit</div>
+      
+      
+      <div class="summary">Bruce Willis is a legendary actor, probably best known for films like Die Hard and The Sixth Sense. Now, his 1997 sci-fi cult classic is a hit on streaming. Per FlixPatrol, The Fifth Element is currently the No. 2 most-watched movie on Tubi in the Un&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/apple-tv-black-bird-modern-classic/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/paul-walter-hauser-and-taron-egerton-as-larry-hall-and-jimmy-keen-in-black-bird.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV's Black Bird: A 6-Episode Crime Thriller That Will Be a Classic
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV Quietly Dropped a 6-Episode Thriller That Will Go Down as a Modern Crime Classic</div>
+      
+      
+      <div class="summary">Over the last seven years, Apple TV has become renowned for delivering some of the most gripping, grounded, and compelling crime thriller series in television history, including one of its prime examples, Black Bird.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dune-part-two-saddest-line-paul-atreides-duke-leto-tragedy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/chani.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dune: Part Two's Saddest Line is Already the Greatest Quote In Sci-Fi History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The villain arc of Paul “Muad’Dib” Atreides is a popular talking point, but no one seems to discuss how sad it is. In Denis Villenueve’s Dune: Part Two, Paul’s acceptance of taking the Water of Life and manipulation of the Fremen take up a lot of rea&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/cillian-murphy-sunshine-perfect-interstellar-replacement/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/sunshine.jpg?q=49&fit=contain&w=2800&h=1575&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cillian Murphy's Sci-Fi Film 'Sunshine' Is a Must-Watch
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget 'Interstellar,' Cillian Murphy's Underrated Sci-Fi Gem Is a One-Night Must-Watch</div>
+      
+      
+      <div class="summary">Cillian Murphy has had a long and lucrative relationship with Christopher Nolan, but his best science fiction work is a far cry from fan favorites like Interstellar.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jennifer-lawrence-spy-movie-masterpiece-red-sparrow/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/05/MV5BZWE1NzUwNWMtN2M1NC00ZGY0LTlmZTItNmYxZjI2NTE2ZDI5XkEyXkFqcGdeQXVyNDg2MjUxNjM@_V1_-(1).jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jennifer Lawrence's 'Red Sparrow' Is a Must-Watch Spy Thriller
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget ‘Black Widow,’ Jennifer Lawrence’s Best Spy Movie Is a Masterpiece From Start to Finish</div>
+      
+      
+      <div class="summary">Jennifer Lawrence has a near-endless Rolodex of truly awe-inspiring cinema. From The Hunger Games Trilogy to Silver Linings Playbook, Lawrence has cemented her status as a tour de force in film. That said, her 2018 thriller seems to have fallen under&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/bbc-sherwood-season-3-show-ending-james-graham/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/david-morissey-gives-a-stares-at-a-patient-in-sherwood.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sherwood Season 3 to Be the Final Season in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: BBC's Hit 3-Season Crime Thriller Officially Ending In 2027</div>
+      
+      
+      <div class="summary">One of the BBC's modern-day mystery hits is ready to close out the case. The renowned British broadcaster has many beloved series, ranging from sci-fi to thrillers. In fact, the BBC has a rich selection of hit mystery crime thrillers, including Line &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/fortnite-player-loses-pirate-shop-access-token-game-crash/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/07/the-simpsons-fortnite-loading-screen.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fortnite Player Gets Screwed Out of Extremely Rare Pirate Shop Token
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Pirate Shop Access token is arguably the best reward Fortnite has ever had. With it, players can claim every reward in the shop for free for two whole weeks. And it can be activated twice! It's extremely rare, but gamers have been grinding hard t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/marvel-shows-2026-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/white-vision-in-a-freezer-in-visionquest.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Marvel TV Show Of 2026, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">2026 has been a good year for Marvel on TV, be it in the Marvel Cinematic Universe or its related franchises. Increasingly, Marvel TV shows are important to their franchises, especially those in the MCU.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/nintendo-64-classic-returns-30-years-new-rare-discovery/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/02/n64-console-and-game.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Rare Co-Founder Finds Conker's Bad Fur Day Banner After 27 Years
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Nintendo 64 Classic Returns After Nearly 30 Years in New Rare Discovery</div>
+      
+      
+      <div class="summary">The N64 is primarily beloved by '90s kids because of its classic lineup of first-party Nintendo games. However, Nintendo weren't the only ones produced masterpiece after masterpiece, with Rare also being synonymous with the console.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2316912/colin-farrell-remake-90s-sci-fi-hit-prime-video-streaming-hit-total-recall/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/colin-farrells-remake-of-a-classic-90s-sci-fi-movie-is-a-prime-video-streaming-hit/intro-1794685011.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Colin Farrell's 'Total Recall' Remake Is a Streaming Hit on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Colin Farrell's Remake Of A Classic '90s Sci-Fi Movie Is A Prime Video Streaming Hit</div>
+      
+      
+      <div class="summary">Colin Farrell's Remake Of A Classic '90s Sci-Fi Movie Is A Prime Video Streaming Hit Len Wiseman's "Total Recall" released in August 2012, and neither critics nor audiences were very kind to it.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/avengers-endgame-encore-disney-plus-streaming-success-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/steve-rogers-and-peggy-carter-in-avengers-endgame-encore.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers Endgame: Encore Becomes #1 on Disney+ Ahead of Doomsday
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New Avengers Release Conquers Disney+ Ahead Of Doomsday</div>
+      
+      
+      <div class="summary">It has been a packed year for the Marvel Cinematic Universe, as it builds toward its Multiverse Saga finale. Throughout 2026, Marvel Studios brought a new character to life in the MCU timeline with Simon Williams in the Wonder Man TV show.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/rivals-season-2-part-2-danny-dyer-katherine-parkinson-lisa-mcgrillis/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/rivals-danny-dyer-katherine-parkinson-lisa-mcgrillis-interview.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Rivals’ Stars Reveal Behind-the-Scenes Secrets of Season 2's Most Outrageous Scene
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's Note: The following contains spoilers for Rivals Season 2, Episode 7-9.While some viewers are lusting over the possibility of Rupert Campbell-Black (Alex Hassell) and Taggie O'Hara (Bella McLean) finally getting together, the rest of Rivals &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/heartland-yellowstone-nashville/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/jessica-chastain-in-heartland.jpg?q=49&fit=crop&w=292&h=384&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Heartland: Netflix's 'Yellowstone Meets Nashville' Thriller Gets Tulsa King Star's Approval
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's "Yellowstone Meets Nashville" Thriller Comparison Scores 'Tulsa King' Star's Approval</div>
+      
+      
+      <div class="summary">Garrett Hedlund has established himself as a familiar face in action-driven roles, most recently within the Taylor Sheridan universe.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dexter-resurrection-season-2-charley-lumen-replacement/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/uma-thurman-as-charley-in-dexter-resurrection-episode-6-season-1-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dexter: Resurrection Introduces Charley Brown as Lumen Replacement
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Dexter Officially Finds Its Best Replacement For Lumen 16 Years Later</div>
+      
+      
+      <div class="summary">Warning! This article contains SPOILERS for Dexter: Resurrection season 2, episode 3.Sixteen years after Julia Stiles played Lumen Pierce in Dexter season 5, Dexter: Resurrection has finally found her replacement.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/ben-10-cartoon-network-reboot-xlr8-change/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/ben-10-s-xlr8-fights-in-dynamite-entertainment-s-comic-reboot.webp?q=49&fit=contain&w=1366&h=2100&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ben 10 Reboot Makes Major Change to XLR8's Powers
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Cartoon Network’s New Ben 10 Reboot Makes A Major Change To A Beloved Character</div>
+      
+      
+      <div class="summary">The new Ben 10 reboot introduces a twist to one of the Cartoon Network show's most popular season 1 characters. Ben 10's iconic lineup of ten starter transformations soon blossomed into a huge collection of wild alien creatures.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tom-hardy-lawless-leaving-tubi-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/01/lawless.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Hardy's Crime Thriller 'Lawless' Leaves Free Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘MobLand’ Star Tom Hardy’s Crime Thriller Officially Leaves Free Streaming</div>
+      
+      
+      <div class="summary">With only a few days to go until the MobLand Season 2 finale, fans of the show may be in the market for something similar. Now's the perfect time to check out a rather low-key movie that Tom Hardy starred in shortly after he was anointed to the A-lis&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/visionquest-marvel-sci-fi-minutes-watched-disney-plus/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/visionquest-paul-bettany-episode-7-1.jpeg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel's 'VisionQuest' Hits 421 Million Minutes Watched in One Week
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel's New Sci-Fi Series Hits 421 Million Minutes Watched in One Week</div>
+      
+      
+      <div class="summary">Curiosity surrounding the MCU's future has heightened to a boiling point as Avengers: Doomsday's theatrical debut creeps ever closer. For one, Doomsday's vigorous ticket presales are nothing to sneeze at.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <span class="current">2</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/3.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

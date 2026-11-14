@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-14 22:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>44 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>117 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/tulsa-king-season-4-tyson-mitchell-taylor-sheridan-character/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/tulsa-king_zgfken.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Taylor Sheridan Officially Dubs Tulsa King's Tyson Mitchell His Dumbest Character
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan Officially Dubs His Dumbest Character Ever</div>
+      
+      
+      <div class="summary">Warning! This article contains SPOILERS for Tulsa King season 4, episode 5.After eight years and 10 scripted television shows, Taylor Sheridan has officially confirmed the dumbest character he's ever created.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/last-of-us-season-3-tommy-return-image-gabriel-luna/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/tommy-in-the-last-of-us-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tommy’s Last Of Us Season 3 Return Unveiled By Gabriel Luna
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With filming still underway on The Last of Us season 3, star Gabriel Luna has teased his return to the hit post-apocalyptic series. Luna guest-starred in the first season as Tommy Miller before becoming a series regular.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/indiana-jones-emperors-tomb-xbox-pc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/harrison-ford-s-indiana-jones-looks-over-his-shoulder-in-raiders-of-the-lost-ark-poster.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Indiana Jones and the Emperor's Tomb Game Joins Xbox Backward Compatibility on PC
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Indiana Jones Officially Returns In The Emperor's Tomb</div>
+      
+      
+      <div class="summary">There's arguably no adventure franchise out there that has stood the test of time quite like Indiana Jones.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-body-streaming-recommendation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/lizbeth-anya-the-body.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix’s New 8-Part Psychological Thriller Is a Perfect Weekend Binge
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix is still the go-to destination for compelling series to binge, and its new psychological thriller offers the perfect weekend viewing experience. At just eight hour-long episodes, it's a quick story to get through — and its fast pacing, tense &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/law-and-order-svu-streaming-peacock-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/olivia-benson-and-elliot-stabler.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Law & Order: SVU Faces Streaming Setback 1 Day After Historic Benson & Stabler Reunion
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Law & Order franchise is one of the most popular and long-lasting police procedural franchises of all time. And easily the most popular spin-off is Law & Order: Special Victims Unit, which recently reached a new milestone by airing its 600th epis&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-next-era-learn-starfleet-academy-lessons/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/holly-hunter-as-nahla-ake-in-star-trek-starfleet-academy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Starfleet Academy Proves Star Trek’s Next Era Must Learn From Its Past
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The new Star Trek: Starfleet Academy is the newest show in the 60-year-old universe created by Gene Roddenberry. It follows the first cadet class at the titular institution in a century. It's also the example offered up by those who argue Star Trek s&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2316466/amazon-echo-dot-6th-gen-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/amazon-echo-dot-6th-gen-review-better-audio-twice-the-price/l-intro-1794599523.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Amazon Echo Dot (6th Gen) Review: Better Audio, Twice The Price
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Echo Dot (6th Gen) has a new full-range driver powering its audio. It's still a single driver (so audio isn't split between multiple drivers like it would be on higher-end speakers), but Amazon still claims 50% more bass than the last Echo Dot. O&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-hero-awakens-release-date-star-wars-documentary-disney-plus/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/george-lucas-greedo-star-wars.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Documentary 'The Hero Awakens' About George Lucas' Star Wars Debuts on Disney+ in May
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New George Lucas Star Wars Movie Confirmed to Release in 6 Months</div>
+      
+      
+      <div class="summary">Disney+ is celebrating 50 years of Star Wars with a new behind-the-scenes look at the making of George Lucas' first Star Wars movie. Appropriately, the documentary, titled The Hero Awakens, releases on May 4th, Star Wars Day. Directed by R.J.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/pokemon-celebrates-30th-anniversary-485-new-release-available-now/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/pikachu-bilionare-clube-jacket.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Celebrates 30th Anniversary With $485 Pikachu Jacket Available Now
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Pokémon Celebrates 30th Anniversary With $485 New Release Available Now</div>
+      
+      
+      <div class="summary">2026 might be winding down, but The Pokémon Company is still releasing expensive merchandise for the series' 30th anniversary, which includes a new $485 item for fans who are serious about wearing the most expensive gear.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/punisher-new-costume-white-redesign/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/the-punisher-aims-his-guns-in-the-shadows.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Drops First Look At Punisher's Epic New White Costume Redesign
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Nov 13, 2026, 2:48 PM EST Nicolas Ayala is a Senior Writer for the Comics team at ScreenRant, with over five years of experience writing about Superhero media, action movies, and TV shows. This article covers a developing story.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/sunset-pi-show-brooklyn-nine-nine-replacement-nbc-release-date-images/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/brooklyn-99-s7-jake-and-amy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            NBC Officially Unveils 2027's New Workplace Comedy Sunset P.I.
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: NBC Officially Unveils 2027's New Brooklyn Nine-Nine Replacement Series</div>
+      
+      
+      <div class="summary">Published Nov 13, 2026, 2:45 PM EST Jeff Dodge (he/him), a published author and graduate of Western Washington University, has been a TV news editor for many years and has had the chance to interview multiple reality show stars, including Randy Jacks&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/eternally-yours-vampire-vs-werewolves-trope-modernize/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/eternally-yours-india-de-beaufort.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            CBS's Eternally Yours Modernizes the Vampires vs. Werewolves Trope
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: CBS’s Supernatural Series Modernizes 1 Quintessential Fantasy Trope</div>
+      
+      
+      <div class="summary">SPOILERS AHEAD for Eternally Yours season 1, episode 6.CBS's most exciting new series, Eternally Yours, is heading towards a classic fantasy showdown. With only six episodes under its belt, the supernatural sitcom has quickly become one of the most e&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-riot-netflix-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/the-riot-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's New "Prison Break Meets Chernobyl" 6-Part Thriller Arrives Next Month With Gritty First Trailer
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix's international slate has become a reliable place to find strong dramas, and Poland seems to be building its own solid track record. The country has already given the streamer 1670, a comedy that found an audience through word of mouth, along&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-week-of-pain-margot-robbie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/margot-robbie-wolf-of-wall-street-stream-free-pluto-tv-november-2026-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Margot Robbie Lands New A24 Movie Following $240 Million Box Office Success
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Among Warner Bros.' high-profile box office flops in 2026, Margot Robbie delivered one of the studio's few hits with Wuthering Heights. Robbie starred alongside Jacob Elordi in Emerald Fennell's adaptation of Emily Brontë's beloved book. Opening on F&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/xfiles-sequel-series-mulder-scully-return-hulu-reboot-new-update-chris-carter/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/david-duchovny-s-mulder-showing-gillian-anderson-s-scully-something-on-his-phone-in-the-x-files-season-11.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mulder & Scully’s X-Files Sequel Gets New Update From Chris Carter After Hulu Reboot Greenlight
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Chris Carter isn't giving up on a full Mulder and Scully return in The X-Files. The sci-fi franchise is currently in the midst of a major resurgence, with Carter finally releasing his horror-tinged version of the I Want to Believe sequel film, and Ry&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/harry-potter-every-new-release-book-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/0817e99c-7c08-495d-bdb3-a053742ab80e.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Harry Potter's Pocket Potters Series Adds McGonagall and Weasley Twins Books in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Harry Potter Officially Has 2 New Books Releasing In 2027</div>
+      
+      
+      <div class="summary">The Harry Potter franchise is adding two more illustrated books to its growing collection in 2027, with Professor Minerva McGonagall and the mischievous Weasley twins getting the spotlight.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hbo-best-sci-fi-thriller-beforeigners/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/11/beforeigners.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO’s Forgotten 12-Episode Sci-Fi Thriller Is One of Television’s Most Unsettling
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When a show decides to add time travel to its storytelling, the project becomes all the more ambitious. After all, while there have been many successful time-travel shows over the years, including Doctor Who, Dark and 11.22.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/tom-hiddleston-loki-better-with-every-episode/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/25074120/ARC_205_15197_R.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Hiddleston's Loki: A Marvel Series Evolution
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Tom Hiddleston is possibly one of the busiest actors in Hollywood, and has been so for over a decade. 2026 saw him as Ed Hillary in Apple TV's Tenzing, and now he's returning to the stage to star in the Broadway adaptation of Much Ado About Nothing a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2312010/best-movies-like-the-invite/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/5-best-movies-like-the-invite/l-intro-1794438584.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Best Movies Like The Invite
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Best Movies Like The Invite Static Media A sleeper box office hit, "The Invite" is a wickedly funny comedy starring Edward Norton, Penélope Cruz, Seth Rogen, and Olivia Wilde, that has no doubt sparked some awkward conversations among many couples.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/rings-of-power-season-3-lord-of-the-rings-easter-eggs/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/copy-of-feature-images-8.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            22 Biggest ‘Lord of the Rings’ Easter Eggs & References In ‘The Rings of Power’ Season 3
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Rings of Power Season 3 is packed with deep-cut lore, unanswered questions, and Easter Eggs built for those who have explored the deep corners of J.R.R. Tolkien's Middle-earth mythology.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2314637/dwayne-johnson-jason-statham-fast-and-furious-spin-off-streaming-free/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/dwayne-johnson-and-jason-stathams-fast-furious-spin-off-is-streaming-for-free/l-intro-1794494009.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fast & Furious Presents: Hobbs & Shaw Is Streaming For Free on Tubi
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Dwayne Johnson And Jason Statham's Fast & Furious Spin-Off Is Streaming For Free</div>
+      
+      
+      <div class="summary">Dwayne Johnson And Jason Statham's Fast & Furious Spin-Off Is Streaming For Free Jason Statham and Dwayne Johnson's "Fast & Furious" spin-off — get ready for a killer name — "Fast & Furious Presents: Hobbs & Shaw" is now available to watch for free w&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-x-factor-reboot/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/x-factor-1.png?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fox Is Reviving 'The X Factor' Reality Competition After 13 Years
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 13 Years Later, Fox Is Reviving One of Its Biggest Reality TV Competitions</div>
+      
+      
+      <div class="summary">Reality TV competitions have been around for years, but it wasn't until the last three and a half decades or so that they became a staple of television. Nearly every network out there has a reality competition or two to hang their hat on, and in rece&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/video/how-to-rob-a-bank-a-messy-crash-made-thieves-believable-collider-bts/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/collider-bts-how-to-rob-a-bank-02.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How to Rob a Bank: A Messy Crash Made Thieves Believable | Collider BTS
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How to Rob a Bank features elaborate heists and practical action, but director David Leitch and producer Kelly McCormick reveal why making the stunts look imperfect was sometimes the most important creative decision.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/underrated-crunchyroll-sci-fi-anime-masterpieces/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/id_-invaded-sakaido-gearing-up-for-a-fist-fight.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Underrated Crunchyroll Sci-Fi Anime That Are Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Science fiction anime has no shortage of beloved classics, but some of the genre's most interesting stories rarely get the attention they deserve. Popular series like Steins;Gate and Psycho-Pass have earned their reputations through clever writing an&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/magic-the-gathering-planeswalker-netflix-first-look-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/magic-the-gathering-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix’s Long-Awaited ‘Magic: The Gathering’ Series Officially Gets a First Look and Release Window
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The first time Chandra Nalaar escaped to another world, she was about to die. In Magic: The Gathering lore, her spark ignited just in time to take her from her home plane to a monastery where she could learn to control her fire, which is an unusually&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/harry-potter-best-selling-series-new-york-times-record/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/daniel-radcliffe-as-harry-potter-in-one-of-the-warner-bros-movies.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Harry Potter Books Officially Make History Ahead of HBO Reboot
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Almost thirty years after their debut, the Harry Potter books have once again made history as one of the most popular fantasy series of all time. Created by author J.K. Rowling, the Wizarding World isn't going away anytime soon, as it prepares to lau&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-magic-the-gathering-series-planeswalker-first-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/magic-the-gathering-chandra-nalaar-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Unveils First Look at Magic: The Gathering Animated Series Planeswalker From Star Trek Showrunner
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Unveils First Look at Magic: The Gathering Series From Star Trek Showrunner</div>
+      
+      
+      <div class="summary">The Magic: The Gathering multiverse is finally coming to streaming. Netflix has unveiled the first look at its upcoming Magic: The Gathering animated series, Planeswalker, from Star Trek: Picard and VisionQuest showrunner Terry Matalas.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jake-johnson-sunset-pi-release-date-february-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/new-girl.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘New Girl’ Star’s New Detective Series Officially Sets Release Date With First Look
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's been more than eight years since New Girl ended its seven-season run on Fox. But now, one of its stars is returning to network TV for a new half-hour comedy that promises to be a classic mess-around. Sunset P.I.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/gta-6-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/lucia-and-jason-gta-6.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6 Pre-Launch Update Requires 1GB Download Before Release
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'GTA 6' Players Need to Do One Important Thing Before Next Week's Massive Launch</div>
+      
+      
+      <div class="summary">Thirteen long years after its predecessor, Grand Theft Auto 6is finally approaching its release date, with expectations so high that it's being compared to Hollywood's biggest blockbusters.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/mtg-nauctis-the-sunken-realm-magiccon-reveals-spoilers/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/6oryajtsh4.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 13 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Magic Reveals 19 New Cards From 2027's First Set Nauctis: The Sunken Realm, Including $30 Reprint
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Magic Just Revealed 19 New Cards From 2027’s First Set — Including a $30 Reprint With Stunning Art</div>
+      
+      
+      <div class="summary">Magic: The Gathering is heading underwater, and we’ve just gotten a closer look at what’s lurking in the depths of a new plane called Nauctis.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <span class="current">16</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/17.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

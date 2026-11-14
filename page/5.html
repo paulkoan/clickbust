@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-14 22:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>44 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>117 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.polygon.com/video-game-villains-best-motives/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/22989776/ss_4b2b412307b72a21f68148c32fab7a278875d139.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Iconic Video Game Villains Who Were Actually Right the Whole Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Grab your gavel: Court is in session for eight of gaming’s most misunderstood villains. Their charges? One occupied planet, one erased painting, one underwater utopia gone to rot, and a truly staggering body count.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-grand-theft-auto-no-code-physical-edition/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/lucia_caminos_10.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6 Players Report Issues with Physical Version Pre-Order Codes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With its launch less than a week away, players all over the world have started preloading Grand Theft Auto 6 to ensure they're able to play as soon as it drops.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-switch-hidden-gems/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/25290169/mario_switch_.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Near-Perfect Nintendo Switch Games Nobody Played
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When a system has a library as diverse as the Nintendo Switch, some great games are bound to go unrecognized. There are thousands of physical titles available, and thousands more that never got more than a simple digital release. Not every game is fo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/eagle-eye-shia-labeouf-watch-dogs-leaving-tubi-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/billy-bob-thorton-eagle-eye.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Shia LaBeouf's Eagle Eye Leaving Streaming Soon
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Shia LaBeouf’s Forgotten ‘Watch Dogs’ Replacement Is Officially Leaving Streaming</div>
+      
+      
+      <div class="summary">For an original movie to gross nearly $200 million at the worldwide box office is seen as an anomaly these days. For instance, consider the recently released survival thriller Heart of the Beast, starring Brad Pitt and directed by David Ayer.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/how-to-rob-a-bank-rotten-tomatoes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/nicholas-hoult-as-ryan-dressed-as-the-wolf-in-how-to-rob-a-bank.jpg?q=49&fit=contain&w=3000&h=1688&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How to Rob a Bank: David Leitch's New Action Thriller Gets 80% Audience Score on Rotten Tomatoes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'John Wick' Director's New 122-Minute Action Thriller Scores Big With Audiences on Rotten Tomatoes</div>
+      
+      
+      <div class="summary">David Leitch has always been more of an audience director than a critics' director, which makes sense for a former stuntman who learned filmmaking by figuring out what plays in a theater rather than what plays in a review.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/rivals-season-2-part-2-taggie-ohara-problem/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/rivals-bella-maclean-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            No, ‘Rivals’ Season 2 Doesn’t Have a Taggie O’Hara Problem
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's Note: The below contains spoilers for Episodes 7-9 of Rivals Season 2 Part 2.Few tropes beat the reformed rake in romance. Famously, they make the best husbands. Yes, it's completely unrealistic and about as fantastical as dragons and unicor&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/is-stuart-scola-exiting-in-fbi-season-9/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/02/agents-in-fbi-season-8-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            CBS Is Putting FBI's Future in Doubt & Setting Up a Major Season 9 Character Exit
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The following contains spoilers for FBI Season 9. CBS is clearing a path for Stuart Scola’s (John Boyd) exit in FBI Season 9, putting the series’ future in doubt, as disrupting the current character dynamics could upset the mothership of a franchise &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2312606/how-much-it-cost-build-data-center/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-much-does-it-cost-to-build-a-data-center/l-intro-1794340397.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Much Does It Cost To Build A Data Center?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How Much Does It Cost To Build A Data Center? Make more Aerials/Shutterstock Data centers are facing a reckoning.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/stranger-things-winona-ryder-script-changes.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2022/06/winona-ryder-stranger-things.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stranger Things Kept Being Changed Because Of Winona Ryder
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Winona Ryder is one of the most seasoned actors on Stranger Things, and because of that, she kept getting the script changed for one reason. By James Brizuela | Published 48 seconds ago Winona Ryder is arguably one of the best parts of Stranger Thing&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/james-gunn-responds-man-of-tomorrow-rumors/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/08/mcdsupe_wb003.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            James Gunn Responds To Scathing Man of Tomorrow Rumors Following DC Studios Exit
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Skydance's decision to replace DC Studios heads James Gunn and Peter Safran with Jeremy Latcham earlier this week has spawned all sorts of rumors and reports.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-hunt-for-red-october-inspired-jack-ryan-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/03/the-hunt-for-red-october.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Clancy's The Hunt for Red October Inspired the Best Jack Ryan Adaptation
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Clancy's 1984 Book Inspired The Best Jack Ryan Adaptation</div>
+      
+      
+      <div class="summary">Tom Clancy's Jack Ryan book series is still going strong today for a reason. Though Clancy might have begun writing the adventures of the titular spy back in the 1980s, this hasn't prevented the Ryanverse from becoming a massive international franchi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/silent-hill-pt-return-free-download-pc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2022/09/PTdemo-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Silent Hill's P.T. Finally Returns, Free And Fully Playable
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">What happened to Kojima's rendition of Silent Hill is a tragedy, and fans are still recovering over a decade later. Initially debuting on August 12, 2014, P.T. ("playable teaser") unleashed a new brand of Hideo Kojima into the world under the Kojima &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/black-doves-season-2-best-spy-thriller-on-streaming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/jack-lowden-in-slow-horses-season-4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Black Doves: Netflix's Spy Thriller Is the Best on Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget Slow Horses, Netflix's 12-Episode Hit Is The Best Spy Thriller On Streaming</div>
+      
+      
+      <div class="summary">Slow Horses has, without a doubt, earned all the praise it has received. With a 97% Rotten Tomatoes score, the Gary Oldman-led spy thriller continues to prove that audiences love reinvented genres.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/steps-2026-netflix-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/cinderella-holds-a-glass-slipper-out-to-lilith-in-steps.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Steps: A Revisionist Cinderella Tale with KPop Demon Hunters Vibe
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s New KPop Demon Hunters Replacement Is an Instant Fantasy Classic</div>
+      
+      
+      <div class="summary">A quarter-century after Shrek first married the princess and turned the entire genre on its head, these subverted fairytales have become about as commonplace as the original stories that inspired them.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/butch-cassidy-sundance-beats-tombstone/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/tombstone-val-kilmer.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Butch Cassidy and the Sundance Kid Still Beats Tombstone
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Robert Redford's 110-Minute Western Action Thriller Still Beats 'Tombstone' at Its Own Game</div>
+      
+      
+      <div class="summary">Robert Redford had a rare gift for the Western. He made quiet, weathered solitude feel as compelling as a gunfight. In Jeremiah Johnson, he embodied the rugged mountain man with restrained intensity. In The Horse Whisperer, he brought that same front&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/anime-tournament-arcs-better-than-yu-yu-hakusho/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/yusukevssensui-cropped-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Anime With Better Tournament Arcs Than Yu Yu Hakusho
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Martial arts competitions were hardly a new concept when Yu Yu Hakusho's Dark Tournament came around, but this exceptional run of exciting episodes helped redefine what's possible in such an arc. Three decades later, the Dark Tournament is still a ce&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/gilmore-girls-a-year-in-the-life-leaving-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/gilmore-girls-lauren-graham-alexis-bledel-the-bracebridge-dinner-season-2-2000-2007.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Is Pulling the Plug on Its 10-Year-Old Gilmore Girls Revival
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Gilmore Girls aired for seven seasons on The WB/The CW between 2000 and 2007, and it received a revival on Netflix in 2016. For 12 years, Gilmore Girls had a safe home with the streaming platform, but that's officially ending.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/firefly-i-aim-to-misbehave-best-serenity-quote/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/nathan-fillion-as-captain-mal-reynolds-from-firefly-in-serenity.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            23 Years Later, Firefly's 4 Most Powerful Words Hit Even Harder Than Ever
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Firefly follows the crew of the spaceship Serenity, named for the Battle of Serenity Valley, where Captain Malcolm Reynolds fought and lost to the Unification and the Alliance. With relatable, relevant themes, Firefly stands the test of time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-cyberpunk-books-of-all-time-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/blade-runner.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Greatest Cyberpunk Books of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">For decades, cyberpunk fiction has been one of sci-fi's most popular sub-genres. The uber-popular literary milieu is defined by lowlife and high-tech, mixing neon-laden megacities with economic inequality, societal collapse, and the grit and grime of&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/rezero-season-5-first-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/hvi9bmabqaac4wr.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Re:Zero Season 5 Officially Announced With First Look
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Legendary Crunchyroll Isekai Officially Confirms Season 5 With First Look</div>
+      
+      
+      <div class="summary">Today's a great day to be a fan of Re:Zero − Starting Life in Another World. Crunchyroll's isekai masterpiece is officially returning for Season 5, complete with a first look at Subaru's next adventure.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2312132/drawbacks-using-touchscreen-laptops-according-to-users/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/3-disadvantages-of-using-touchscreen-laptops/l-intro-1794327097.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Disadvantages Of Using Touchscreen Laptops
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">3 Disadvantages Of Using Touchscreen Laptops Andreypopov/Getty Images Laptops have become an essential part of daily life for many, just like smartphones. While some prefer using a desktop system, most may prefer using a laptop. One of the less commo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/rampart-woody-harrelson-leaving-roku-channel-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/04/rampart-woody-harrelson.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bosch Prequel 'Start of Watch' Announced; Woody Harrelson's 2011 LAPD Film Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It’s Officially the End of an Era for Woody Harrelson’s Forgotten ‘Bosch’ Replacement</div>
+      
+      
+      <div class="summary">Prime Video keeps finding ways to continue its spectacularly successful detective thriller series, Bosch, based on the novels by Michael Connelly and starring Titus Welliver in the lead role.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hbo-mystery-shows-every-episode-masterpiece/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/the-white-lotus-murray-bartlett.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 HBO Mystery Shows Where Every Episode Is a Masterpiece
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's funny to remember that once upon a time, HBO was not known for television shows. But once The Sopranos and Sex and the City arrived, suddenly, the premium cable channel was being taken seriously as a purveyor of quality television.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/alan-moore-final-comic-league-extraordinary-gentleman/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/close-up-photo-of-alan-moore-staring-deadpan-into-the-camera.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alan Moore's The League of Extraordinary Gentlemen Is His Most Underrated Masterpiece
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Alan Moore's Final Comic Is Still His Most Underrated Masterpiece</div>
+      
+      
+      <div class="summary">Alan Moore earned his reputation as a maestro of comic book storytelling across the span of a roughly 40-year career. Only a real iconoclast, or a serious contrarian, would try to argue that Moore isn't one of the all-time greats, and the argument wo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/avengers-secret-wars-spider-man-plot-symbiote-character" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/tom-holland-tobey-maguire-spider-man.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers: Secret Wars Rumored to Feature Spider-Queen in Spider-Man Plot
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Avengers: Secret Wars' Rumored Spider-Man Plot Can Use 1 Special Symbiote Character</div>
+      
+      
+      <div class="summary">Avengers: Doomsday has a spider-sized hole in its heart. Despite leading one of the highest-grossing movies of all time in 2026, Tom Holland's Wall-Crawler appears to be on the bench for the rest of the year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/tom-hardy-mobland-season-2-controversy-script-problems-pierce-brosnan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/mobland_206_lv_260216_01175_rt3.JPG?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Hardy’s MobLand Controversy Wasn’t Season 2's Only Behind-The-Scenes Problem
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">MobLand season 2 faced more issues beyond the controversy with Tom Hardy. Back in May, it was reported that Hardy would exit MobLand following season 2 due to “friction” with showrunner Jez Butterworth. It was later clarified that Hardy had not been &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pirates-of-the-caribbean-6-ragetti-return-mackenzie-crook-response/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/pirate-king-elizabeth-swann-captain-hector-barbossa-captain-jack-sparrow-and-ragetti-standing-together-in-pirates-of-the-caribbean-at-world-s-end.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pirates Of The Caribbean 6 Return Addressed By Star After Johnny Depp Update
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After Johnny Depp's latest comments, another franchise star addresses returning for Pirates of the Caribbean 6. During the press tour for his new movie, Ebenezer, Depp shared that he doesn't "know if you'll see us set sail. We might do that privately&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/avatar-last-airbender-game-shutting-down-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/uncle-iroh-from-avatar-the-last-air-bender.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avatar: The Last Airbender - Quest for Balance Game to Be Delisted in December 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: December 2026 Is Officially The End Of An Era For Avatar: The Last Airbender</div>
+      
+      
+      <div class="summary">Avatar: The Last Airbender kicked off in earnest in 2005, and over 20 years later, it's still actively delighting tons of fans with new projects.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/doc-season-3-amy-michael-romance-dead/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/milton-barnes-and-molly-parker-in-doc.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Amy's Original Doc Story Continuation Is Dead For Now
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Doc is finding fascinating new ways to evolve beyond its original premise. After a car accident left Molly Parker’s Dr. Amy Larsen unable to recall the last eight years of her life, she spent season 1 trying to remember who she was.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/spider-man-brand-new-day-2028-x-men-movie-jean-grey-catalyst" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/spider-man-x-men.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spider-Man: Brand New Day Introduces the First 2028 X-Men Movie Catalyst With Unresolved Jean Grey Ending
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel Studios’ X-Men reboot just received its first true catalyst, and it did not come from an X-Men project at all.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <span class="current">5</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/6.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

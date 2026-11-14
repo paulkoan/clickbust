@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-14 22:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>44 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>117 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.polygon.com/pokemon-go-wild-area-2026-streets-to-skies-research-steel-dragon/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/jlee_261112_1001_pogo_wildresearch.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Go 'Streets to Skies' choose a path — steel or dragon?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">As part of the ticketed bonus to Pokémon Go's 2026 Wild Area event, players can start a set of Special Research Tasks called "Streets to Skies." During this research, you'll need to pick between steel- or dragon-type Pokémon, with your pick having a &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2314967/chris-hemsworth-remake-classic-80s-action-movie-streaming-free-red-dawn/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/chris-hemsworths-94-minute-remake-of-a-classic-80s-action-movie-is-streaming-for-free/l-intro-1794502077.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Chris Hemsworth's 94-Minute 'Red Dawn' Remake Streaming Free on Tubi
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Chris Hemsworth's 94-Minute Remake Of A Classic '80s Action Movie Is Streaming For Free</div>
+      
+      
+      <div class="summary">Chris Hemsworth's 94-Minute Remake Of A Classic '80s Action Movie Is Streaming For Free FilmDistrict Chris Hemsworth became a household name thanks to playing Thor in the Marvel Cinematic Universe.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/reacher-franchise-prime-video-western/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/untitled-design-91-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's Reacher Franchise Is the Best Western on TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video's 40-Episode Flagship Franchise Is Secretly The Best Western On TV</div>
+      
+      
+      <div class="summary">A lone man walks into a small American town that is beset by problems and corruption. He makes an impression, has a fleeting romance with one of the local women, and when the trouble is over, he rides away into the sunset for an unknown destination.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/avengers-doomsday-hulk-tva-characters-confirmed-encore/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/avengers-doomsday-mural-featured-image.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Officially Confirms 7 More Characters For Avengers: Doomsday
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: Contains spoilers for Avengers Endgame: Encore AND VisionQuest!Even more characters are in Avengers: Doomsday than previously known, as Marvel has confirmed some additional members.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/strongest-pokemon-owned-by-jessie-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/08/jessie-s-gourgeist.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Strongest Pokémon Owned by Jessie, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pokémon has been a pop culture sensation for three decades, and its anime is still going strong after nearly 1400 episodes. Team Rocket, the franchise's recurring antagonists, gain additional depth and personality in the anime, largely thanks to the &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/rainbow-six-vegas-3-rumor/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/rainbow-six-vegas-2.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ubisoft Reportedly Developing Rainbow Six: Vegas 3 After 18 Years
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ubisoft Is Reportedly Bringing A Beloved Series Back After Nearly Two Decades</div>
+      
+      
+      <div class="summary">Before Rainbow Six Siege, Ubisoft published two Rainbow Six: Vegas games for PS3 and Xbox 360. Now, a new report suggests that a third Rainbow Six: Vegas game is in the works, moving the franchise beyond Siege.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2312906/clever-gadgets-for-book-lovers/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/7-clever-gadgets-that-book-lovers-will-adore/l-intro-1794338830.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Clever Gadgets That Book Lovers Will Adore
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">7 Clever Gadgets That Book Lovers Will Adore Sestovic/Getty Images We may receive a commission on purchases made from links.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/black-doves-season-2-netflix-streaming-number-one-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/sam-riley-black-doves-season-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Spy Thriller Series Reclaims Streaming Crown with 10.8M Views
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s 10/10 ‘Slow Horses’ Replacement Officially Reclaims Streaming Crown</div>
+      
+      
+      <div class="summary">It's always tricky when a show takes longer than usual between seasons, especially in the streaming era. Audiences are accustomed to their favorite shows returning like clockwork every year, and that's one of the reasons why Prime Video's Reacher has&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/rings-of-power-season-3-theo-ringservant-arondir-death-tyroe-muhafidin/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/rings-of-power-season-3-tyroe-muhafidin.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The Rings of Power's Tyroe Muhafidin Explains Theo's Darkest Season 3 Decision
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's note: The below interview contains major spoilers for The Rings of Power Season 3 Episode 4. With The Lord of the Rings: The Rings of Power finally returned for its third season, the first four episodes have established an even darker world &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/magic-the-gathering-star-trek-references/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/de-evolve-art-star-trek-104-81d798f1-07dd-46b1-b0b3-411280a2e257-art.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Magic: The Gathering’s 5 Best and Weirdest Star Trek References
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Magic: The Gathering’s Star Trek is a love letter to the franchise. The set uses sagas to pay tribute to standout episodes like “The Inner Light” and “In the Pale Moonlight,” and it’s stuffed with cards representing legendary characters and spacecraf&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/outer-range-streaming-recommendation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/westworld-2016.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Outer Range: Prime Video's Sci-Fi Western Tells a Better Story in 16 Episodes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget 'Westworld,' Prime Video's Greatest Sci-Fi Western Tells a Better Story In Just 16 Episodes</div>
+      
+      
+      <div class="summary">Science fiction and Westerns are a natural pair. Both genres are built around frontiers, whether that means settlers crossing untamed deserts or explorers venturing into unknown regions of space and time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/10-most-overhyped-comic-book-stories-since-2000/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/dc-comics-nightwing-79-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Overhyped Comic Book Stories Since 2000
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Since 2000, the comic book industry has seen the release of some truly game-changing masterpieces. Publishers like Marvel, Image, and DC Comics have all pushed the boundaries of what can be done with the medium, and the 21st century has, thus far, be&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/transformers-dark-of-the-moon-megatron-yolopark-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/yolopark-amk-pro-dark-of-the-moon-megatron-01-1.jpeg?q=49&fit=contain&w=1080&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Yolopark AMK PRO Megatron Model Kit from Transformers: Dark of the Moon Available for Pre-Order
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Transformers Brings Back Megatron's Most Brutal Movie Design in New Official Release</div>
+      
+      
+      <div class="summary">A decade and a half ago, the third entry in the Michael Bay Transformers movie series hit theaters. It featured one of the more well-liked Megatron designs in the cinematic series, and this form is now immortalized once more in one of the design's mo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/visionquest-finale-record/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/jim-hammond-human-torch-in-visionquest.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            VisionQuest Sets New Record with 3.7M Views in First Day
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: In Just 1 Day, Disney's Smash Hit Sci-Fi Action Series Officially Sets a New Record</div>
+      
+      
+      <div class="summary">While it’s true that Marvel television has felt a bit overextended in recent years, with Disney+ audiences showing some fatigue toward the larger interconnected slate, there are still signs that the studio can generate real event-level interest when &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2312145/all-in-one-pc-disadvantages/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-disadvantages-of-using-all-in-one-desktop-pcs/l-intro-1794327407.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Disadvantages Of Using All-In-One Desktop PCs
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Disadvantages Of Using All-In-One Desktop PCs Krisda/Shutterstock Buying a solid all-in-one (AIO) PC can seem like a smart move.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/sonic-hedgehog-return-classic-characters-new-releases-preorder-now/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/sonic-tails-vinyl-dhd-header.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dark Horse Direct Pre-Orders for Sonic and Tails Vinyl Figures Now Open
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Sonic the Hedgehog Brings Back 2 Classic Characters With New Releases Available for Preorder Now</div>
+      
+      
+      <div class="summary">Sonic the Hedgehog is racing back to a classic locale alongside his most iconic sidekick, and fans can look forward to bringing them home next year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-action-spy-movies-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/07/Mission_-Impossible---Fallout.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 8 Greatest Action Spy Movies of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some film genres are so good that we sometimes wish we could exist in them. Let’s be honest, who hasn’t dreamed of being a spy at least once in our lives? We love the spy genre because it combines high-stakes danger, glamorous escapism, and a safe wa&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-studios-mutant-saga-mcu-heroes-missing-x-gene" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/ms-marvels-mistake.jpg?imgeng=/cmpr_60/w_1280" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ms. Marvel and Other MCU Mutants Missing from Mutant Saga Plans
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Studios’ Mutant Saga Is Missing 5 Established MCU Heroes With The X-Gene</div>
+      
+      
+      <div class="summary">The prevailing theory is that Avengers: Doomsday will whittle down its mutant roster before the credits roll. Cyclops, Nightcrawler, and Gambit could all be on the chopping block as Doctor Doom begins his assault on the multiverse.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/big-walk-house-house-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/bigwalkmegaphone.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Big Walk's AI Controversy Overshadows a Remarkable Creative Achievement
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Big Walk started as a respite from the reality of lockdown. The team at House House (Untitled Goose Game) needed to get out of their house houses at a time when they couldn’t. So they built a new way to chat. That became a new way to play. That becam&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ramayana-rise-of-a-legend-100-million-box-office-godzilla-minus-zero/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/world-of-ramayana-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ramayana Beats Godzilla Minus Zero to $100M at Box Office
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: India’s 195-Minute Epic Beats ‘Godzilla Minus Zero’ To $100M Mark at the Box Office</div>
+      
+      
+      <div class="summary">Two major tentpoles primarily targeted at overseas markets debuted alongside each other last week, securing spots on the domestic top-five list. While Godzilla Minus Zero exceeded expectations to claim the number-one spot on the domestic box-office c&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/avengers-secret-wars-cast-marvel-actors-doomsday-sequel" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000014472.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers: Secret Wars Cast - All 16 Confirmed Actors In Marvel's Doomsday Sequel
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While Avengers: Secret Wars is still a ways out from releasing, more than a few actors are already confirmed for its expectedly massive cast.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/pluribus-season-2-new-series-regular/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2025/12/breakfast.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pluribus Season 2 Makes One Of Its Best Characters A Series Regular
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">As the second season of Apple TV's Pluribus enters production, more details are emerging. On Nov. 13, we learned that a standout cast member from the show's first season will be promoted to a series regular.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-netflix-shows-4-episodes-or-less/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/11/death-by-lightning-michael-shannon-04.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Greatest Netflix Miniseries With 4 Episodes or Less
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With the streaming landscape overcrowded with shows and series that take multiple years and seasons to tell their stories, it is refreshing to find a series that is not only short and sweet but also substantial enough to be memorable.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/visionquest-the-fugitive/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2024/11/the-best-the-fugitive-quotes-v1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel's VisionQuest Compared to The Fugitive in New Interview
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney+'s New Sci-Fi Action Series Officially Compared to Harrison Ford Thriller Masterpiece</div>
+      
+      
+      <div class="summary">Over the last 60 years, Harrison Ford has amassed an impressive resume of movie and TV roles, many of which have become pop culture staples.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/black-rabbit-guy-ritchie-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/tom-hardy-mobland.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Black Rabbit: Netflix's Crime Thriller Draws Guy Ritchie Comparisons
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's Star-Studded 8-Part Crime Thriller Beats Guy Ritchie At His Own Game</div>
+      
+      
+      <div class="summary">If there's an impressive crime thriller movie or television series, chances are that Guy Ritchie is behind it. Along with directing several gangster movies in the 1990s, 2000s, and into the 2020s, he has a strong presence on TV.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/open-range-kevin-costner-streaming-free-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/open-range.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Open Range: Kevin Costner's Western Epic Now Streaming for Free
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Kevin Costner's 139-Minute Western Epic Officially Shoots Onto New Free Streaming Home</div>
+      
+      
+      <div class="summary">Long before Kevin Costner's Horizon: An American Saga became one of the biggest box office flops in recent memory, he directed and starred in a 2003 Western that was a critical and commercial success.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/most-successful-comic-strips-best/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/calvin-and-hobbes-pose-next-to-peanuts-charlie-brown-and-snoopy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Successful Comic Strips Of All Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ten incredibly popular comic strips have earned massive success, rivaling movie, television, and comic book juggernauts.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/resident-evil-2-couch-co-op-mode-fan-made/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/leon-and-claire-resident-evil-2-remake.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Resident Evil 2 Remake Gets Couch Co-Op Mod from Nexus Mods
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Resident Evil 2 Returns With Incredible Couch Co-Op Mode</div>
+      
+      
+      <div class="summary">Resident Evil 2 made a huge splash when it was originally released in 1998. I vividly recall the original Resident Evil being released to acclaim, but it was around the second iteration that I began to see the groundswell of fans really grow for the &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/stranger-things-other-worlds-other-experiments-season-3/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/02/stranger-things-season-3-russian-key.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Other Worlds: A Stranger Things Adventure Pays Off Season 3 Tease from 7 Years Ago
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Stranger Things' New Show Pays Off A Tease From 7 Years Ago</div>
+      
+      
+      <div class="summary">The world of Stranger Things will continue to expand with a new show, which will pay off a tease from seven years ago. Through its original productions, Netflix has brought some of the best TV shows of all time across different genres, but it has mos&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/video/the-mcelroys-take-sibling-rivalry-to-a-new-level-shelf-quest/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/mcelroysthumb2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The McElroys take sibling rivalry to a new level | Shelf Quest
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Return of the best boys! Griffin and Justin McElroy take to the shelves at videogamesnewyork to pull out some of the deepest video game cuts we've seen so far! From NES classics like Shadowgate to modern favorites like Persona 4 Golden and everything&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <span class="current">6</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/7.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-14 22:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>44 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>117 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/rings-of-power-season-3-prime-video-number-one-streaming-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/rings-of-power-season-3-tyroe-muhafidin-charlie-vickers.jpg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Rings of Power Season 3 Debuts to Instant Success and Solid Reviews
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video’s Biggest Fantasy Series Officially Claims No. 1</div>
+      
+      
+      <div class="summary">With the void left by HBO's Game of Thrones still quite noticeable, Prime Video is putting all its might behind The Lord of the Rings: The Rings of Power.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/forgotten-comic-book-live-action-adaptations-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/morgan-freeman-from-wanted.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Comic Books Everyone Forgot Were Adapted In Live-Action
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Live-action comic book adaptations have been at the forefront of mainstream pop culture for the better part of the last 20 years. The MCU, the Dark Knight trilogy, and TV series like Lanterns and The Boys have piqued the interest of mainstream audien&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-movie-trilogies-of-the-last-50-years-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/caesar-going-to-war-in-the-snow-in-war-for-the-planet-of-the-apes.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Movie Trilogies of the Last 50 Years, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The best movie trilogies of all time have stood the test of time thanks to their original stories, memorable characters and the lasting connection they've built with audiences.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-lord-of-the-rings-the-rings-of-power-streaming-success-prime-video-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/sauron-sitting-on-his-throne-in-rings-of-power-season-3.jpg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Lord of the Rings: The Rings of Power Becomes Prime Video's #1 Show Worldwide
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video’s Record-Breaking Fantasy Series Officially Takes Over The World</div>
+      
+      
+      <div class="summary">Global streaming viewership is being dominated by Prime Video's record-breaking fantasy series. While HBO's Game of Thrones is widely regarded as the genre's gold standard when it comes to television, many of Prime Video's fantasy shows have also pro&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/clint-eastwood-dollars-trilogy-masterpiece-kept-getting-better/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/clint-eastwood-as-the-man-with-no-name-in-the-good-the-bad-and-the-ugly.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Clint Eastwood's Dollars Trilogy: Each Movie Got Better Than the Last
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Clint Eastwood's Greatest Franchise Was A Masterpiece That Just Kept Getting Better With Each Movie</div>
+      
+      
+      <div class="summary">Clint Eastwood's most unlikely franchise just kept getting better with each sequel. Despite being a leading man for decades, there are only a handful of Clint Eastwood franchises in existence.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-tv-series-live-action-series-daredevil-wonder-man-cancellations" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/marvel-live-action-shows.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Live-Action Marvel TV Series In Development After Daredevil & Wonder Man's Cancellations
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel Studios left many fans displeased when it surprisingly canceled Wonder Man in July and subsequently Daredevil: Born Again in September. This came as part of the studio's plans to restructure its Disney+ slate ahead of Avengers: Secret Wars, wh&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2312294/hacker-jailbreaks-iphone-lockdown-mode/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/hackers-jailbreak-iphone-in-lockdown-mode-heres-why-this-matters/l-intro-1794332339.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hackers Jailbreak iPhone In Lockdown Mode - Here's Why This Matters
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Hackers Jailbreak iPhone In Lockdown Mode - Here's Why This Matters José Adorno/BGR A few years ago, Apple released a Lockdown Mode for iPhone users, which basically cuts access to several parts of the device.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jurassic-park-movies-ranked-officially/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/jurassic-park.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            We Officially Ranked Every Jurassic Park Movie
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Jurassic Park is perhaps the most frustrating of all cinematic franchises because of the sharp demarcation line in terms of quality.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/fire-country-cj-gabriela-lesson-learned/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/3230848_ficy_s5_0715b2.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fire Country Learns from Gabriela's Mistakes with New Lead CJ Ryan
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Fire Country Has Officially Learned Its Gabriela Lesson</div>
+      
+      
+      <div class="summary">Throughout Fire Country's run there have been characters that have defined the series, and though Gabriela Perez (Stephanie Arcila) was one of those series-defining characters, it appears the CBS series has finally learned a lesson after her departur&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/keanu-reeves-matrix-movies-streaming-success-pluto-tv-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/keanu-reeves.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Matrix Films Chart in Streaming Top 10 Worldwide
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget John Wick, Keanu Reeves’ Genre-Bending Sci-Fi Thriller Is Officially a #1 Hit</div>
+      
+      
+      <div class="summary">In the last few years, Keanu Reeves has become widely loved and celebrated thanks to his role in the John Wick franchise, but long before he was cracking skulls as the High Table assassin, he starred in one of the most famous sci-fi franchises of all&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/disney-lucasfilm-star-wars-story-skipping" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/photos/oldrepublic_720.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Disney and Lucasfilm Should Adapt Star Wars: Knights of the Old Republic
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney & Lucasfilm Keep Skipping Star Wars' Only True Unmissable Story</div>
+      
+      
+      <div class="summary">Disney and Lucasfilm have a perfect Star Wars story staring them in the face, and instead of capitalizing on it, they continue to pretend as though it doesn't even exist. Star Wars is one of the biggest franchises in the world, and has been for the p&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/doctor-doom-vs-wolverine-skeleton/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/image-1.jpg?q=49&fit=crop&w=750&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Doctor Doom's Brutal Defeat of Wolverine in Marvel Comics Explained
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Avengers: Doomsday Fans Aren't Ready For How Hard Doctor Doom Schools Wolverine</div>
+      
+      
+      <div class="summary">The beginning of the end of the Marvel Cinematic Universe’s Multiverse Saga is one month away. Avengers: Doomsday will see Robert Downey Jr.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/red-dead-redemption-2-online-thanksgiving-dlc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/rdr2-mod-2.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Red Dead Online Thanksgiving Events Announced for November
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Red Dead Redemption 2 Thanksgiving DLC Officially Announced</div>
+      
+      
+      <div class="summary">Red Dead Redemption 2 will go down in history as one of the most accomplished open-world games of all time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-penguin-season-2-more-likely-dc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/colin-farrell-as-oz-cobb-looking-angry-in-the-penguin.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Penguin Season 2 Is Now Looking A Lot More Likely
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After Matt Reeves' The Batman dropped in 2022, news that HBO was developing The Penguin naturally got people excited about seeing more of this universe, but even those with the highest expectations were left blown away by the spinoff.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/project-hail-mary-movie-best-scene-sci-fi-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/a-spaceship-near-a-green-and-orange-planet-in-project-hail-mary.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Project Hail Mary's Adrian Scene: A Stunning Sci-Fi Sequence
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Project Hail Mary's Best Scene Is One Of The Greatest In 21st Century Sci-Fi Movies</div>
+      
+      
+      <div class="summary">From the moment Project Hail Mary hit theaters, Ryan Gosling's 2026 movie based on Andy Weir's acclaimed novel was showered with praise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/quantum-of-solace-james-bond-leaving-paramount-plus-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/06/xvbpfbd2p5ghiszrwcvqgj.jpg?q=70&fit=contain&w=750&h=422&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Quantum of Solace Is Being Removed From Paramount+ Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Daniel Craig’s Most Divisive James Bond Movie Is Officially Being Removed From Streaming</div>
+      
+      
+      <div class="summary">Daniel Craig has often made it seem like he was reluctantly playing James Bond. Following the premiere of his first film as Agent 007, he asked producer Barbara Broccoli how many more films he'd have to do.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/true-romance-leaves-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/sharedimages/2024/04/true-romance-movie-poster.jpg?q=70&fit=contain&w=480&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            True Romance Is Leaving Netflix on Nov. 19
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Quentin Tarantino's 33-Year-Old Crime Classic Is Losing Its Streaming Home</div>
+      
+      
+      <div class="summary">Quentin Tarantino is best known for his work as a director, specifically for hit movies like Pulp Fiction, the Kill Bill series, and many more. Tarantino has written a lot of movies he hasn't directed, though, and one of those is getting ready to lea&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-strange-new-worlds-season-3-prayer/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/10/captain-pike-in-battle-armor-kneels-to-pray-in-sick-bay-from-star-trek-strange-new-worlds.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: Strange New Worlds Season 3 Shows Captain Pike Praying
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek Quietly Broke Gene Roddenberry’s Most Sacred Rule</div>
+      
+      
+      <div class="summary">Star Trek: Strange New Worlds Season 3 was arguably the most divisive season among fans. The show follows Captain Christopher Pike and the USS Enterprise crew before the events of The Original Series. Storytelling choices, including genre shifts and &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2307417/best-horror-movie-villains-2020s/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/5-best-horror-movie-villains-of-the-2020s-so-far/l-intro-1793909743.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Best Horror Movie Villains Of The 2020s (So Far)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Best Horror Movie Villains Of The 2020s (So Far) Static Media Looking over a list of the best horror movies of all time, it's clear that there's no shortage of artistry in this amazing cinematic genre.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/avengers-endgame-encore-post-credits-scene-hulk-son-doomsday" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/hulk-mcu-movie.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers Endgame: Encore’s Post-Credits Scene Provides Hulk's Son With A New Purpose For Doomsday
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel Studios is going to go to war when it releases Avengers: Doomsday later this year, as the highly anticipated film will go head-to-head with Dune: Part Three at the box office.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/far-side-funniest-vikings-comics/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/best-far-side-vikings-10.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Far Side Comics About Vikings
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Vikings have been featured in popular culture for decades, from horned-helmet cartoons to prestige TV epics. Gary Larson couldn't resist including them in his comic strips, either. In The Far Side, the Norse raiders look the part, horns and all.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/hunters-al-pacino-netflix-leave-stream-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/12/al-pacino-in-hunters.jpg?q=49&fit=crop&w=252&h=183&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Al Pacino's Series Hunters Is Leaving Netflix Soon
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Al Pacino's 18-Episode Revenge Thriller Series Is Officially Being Cut From Netflix</div>
+      
+      
+      <div class="summary">Al Pacino has played many memorable characters throughout his career. From Michael Corleone in The Godfather series to playing the Devil himself in The Devil's Advocate, the Academy Award-winning actor has proven his range for decades, cementing his &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/spider-noir-nicolas-cage-reaction-prime-video-cancellation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/spider-noir-1.jpg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nicolas Cage Relieved Prime Video Canceled Spider-Noir
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Nicolas Cage Officially Confirms Why He’s Happy His Marvel Series Was Cancelled</div>
+      
+      
+      <div class="summary">Nicolas Cage had already played a Spider-Man who sounded like he’d walked out of an old detective movie in the genre-defining Spider-Man: Into the Spider-Verse. Giving that idea eight hours of live action was a different proposition.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/percy-jackson-camp-half-blood-wild-zone-best-seller-list-rick-riordan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/walker-scobell-holds-an-ancient-device-in-percy-jackson-and-the-olympians.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Camp Half-Blood: The Wild Zone Hits #1 on NYT Bestseller List
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Rick Riordan’s New Percy Jackson Spin-Off Is Officially One of the Biggest Books in the World</div>
+      
+      
+      <div class="summary">Percy Jackson is officially one of the biggest books in the world--again. More than 20 years after The Lightning Thief, Rick Riordan has done it again with the latest installment of what some have called "The Riordanverse." The new book is now sittin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/mcu-visionquest-scarlet-witch-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/vision-hugging-billy-and-tommy-in-visionquest.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            VisionQuest Brings Back Scarlet Witch and Restores Billy's Memories
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Just Made Scarlet Witch's MCU Return Even Bigger</div>
+      
+      
+      <div class="summary">The following contains spoilers for VisionQuest Season 1, Episode 8, "Forever," now streaming on Disney+. After years of speculation, VisionQuest has finally brought Scarlet Witch back to the Marvel Cinematic Universe.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-removes-the-resident-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/sharedimages/2024/04/the-resident-tv-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Resident Is Leaving Netflix on Nov. 20
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Confirms Removal of Fox's Hit 6-Season Medical Drama</div>
+      
+      
+      <div class="summary">A new month means a new batch of streaming titles leaving their homes. As we head deeper into November, even more projects are leaving and joining platforms like Netflix, including a hit medical drama that's ready to leave very soon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-rings-of-power-season-3-harfoots-storyline-cut-good/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/08/the-rings-of-power-the-stranger-and-nori.jpg?q=70&fit=contain&w=750&h=422&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Rings of Power Was Right to Cut the Harfoots in Season 3
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘The Rings of Power’ Made the Right Call Saying Goodbye to This Storyline in Season 3</div>
+      
+      
+      <div class="summary">Editor's note: The below contains spoilers for The Lord of the Rings: The Rings of Power Season 3. Truth be told, The Lord of the Rings: The Rings of Power has been pretty hit-or-miss over the past few years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2312157/common-reasons-roku-remote-stops-working/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-common-reasons-why-a-roku-remote-stops-working/l-intro-1794327899.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Common Reasons Why A Roku Remote Stops Working
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Common Reasons Why A Roku Remote Stops Working Erman Gunes/Shutterstock Imagine trying to unwind with a few episodes of your favorite show, only to find that your Roku remote isn't working.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-hunger-games-franchise-streaming-success-hulu-tubi-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/04/hunger-games-sunrise-on-the-reaping-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Hunger Games Films Gain Streaming Momentum Before Sunrise on the Reaping
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Hunger Games Officially Takes Over Streaming Before New Release</div>
+      
+      
+      <div class="summary">Marvel and Star Wars have earned more at the box office than most other franchises since the start of the 2010s, but there haven't been many franchises with as dedicated a fan base as The Hunger Games.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-cast-rumors-speculation-confirmed-actors/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/lucia_caminos_10.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6 Cast Rumors: Manni L. Perez and Dylan Rourke Rumored as Lucia and Jason
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Every GTA 6 Actor Rumored and Confirmed by Rockstar Ahead of Launch</div>
+      
+      
+      <div class="summary">It's been an excruciatingly long wait, but we're just days away from the launch of Grand Theft Auto 6.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <span class="current">7</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/8.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-14 22:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>44 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>117 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.cbr.com/one-battle-after-another-leaving-prime-video-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/07/leo-one-battle-after-another-1280x720-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            One Battle After Another: Leonardo DiCaprio's Action Epic Leaving Prime Video on Nov. 18
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Amazon Is Scrubbing Leonard DiCaprio's 162-Minute Action Epic From Prime Video</div>
+      
+      
+      <div class="summary">Leonardo DiCaprio's Oscar-winning 2025 movie One Battle After Another was a hit amongst critics. After being available to watch at home on streaming platforms, the movie is getting ready to leave very soon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-peanuts-quote-life-lessons-snoopy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/img_4329.AVIF?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Charlie Brown's 1966 Peanuts Quote About Facing Challenges Is a Timeless Life Lesson
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Peanuts Quote Is Still The Best About Learning Life Lessons</div>
+      
+      
+      <div class="summary">Although the last Peanuts comic strip was published in February 2000, many impactful words spoken by Peanuts characters have still not been forgotten by fans. Charles M.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/brad-pitt-heart-of-the-beast-watch-fury-movie-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/james-and-odin-looking-at-each-other-in-heart-of-the-beast.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brad Pitt's Thriller 'Heart of the Beast' Dominates Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brad Pitt's Near-Perfect 101-Minute Thriller Dominating Streaming Is A Reminder To Watch His War Movie On Netflix</div>
+      
+      
+      <div class="summary">Brad Pitt's nearly-perfect, 101-minute thriller movie that's a dominant force on streaming is a reminder to watch his incredible war movie on Netflix. Pitt's best movies span across his entire career, ranging in genre while still keeping him and his &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/final-fantasy-7-sephiroth-returns-4-new-40th-anniversary-releases/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/final-fantasy-7-sephiroth-40th-anniversary.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Final Fantasy 40th Anniversary Exhibition Features Sephiroth 'Beauty Looking Back' Artwork
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Final Fantasy 7 Brings Back Sephiroth With 4 New 40th Anniversary Releases</div>
+      
+      
+      <div class="summary">The Final Fantasy franchise celebrates its 40th anniversary in 2027, and Square Enix is kicking off the year with four new releases, one of which shows Sephiroth in a way that fans have never seen him before.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2311832/tesla-batteries-who-makes-them-where-are-they-produced/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/who-makes-tesla-batteries-and-where-are-they-produced/l-intro-1794301950.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Who Makes Tesla Batteries, And Where Are They Produced?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Who Makes Tesla Batteries, And Where Are They Produced? Grigvovan/Shutterstock Tesla was founded in 2003, but it wasn't until 2008 that it launched its first vehicle, the all-electric Roadster sports car, powered by a battery pack containing commerci&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-the-body-season-2-plans-quinn-shephard-creator/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/netflix-s-logo-on-a-dark-red-background.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'The Body' Gets Promising Season 2 Update From Creator
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s New 8-Part Psychological Thriller Series Gets Promising Season 2 Update From Creator</div>
+      
+      
+      <div class="summary">Netflix's new psychological thriller is making waves on streaming. Netflix has become the hub for YA series and movies, but also dark and brooding thrillers that keep audiences on the edge of their seats.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/virgin-river-season-9-netflix-longest-tv-show-record/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/netflix-s-logo-with-red-streaks.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'Virgin River' Makes TV History as Longest-Running Original Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's 9-Part Drama Series With High Rotten Tomatoes Score Officially Making TV History</div>
+      
+      
+      <div class="summary">Netflix has a long-running drama series that is officially set to make history on the streaming service after a new announcement, and it is one of the best TV shows on Netflix, hitting a particular niche.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/calvin-and-hobbes-movie-dear-mr-watterson-streaming-free/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/calvin-and-hobbes-strips-appear-in-a-newspaper-in-dear-mr-watterson.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Calvin & Hobbes Documentary 'Dear Mr. Watterson' Is Now Streaming for Free
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The 89-Minute Movie That's Essential For Calvin & Hobbes Fans Is Officially Streaming For Free</div>
+      
+      
+      <div class="summary">Calvin & Hobbes is among the most impactful comic strips in the history of the medium, and a fantastic 2013 film about it is now streaming for free.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/fantasy-movies-2000s-perfect-masterpieces/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/the-lord-of-the-rings-the-fellowship-of-the-ring.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Fantasy Movies From the 2000s That Are 10/10 Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When it comes to fantasy, there's an argument to be made that the genre peaked on the big screen back in the early 2000s.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2311650/apple-updates-old-feature-split-view-ipad-os-27-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/apple-just-updated-an-old-ipad-feature-that-makes-it-feel-like-a-iphone-duo/intro-1794262455.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            iPadOS 27.2 Update Improves Split View, Making iPad Feel Like iPhone Duo
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple Just Updated An Old iPad Feature That Makes It Feel Like A iPhone Duo</div>
+      
+      
+      <div class="summary">Apple Just Updated An Old iPad Feature That Makes It Feel Like A iPhone Duo tnoi/Shutterstock Ever since iOS 9 was launched in 2015, Apple iPad users have been able to multitask with the split-screen app mode, known as Split View.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-coldest-war-jack-ryan-release-date-plot-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/1_29111852-3d70-4def-8b42-eecd5abec916_850x.jpg?q=70&fit=crop&w=750&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Everything We Know About Jack Ryan Novel 'The Coldest War' Releasing in November
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Everything We Know About The Next Jack Ryan Book Releasing In November</div>
+      
+      
+      <div class="summary">The modern era of Jack Ryan has seen some groundbreaking additions to the series, changing the way readers look at the character. Tom Clancy's Jack Ryan series began in 1984 with the publication of The Hunt for Red October and has been on the cutting&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/fantastic-beasts-secrets-of-dumbledore-leaving-peacock-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/04/Fantastic-Beasts-Secrets-of-Dumbledore-Jude-Law.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fantastic Beasts: The Secrets of Dumbledore Leaving Peacock Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Harry Potter Franchise’s $407M Fantasy Flop Is Officially Leaving Streaming</div>
+      
+      
+      <div class="summary">On November 13, Johnny Depp made his comeback to mainstream leading roles with Ebenezer, a new take on Charles Dickens' frequently adapted A Christmas Carol. Depp hasn't headlined a major project since Pirates of the Caribbean: Dead Men Tell No Tales&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/unwatchable-book-movie-adaptations-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/01/the-dark-tower.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Most Unwatchable Book-to-Movie Adaptations Of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's always a shame when movie adaptations of notable novels don't pan out as creators and audiences expected, but there are some book adaptations that are simply unwatchable.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/switch-online-missing-wii-games/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/punch-out-wii-cropped-cover-art.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            12 Classic Wii Games That Nintendo Should Add to Switch Online
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With GameCube games now available to play on Nintendo Switch Online with the Expansion Pack upgrade, it’s fun to think about other hardware that might benefit from similar treatment.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-irishman-criterion-collection/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/sharedimages/2024/04/the-irishman-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Irishman Joins Criterion Collection in 4K
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Martin Scorsese's Oscar-Nominated Crime Masterpiece Joins Iconic Collection</div>
+      
+      
+      <div class="summary">Martin Scorsese often laments that he's best known for gangster movies. He has perfected the modern take on the genre, after all. Yet, to be fair, the director has made no shortage of masterpieces across the cinematic spectrum.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/bat-out-of-hell-songs-meat-loaf-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/bat-out-of-hell-1977-album-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Song on Meat Loaf's 'Bat Out of Hell,' Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Bat Out of Hell might not be your kind of thing if you're not particularly fond of classic rock music that pushes things to the absolute limits while being unafraid to get truly over-the-top, but if you are open to that kind of music, it’s paradise (&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/james-gunn-major-man-of-tomorrow-skydance-rumor/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/superman-poster-zoomed-in.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            James Gunn Denies Major Man of Tomorrow Rumor Amid DC Studios Shakeup
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In October, Warner Bros. and Paramount finally completed the multi-billion-dollar merger into what's now called Skydance. Following the merger, several changes followed, including James Gunn's firing from DC Studios.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2314998/best-time-loop-horror-movies-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-best-time-loop-horror-movies-ranked/l-intro-1794502903.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Best Time-Loop Horror Movies, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Best Time-Loop Horror Movies, Ranked Universal Pictures Time-loop movies are evergreen for a reason.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/bleach-strongest-resurreccion-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/bleach-s-szayelaporro-granz-resurrecion-la-vida-fornicar-s.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Strongest Resurrección in Bleach, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">As one of the Big Three, Bleach has always been known for its characters, world building and art style. The power system is another thing that makes the series so much fun, especially with Soul Reapers having Zanpakuto and Hollows having all kinds of&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-cell-joel-kinnaman/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/06/joel-kinnaman-in-silent-night.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Joel Kinnaman to Star in Sci-Fi Thriller The Cell
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Joel Kinnaman Officially Leads New "Die Hard Meets Resident Evil" Sci-Fi Action Thriller</div>
+      
+      
+      <div class="summary">Body horror has quietly become the most commercially viable corner of the genre again, which would have sounded unlikely even five years ago.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/blade-runner-is-officially-getting-the-aaa-game-treatment/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/hunter_schafer_as_cora_in_blade_runner_2099_-_credit_clay_enos_for_prime_-_1_3000-1.jpg?q=49&fit=crop&w=220&h=124&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Blade Runner AAA Game in Discussion, Alcon Entertainment Confirms
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Blade Runner Is Officially Getting The AAA Game Treatment</div>
+      
+      
+      <div class="summary">Alcon Entertainment, which owns the Blade Runner franchise, confirmed in a recent interview that it has discussed making a AAA game based on the beloved sci-fi series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/saturday-night-live-snl-uk-cue-cards/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/saturday-night-live-john-mulaney-ashley-padilla-november-14-2026.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Saturday Night Live’ Can’t Escape This “Outdated” Part of Its Past
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When Saturday Night Live came to the UK, the British team behind SNL UK initially thought one of the American show's longest-running traditions was outdated. Cue cards seemed like an unnecessarily cumbersome way to deliver lines when an autocue offer&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/switchboard-zelda-ocarina-of-time-reception/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/zelda-ocarina-of-time-owl.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Zelda: Ocarina of Time Remake Is an Event Even if You’re Not Playing It
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Switchboard is Polygon's weekly newsletter for all things Nintendo, sent on Thursdays and published on the site on Saturdays. You can subscribe here. As I mentioned last week, I'm not playing the Switch 2 remake of The Legend of Zelda: Ocarina of Tim&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/castle-rock-stephen-king-leave-stream-netflix-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/12/tcdcaro_ec084.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Castle Rock: Stephen King's 20-Episode Hulu Anthology Expands His Universe
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Stephen King's Forgotten 20-Episode Thriller Is a Must-Watch Before It's Officially Pulled From Netflix</div>
+      
+      
+      <div class="summary">With the recent release of Prime Video's Carrie, Season 2 of The Institute, and a special episode of It: Welcome to Derry, 2026 has already seen its fair share of series based on the works of horror mastermind Stephen King.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/yaga-streaming-recommendation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/yaga-rapp-carter.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Yaga: Crave's New Mystery Series Starring Noah Reid and Carrie-Anne Moss
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Twin Peaks' Meets 'Sherlock' In a New Thriller That Is a Masterclass in Mystery Storytelling</div>
+      
+      
+      <div class="summary">If you've heard about the story of Baba Yaga, you know she lives in a hut on chicken legs, calls the forest home, and is a captivating witch. The Slavic folklore figure is creepy and unforgettable (and makes the villain in Hansel & Gretel seem like n&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/heartland-jessica-chastain-netflix-streaming-hit-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/heartland-netflix-5.jpg?q=49&fit=contain&w=3000&h=1500&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jessica Chastain's Heartland Is Netflix's Latest Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jessica Chastain’s ‘Yellowstone’ Replacement Is Officially Netflix’s Latest Hit</div>
+      
+      
+      <div class="summary">In its efforts to appeal to the heartland of America, liberal elite Hollywood has produced a movie titled — checks notes — Heartland. The market was cracked wide open by Taylor Sheridan's sprawling neo-Western series Yellowstone, which Netflix famous&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/spider-man-most-controversial-story-one-more-day-retconned/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/screenshot-2026-11-04-224239-1793897155836-png.jpeg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spider-Man's 'One More Day' Retconned in New Avengers Story
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Spider-Man’s Most Controversial Story Is Officially Retconned Almost 25 Years Later</div>
+      
+      
+      <div class="summary">Ever since he swung his way into our hearts more than six decades ago, Spider-Man has faced harrowing challenges.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dexter-resurrection-pays-off-2-season-plot-hole/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/david-zayas-kadia-saraf-and-dominic-fumusa-look-at-a-phone-in-dexter-resurrection.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dexter: Resurrection Finally Erases a Weird 2-Season Plot Hole
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When viewers first meet Detective Claudette Wallace (Kadia Saraf) in Dexter: Resurrection, it's evident that she has quirks. She's direct, clinical, and weighs facts mathematically, seeing crime scenes in ways no one else does.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/cowboy-bebop-spike-spiegel-90s-figure/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2019/09/Cowboy-Bebop-1400x700.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cowboy Bebop Brings Back Spike Spiegel's Original '90s Design for New Limited-Edition Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Cowboy Bebop remains one of the most acclaimed anime of the 1990s, and its protagonist, Spike Spiegel, is one of the decade's most iconic faces. Voiced by Steve Blum in the highly praised English dub, Spike carried the space western on his slouched s&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2312284/anker-accessories-apple-watch-owners-check-out/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-anker-accessories-apple-watch-owners-should-check-out/l-intro-1794331806.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Anker Accessories Apple Watch Owners Should Check Out
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Anker Accessories Apple Watch Owners Should Check Out love4aya/Shutterstock We may receive a commission on purchases made from links. Anker is one of the world's biggest charging equipment manufacturers, with millions of people relying on it for th&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <span class="current">4</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/5.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

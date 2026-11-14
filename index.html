@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-14 22:05 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>44 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>106 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>98 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>7 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>51 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>117 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>15 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/greys-anatomy-george-tr-knight-death-exit-reason/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/greys-anatomy_xtdvp1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Grey's Anatomy: Why TR Knight's George O'Malley Was Killed Off In Season 6
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The George O’Malley death in Grey's Anatomy season 6 and T.R. Knight's departure from the show were shocking — so how did George O'Malley die, and why was he killed off in the first place? The series is led by Meredith Grey, who started her journey a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/new-villains-knomad-hydra/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/mcu-captain-america-with-hydra-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Captain America #17 Debuts The Knomads, Marvel's New Villains Opposite Hydra
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel's New Villains Are The Game-Changing Opposite Of Hydra</div>
+      
+      
+      <div class="summary">Warning! This post contains SPOILERS for Captain America #17 Marvel has just debuted the game-changing opposite of Hydra. Of course, Hydra has been one of the Marvel Universe's most enduring villain organizations and a classic foe of Captain America.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/elden-ring-raging-wolf-spring-2027-statue-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/elden-ring-cover-image-artwork.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Elden Ring Raging Wolf Statue Releases Spring 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Elden Ring: Raging Wolf Officially Releases Spring 2027</div>
+      
+      
+      <div class="summary">Elden Ring may very well be FromSoftware's magnum opus, a feat that has, consequently, led to it getting numerous spin-offs, expanded media releases, and merchandise, all of which are treasured by fans worldwide.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/my-lady-jane-recommendation/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/kate-o-flynn-mary-my-lady-jane.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            My Lady Jane: Prime Video's 8-Part Historical Fantasy Series Earns George R.R. Martin's Praise
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video’s 8-Part Historical Fantasy Series Was So Good, Even George R.R. Martin Wanted More Episodes</div>
+      
+      
+      <div class="summary">Prime Video is one of the best streamers to find fantasy offerings, though not all of them are as massive and recognizable as The Lord of the Rings: The Rings of Power and The Wheel of Time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-last-kingdom-leaving-netflix-stream-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/netflix-the-last-kingdom-leaving-streaming.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Last Kingdom: Netflix's Historical Action Epic Leaving Streaming on Dec. 9
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's Near-Perfect 5-Part "Ridley Scott Meets Vikings" Action Epic Is Being Cut From Streaming</div>
+      
+      
+      <div class="summary">Netflix is about to lose one of its best action series that's a blend of Vikings and Ridley Scott's many historical epics.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/dig-amy-poehler-parks-and-recreation-replacement-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/10/dig-season-1-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Amy Poehler's New Series 'Dig' Arrives on Peacock Next Week
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Amy Poehler’s ‘Parks and Recreation’ Replacement Officially Arrives Next Week</div>
+      
+      
+      <div class="summary">It's been over ten years since Amy Poehler left Pawnee, Indiana, and Parks and Recreation behind, and since then, she's been less of a defining presence in live-action television comedy.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/jason-statham-mutiny-action-thriller-success-pvod-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/08/jason-statham.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mutiny: Jason Statham's Thriller Outperforms Nolan's The Odyssey on Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jason Statham's New 95-Minute Thriller Sinks Chris Nolan's Highest-Grossing Movie on Streaming</div>
+      
+      
+      <div class="summary">Jason Statham is known as an action star, gaining international success for films like The Italian Job, Crank, and the Transporter and Fast & Furious film series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/x-men-comics-forgot-secret-weapon/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/the-x-men-in-their-90s-team-uniforms-by-jorge-molina.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            X-Men Comics Have Neglected Their Sci-Fi and Space Opera Elements
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The X-Men Comics Forgot One Of The Title's Strongest Sci-Fi Weapons</div>
+      
+      
+      <div class="summary">It goes without saying that the X-Men are one of the most important properties in the history of comics, and for a good reason.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-animated-movies-letterboxd-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/wildwood.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Animated Movies of All Time, According to Letterboxd
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Animation is a staple of the film world that continues to evolve in exciting new ways. Whether it's traditional hand-drawn, stop-motion or computer-generated, this particular art form allows storytellers to truly push their imaginations to the limit.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/skip-hinnant-death-obituary/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/05/mixcollage-21-may-2024-04-39-pm-2426.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Skip Hinnant, Peanuts Star, Dies At 86
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Nov 14, 2026, 4:53 PM EST Jennifer is a TV and Movie News Editor at ScreenRant. She started her journey in entertainment media in 2022 when she first joined Valnet at CBR before coming to ScreenRant. Jennifer loves TV, especially science fi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/hunger-games-battle-royale-japanese-movie-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/the-hunger-games_oeeeoc-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Battle Royale Told A More Brutal Version Of The Hunger Games 12 Years Earlier
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Japanese cinema offered a rendition of The Hunger Games 12 years earlier, and it’s so much more intense. Young adult dystopian fiction has produced some of the most successful entertainment franchises of the 21st century.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/chris-pratt-the-terminal-list-dark-wolf-streaming-success-prime-video-200-days/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/08/chris-pratt-terminal-list-dark-wolf.jpeg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Which Action Hero Is Your Perfect Partner? Take Our Quiz
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video’s Military Thriller Masterpiece Officially Hits a Major Streaming Milestone</div>
+      
+      
+      <div class="summary">00:10Live Five channelsOne partner Collider · Action Heroes Which Action Hero Would BeYour Perfect Partner? Ten questions · five legends · one partner Five legends.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-the-body-rotten-tomatoes-audience-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/a-student-from-the-body-hiding-behind-a-chair.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's The Body Earns 98% Rotten Tomatoes Audience Score
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's New 8-Part Psychological Thriller Earns Near-Perfect Rotten Tomatoes Audience Score</div>
+      
+      
+      <div class="summary">Netflix's newest psychological thriller is off to a promising start. Created by Quinn Shephard, The Body follows a group of Catholic school girls whose dance-team initiation goes wrong, leading to prophetic visions and mass hysteria throughout their &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-hopeless-christmas-movies-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/spencer-2021-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Most Hopeless Christmas Movies, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There’s no shortage of feel-good Christmas movies. Some will have dramatic moments, sure, but you can’t really call It’s a Wonderful Life downbeat or hopeless when it ends up feeling life-affirming and hopeful by the end.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/kill-current-oliver-lowe-keanu-reeves-next-adapation-thriller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/instar54893747.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Keanu Reeves To Adapt Oliver Lowe's Thriller Kill Current
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: John Wick Meets Reacher In This Must-Read Thriller That Keanu Reeves Is Adapting Next</div>
+      
+      
+      <div class="summary">After starring in the John Wick film franchise and witnessing the success of the Jack Reacher adaptations, Keanu Reeves' next major movie project will blend the two seamlessly using an exciting new title as its foundation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/doctor-strange-join-doom-secret-wars/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/robert-downey-jr-s-doctor-doom-and-his-acolytes-pose-together-in-avengers-doomsday.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why Doctor Strange Abandons The Avengers To Join Doctor Doom Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There's a sensible reason why Doctor Strange betrays the Avengers and becomes Doctor Doom's right-hand man during the collapse of the Marvel multiverse. Every major Avengers antagonist has led an army and a group of devoted lieutenants.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/from-netflix-hit-last-season/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/twin-peaks.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            From: Netflix's Hit Horror Series Only Has One Season Left
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Twin Peaks Meets Stephen King' Series, Now A Major Netflix Hit, Only Has One Season Left</div>
+      
+      
+      <div class="summary">The horror mystery series From has been the main streaming attraction of MGM+ since its premiere in 2022. Starring Lost alum Harold Perrineau, From has drawn countless comparisons to the hit ABC mystery series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/mark-wahlberg-shooter-leaving-tubi-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/shooter-mark-wahlberg-bob-lee-swagger-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Which Action Hero Is Your Perfect Partner? Take Our Quiz
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Tracker’ Meets ‘Reacher’ in Mark Wahlberg’s Action Hit That Is Officially Removed From Free Streaming</div>
+      
+      
+      <div class="summary">00:10Live Five channelsOne partner Collider · Action Heroes Which Action Hero Would BeYour Perfect Partner? Ten questions · five legends · one partner Five legends.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/austin-powers-4-writing-update-mike-myers/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/mike-myers-as-austin-in-the-time-machine-in-austin-powers-the-spy-who-shagged-me.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Austin Powers 4 Gets Exciting Writing Update From Mike Myers
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Austin Powers 4 is on the way, and Mike Myers is ready for his shagadelic return to the big screen. Released in 1997, Austin Powers: International Man of Mystery starred Myers as the titular character, an ostentatious James Bond parody, in addition t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-spy-x-family-manga-panels/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/spy-x-family-manga-color-art-for-mission-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Greatest Spy x Family Manga Panels, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Spy x Family quickly became one of the most beloved shonen manga of all-time after its debut in 2019. Tatsuya Endo's brilliant blend of found family, spy thriller, Cold-War political tension and comedy elements swept the globe.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-vampire-books-since-dracula-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/salem-s-lot-book-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 8 Greatest Vampire Books Released Since 'Dracula', Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The vampire is one of the most enduring monsters in fiction, shifting in step with the times. Supernatural bloodsuckers have existed in folklore for centuries, but they took their core modern form in Bram Stoker's seminal Dracula back in 1897.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sci-fi-novel-red-rising-adapted-wrong-movie-animated-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/cover-of-red-rising-by-pierce-brown.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Red Rising Adaptation Announced After 12 Years, but Fans Worry About Approach
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Beloved Sci-Fi Novel Is Finally Getting Adapted After 12 Years, but It’s All Wrong</div>
+      
+      
+      <div class="summary">After 12 years and at least two scrapped attempts, Red Rising by Pierce Brown is finally getting adapted for the screen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-christmas-movies-watch-november/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/11/will-ferrell-in-elf-2003.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 7 Best Christmas Movies To Watch in November
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">'Tis the season to be jolly! Well, almost. As Mariah Carey defrosts and Thanksgiving dinner gets prepped, some Christmas lovers are still eager to haul out the holly and start celebrating.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/star-trek-generations-streaming-free-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/msdsttr_pa117.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek: Generations Now Streaming Free on Pluto TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 32 Years Later, Star Trek's Most Important Movie Is Officially Free on Streaming</div>
+      
+      
+      <div class="summary">There are few things Star Trek fans love more than a good crossover. Bringing together characters from different eras of the franchise is practically guaranteed to generate excitement, particularly when those characters happen to be two of Starfleet'&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/rings-of-power-marnukh-gollum-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/gollum-frowning-lotr.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Rings of Power Season 3 Introduces Gollum-Like Orc Marnûkh
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘The Lord of the Rings’ Officially Replaces Gollum</div>
+      
+      
+      <div class="summary">Warning: This article contains SPOILERS for The Rings of Power Season 3, Episodes 1–4.The Rings of Power Season 3 is expanding on J.R.R. Tolkien's lore and dropping references to The Lord of the Rings, and the first four episodes even produce a Gollu&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/east-of-eden-netflix-top-10-six-weeks-florence-pugh/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/east-of-eden-series.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Which Oscar Best Picture Is Your Perfect Movie? Take Our Quiz
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Florence Pugh’s Steinbeck Adaptation Officially Passes Massive Netflix Milestone</div>
+      
+      
+      <div class="summary">Collider · Best Picture Which Oscar Best PictureIs Your Perfect Movie? Five winners · ten questions · one envelope Five Oscar Best Picture winners. Five completely different visions of what cinema can be and what it can do to you.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-middle-sitcom-success-prime-video-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/neagley-reacher.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Middle Sitcom Outperforms Reacher and Neagley on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Reacher & Neagley Are Losing to a 17-Year-Old Sitcom on Streaming</div>
+      
+      
+      <div class="summary">Reacher is one of the most successful Prime Video shows of the 2020s, and its recent spin-off, Neagley, has also found success on the streaming platform. However, both are now struggling on the charts as one of the most underrated sitcoms of the 2000&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/shade-of-the-marionette-story-of-piyorita-first-trailer-steam-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/characters-prepare-for-battle-in-fullmetal-alchemist-brotherhood.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            WitchSpring's Shade of the Marionette Action RPG Announced for Steam
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Fullmetal Alchemist Meets Kingdom Hearts in New Action RPG Coming to Steam</div>
+      
+      
+      <div class="summary">In the Fullmetal Alchemist series, the concept of being "incomplete" is literally personified through alchemically produced beings known as Homunculi.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/worst-james-gunn-dcu-mistakes-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/james-gunn.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Biggest DCU Mistakes James Gunn Made Before Being Replaced
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In November 2026, DC fans were left disappointed when the universe scrapped yet another timeline with the firing of James Gunn, and he made some mistakes along the way.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-hopeless-netflix-shows-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/narcos-pedro-pascal-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 14 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 6 Most Hopeless Netflix Shows, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">I know a television show has thoroughly destroyed my optimism when somebody receives good news and my first reaction is suspicion. A witness has come forward? Wonderful. Who's going to murder them? The family finally has enough money to escape? Excel&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    <span class="disabled">&laquo; Newer</span>
+  
+
+  
+    
+      <span class="current">1</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/2.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>
