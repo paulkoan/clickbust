@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-21 16:06 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>33 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>96 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>10 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>63 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>124 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/mobland-season-2-finale-johnny-flynn-tom-hardy-helen-mirren/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/mobland-johnny-flynn.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'MobLand's Johnny Flynn on His Favorite One-on-One Scene With Tom Hardy in Season 2
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's Note: The following contains spoilers for MobLand Season 2 Episode 10.MobLand has finally reached its conclusion for Season 2, delivering an even more shocking ending than Season 1.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/switchboard-nintendo-switch-2-gta-6-rockstar/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/gta-3-switch.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nintendo’s Long History with GTA Seems to Have Met Its End
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Switchboard is Polygon's weekly newsletter for all things Nintendo, sent on Thursdays and published on the site on Saturdays. You can subscribe here. Once upon a time, Rockstar Games regularly released Grand Theft Auto games on Nintendo consoles. Exc&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/better-sister-harlan-coben-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/the-better-sister-elizabeth-banks-michael-harney-jessica-biel.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's 8-Part Psychological Thriller 'The Better Sister' Beats Harlan Coben At His Own Game
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video’s 8-Part Psychological Thriller Beats Harlan Coben At His Own Game</div>
+      
+      
+      <div class="summary">Whether it's a man searching for his son or a married couple whose lives are ruined by more than a few secrets, Harlan Coben's Netflix thriller adaptations always make for riveting binge-watching.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-loch-ness-mysteries-melissa-george-britbox/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/matthew-goode-in-dept-q-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Loch Ness Mysteries: New Scottish Mystery Series on BritBox
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget ‘Dept Q,’ The Best New Scottish Mystery Series Is Officially Here</div>
+      
+      
+      <div class="summary">On October 24, filming came to an end on the second season of one of Netflix's best recent breakout shows.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/avengers-secret-wars-genre-risk/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/robert-downey-jr-as-doctor-doom-in-avengers-doomsday.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers: Secret Wars' Genre Is the Biggest Risk in MCU History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">For Marvel Cinematic Universe fans, all eyes are currently on the imminent release of Avengers: Doomsday, but that is only the first half of a two-part story. It will be followed up in 2027 by Avengers: Secret Wars.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/power-rangers-unlimited-5-rewrites-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/power-rangers-unlimited-5-variant-cover-header-connecting.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Power Rangers Unlimited #5 Rewrites History All Over Again
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The following contains major spoilers for Power Rangers Unlimited #5, on sale now from BOOM! Studios. Over the course of the past three decades, the Power Rangers franchise has been home to entire generations of color-coded superheroes whose powers h&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jon-bernthal-best-performance-taylor-sheridan-wind-river/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/jon-bernthal-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jon Bernthal's Devastating Performance in Taylor Sheridan's 'Wind River'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 9 Years Ago, Jon Bernthal Teamed With Taylor Sheridan to Deliver His Most Devastating Performance</div>
+      
+      
+      <div class="summary">Jon Bernthal is known for his gun-toting, intense characters, but one of his best depictions of masculinity was only for a few scenes of screen time in Taylor Sheridan’s masterpiece, Wind River.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/jon-bernthal-noir-crime-thriller-mob-city-deserved-better/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/milo-ventimiglia-jon-bernthal-mob-city-resized.jpg?q=49&fit=contain&w=2800&h=1575&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mob City: Jon Bernthal's Underrated Noir Crime Thriller
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jon Bernthal’s 6-Episode Noir Crime Thriller Deserved a Better Fate</div>
+      
+      
+      <div class="summary">The classic noir detective comes with three staples: a gun, a smoking habit, and a three-piece suit. While many actors have taken on the role, few embody it quite like Jon Bernthal in TNT’s Mob City. Based on John Buntin’s book L.A.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/george-rr-martin-in-the-lost-lands-global-streaming-success-prime-video-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/in-the-lost-lands-deidre-mullins.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            George R.R. Martin's 'In the Lost Lands' Makes Streaming History
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Game of Thrones’ Creator’s Box Office Bomb Officially Makes Streaming History</div>
+      
+      
+      <div class="summary">Best known for his work writing A Song of Ice and Fire, the series of novels that inspired the hit HBO series, Game of Thrones, George R. R. Martin is also involved in plenty of other important projects.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/alien-ridley-scott-leaving-netflix-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/alien-tom-skerritt.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ridley Scott's 'Alien' Leaving Netflix Soon
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ridley Scott’s Sci-Fi Masterpiece Is Officially Being Removed From Netflix</div>
+      
+      
+      <div class="summary">This year, two major directors made long-awaited returns to the genre they are most closely associated with: sci-fi. First out of the gate was Steven Spielberg, who released Disclosure Day — his first new sci-fi film since 2018.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/mindblowing-from-fan-theories-that-make-sense/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/jade-looking-shocked-in-from-season-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Mindblowing From Fan Theories That Actually Make Sense
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are only a few television series that have it in them to keep the viewers on the edge of their seats during every episode, and MGM+'s horror/mystery series From is one of them. Ever since its debut in 2022, the show's fans have been figuring ou&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2323603/british-sci-fi-show-dinosaurs-modern-world-streaming-free-primeval/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-british-sci-fi-show-with-dinosaurs-terrorizing-the-modern-world-is-streaming-for-free/intro-1795206515.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Primeval Is Now Free to Stream on Tubi
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This British Sci-Fi Show With Dinosaurs Terrorizing The Modern World Is Streaming For Free</div>
+      
+      
+      <div class="summary">This British Sci-Fi Show With Dinosaurs Terrorizing The Modern World Is Streaming For Free ITV The "Jurassic World" franchise features a modern society where dinosaurs roam free, even if their release wasn't exactly intentional, and people have grown&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/hateful-eight-free-to-stream-tubi/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/4233531/hateful-eight2.0.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Hateful Eight Is Now Free to Stream on Tubi
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Quentin Tarantino's Western Thriller Masterpiece Is Officially Free on Streaming</div>
+      
+      
+      <div class="summary">As far as Quentin Tarantino movies go, just about everyone loves Pulp Fiction. Reservoir Dogs and Once Upon a Time… in Hollywood are also widely regarded, while the Kill Bill films and Django Unchained each have a pretty fervent fanbase.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/far-side-best-astronauts-comics/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/the-best-far-side-about-astronauts.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Funniest Far Side Comics About Astronauts
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Gary Larson sent numerous astronauts into space during the run of The Far Side. Sadly, the bulk of those strips slipped under mission control's radar. Most are black and white, so they can be easy to miss when readers flip through the pages.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/sisu-streaming-free-tubi-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/03/mv5bowi1zgvjzdutzguxnc00y2qwlwi5mwytndk5mze3yznhyji0xkeyxkfqcgc-_v1_.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Sisu': John Wick Meets Rambo in 91-Minute Action Thriller Now Streaming Free
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: "John Wick Meets Rambo" in 91-Minute Action Thriller Shooting Onto New Free Streaming Home</div>
+      
+      
+      <div class="summary">What do you get when you take the best of John Wick and Rambo and place it in a WWII setting? The answer is a near-perfect action thriller that's about to take over free streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/brandon-sanderson-stormlight-archive-book-6-writing-timeline/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/the-stormlight-archive-oathbringer.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brandon Sanderson to Begin Writing Stormlight Archive Book 6 in January 2028
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brandon Sanderson Officially Confirms Major ‘Stormlight Archive’ Update</div>
+      
+      
+      <div class="summary">The last time Brandon Sanderson took readers to Roshar for a full-length Stormlight Archive novel, he gave them an ending and a fairly long wait. Wind and Truth closed out the first five-book arc in December 2024.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/marvel-inde-navarrette-x-men-movie-superhero-rouge-obsession-nikki-marvel-rivals" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000014589.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Celebrates Inde Navarrette's X-Men Movie With New Poster Showing Superhero Rouge Striking The Same Pose As the 'Obesession' Star's Nikki In 'Marvel Rivals'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Young actors experiencing meteoric rises always face questions about joining Marvel Studios' ever-growing stable of actors. Most give diplomatic answers about the oppurtunity to work with successful filmmakers, but a select few let their geek flags f&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/fantasy-shows-single-season-masterpieces/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/over-the-garden-wall-wirt-beatrice-1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            These 8 Single-Season Fantasy Shows Are Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fantasy TV is greatly known for thriving on sprawling worlds and long-running sagas, multi-season chaos that offers thrilling character journeys. But sometimes the genre produces rare and fantastic hits that deliver just a single season.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/avengers-doomsday-robert-downey-jr-victor-von-doom-mcu-unmask" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000014585.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Unmasks Doctor Doom & Reveals His Face In New Merch As Robert Downey Jr.'s Avengers: Doomsday Return As MCU Victor Von Doom Draws Near
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel officially unmasks Doctor Doom in new merchandise just in time for Robert Downey Jr.'s MCU return as Victor von Doom in Avengers: Doomsday. Doctor Doom's true face has always been one of Marvel's best-kept secrets across different media.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/legend-of-zelda-tears-kingdom-mineru-amiibo-dlc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2023/04/39de181eee485320b9765a5d957c419d.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Legend of Zelda: Tears of the Kingdom Mineru's Construct Amiibo Released
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Legend Of Zelda: Tears Of The Kingdom $35 DLC Officially Available Now</div>
+      
+      
+      <div class="summary">Though Echoes of Wisdom absolutely counts in its own right, The Legend of Zelda: Tears of the Kingdom is the most recent fully open-world, fully 3D entry that we've had in the series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/wwii-with-tom-hanks-streaming-success-apple-tv-150-days-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/world-war-ii-tom-hanks-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Take Our Quiz: Which Oscar Best Picture Is Your Perfect Movie?
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Hanks’ Acclaimed WWII Miniseries Officially Celebrates a Streaming Milestone</div>
+      
+      
+      <div class="summary">Collider · Best Picture Which Oscar Best PictureIs Your Perfect Movie? Five winners · ten questions · one envelope Five Oscar Best Picture winners. Five completely different visions of what cinema can be and what it can do to you.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2319943/fitness-trackers-to-buy-instead-fitbit-air/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-fitness-trackers-to-buy-instead-of-the-fitbit-air/l-intro-1794951994.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Fitness Trackers To Buy Instead Of The Fitbit Air
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Fitness Trackers To Buy Instead Of The Fitbit Air We may receive a commission on purchases made from links. The Google Fitbit Air is a compelling new screenless fitness tracker that passively does its thing on your wrist.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/project-hail-mary-rocky-james-ortiz-puppeteer-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/project-hail-mary.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            James Ortiz Discusses Bringing Rocky to Life in 'Project Hail Mary'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Project Hail Mary’ Almost Had a Completely Different Ending for Rocky</div>
+      
+      
+      <div class="summary">Summary Collider's Steve Weintraub talks with James Ortiz for Project Hail Mary. Ortiz discusses the practical puppetry and improvisation that make his performance as Rocky an Oscar contender.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/crime-shows-best-villain-performances-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/giancarlo-esposito-as-gus-fring-in-breaking-bad.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Crime Shows With the Greatest Villain Performances, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of the greatest strengths of crime television is its ability to skew moral compasses and deliver fascinating, complex characters that challenge our understanding of humanity.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/colson-whitehead-cool-machine-amazon-best-books-of-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/nickel-boys.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Colson Whitehead's 'Cool Machine' Lands on Amazon's Best Books of 2026 List
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Colson Whitehead's Brilliant Thriller Lands On Amazon's List Of The Best Books Of 2026</div>
+      
+      
+      <div class="summary">As 2026 draws to a close, many publishers and vendors are rounding up their list of the best books of 2026. It's no surprise that some incredible thriller books have landed on the Amazon Editor's list of the best books of 2026, including one of Colso&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/pokemon-heart-gold-soul-silver-february-2027-anniversary-set/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/pokemon-heartgold-soulsilver-pins.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon HeartGold & SoulSilver Box Art Pin Collection Announced
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Pokémon HeartGold & SoulSilver February 2027 Collection Officially Confirmed</div>
+      
+      
+      <div class="summary">Pokémon HeartGold and SoulSilver continue to serve as the series' pinnacle, widely regarded as the greatest Pokémon game ever made and for good reason.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/yellowjackets-season-4-plane-crash-location/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/yellowjackets_s4_ds_0413_0673_rt.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Years Later, 'Yellowjackets' Officially Solves One of Its Last Huge Mysteries
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Yellowjackets has plenty of mysteries that have yet to be answered as the twisty survival thriller reaches its final season.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-last-duel-streaming-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/06/the-last-duel-streaming-paramount-june-2026-ridley-scott-historical-action-epic.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Last Duel Is Officially Being Cut From Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Matt Damon's 153-Minute Ridley Scott Historical Action Epic Is Officially Being Cut From Streaming</div>
+      
+      
+      <div class="summary">From Gladiator and Kingdom of Heaven to Robin Hood and Napoleon, Ridley Scott definitely knows his way around an epic historical thriller, even if some are better than others.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/archie-anniversary-comic-all-star-artists/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/camila-mendes-as-veronica-lodge-kj-apa-as-archie-andrews-on-riverdale.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            85 Years Later, Archie Plans Historic Release With an All-Roster of Artists
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Not all of the most prolific comic book characters wear capes (or tights, for that matter). Take, for example, Archie Andrews, who is the center of a comic book universe that has dominated pop culture even long before the debut of Riverdale.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/space-opera-movies-better-than-dune-letterboxd-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/dune-part-two_i6e6dx.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Live-Action Space Operas Better Than Dune, According to Letterboxd
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Denis Villeneuve's Dune became a major hit upon its release in 2021. It was the second major attempt to bring Frank Herbert's seminal sci-fi novel to the big screen, and though not without flaws, it was a beautiful and largely faithful adaptation.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <span class="current">3</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/4.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-21 16:06 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>33 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>96 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>10 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>63 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>124 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/sheriff-country-no-new-episode-november-20-2026-season-2-episode-6-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/morena-baccarin-as-mickey-fox-in-sheriff-country-season-2-episode-6.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why There's No Sheriff Country Tonight (November 20) & When New Season 2 Episodes Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">No new episodes of Sheriff Country season 2 will air tonight, raising some questions about what will be broadcast by the Eye Network instead and when Sheriff Country returns.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-easter-eggs/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2025/10/gta6jason.JPG?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Best GTA 6 Easter Eggs We’ve Seen So Far
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Grand Theft Auto 6 is finally in the wild, and there are a mind-boggling number of things to do in Leonida. Many of them are terribly dangerous, like stealing cars from the police impound lot, getting into high-speed chases, and laundering stolen goo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/lenore-dove-lucy-gray-katniss-connection/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/lenore-dove-haymitch-sunrise-on-the-reaping.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Lenore Dove Is Related to Lucy Gray Baird & Katniss Everdeen
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Hunger Games: Sunrise on the Reaping centers on a younger version of Woody Harrelson's character, Haymitch Abernathy, now played by Joseph Zada. However, the character with the broader franchise implications takes on a smaller role in the movie.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/robert-pattinson-james-bond-jeffrey-bezos-reaction/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/robert-pattinson-is-james-bond.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Robert Pattinson Almost Missed James Bond Role Because Bezos Worried He Was Too Famous
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Robert Pattinson Almost Wasn’t Cast as James Bond for One Key Reason</div>
+      
+      
+      <div class="summary">It's official: Robert Pattinson is the next James Bond, making him the eighth actor to take on the role after Daniel Craig's 15-year tenure in the franchise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/yellowjackets-season-4-lost-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/yellowjackets-season-4-cast.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Yellowjackets Season 4 Is Finally Becoming the Perfect Lost Replacement
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The following contains spoilers for Yellowjackets Season 4, Episode 1, "Hivemind," now streaming on Paramount+. Beyond a shadow of doubt, Lost made such an impact on television that any shows after that feature a plane crash are bound to be compared &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/cole-hauser-pale-horse-is-dutton-ranch-meets-sicario/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/cole-hauser-looks-menacing-as-rip-wheeler-in-dutton-ranch.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cole Hauser's Pale Horse is Dutton Ranch Meets Sicario
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Cole Hauser has spent years playing the most dangerous man on the Yellowstone Dutton ranch in Yellowstone, then on the Beth and Rip spinoff Dutton Ranch, and now he's reaching for a role that is even closer to the edge.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2323529/gta-6-mitsubishi-eclipse-paul-walker-fast-and-furious-car-location/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/gta-6s-mitsubishi-eclipse-how-to-find-paul-walkers-fast-furious-car/l-intro-1795204491.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6's Mitsubishi Eclipse: How To Find Paul Walker's Fast & Furious Car
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">GTA 6's Mitsubishi Eclipse: How To Find Paul Walker's Fast & Furious Car Tim P. Whitby/Getty Images The Grand Theft Auto and Fast and Furious franchises share a lot of the same DNA.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/james-gunn-dc-studios-exit-writer-director/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/10/james-gunn-at-the-uk-launch-event-for-superman-at-cineworld-leicester-square-in-london-england.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            James Gunn Confirms New Role Ahead of DC Studios CEO Exit
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Nov 20, 2026, 2:56 PM EST Jamie Lovett is a graduate of MTSU's Journalism program who followed his lifelong passion for comics and related media into a career writing about pop culture.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/airman-casting-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/tom-hardy-in-dunkirk.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            A24 and Laika's WWII Thriller 'Airman' Starring Jeremy Allen White Assembles Cast with Ben Stiller Directing
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: A24's New 'Dunkirk'-Esque WWII Thriller Officially Assembles a Star-Studded Force</div>
+      
+      
+      <div class="summary">A24 has had an incredible year, both at the box office and with critics. The company's slate includes its biggest box-office hit, Backrooms, as well as the critically acclaimed and widely discussed three-hour documentary You Can See Everything.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/jared-padalecki-netflix-guarding-stars-rotten-tomatoes-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/07/instar49998211.jpg?q=49&fit=crop&w=50&h=65&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jared Padalecki's 'Guarding Stars' Sets 90% Rotten Tomatoes Record, His Best Ever
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jared Padalecki’s New Netflix Adaptation Sets All-Time Career Rotten Tomatoes Record</div>
+      
+      
+      <div class="summary">Published Nov 20, 2026, 2:51 PM EST Andy Behbakht has worked as an entertainment journalist since 2010, covering all the latest in Hollywood on both the big and small screens, from staying on top of the biggest breaking news, analyzing movies and tel&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-official-sales-figure-how-much-made/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/vice_city_19.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6 Official Sales Numbers Are In — And They're Unbelievable
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Grand Theft Auto 6 is off to a staggering start mere days into its release. Rockstar Games and Grand Theft Auto publisher Take-Two Interactive announced Friday that GTA 6 has sold 32.5 million copies during its pre-release period — a new record acros&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/gta-6-lucia-twist-reaction/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/gta-6-lucia.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Grand Theft Auto VI' Players Divided Over "Disgusting" Lucia Twist
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Arguably the most-anticipated game of the last decade and a half hit shelves yesterday. Grand Theft Auto 6 officially released on Nov. 19, 2026, and eager gamers dove straight in. Many even took off work and ditched plans to pump as much time as poss&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/steam-machine-price-increase-valve-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/steam-machine-buttons-ports.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Valve Warns Steam Machine Price May Increase
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Valve's Steam Machine was an unfortunate victim of circumstance, releasing right as the ongoing component crisis was ramping up, forcing the mini PC to be sold for more than $1,000.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/yellowjackets-season-4-new-timeline-format/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/yellowjackets-3x9.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Yellowjackets Is Officially Changing Its Format In Season 4
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! Spoilers ahead for Yellowjackets season 4, episode 1, "Hivemind"!Yellowjackets has finally returned, and the thriller TV show is full of more backstabbing and brutality than ever in the season 4 premiere, "Hivemind.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-empress-netflix-streaming-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/06/oguthiju7bsivrs5um5xvy-1920-80.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'The Empress' Season 3 Crowned a Streaming Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's New (Very) R-Rated 3-Part Historical Epic Is Officially Crowned a Streaming Hit</div>
+      
+      
+      <div class="summary">Netflix has found another streaming hit in a steamy historical epic that combines all the romance and scandal of Bridgerton with the monarch drama of The Crown. The best part is that a new season just dropped, so it's perfect for those looking for so&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/bodyguard-replacement-trinity-netflix-political-thriller-december-1/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/trinity-richard-madden.png?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'Trinity' Reunites 'Bodyguard' Creator Richard Madden in Political Thriller
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Bodyguard’ Meets ‘The Hunt for Red October’ in Netflix’s 7-Part Political Thriller</div>
+      
+      
+      <div class="summary">In 2018, Netflix brought the BBC series Bodyguard to its streaming library. The political thriller centers on David Budd (Richard Madden), a former soldier turned bodyguard who's assigned to protect Home Secretary Julia Montague (Keeley Hawes).</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/castle-crawl-release-date-dungeon-crawler-carl-replacement/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/91nxudjrhvl-_sl1500_.avif?q=70&fit=crop&w=750&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            LitRPG Series 'Castle Crawl' from Justin Sloan and Zack Petroc Gets April 2027 Release Date
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Dungeon Crawler Carl’ Replacement Series Sets Release Date</div>
+      
+      
+      <div class="summary">Of all the things Carl could have carried into the dungeon at the end of the world, he wound up with his ex-girlfriend’s cat.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/video/visionquest-the-trick-that-made-tommy-s-speed-feel-real-collider-bts/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/collider-bts-visionquest-01.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            VisionQuest: The Trick That Made Tommy’s Speed Feel Real | Collider BTS
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">VisionQuest editor Amelia Allwarden breaks down how Marvel combined practical effects, inventive editing, and visual effects to bring Vision's world to life.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2322597/james-bond-movies-aged-horribly/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/5-james-bond-movies-that-have-aged-horribly/l-intro-1795135579.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 James Bond Movies That Have Aged Horribly
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 James Bond Movies That Have Aged Horribly MGM With Robert Pattinson officially confirmed to be the next actor who'll take up the James Bond mantle, the 007 film franchise is preparing to roar back to life in a major way after years away from the si&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2319915/tom-hiddleston-jeremy-irons-dystopian-drama-deserved-respect-high-rise/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/tom-hiddleston-and-jeremy-irons-overlooked-dystopian-drama-deserved-more-respect/intro-1794951004.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ben Wheatley's 'High Rise' with Tom Hiddleston and Jeremy Irons Deserved More Respect
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Hiddleston And Jeremy Irons' Overlooked Dystopian Drama Deserved More Respect</div>
+      
+      
+      <div class="summary">Tom Hiddleston And Jeremy Irons' Overlooked Dystopian Drama Deserved More Respect StudioCanal JG Ballard's "High Rise" was once considered impossible to film. The novel isn't focused on plot, and great filmmakers (like Nicolas Roeg) failed to bring i&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/transformers-all-time-smallest-autobots-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/idw-rom-vs-transformers-shining-armor.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Smallest Autobots of All Time, Ranked Biggest to Smallest
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Optimus Prime sets the normal standard for how big an Autobot body should be. Every Autobot who falls short of it carries a different set of problems and their own unique strengths.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/empire-city-gerard-butler-bidding-war/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/03/hagnzeiacae97v1.jpeg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gerard Butler's Action Thriller 'Empire City' Sparks Bidding War, Netflix Interested
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Gerard Butler's New 'Die Hard'-Esque Action Thriller Gets Release Update as Netflix Circles</div>
+      
+      
+      <div class="summary">Gerard Butler is one of the most iconic action stars working today, and he is not slowing down anytime soon. In fact, his latest project is gaining massive interest from the biggest companies in Hollywood, and it is easy to see why.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/baldurs-gate-3-shadowheart-may-2027-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/baldur-s-gate-3-shadowheart-book.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Baldur's Gate 3 Prequel Novel 'Shadowheart' Gets 2027 Release Date
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Baldur's Gate 3: Shadowheart Officially Confirmed For 2027 Release</div>
+      
+      
+      <div class="summary">The arrival of Grand Theft Auto 6 has taken over most gaming discussion, but it wasn't too long ago that Baldur's Gate 3 was at the top of the pile. While it's no longer the center of every conversation, the game has proven to have legs, and its stor&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/pokemon-tcg-flowing-fists-set-release-day-change-2027-card-etb/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/pokemon_tcg_mega_evolution-flowing_fists_elite_trainer_box_en.png?q=49&fit=contain&w=2711&h=2584&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon TCG's Flowing Fists Set Moves Release to Saturday, Impacts Collectors
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New Lucario 'Pokémon' Set Quietly Changes Everything For TCG Fans</div>
+      
+      
+      <div class="summary">After weeks of apparent early sales leaks, The Pokémon Company just revealed its slate of products for the upcoming Flowing Fists Pokémon Trading Card Game expansion set.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/steven-spielberg-the-odyssey-prequel-christopher-nolan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/the-odyssey-anne-hathaway-bow.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Steven Spielberg Urges Christopher Nolan to Adapt The Iliad as The Odyssey Prequel
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Steven Spielberg Urges Christopher Nolan to Make The Odyssey Prequel He Passed on 22 Years Ago</div>
+      
+      
+      <div class="summary">Christopher Nolan's The Odyssey is one of the biggest movies of the year and is all but certain to be a major contender at the Oscars. There are no known plans for Nolan to give the epic a follow-up film, but Steven Spielberg has a pitch in mind for &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-change-time-how-to-how-long-day/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/gta6_guide_time_lead.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How to change time in GTA 6
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Being able to change time in Grand Theft Auto 6 is quite helpful, as you can only start some missions at a certain time of day. Progressing through the campaign is not the only reason to do so. Some businesses are open only for a period of the day, l&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2323422/gta-6-what-you-need-to-do-first/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/i-played-over-15-hours-in-gta-6-heres-what-you-need-to-do-first/l-intro-1795201119.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            I Played Over 15 Hours In GTA 6 - Here's What You Need To Do First
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">I Played Over 15 Hours In GTA 6 - Here's What You Need To Do First "Grand Theft auto 6" is a massive open world that players can jump right into and explore from the start.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/home-alone-sequel-macaulay-culkin/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/12/macaulay-culkin-in-home-alone-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Home Alone 7' Is Officially Happening With Macaulay Culkin Set to Return
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Nov 20, 2026, 2:03 PM EST Richard is a writer/journalist from Oregon (by way of California) with a love of Marvel, Star Wars, DC, and all kinds of entertainment. He joined MovieWeb in January 2026 as a Movie & TV Writer/Editor.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/wednesday-season-3-real-addams-family/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/jenna-ortega-in-wednesday.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wednesday Season 3 Is Finally Adapting The Real Addams Family
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Things are changing for Wednesday, as Jenna Ortega's hit Netflix show leaves Nevermore Academy behind in its upcoming third season.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-recruit-reacher-character-problem/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/02/the-recruit-netflix.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'The Recruit' Fixes a Reacher Problem in 14 Episodes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s Near-Perfect Action Thriller Fixes the Biggest Problem With 'Reacher' In Only 14 Episodes</div>
+      
+      
+      <div class="summary">Alan Ritchson has had an enviable career. He appeared in a few episodes of Smallville, and his 2026 Netflix sci-fi action movie, War Machine, is perfectly entertaining. But no role will ever match his time as the super-strong main character on Prime &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <span class="current">11</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/12.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-21 16:06 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>33 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>96 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>10 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>63 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>124 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.bgr.com/2322316/how-to-get-free-month-gta-plus-with-gta-6-guide/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-to-get-your-free-month-of-gta-from-gta-6-and-why-you-should-wait/l-intro-1795118782.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How To Get Your Free Month Of GTA+ From GTA 6 (And Why You Should Wait)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How To Get Your Free Month Of GTA+ From GTA 6 (And Why You Should Wait) LarysaP/Shutterstock If you pre-ordered or purchased the digital version of "Grand Theft Auto 6" before November 20, 2026, then you are eligible to claim one free month of the GT&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/avengers-doomsday-return-trailer-marvel-teams-fans" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/avengers-doomsday-teams-mcu-marvel.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers: Doomsday Releases New ‘Return’ Trailer, Which Unites 5 Marvel Teams & Fans
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Avengers: Doomsday's new trailer highlights the five main teams uniting to save the Multiverse from Robert Downey Jr.'s Doctor Doom.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/deltarune-chapter-6-7-finale-update-toby-fox/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/06/deltarune-ch-5-key-art.webp?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Undertale Creator Officially Teases the End of Deltarune
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's been almost a decade since Toby Fox released the first chapter of Deltarune, the celebrated indie developer's follow-up to Undertale. Now the end of the story is in sight. In a recent newsletter update, Fox revealed that his team is making good &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-terminal-list-season-ratings/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/pratt.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Terminal List Season 2 Shoots Up Streaming Charts With 476M Minutes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Amazon's 16-Episode 'Reacher' Substitute Shoots up the Streaming Charts With 476M Minutes</div>
+      
+      
+      <div class="summary">Prime Video has had a pretty solid run with action thrillers lately, with Reacher remaining one of its biggest draws. But even when a series is popular, keeping viewers interested between seasons isn't always easy.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/guillermo-del-toro-star-wars-marvel-rumors-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/guillermo-del-toro.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Guillermo del Toro Denies Working on Star Wars or Marvel Projects
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Guillermo del Toro Officially Confirms Future With Star Wars and Marvel</div>
+      
+      
+      <div class="summary">Guillermo del Toro has been oh so close to various projects with two of the biggest franchises in all of sci-fi, Marvel and Star Wars.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2322820/new-upgrades-windows-11-november-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/20-cool-new-upgrades-your-windows-11-pc-is-getting-in-november-2026/l-intro-1795183094.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            20 Cool New Upgrades Your Windows 11 PC Is Getting In November 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">20 Cool New Upgrades Your Windows 11 PC Is Getting In November 2026 dennizn/Shutterstock The November update is the second monthly patch since the annual Windows 11 release in September.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-popinjay-cavalier-quentin-tarantino-stage-play-cast/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/05/movieweb-featured-image-template-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Quentin Tarantino's Stage Play 'The Popinjay Cavalier' Reveals Star-Studded Cast
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Quentin Tarantino's New "Swashbuckling" Project Officially Reveals Star-Studded Cast</div>
+      
+      
+      <div class="summary">Quentin Tarantino's self-imposed ten-film limit has kept audiences waiting for years for his final feature, especially after he scrapped The Movie Critic right before production.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-red-dead-redemption-other-rockstar-games/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/grand-theft-auto-6-jason-with-helmet.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6’s Official Connection to Red Dead Redemption Revealed
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Grand Theft Auto 6 may have just come out, but players have already discovered many of Leonida's mostbizarre secrets, including the return of a certain legendary cryptid. One of these Easter eggs contains a big reveal: Red Dead Redemption and Grand T&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/crispin-glover-movies-never-digitally-available.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2022/11/best-crispin-glover-characters.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Crispin Glover Wants His Movie To Never Be Digitally Available
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Crispin Glover does not want any movie he has directed to become available digitally. By Jennifer Asencio | Published 29 seconds ago Crispin Glover is best known as George McFly, the father of time traveler Marty from the Back to the Future trilogy.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/absolute-justice-league-first-look-dc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/the-absolute-justice-league-assembles-in-dc-cover-by-dan-mora.jpg?q=70&fit=crop&w=750&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DC Reveals New Cover for Absolute Justice #1 Comic
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: DC Reveals New Official Look At Next Justice League Project</div>
+      
+      
+      <div class="summary">DC starts to raise anticipation for the upcoming Justice League project that will unite the best Superman in decades with the rest of his teammates.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/wishlister-nov-20/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/sink-my-bricks-key-art.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Steam Games To Wishlist That Aren't GTA 6
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This week, players are finally able to get their hands on Grand Theft Auto 6. While Rockstar’s gigantic open-world is sure to keep players occupied for a very long time, it’s certainly not the last video game that will ever be released.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-debut-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/paul-giamatti-and-julianne-moore-facing-each-other-in-a-rehearsal-space-in-the-debut.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Debut Review: Jesse Eisenberg's A24 Film Is an Acting Powerhouse
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jesse Eisenberg's 'Whiplash' Meets 'Black Swan' Is An Acting Powerhouse | Review</div>
+      
+      
+      <div class="summary">Realizing the people you've built your life around are about to go off on their own is unsettling. Jesse Eisenberg's latest A24 film, The Debut, finds humor and heartache in that, following a mother whose children's looming independence leaves her un&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/christopher-nolan-movies-ranked-by-box-office-performance/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/02/untitled-design-3-16.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Christopher Nolan's Highest-Grossing Movies, Ranked by Box Office Earnings
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Christopher Nolan is one of the best directors of the 21st century, and his name alone can sell a movie. Whatever the subject, crowds turn out in droves for his latest release. That's a rare position for a director these days, when even bankable movi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/thrillers-for-christopher-nolan-fans-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/jake-gyllenhaal-in-source-code.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Thriller Movies That Feel Like Forgotten Christopher Nolan Classics
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Although Christopher Nolan's earlier films leaned into psychological thrillers, it is interesting that his most famous movies lean away from this preferred genre, with The Odyssey leaning into a mythological fantasy adventure and The Dark Knight bein&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/bleach-strongest-kido-spells-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/bleach-tybw-sosuke-aizen-looking-down.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Strongest Kido Spells in Bleach, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Bleach's Kido gives Soul Reapers another way to control battles beyond their Zanpakuto. Kido is divided into the offensive Hado and the defensive Bakudo. These spells can greatly help overpower opponents. Spell numbers suggest difficulty, but they do&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2312932/the-hunger-games-sunrise-on-the-reaping-ending-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/the-hunger-games-sunrise-on-the-reaping-ending-explained/l-intro-1793216166.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Hunger Games: Sunrise On The Reaping Ending Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Hunger Games: Sunrise On The Reaping Ending Explained Static Media Contains spoilers for "The Hunger Games: Sunrise on the Reaping" In 2024, Suzanne Collins gave Hunger Games fans a huge and extremely welcome surprise when she announced her secon&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-mission-chapter-list-how-many/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/grand-theft-auto-6-jason-and-lucia-motorcycles.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All main story missions in GTA 6
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Grand Theft Auto 6 is a big game, and that extends to its story. It features the longest campaign of any GTA game by a wide margin, taking well over 50 hours to complete even at a rushed rate.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-rings-of-power-prime-video-rotten-tomatoes-higher-wheel-time/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/sharedimages/2026/11/the-rings-of-power-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            After 3 Seasons, The Rings of Power Finally Beats The Wheel of Time in Critics' Scores
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: After 3 Seasons, Prime Video's Biggest Fantasy Series Finally Beats The Wheel Of Time</div>
+      
+      
+      <div class="summary">While it might have taken three seasons and a massive investment in the Lord of the Rings prequel show’s budget, Prime Video’s biggest fantasy show ever has finally beaten The Wheel of Time as far as critics are concerned.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/ahsoka-sabine-ancient-temple-peridea-season-2" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/ahsoka-sabine-season-2-star-wars-peridea.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ahsoka & Sabine Enter an Ancient Temple On Peridea In New Season 2 Promo
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ahsoka Tano and Sabine Wren are shown visiting a very intriguing location in a new promo for Season 2 of Star Wars: Ahsoka.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/kurt-russell-rivals-of-amziah-king-hulu-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/02/kurt-russell-at-los-angeles-apple-tv-press-day.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Kurt Russell's 'The Rivals of Amziah King' Sets Hulu Premiere Date
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Kurt Russell's New R-Rated Western Crime Thriller Officially Sets Hulu Streaming Premiere Date</div>
+      
+      
+      <div class="summary">Published Nov 20, 2026, 10:54 AM EST Felipe Rangel is a Movie and TV Journalist ScreenRant. He has been writing about movies and TV since 2021. Felipe joined ScreenRant in 2022, working across different teams, covering everything from breaking news t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-sales-2-billion-dollars-ps5-xbox-series-x/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/gta-6-jasopn-lucia-bank-robbery.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6 Sets New Sales Record for Rockstar Just One Day In
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Grand Theft Auto 6 was setting records before it was even released. Now that it's out, don't expect that pace to slow down anytime soon. New estimates suggest GTA 6 is not just the fastest-selling video game ever, but the fastest-selling piece of ent&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/james-bond-pierce-brosnan-endorses-robert-pattinson-casting/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/pierce-brosnan-holds-a-gun-as-james-bond-in-goldeneye.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Former James Bond Officially Endorses Robert Pattinson 16 Years After Playing Father and Son
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Nov 20, 2026, 10:50 AM EST Lee Freitag is a senior author at CBR, with more than four years of experience in entertainment and pop culture journalism.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/ncis-origins-season-3-mary-jo-return-time-jump/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/untitled-design-4-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            NCIS: Origins Brings Back Mary-Jo in Present Timeline
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: NCIS Officially Unveils Original Franks Team Member Return For Origins Time Jump</div>
+      
+      
+      <div class="summary">This article covers a developing story. Continue to check back with us as we will be adding more information as it becomes available.Another member of Mike Franks' original team is coming back in the present-time NCIS.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/stan-sakai-returns-to-usagi-yojimbo-first-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/usagi.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Legendary Cartoonist Stan Sakai Returns to Usagi Yojimbo And Dark Horse Gives Us Exclusive First Look
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Dark Horse comics recently announced the return of multiple Eisner award-winning cartoonist Stan Sakai to the Usagi Yojimbo series for the first time since 2025.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-cast-list-actors-cameos-grand-theft-auto/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/vintage_vice_city_pack_exclusive_looks_01-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6 Cast List: Who plays Jason, Lucia and More
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Grand Theft Auto 6 has the longest story ever seen in a GTA game, which also means that it has an enormous cast of characters. Between rival faction leaders, radio station DJs, and fictional rappers, you're going to meet a whole lot of people in Leon&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-hunger-games-sunrise-on-the-reaping-rotten-tomatoes-audience-score-record/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/haymitch-checking-the-fence-in-the-hunger-games-sunrise-on-the-reaping.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Hunger Games: Sunrise On The Reaping Rotten Tomatoes Audience Score Officially Breaks Record
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Audiences love The Hunger Games: Sunrise on the Reaping like all fire. The dystopian franchise returns with a new prequel, in which Haymitch Abernathy (Joseph Zada) is the main protagonist of the 50th Hunger Games, also known as the Second Quarter Qu&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-radio-station-how-to-change/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/gta-6-change-radio-how-to-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How to change radio stations in GTA 6
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">You need to know how to change radio in Grand Theft Auto 6 if you want to explore the vast array of music the game has to offer, and trust me, GTA 6 has a lot of songs.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/quentin-tarantino-the-popinjay-cavalier-cast-mobland/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/08/instar50789516-1.jpg?q=70&fit=contain&w=280&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Quentin Tarantino Casts MobLand's Nigel Lindsay in 'The Popinjay Cavalier'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Quentin Tarantino’s Next Release Officially Casts Guy Ritchie’s MobLand Star</div>
+      
+      
+      <div class="summary">Quentin Tarantino is bringing an alum from MobLand into the fold. Paramount+'s MobLand, which was created by Ronan Bennett and is executive produced by Guy Ritchie, debuted on the streaming platform in 2025 and quickly became a hit, earning Paramount&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-kill-spare-arnold-hey-arnold-quest-grand-theft-auto/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/gta-6-kill-spare-arnold-hey-arnold-quest.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Should you spare or kill Arnold for 'Hey Arnold' in GTA 6?
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Deciding whether to spare or kill Arnold in Grand Theft Auto 6's "Hey Arnold" quest is one of your first big branching decisions in the game. It seems like a big one, though while it will influence certain aspects of your playthrough, it doesn't dram&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-wars-replaces-darth-sidious-ahsoka-thrawn/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/02/thrawn-in-ahsoka-finale.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Wars Replaces Darth Sidious with Grand Admiral Thrawn in Ahsoka Season 2
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Wars Officially Replaces Darth Sidious</div>
+      
+      
+      <div class="summary">Emperor Palpatine, also known as Darth Sidious, has been the main antagonist of Star Wars for nearly 50 years now, but the franchise is finally ready to replace him.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <span class="current">14</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/15.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

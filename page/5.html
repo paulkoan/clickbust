@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-21 16:06 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>33 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>96 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>10 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>63 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>124 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/captives-war-prime-video-series-sci-fi-worldbuilding/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/03/the-mercy-of-gods-poster-shows-the-carryx-empire.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's 'The Captive's War' Adaptation Is a Masterclass in Sci-Fi Worldbuilding
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video's Highly-Anticipated Space Series Is A Masterclass In Sci-Fi Worldbuilding</div>
+      
+      
+      <div class="summary">The science fiction genre has always prided itself on bringing stories that seem impossible to adapt to life. Although the genre has thrived for myriad reasons, one of the most important aspects is how wellsci-fi shows build their worlds.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/bloodborne-old-hunters-collection-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/71c0320c4238ceb5682180d698758d6b.webp?q=70&fit=crop&w=600&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bloodborne Hunter Figma Collection Releasing May 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Bloodborne Officially Returns May 2027 In New Collection</div>
+      
+      
+      <div class="summary">Despite first releasing over a decade ago, Bloodborne is still home to an impressive fanbase, all of those who want to see that highly anticipated PC port, remake, or remaster. Or even just a 60fps update. Anything.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/billy-bob-thornton-friday-night-lights-streaming-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2023/01/gary-gaines-friday-night-lights-2004-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Friday Night Lights' (2004) Is a Masterpiece of Sports Drama
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget 'Landman,' Billy Bob Thornton's Netflix Sports Drama Is a Masterpiece</div>
+      
+      
+      <div class="summary">Sports can be a difficult thing to capture on film. The raw passion of the crowd, the elation or despair of the result, and the personal histories we have with our teams are rarely dramatized in a way that is satisfying for those who get it. But in 2&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/planet-of-the-apes-reboot-hbo-max-best-science-fiction-epic/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/04/caesar-dawn-of-the-planet-of-the-apes-matt-reeves-andy-serkis.jpg?q=49&fit=contain&w=3000&h=1500&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 'Planet of the Apes' Reboot Series Is a Sci-Fi Epic Worth Streaming
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO Max's 4-Part Sci-Fi Epic Is One of the Best on Any Streaming Platform</div>
+      
+      
+      <div class="summary">Most science fiction franchises tend to try to reinvent themselves over the years, with mixed results. Some, like Star Wars, return with new installments that often spark divisive discourse. Others, like Blade Runner or Tron, have extremely lengthy g&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/game-of-thrones-war-for-the-throne-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/dragonseeds_1920_1080-1024x576-v1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Game of Thrones: Conquest' Mobile Game Gets 'War for the Throne' Event
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Game Of Thrones: War For The Throne Officially Unveiled</div>
+      
+      
+      <div class="summary">Game of Thrones has transformed many times throughout the years. What originally started as a TV show back in the 2010s now encompasses so much more, as the greater fandom has become more away of the source material and all of author George R.R. Mart&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/9-perfect-calvin-and-hobbes-1990s-comics/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/calvin-and-hobbes-treasure-everywhere.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            9 Calvin and Hobbes Comics from the 1990s that Prove Bill Watterson is a Genius
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Calvin and Hobbes creator Bill Watterson is a genius. Over the course of ten years spanning more than 3,000 comic strips, he developed two truly irresistible characters that are still beloved by millions.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/a-nightmare-on-elm-street-tim-robinson-freddy-krueger/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/tim-robinson.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tim Robinson Fans Want Him to Play Freddy Krueger in Nightmare Reboot
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: A Nightmare on Elm Street Fans Rally Behind Unexpected Choice as the Next Freddy Krueger</div>
+      
+      
+      <div class="summary">A reboot of A Nightmare on Elm Street is officially in development, but one big question that remains is who will be playing the iconic role of Freddy Krueger. As far as fantasy casting goes, an unlikely name has emerged as a particularly popular can&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/thriller-books-hooked-me-opening-chapter/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/fatale-book-comic.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Thriller Books That Hooked Me From the Opening Chapter
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Some thriller writers seem terrified you'll put their book down, so they throw everything at you: a murder on page one and an abduction on page three, all while a massive conspiracy begins to unravel. And that’s all before introducing who’s involved.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2319563/ways-make-portable-power-station-last-longer-outage/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-ways-to-make-a-portable-power-station-last-longer-during-an-outage/l-intro-1794940324.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Ways To Make A Portable Power Station Last Longer During An Outage
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Ways To Make A Portable Power Station Last Longer During An Outage Marekuliasz/Getty Images You never know when the next power outage will hit, and while disruptions can sometimes only last a few hours, more extreme ones can shut off your power for&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/visionquest-finale-end-of-an-era-marvel-shows-doomsday/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/visionquest_dc10jo.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            VisionQuest Marks the End of an Era for Marvel's Disney+ Shows
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It's Officially The End Of An Era For Marvel Shows</div>
+      
+      
+      <div class="summary">Marvel’s ventures have been very successful in 2026, but it is now officially the end of an era for the TV side of the franchise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/american-anime-for-avatar-the-last-airbender-fans/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/02/aang-and-momo-with-sokka-katara-and-appa-in-the-background-in-avatar-the-last-airbender.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 American Anime to Watch If You Love Avatar: The Last Airbender
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Avatar: The Last Airbender is famously regarded as one of the greatest animated series of all time. The story of Aang and his growth as the Avatar is inspiring. Moreover, Aang could not have done it without the help of his friends: Katara, Sokka, Top&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/9-1-1-season-10-midseason-finale-buck-eddie-problem/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/t4.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            '9-1-1' Season 10 Shifts Focus to Buck, Relegating Eddie to a Supporting Role
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘9-1-1’ Is Officially Switching Protagonists, but There’s a Big Problem</div>
+      
+      
+      <div class="summary">Editor's Note: The following contains spoilers for 9-1-1 Season 10, Episode 6.9-1-1 is just six episodes into its tenth season, but the show already just aired its mid-season finale.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-lord-of-the-flies-vs-yellowjackets/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/02/yellowjackets.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Lord of the Flies Miniseries Is a Dark Survival Story
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget Yellowjackets, Netflix's 4-Part Miniseries Is TV's Darkest Survival Show</div>
+      
+      
+      <div class="summary">Based on William Golding's 1954 classic allegorical novel, Netflix's Lord of the Flies is a coming-of-age survival and psychological thriller.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/things-everyone-gets-wrong-about-calvin-and-hobbes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/03/10-things-everyone-gets-wrong-about-calvin-and-hobbes.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Things Everyone Gets Wrong About Calvin and Hobbes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When Bill Watterson's Calvin and Hobbes first debuted in 1985, it was instantly evident that the strip was special. The characters were charming, the humor was laugh-out-loud, and the strips always had a fascinating message.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/turn-based-rpgs-perfect-class-systems-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/baldur-s-gate-3-paladin-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Turn-Based RPGs With Virtually Perfect Class Systems
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Turn-based roleplaying games are often highly tactical, allowing players to take a strategic approach to each combat encounter.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/sword-art-online-anime-netflix-release-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2020/11/kirito-and-asuna.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sword Art Online Seasons 1-2 Added to Netflix After Nearly 3 Years
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Nearly 3 Years Later, Sword Art Online Fans Finally Get the Perfect Streaming Update</div>
+      
+      
+      <div class="summary">Sword Art Online fans can rejoice, as the anime is now available to watch on a new platform in the United States following a major streaming update. The first two seasons of the Sword Art Online anime were added to Netflix on Nov. 18, 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/scifi/star-trek-bynar-enterprise.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2023/10/gfr-bynar-1280x720-1.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Trek's Bynar Aliens: From TNG to Lower Decks
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek's Strangest Aliens Stole The Enterprise Because They Feared One Word</div>
+      
+      
+      <div class="summary">By Chris Snellgrove | Published 38 seconds ago There are plenty of great reasons to watch the Star Trek spinoff Lower Decks, and one of our personal favorites is how the show will bring back alien races that we thought we’d never see again.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-mummy-best-quote-action-brendan-fraser-rachel-weisz/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/the-mummy-1999.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ’The Mummy’s’ Best Line Is Still the Greatest Quote in Franchise History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Mummy movies are a celebrated blend of action, adventure, and comedy that still remain popular — and immensely quotable —decades after the first film’s 1999 release.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-netflix-shows-under-30-episodes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/mindhunter-anna-torv.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Netflix Shows With Fewer Than 30 Episodes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix has frequently proven that good things come in small packages when it comes to original television shows. Some of them had short episode counts on purpose, while others were canceled too soon.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/home-alone-chris-columbus-new-sequel-comments/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/macauley-culkin-in-home-alone.jpg?q=49&fit=crop&w=292&h=384&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Chris Columbus Comments on Home Alone Sequel Minutes Before New Film Announced
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Home Alone Director Makes Unexpected Comment Just Minutes Before The New Sequel Was Confirmed</div>
+      
+      
+      <div class="summary">The director of Home Alone made surprising remarks about a sequel only minutes before news broke that a new film is being developed. The legendary director Chris Columbus wrote or helmed beloved movies like Gremlins, The Goonies, Mrs.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-whispers-steven-spielberg-sci-fi-weekend-binge/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/the-cast-of-the-whispers.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Whispers: Steven Spielberg's 13-Part Sci-Fi Series Is a Creepy Thriller
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Steven Spielberg’s 13-Part Sci-Fi Series Is So Good, You’ll Finish It in One Weekend</div>
+      
+      
+      <div class="summary">Few things are as creepy as children in horror films and TV series. What's scarier? Children who are being manipulated by something — or someone — unknown, that is.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2319849/android-privacy-setting-stop-apps-accessing-camera/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-one-android-privacy-setting-can-stop-apps-from-accessing-your-camera/why-you-might-want-apps-to-not-access-your-camera-1794949269.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How to Use Android's Permission Manager to Block Camera Access for Apps
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This One Android Privacy Setting Can Stop Apps From Accessing Your Camera</div>
+      
+      
+      <div class="summary">This One Android Privacy Setting Can Stop Apps From Accessing Your Camera PixieMe/Shutterstock When you download a new app to your smartphone, you may find that it wishes to access certain features. These can range from accessing your contacts and lo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/weakest-naruto-clans-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/shikamaru-nara-uses-ninjutsu-in-naruto-shippuden.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Weakest Naruto Clans, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Naruto is filled with powerful clans, but not every clan can go toe-to-toe with the Ōtsutsuki. Many clans use fighting techniques that have glaring weaknesses, and because of that, they often struggle in battles against powerful opponents, or can onl&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/avengers-doomsday-simu-liu-shang-chi-upgrade-mcu/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/simu-liu-as-shang-chi.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Simu Liu Teases Shang-Chi's Power Upgrade in Avengers: Doomsday
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Avengers: Doomsday Star Reveals Major Power Upgrade For Returning MCU Hero</div>
+      
+      
+      <div class="summary">One of Avengers: Doomsday's heroes has been getting ready for his return off-screen. Shang-Chi's debut expanded the MCU by introducing audiences to Ta Lo, a hidden dimension connected to his mother's family.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/spider-man-beyond-the-spider-verse-first-trailer-sony-tie-in" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000014579.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Report: 'Spider-Man: Beyond The Spider-Verse' First Trailer Is Near As Sony Announces 'Spider-Verse 3' Tie-In Book
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Spider-Man: Beyond the Spider-Verse's first trailer is reportedly releasing soon, amid a new tie-in book announcement from Sony.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-hunger-games-sunrise-on-the-reaping-movie-every-death-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/the-hunger-games-sunrise-on-the-reaping.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 52 Deaths In The Hunger Games: Sunrise On The Reaping & Who Kills Each Character Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are always going to be a massive number of deaths in any Hunger Games movie, as that is simply the nature of the franchise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-body-season-1-unanswered-questions/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/the-lions-the-body-1x2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Questions The Body Season 2 Still Needs To Answer
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This article contains discussion of religious trauma, drug overdose, and suicide. The Body ended with a bang, but the hit coming-of-age drama left plenty of loose ends to tie up. Set in 2004 at a co-ed Catholic school in the Northeast United States, &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/most-iconic-archie-stories/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/archie-comics-gang-in-a-group-hug.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Iconic Archie Comics Stories of All Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">For more than eight decades, the fictional town of Riverdale has been America’s quintessential backdrop for teen and pop culture, outlasting even the most iconic comic book franchises.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dc-comics-february-2027-solicitations-absolute-justice/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/absolute-justice-eom-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Absolute Justice Launches Its First Crossover in DC's Official February 2027 Solicitations
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's time for DCs new solicitations! Here are the solicits for DC comic book products scheduled to be released in February 2027.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2319804/how-use-old-ftibit-with-broken-screen-app/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/you-can-still-use-your-old-fitbit-with-a-broken-screen-heres-how/l-intro-1794947346.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            You Can Still Use Your Old Fitbit With A Broken Screen — Here's How
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">You Can Still Use Your Old Fitbit With A Broken Screen — Here's How Satyrenko/Shutterstock A shattered or unresponsive display doesn't mean you have to say goodbye to your trusty Fitbit.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <span class="current">5</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/6.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

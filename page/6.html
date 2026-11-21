@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-21 16:06 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>33 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>96 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>10 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>63 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>124 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.cbr.com/perfect-atari-2600-games-no-one-remembers-today/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/montezuma-s-revenge-on-atari-2600.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Perfect Atari 2600 Games No One Remembers Today
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Atari 2600 was the first truly popular video game console. The system was practically synonymous with home gaming, and with Atari being a prolific arcade manufacturer in the '70s and '80s, the console had no shortage of games.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/tommy-lee-jones-pokemon-ad/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/01/finestkind-tommy-lee-jones.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Officially Recruits Tommy Lee Jones for New Ad
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pokémon is celebrating its 30th anniversary and has partnered with many major brands. From toys to clothing and even gaming accessories, and even teaming up with astronauts, Pikachu and Eevee merchandise has become hard to avoid.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/alien-romulus-coming-to-hbo-max-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/cailee-spaeny-surrounded-by-smoke-in-alien-romulus.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alien: Romulus Arrives on HBO Max on December 21
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney's 119-Minute Sci-Fi Thriller That Revived a Franchise Sets HBO Max in Just 1 Month</div>
+      
+      
+      <div class="summary">One of the biggest sci-fi revivals in recent years is heading to HBO Max. Alien: Romulus will join the streamer's catalog beginning Dec. 21. Alien: Romulus is the first Alien movie made since Disney acquired 20th Century Fox, the franchise's original&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/masterpiece-anime-where-every-episode-is-perfect/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2022/05/Decim-Attends-To-His-Duties-In-Death-Parade.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Death Parade: An Anime Where Every Episode Is Perfect
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Masterpiece Anime Where Every Episode Is Perfect</div>
+      
+      
+      <div class="summary">Some anime are remembered for their incredible battles, shocking twists, or unforgettable endings. However, even the best anime can occasionally have poor episodes. An anime that maintains a consistently high quality throughout is a tremendous achiev&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/disney-avengers-endgame-best-sci-fi-time-travel-movie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/disney-logo.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Avengers: Endgame Is the Best Time Travel Movies
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Time travel hasn't always been handled well on the big screen, but Disney got it right with Avengers: Endgame,now celebrated as one of the most successful sci-fi movies in cinema history.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/guy-ritchie-in-the-grey-streaming-drop-starz-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/in-the-grey-jake-gyllenhaal-eiza-gonzalez-henry-cavill.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Guy Ritchie's In the Grey Loses No. 1 Streaming Spot
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Guy Ritchie’s Latest Crime Thriller Officially Loses No. 1 Streaming Spot</div>
+      
+      
+      <div class="summary">Having redeemed itself on streaming after a disappointing box-office run, Guy Ritchie's latest theatrical release has relinquished its streaming crown. Like every other movie directed by Ritchie in the last five years, the new crime thriller underper&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/forgotten-80s-sci-fi-anime-aged-like-fine-wine/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/sonic-senshi-borgman-and-robot-ninja-anime.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Forgotten '80s Sci-Fi Anime That Have Aged Like Fine Wine
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 1980s were another period where anime was making nothing but classic series. Franchises like Gundam were at their peak, and mecha and science fiction ruled the world.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/slow-horses-apple-tv-renewed-season-9-10/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/slow-horses-6-olivia-cooke-jack-lowden.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Slow Horses Gets Unprecedented Renewal for Seasons 9 and 10 on Apple TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV's 10/10 Spy Thriller Just Made a Totally Ambitious Move</div>
+      
+      
+      <div class="summary">The best news for fans of spy thrillers this week isn't what you'd expect. While everyone was celebrating a new James Bond, MI5 actually had the biggest shake-up as Apple TV announced the renewal of Slow Horses for Seasons 9 and 10.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/robert-pattinson-new-james-bond-spy-thriller/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/james-bond-robert-pattinson-announcement.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Ways Robert Pattinson Makes Sense as James Bond and 1 Way He Doesn't
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The announcement of who would take up the role of James Bond was met with much anticipation. Dozens of actors could have been chosen, but it was revealed that Robert Pattinson would be the iconic spy in a new series of films.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/hunger-games-sunrise-on-the-reaping-movie-book-changes-differences/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/sunrise-on-the-reaping.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sunrise On The Reaping's 10 Biggest Changes To The Hunger Games Book
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! This post contains SPOILERS for The Hunger Games: Sunrise on the Reaping. The newest addition to the Hunger Games franchise, The Hunger Games: Sunrise on the Reaping, has officially hit theaters, and while the movie's Rotten Tomatoes scores &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/x-men-xorcists-villain-demon-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/magik-detects-a-limbo-demon-in-x-orcists-1.webp?q=49&fit=crop&w=750&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            X-Orcists #1 Debuts Terrifying New X-Men Villain from Limbo
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: X-Men Debuts Terrifying New Villain With Unique Superpower</div>
+      
+      
+      <div class="summary">Marvel's new X-Men villain is very different from mutants like Magneto, robots like the Sentinels, and humans like Bolivar Trask.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/taylor-sheridan-tulsa-king-season-4-streaming-success-paramount-plus-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/taylor-sheridan.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tulsa King Achieves Major Streaming Milestone Ahead of New Sheridan Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan’s 10/10 Crime Thriller Officially Surges Ahead of New Spin-Off</div>
+      
+      
+      <div class="summary">It's been a big month for Sylvester Stallone; not only has the legendary star been ruling over the streaming charts thanks to his gangster drama on Paramount+, but his career has also been honored in the recently released film I Play Rocky.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-a24-movies-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/ke-huy-quan-fighting-with-a-document-in-everything-everywhere-all-at-once.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 A24 Movies That Are 10/10 Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Competing against massive studios producing blockbuster after blockbuster, A24 has excelled by delivering many high-quality and completely original movies that could be considered absolutely perfect masterpieces.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-atari-arcade-games-of-all-time-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/gauntlet-arcade-controller.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Atari Arcade Games of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Atari defined the golden age of coin-operated entertainment, transforming dim pizza parlors and shopping mall arcades into thrilling cultural hubs.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2319727/how-reduce-unwanted-notifications-galaxy-s26/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/how-to-reduce-unwanted-notifications-on-your-galaxy-s26/l-intro-1794945484.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How To Reduce Unwanted Notifications On Your Galaxy S26
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How To Reduce Unwanted Notifications On Your Galaxy S26 Ruslan Lytvyn/Shutterstock You're busy at work, and your phone keeps sending alerts.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-body-streaming-success-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/the-body-geena-meszaros.jpg?q=49&fit=contain&w=2800&h=1575&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'The Body' Debuts as No. 1 Series with 5.1 Million Views
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Officially Finds Its Next No. 1 Series in New Psychological Thriller</div>
+      
+      
+      <div class="summary">Only a few franchises can boast the same immense global reach as J. R. R. Tolkien's legendary creation, The Lord of the Rings. The legacy of the franchise established by Peter Jackson's films is now being carried on by Prime Video's prequel series, T&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/pokemon-movie-collection-amazon-blu-ray-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/pokemon-first-movie.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon's 24-Part $399 Collection Officially Launches Next Week
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Viz Media is releasing an Amazon-exclusive, limited-edition set of all 24 Pokémon phttp://polygon.com/movies on Blu-ray. It's a beautiful collection that will catch the attention of any fan, but its eye-watering price tag might be the reason potentia&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hunger-games-book-series-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/hunger-games-catching-fire-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Hunger Games Book, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">It's been nearly two decades since Suzanne Collins introduced readers to the dark world of Panem, but The Hunger Games remains one of the most influential young adult book series of its generation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/pokemon-go-pawniward-community-day-shiny-bisharp-moveset/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/jlee_261116_1004_pogo_pawniard_cd.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pokémon Go Pawniard Community Day event guide
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Pokémon Go is having a Pawniard Community Day event on Saturday, Nov. 21 from 2-5 p.m. in your local time. This event is indeed running alongside the "Dynamax Trails" event, and it begins right when Eternatus' stint in the morning ends.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/elden-ring-meets-minecraft-free-open-world-rpg-dark-craft/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/enemy-zombie-attacking-a-knight-character-in-dark-craft.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dark Craft: Free Souls-like MMO with Minecraft-Inspired Visuals
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Elden Ring Meets Minecraft In Huge New Free RPG</div>
+      
+      
+      <div class="summary">Elden Ring fans already have a multiplayer game for those who want to play together in Elden Ring Nightreign. The spinoff is meant to be played either alone or with a team of three, making it the most cooperative game in the FromSoft Soulslikes catal&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dc-sexism-spoiler-batgirl-robin/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/12/bat-family-in-dc-comics-featured.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            20 Years Later, DC Admits Sexism In Batman Franchise
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When DC Comics fans think of Robins, the first name that will come to mind is Dick Grayson. Not only is he widely considered the best Robin of all time, but he also redefined what it meant to be a sidekick. After Dick, it’s a toss-up which Robin is t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/rings-of-power-theo-witch-king-theory/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/witch-king-lotr-return-of-the-king-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘The Rings of Power’ Debunks Its Biggest Witch-king Theory
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: This article contains SPOILERS for The Rings of Power Season 3, Episodes 5 & 6.The Rings of Power Season 3 has seemingly debunked its biggest Witch-king theory, raising questions about the identity of the iconic Lord of the Rings villain.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/pokemon-go-eternamax-eternatus-max-battles-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/unnamed-8.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Eternamax Eternatus Returns to Pokémon GO for 3 Hours on Saturday
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: A Legendary Pokémon Is Officially Returning for Only 3 Hours</div>
+      
+      
+      <div class="summary">By the time you reach the top of Hammerlocke Stadium in Pokémon Sword and Shield, you’ve beaten eight Gym Leaders and have a reasonable shot at taking Leon’s title. Then you and Hop get into a fight where your Pokémon can’t get a single move off.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/yellowstone-replace-kayce-and-monica-romance-marshals-season-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/kayce-dutton-in-marshals-season-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Yellowstone Quietly Confirms Kayce & Monica's Replacements in Marshals
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The following contains spoilers for Marshals Season 2, Episode 6, “Roughstock,” which aired Sunday, November 15, 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/anya-taylor-joy-the-gorge-global-success-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/miles-teller-and-anya-taylor-joy-in-the-gorge.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Gorge Returns to Global Streaming Charts
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Anya Taylor-Joy’s 127-Minute Gritty Sci-Fi Thriller Returns as a Global Sensation</div>
+      
+      
+      <div class="summary">Anya Taylor-Joy has found success with many different releases, whether as limited series, theatrical blockbusters, or streaming movies. Among the latter, Apple TV's The Gorge is the most obvious response.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2322052/great-movies-hide-sci-fi-plot-until-late-story/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-great-movies-that-hide-their-sci-fi-plots-until-late-in-the-story/l-intro-1795111421.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Great Movies That Hide Their Sci-Fi Plots Until Late In The Story
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Great Movies That Hide Their Sci-Fi Plots Until Late In The Story Universal Pictures It's no easy feat to hide a twist in a movie that will not only reveal something huge and unexpected but also cross over to another genre.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-bear-replacement-cbs-2-broke-girls-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/2-broke-girls2.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            2 Broke Girls to Debut on Netflix in December
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'The Bear’s 6-Season Replacement Officially Finds a Home on Netflix</div>
+      
+      
+      <div class="summary">Fans of The Bear looking for a laugh are in luck, with 2 Broke Girls set to debut on Netflix in December. Its new streaming home will make the show easily accessible for one of the first times since it went off air. The sitcom premiered on CBS in 201&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/emilia-clarke-me-before-you-streaming-success-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/04/me-before-you-movie-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Emilia Clarke's 'Me Before You' Finally Gets Its Due
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Officially Revives ‘Game of Thrones’ Star’s Heartbreaking Romance</div>
+      
+      
+      <div class="summary">Emilia Clarke rose to prominence with her breakout role as Daenerys Targaryen in Game of Thrones. Fans around the world know and love her as Khaleesi, the Mother of Dragons, Breaker of Chains, and the queen who kept asking Jon Snow (Kit Harington) to&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/most-unwatchable-one-piece-episodes-all-time/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/luffy-declares-his-vow-to-sanji-in-one-piece-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Most Unwatchable One Piece Episodes, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With more than a thousand episodes behind it, One Piece can’t deliver a masterpiece every week and dull stretches are inevitable.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/cowboy-bebop-movie-4k-remaster-physical-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/spike-jet-faye-ed-and-ein-look-down-at-something-in-the-cowboy-bebop-anime-series.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Cowboy Bebop Confirms Release Date for 25th Anniversary Movie
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In late October 2026, the 25-year-old anime feature film Cowboy Bebop: Knocking on Heaven's Door (2001) was re-screened in Japanese theaters in stunning remastered 4K.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <span class="current">6</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/7.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

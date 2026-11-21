@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-21 16:06 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>33 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>96 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>10 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>63 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>124 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://movieweb.com/rings-of-power-season-3-sauron-problem/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/movie-web-sandbox-2026-11-20t151245-961.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘The Rings of Power’ Officially Repeats Season 1's Biggest Sauron Problem
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Prime Video's record-breaking hit series The Lord of the Rings: The Rings of Power goes well beyond what J.R.R. Tolkien wrote related to Middle-earth during his life, and nowhere is that more evident than in the characterization of Sauron.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/this-city-is-ours-stream-hbo-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/01/qdc3o6urrkiarshp5bnuch.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            This City Is Ours: HBO Max's Crime Thriller Is a Global Streaming Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO Max's New 2-Part Modern 'Peaky Blinders' Remake Is Taking Over Streaming</div>
+      
+      
+      <div class="summary">By order of The Peaky Blinders, you must watch HBO Max's newest crime thriller, which feels like a modern remake of the hit British series — just to be clear, it's not actually connected to Steven Knight's series in any way.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/alexander-skarsgard-the-legend-of-tarzan-streaming-success-hbo-max-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/01/the-legend-of-tarzan-alexander-skarsgard-2.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Legend of Tarzan Becomes a Streaming Hit for Alexander Skarsgård
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Alexander Skarsgård’s Forgotten 'The Mummy' Replacement is a Streaming Hit</div>
+      
+      
+      <div class="summary">Alexander Skarsgård has a very interesting filmography, including his latest role in Wicker, where he plays a magically constructed husband to Olivia Coleman, as well as Pillion, where he plays the charismatic leader of a queer motorcycle club.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/nicolas-cage-madden-sports-biopic-prime-video-success-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/nicolas-cage-christian-bale-and-sienna-miller-in-madden.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Madden Tops Prime Video Charts Despite 17% Rotten Tomatoes Score
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video's New No. 1 Movie Is a Star-Studded 17% RT Biopic</div>
+      
+      
+      <div class="summary">Prime Video has released many popular movies in 2026, including Love of Your Life and The Love Hypothesis. Now, their latest sports biopic is a hit on streaming despite negative reviews from critics. Per FlixPatrol, Madden is currently the No.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/ncis-origins-season-3-episode-6-gibbs-dream-sequence/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/leroy-jethro-gibbs-in-the-office-in-ncis-season-5.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            CBS Makes a Historic Franchise First With Mark Harmon's NCIS Comeback
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The following contains spoilers for NCIS: Origins Season 3, Episode 6, “Shot Through the Heart,” which aired on CBS on Tuesday, November 17, 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-adventure-movies-to-watch-before-the-mummy-4-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/the-mummy-rick-evy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Adventure Movies to Watch If You Can't Wait for The Mummy 4
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Mummy franchise is arguably the defining adventure epic of its era. Starring Brendan Fraser as the iconic Rick O’Connell, the series went to interesting places before a confusing last entry with Rachel Weisz absent from the cast.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/peacock-dungeon-crawler-carl-princess-donut-important-character/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/dungeon-crawler-carl-with-princess-donut.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dungeon Crawler Carl Has 1 Character Peacock Absolutely Has to Nail
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Starting out as a novel series, Matt Dinniman's Dungeon Crawler Carl has quickly become one of the hottest new intellectual properties of the 2020s. This success has led to a live-action adaptation, with the story now poised for a TV series on Peacoc&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dune-the-experience-launch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/dune-the-experience-outside.png?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dune: The Experience Opens in Los Angeles Ahead of Dune: Part Three
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Dune Launches New Event Just 1 Month Before Part Three</div>
+      
+      
+      <div class="summary">Dune: Part Three enters theaters in one month, but fans can visit the Dune universe early. Dune: The Experience is officially open. Located in Downtown Los Angeles, Dune: The Experience opened to the public on Friday.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/western-movies-90s-perfect-masterpieces/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/tombstone-1993-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Western Movies From the ’90s That Are 10/10 Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There's nothing quite like a good Western. Although the golden age of the horse opera was undoubtedly the mid-20th century, the genre continued to persevere long afterward. In fact, there was a Western renaissance in the 1990s that took Hollywood — a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/billy-bob-thornton-all-the-pretty-horses-streaming-success-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/11/all-the-pretty-horses-2000.jpg?q=49&fit=contain&w=1800&h=900&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All the Pretty Horses Becomes a Netflix Hit for Billy Bob Thornton and Matt Damon
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget ‘Landman,’ Billy Bob Thornton’s Forgotten Matt Damon Western Is Officially a Netflix Hit</div>
+      
+      
+      <div class="summary">Billy Bob Thornton is experiencing a major career renaissance thanks to his role as Tommy Norris in Taylor Sheridan's Western series, Landman.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sci-fi-shows-like-stranger-things-mysteries/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/john-turturro-adam-scott-britt-lower-and-zach-cherry-in-severance-2022.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Forget 'Stranger Things,' These 10 Sci-Fi Shows Have Better Mysteries
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After being mentored by their hero, M. Night Shyamalan, Matt and Ross Duffer felt that they were ready to write and create their own show.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/studio-ghibli-howls-moving-castle-calcifer-talking-plushie-new-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2021/08/Calcifer.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Studio Ghibli's Calcifer Talks Back With Adorable New Howl's Moving Castle Plushie
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of the most lovable characters in the Howl's Moving Castle anime is Calcifer, the talking fire demon who begrudgingly powers Howl's fortress from within. Now, Calcifer lovers can finally enjoy a fun chat with the character in real life thanks to &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/new-robin-bat-lad-legion-superheroes-powers/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/league-of-super-heroes-showing-bat-lad-aka-robin-power-to-summon-a-shadow-batman.jpg?q=49&fit=crop&w=750&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DC Reveals Bat-Lad's Powers in Legion of Super-Heroes #4 Cover
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: DC Shares Official Image Of New Robin, Answering Burning Fan Question</div>
+      
+      
+      <div class="summary">DC just shared a new image of its latest iteration of Robin, answering a major fan question about this new hero's superpowers. Here's the new art, and everything we know about the latest Boy Wonder.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/henry-cavill-netflix-spy-thriller-first-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/10/henry-cavill-the-man-from-uncle.jpg?q=70&fit=contain&w=750&h=422&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Collider Quiz: Which Action Hero Is Your Perfect Partner?
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Officially Finds Its James Bond Replacement in Henry Cavill</div>
+      
+      
+      <div class="summary">00:10Live Five channelsOne partner Collider · Action Heroes Which Action Hero Would BeYour Perfect Partner? Ten questions · five legends · one partner Five legends.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/brandon-sanderson-mistborn-most-inspiring-quote-fantasy-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/mistborn-kelsier.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Mistborn's Kelsier and Sazed Deliver One of Fantasy's Most Inspirational Quotes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Mistborn Has the Most Inspirational Quote in Fantasy History</div>
+      
+      
+      <div class="summary">Brandon Sanderson has become one of the biggest names in fantasy thanks to his Cosmere universe. One of his most prolific stories is Mistborn Era 1, which introduced people to the powers of Allomancy and the world of Scadrial.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-new-prime-video-shows-to-binge-weekend-november-20-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/tv-binge-guide-24.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Best New Prime Video Series To Binge-Watch This Weekend (November 20–22, 2026)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 3 best new Prime Video series to binge-watch this weekend, November 20–22, 2026, are an epic fantasy, a historical drama, and a romantic thriller.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/absolute-batman-2027-return-tease-scott-snyder/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/absolute-batman-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Absolute Batman' Creator Officially Teases the Caped Crusader's Massive 2027 Return
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">During a Panel Talk at Fan Expo Chicago in August 2026, Scott Snyder teased that Issues Absolute Batman #26 and Absolute Batman #27 would act as transitional stories.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/fastest-ways-to-lower-heat-level-in-gta-6/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/masked-characters-from-gta-6.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Fastest Ways to Lower Your Heat Level In GTA 6
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Once wanted, the police response will increase until the point where escape becomes increasingly difficult in Grand Theft Auto VI. Police cars will patrol the streets, and cops on foot will start searching as well, but if the player has a higher want&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/mobland-season-2-finale-joanne-froggatt-jan-death-meaning/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/mobland-joanne-froggatt.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'MobLand's Joanne Froggatt Breaks Down Jan's Major Twist in Season 2 Finale
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">MobLand has finally dropped its Season 2 finale, and it's a doozy. After twists and turns in the finale and wondering if Tom Hardy's Harry Da Souza will betray the Harrigans, it seems like everything has worked out for our favorite North London gangs&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/south-park-season-29-low-rt-score-series-change/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/a-woman-sitting-with-a-pile-of-faeces-at-a-restaurant-in-south-park-season-29.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            South Park Season 29’s Record Low Rotten Tomatoes Score Confirms A New Era
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Although South Park season 29’s Rotten Tomatoes audience rating might seem surprisingly low at first glance, the show’s most recent response actually makes a lot of sense when considered in the broader context of its history.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/living-with-yourself-black-mirror-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/movieweb-featured-image-template-2026-11-20t103918-213.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Living With Yourself: Netflix's Sci-Fi Series Delivers Black Mirror-Style Thrills in 8 Episodes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's 8-Part Sci-Fi Thriller Beats 'Black Mirror' at Its Own Game</div>
+      
+      
+      <div class="summary">Black Mirror is one of Netflix's best sci-fi shows, despite being defined by the inability to really sink your teeth into the various worlds it introduces.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-enemies-to-lovers-manhwa/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/enemies-to-lovers-manhwa-revenge-wedding-dear-nemesis-and-the-hand-that-once-fed-manhwa-featured-image.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            25 Best Enemies To Lovers Manhwa Ever
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Romance manhwa comes in many forms, but some of the most memorable love stories begin with two people who would rather have nothing to do with each other.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/michael-bay-13-hours-streaming-success-paramount-plus-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/04/13-hours-the-secret-soldiers-of-benghazi-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Collider Quiz: Which Action Hero Is Your Perfect Partner?
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Michael Bay’s ‘Black Hawk Down’ Replacement Officially Takes Over Paramount+</div>
+      
+      
+      <div class="summary">00:10Live Five channelsOne partner Collider · Action Heroes Which Action Hero Would BeYour Perfect Partner? Ten questions · five legends · one partner Five legends.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/ryan-phillippe-one-mile-loses-to-paw-patrol-paramount-plus-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/sharedimages/2026/02/one-mile-chapter-one-placeholder-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            One Mile: Ryan Phillippe's Two-Part Thriller Loses to PAW Patrol on Paramount+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ryan Phillippe's 2-Part Military Action Thriller Loses to PAW Patrol on Paramount+</div>
+      
+      
+      <div class="summary">Ryan Phillippe’s latest set of films may contain a lot of action, but it has nothing against the pups of Adventure Bay. His two-part military thriller One Mile has officially lost to the newest PAW Patrol film on Paramount+. According to FlixPatrol, &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hunger-games-sunrise-on-the-reaping-katniss-cameo-franchise-fumble/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/12/hg-entry-1-two.PNG?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sunrise on the Reaping’s Katniss Cameo Is Already the Biggest Fumble in Hunger Games History
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Prior to the release of The Hunger Games: Sunrise on the Reaping, it was officially announced that Jennifer Lawrence, Josh Hutcherson and Woody Harrelson would reprise their Hunger Games roles for the new film.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/video-game-sequels-better-than-the-original/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/grand-theft-auto-vi_-the-album-2026-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            9 Video Game Sequels Better Than the Original
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In theory, sequels should always be better than the original since it is easier to see the flaws of the first and correct them.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/hunger-games-sunrise-reaping-ending/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/04/joseph-zada-and-mckenna-grace-in-the-hunger-games-sunrise-on-the-reaping.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The Hunger Games: Sunrise on the Reaping's Twist Ending Explained By Star & Director
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning — this article contains spoilers for 'The Hunger Games: Sunrise on the Reaping.'On Nov. 20, Lionsgate added a new chapter to its massive Hunger Games franchise with the release of The Hunger Games: Sunrise on the Reaping.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-prime-video-movies-watch-weekend-november-21-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/they-will-kill-you-heather-graham-myha-la-interview.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Best Prime Video Movies To Watch This Weekend (Nov 21-22)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are only six more weekends before the end of the year. 2026 has been stellar for streaming, with some of the biggest and best movies and shows available on Prime Video.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/longlegs-follow-up-sterling-k-brown-cast-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/05/nicolas-cage-in-longlegs-2024.png?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Longlegs Sequel: Nicolas Cage Returns, Sterling K. Brown in Talks to Join
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Nicolas Cage Set to Join Forces With a TV Favorite for His Return to $128 Million Thriller</div>
+      
+      
+      <div class="summary">Few TV villains still give us nightmares as chilling and red as Nicolas Cage's Longlegs character. Even his co-star, Maika Monroe, was nervous seeing Cage's transformative prosthetics for the first time, with reports sharing that her heart rate jumpe&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-netflix-movies-watch-weekend-november-21/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/jared-padalecki-petting-a-horse-in-the-winter-in-guarding-stars.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Best Movies To Watch On Netflix This Weekend (November 21-22)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Subscribers have two exciting Netflix Original movies to check out on the streaming service this weekend, as well as a licensed release that has proved itself one of the biggest theatrical success stories ever.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <span class="current">8</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/9.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

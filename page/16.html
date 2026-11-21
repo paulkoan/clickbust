@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-21 16:06 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>33 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>96 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>10 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>63 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>124 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://movieweb.com/day-of-the-jackal-lioness-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2024/11/the-day-of-the-jackal-24.jpg?q=49&fit=crop&w=875&h=540&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Day of the Jackal Season 2 Returns in March 2027 Based on 85% RT Score
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Forget Lioness,' a Long-Awaited 85% RT Spy Action Thriller Officially Returns in Three Months</div>
+      
+      
+      <div class="summary">Lioness remains one of the densest, most electrifying spy action thrillers of recent years. Yet Season 4 still hangs in a frustrating limbo, as Paramount has yet to announce a renewal. The silence is its own kind of mission: uncertain, tense, and imp&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6leonida-keys-breath-of-the-wild/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/leonida_keys_01.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6 Learned All the Right Lessons From Zelda: Breath of the Wild
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Throwing players into an open-world game can be challenging. When your game has an enormous map, you risk giving players almost too much freedom up front.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/presumed-innocent-season-2-release-date-teaser/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2024/06/presumed-innocent-key-art.jpeg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            First Look at 'Presumed Innocent' Season 2 on Apple TV+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'Superman' Star Officially Moves On From DC With First Look at New Apple Series</div>
+      
+      
+      <div class="summary">Back in 2024, Apple TV decided they wanted to stretch a marriage to breaking point with, not cheating, but going through a murder trial.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/james-bond-casino-royale-streaming-robert-pattinson-apple-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/daniel-craig-as-james-bond.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Daniel Craig's James Bond Debut Surges 10 Spots on Streaming Chart After Robert Pattinson Casting
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">James Bond is dead; long live James Bond! After the internet-breaking news that Robert Pattinson has been cast as 007 in Denis Villeneuve's new franchise reboot, fans are flocking to previous James Bond movies on streaming.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/aaron-pierre-fairytale-in-new-york-john-wick-lanterns-combined/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/aaron-pierre-as-john-stewart-in-dc-studios-lanterns.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            John Wick Meets Lanterns In Netflix's Fairytale in New York
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Lanterns star Aaron Pierre will soon be getting the John Wick treatment in a brand-new action thriller movie from Lionsgate, Fairytale in New York, which has found its home on Netflix.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/brie-larson-captain-marvel-avengers-doomsday-mcu-poster-chris-hemsworth-thor" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/photos/bri4.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Captain Marvel Appears in Disney Earnings Report, Sparking Avengers: Doomsday Cameo Speculation
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brie Larson's Captain Marvel Officially Returns On New Avengers Poster Ahead Of 'Doomsday' Release, Igniting Hopes Of An MCU Cameo Alongside Chris Hemsworth's Thor</div>
+      
+      
+      <div class="summary">The Walt Disney Company recently revealed in its quarterly earnings report 12 of its franchises that generated over $1 billion in annual global retail sales, such as Frozen, Star Wars, and Avengers.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-shows-binge-weekend-november-21-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2021/05/run-the-world-amber-stevens-02.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            3 Elite Netflix Series to Binge This Weekend (Nov 21-22)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Who can take The Body's crown? One of the best new shows on streaming this November, Kristina Bogic and Sara Boustany star in a brilliantly twisted horror-thriller, reminiscent of Cruel Intentions and The Craft.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/nbc-law-order-longest-running-procedural-peacock-streaming-milestone-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/mixcollage-13-nov-2026-08-47-am-2683.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Law & Order: SVU Crosses 600 Days on Peacock's Top 10 Streaming Chart
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: NBC’s Longest-Running Procedural Scores A Massive New Milestone</div>
+      
+      
+      <div class="summary">NBC's longest-running procedural TV show just managed to score a massive new milestone after already making history on the network. NBC is home to a number of procedural series that have managed to make their mark on the network.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/reacher-season-5-michelle-chang-amanda-ip-neagley-replacement/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/e2cbab9f-85e3-45b4-b6dd-0b0a0f42bbc5.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Reacher Season 5 Casts Amanda Ip as Michelle Yang, New Love Interest and Neagley Replacement
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Reacher Officially Casts Its Next Female Lead — She’s His New Neagley & Love Interest</div>
+      
+      
+      <div class="summary">Reacher season 5 has officially found its next female lead. Based on Lee Child's Make Me, the Prime Video detective series' next season is all set to return to the classic small-town setting.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-brad-pitt-crime-thriller-movies-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/brad-pitt-as-cliff-booth.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Best Brad Pitt Crime Thriller Movies, Ranked Worst To Best
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Brad Pitt has starred in some of the most gripping crime thrillers of all time. Pitt has built a remarkably varied filmography, effortlessly moving between Hollywood blockbusters, independent dramas, and some of cinema's most celebrated crime movies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/man-of-tomorrow-brainiac/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/06/mcdsupe_wb039.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            James Gunn's Brainiac in 'Man of Tomorrow' Is Unlike Any Villain Superman Has Faced
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Despite the hectic leadership changeover at DC Studios, anticipation for Man of Tomorrow is high. James Gunn returns to write and direct the sequel to his 2025 hit, Superman.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/patrick-stewart-cause-of-death/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/06/movieweb-featured-image-template-37.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Patrick Stewart's Cause of Death Confirmed 4 Weeks After 'Star Trek' Icon's Passing
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">New details have emerged regarding the official cause of Sir Patrick Stewart's death, shedding light on the underlying health conditions behind his passing. Official records now provide a clearer picture of what the acclaimed actor battled. Initial r&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/nintendo-zelda-40th-anniversary-ocarina-pre-orders-anti-scalping/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/link-and-epona-ocarina-of-time.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nintendo Officially Unveils New Ant-Scalping Measures For Zelda 40th Anniversary Pre-Orders
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Legend of Zelda’s 40th anniversary has been a hit with fans, but it has been a challenge to grab the special merchandise. For example, the anniversary Nintendo Switch 2, Pro Controller and other items sold out in many regions soon after pre-order&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.looper.com/2317505/marvel-phase-five-movies-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/all-6-marvel-phase-five-movies-ranked/l-intro-1794867628.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 6 Marvel Phase Five Movies, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">All 6 Marvel Phase Five Movies, Ranked Static Media Phase Five of the Marvel Cinematic Universe was easily the most tormented and bizarre stretch of this franchise's history.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/911-season-10-episode-6-athena-death-bobby-parallel/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/angela-bassett-as-athena-9-1-1-s10.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            9-1-1 Season 10 Parallels Athena's Arc with Bobby's Near-Death Experience, Hinting at Tragedy
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 9-1-1 Season 10’s Bobby Parallel Spells Tragedy For Its Best Character</div>
+      
+      
+      <div class="summary">SPOILERS AHEAD for 9-1-1 season 10, episode 6.9-1-1's mid-season finale set its main character up for a tragic storyline in 2027.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2322755/what-engine-does-gta-6-run-on-rage-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/what-engine-does-gta-6-run-on-its-older-than-you-might-think/how-has-rage-evolved-over-the-years-1795179430.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6 Uses Rockstar's RAGE Engine, Which Debuted in 2006
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: What Engine Does GTA 6 Run On? It's Older Than You Might Think</div>
+      
+      
+      <div class="summary">What Engine Does GTA 6 Run On? It's Older Than You Might Think Rockstar Games Rockstar Games uses its own technology, known as the Rockstar Advanced Game Engine (or Rage), in "Grand Theft Auto 6." Interestingly, Rage is much older than the game.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/the-odyssey-matt-damon-final-fight-stunt-team/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/07/the-odyssey-12.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Matt Damon Reveals the Surprising Secret Behind 'The Odyssey's Epic Final Battle
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When Odysseus (Matt Damon) finally returns home in Homer's Odyssey, he discovers that getting back to Ithaca was only half the battle. His palace has been overrun by suitors hoping to marry his wife, Penelope (Anne Hathaway), and claim his kingdom.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/by-any-means-mark-wahlberg-streaming-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/by-any-means.jpg?q=49&fit=crop&w=875&h=540&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            By Any Means Starring Mark Wahlberg Gets Paramount+ Release on Dec. 3
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Mark Wahlberg's New 107-Minute Action Thriller Officially Sets Streaming Release</div>
+      
+      
+      <div class="summary">Academy Award nominee and Transformers star Mark Wahlberg is transformed in his new action thriller, which has now officially set a streaming release date after debuting in theaters earlier this year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/marvel-movies-aged-best/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/iron-man-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            I Rewatched Every MCU Movie - These 12 Still Hold Up
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Despite initial skepticism about the announcement, Avengers: Doomsday is shaping up to be one of the year's biggest movies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hbo-harry-potter-already-fumbled-iconic-hogwarts-moment/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/mcgonagall-leads-students-into-hogwarts-great-hall-in-the-harry-potter-reboot.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO's Harry Potter Series Clip Shows Great Hall Feast Scene Prompting Fan Debate
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It Took 90 Seconds for HBO's Harry Potter Show to Fumble an Iconic 25-Year-Old Hogwarts Moment</div>
+      
+      
+      <div class="summary">The HBO Harry Potter series has gotten off to a strong start, with its trailers drawing millions of views and audiences eagerly anticipating this new take on the boy wizard's journey.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-fantasy-books-perfect-opening-lines-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/magic-the-gathering-hobbit-bilbo-pantry.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Masterpiece Fantasy Books with Perfect Opening Lines
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Any book needs to have a brilliant opening line — but especially for fantasy. It is crucial for authors to grip the reader immediately with a killer first line in order to interest them in the story they're trying to tell.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2322517/alexa-photo-frame-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/alexa-photo-frame-review-picture-imperfect/l-intro-1795127567.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alexa Photo Frame Review: Picture Imperfect
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Setup requires a smartphone, the Amazon Photos app, the Alexa app, and an Amazon account. Amazon Photos handles backups, albums, featured people, and voice notes. The Alexa app covers the assistant and device setup.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-action-war-movies-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/the-dirty-dozen-1967-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Best Action War Movies of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There’s a risk with making a war movie also feel like an action one, especially if a filmmaker wants to have things feel anti-war, and sure, most war movies should be at least a little anti-war, otherwise they might run the risk of feeling like propa&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-grand-theft-auto-new-zealand-trick-stats/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/leonida_keys_06.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6 Caused a Mass 'Migration' of Over 2 Million People
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Grand Theft Auto 6 was released on Thursday, Nov. 19... officially. Millions of players around the world actually got to play it on Nov. 18 by moving to New Zealand. Well, not actually. Players just changed their account's region to New Zealand.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-critically-acclaimed-books-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/the-great-gatsby-book-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 8 Most Critically Acclaimed Books of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Critics have spent a long, long time debating which books deserve to be considered the greatest, with no end to their disagreements in sight.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/spider-man-brand-new-day-theater-return-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/spider-man-brand-new-day-tom-holland.jpg?q=49&fit=contain&w=2200&h=1100&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spider-Man: Brand New Day Returns to Theaters in 1 Month
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Spider-Man’s Biggest Movie of All Time Officially Returns to Theaters in 1 Month</div>
+      
+      
+      <div class="summary">Marvel Cinematic Universe has regained its spark with releases like Spider-Man: Brand New Day and small-screen adventure like VisionQuest, The Punisher: One Last Kill, and Wonder Man. Each release brings us closer to Avengers: Doomsday, which will pi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/classic-sci-fi-shows-better-than-modern-streaming-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/_jamie-bamber-and-katee-sackhoff-in-battlestar-galactica-2004.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Classic Sci-Fi Shows That Are Better Than Modern Streaming Originals
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There's nothing quite like the classics. As the streaming era has led television as a whole to evolve in ways nobody could have predicted a couple of decades ago, so too has small-screen science fiction transformed in several ways, leaving behind the&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-sopranos-seasons-ranked-officially/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2024/06/steven-van-zandt_james-gandolfini_tony-sirico_the-sopranos_chasing-it.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            We Officially Ranked Every Season of 'The Sopranos'
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Sopranos is hailed as one of the greatest television shows of all time, known for its impeccable writing, unexpected depth, and unforgettable performances.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/apple-tv-masterpiece-fantasy-series-small-prophets/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/small-prophets-acquired-by-apple-tv-6.png?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV's 'Small Prophets' Is a Masterclass in Imaginative Worldbuilding
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV’s 6-Episode Fantasy Series Is a Masterclass in Imaginative Worldbuilding</div>
+      
+      
+      <div class="summary">Over the past few years, Apple TV has slowly been building a hefty catalog of endearing dramas in addition to its beloved sci-fi and crime thrillers.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2319273/owen-wilson-golf-comedy-stick-apple-tv-season-2/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/owen-wilsons-golf-comedy-on-apple-tv-swings-big-in-season-2-and-wins-it-all/intro-1794933282.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Stick Season 2: Owen Wilson's Golf Comedy on Apple TV Wins Big
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Owen Wilson's Golf Comedy On Apple TV Swings Big In Season 2 And Wins It All</div>
+      
+      
+      <div class="summary">Owen Wilson's Golf Comedy On Apple TV Swings Big In Season 2 And Wins It All Apple TV+ When Jason Keller's "Stick" premiered last year, for a moment, it seemed like the feel-good sports comedy was an attempt to fill the space that Apple TV's megahit &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <span class="current">16</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/17.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

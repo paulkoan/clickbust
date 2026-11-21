@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-21 16:06 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>33 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>96 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>10 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>63 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>124 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.cbr.com/taylor-sheridan-mayor-of-kingstown-flawless-sons-of-anarchy-replacement/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/taylor-sheridan-as-david-hale-with-dayton-callie-s-wayne-unser-in-the-background-from-sons-of-anarchy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Mayor of Kingstown Is a 10/10 Sons of Anarchy Replacement
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan's Gritty 4-Part Crime Show Is a 10/10 Sons of Anarchy Replacement</div>
+      
+      
+      <div class="summary">Taylor Sheridan remains a hot name in television in this new streaming age. His name is tied to a few hit shows, including Yellowstone, Landman, and Tulsa King. One of his best shows stands apart from the rest: a gritty crime series called Mayor of K&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/game-of-thrones-maester-aemon-quote-kill-the-boy/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2021/09/Jon-Snow.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Game of Thrones' 'Kill the Boy' Line Is a Twist on Dune
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Game of Thrones' Greatest Line Is a Perfect Twist on a 10/10 Sci-Fi Masterpiece</div>
+      
+      
+      <div class="summary">George R.R. Martin’s iconic fantasy series became a phenomenon when it hit HBO, and for good reason. Game of Thrones depicts a brutal world of politics and magic, but is, in many ways, a love letter to its influences.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/gary-larson-best-comics-after-the-far-side/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/06/gary-larson-s-10-best-comics-post-far-side.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gary Larson's 10 Best Comics Post-Far Side
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Selling over 45 million books and featuring more than 4,337 cartoons, Gary Larson's The Far Side is one of the most popular and iconic comic strips in history.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/battlestar-galactica-film-reboot-production-update-francis-lawrence-director-exit/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/battlestar-galactica.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘Battlestar Galactica’ Reboot Officially Suffers Major Setback as Director Exits
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Over two decades after a Battlestar Galactica film reboot was announced, we're finally getting a much-needed production update. First reported in 1999, the project saw original series creator Glen A.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-legend-eternal-andrea-stewart-hollow-covenant-trilogy-finale/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/game-of-thrones-the-iron-throne-2019.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Andrea Stewart's 'The Hollow Covenant' Trilogy Concludes with 'The Legend Eternal'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It’s Officially the End of an Era for This ‘Game of Thrones’ Meets ‘God of War’ Trilogy</div>
+      
+      
+      <div class="summary">The god who promises to save the world in Andrea Stewart’s The Hollow Covenant books is as good as his word, and that’s why people run when they see him coming. Kluehnn can take a stretch of land that humans have stripped bare and make it habitable a&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/chris-pratt-jurassic-world-streaming-hit-starz-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/jurassic-world.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jurassic World Returns as a Streaming Hit on Starz
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Chris Pratt’s $1.6 Billion Sci-Fi Reboot Officially Returns as a Streaming Hit</div>
+      
+      
+      <div class="summary">Tom Hanks was back at the top of Hollywood this year, as Woody, Buzz (Tim Allen), Jessie (Joan Cusack), and the rest of the gang returned in Toy Story 5.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/forgotten-netflix-shows-better-than-big-hits/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/eric-mccormack-and-arnold-pinnock-in-travelers-2016.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Forgotten Netflix Shows That Are Better Than Their Bigger Hits
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix has produced a plethora of some of the biggest names in television, offering audiences shows that are considered major cultural phenomena.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2319880/bluetooth-accessories-keep-older-car/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-bluetooth-accessory-is-one-of-the-best-entertainment-solutions-for-your-old-car/pros-cons-and-amazon-user-reviews-1794949849.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            COMSOON J22 Bluetooth Receiver: A Simple and Affordable Entertainment Upgrade for Old Cars
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Bluetooth Accessory Is One Of The Best Entertainment Solutions For Your Old Car</div>
+      
+      
+      <div class="summary">This Bluetooth Accessory Is One Of The Best Entertainment Solutions For Your Old Car Milko/Getty Images We may receive a commission on purchases made from links. Cruising down the highway in a classic car should be the dictionary definition of "cool.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/ghost-uk-bbc-sitcom-inspired-6-remakes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2024/02/ghosts-season-4.jpg?q=49&fit=crop&w=220&h=124&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ghosts (UK): The 34-Episode BBC Sitcom That Inspired 6 International Remakes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 34-Episode BBC Sitcom Is So Good, It Inspired 6 Remakes</div>
+      
+      
+      <div class="summary">One 34-episode BBC sitcom is so good, it's inspired multiple international remakes. While the BBC is famous for gritty, hard-hitting dramas and gorgeous historical miniseries, it's also produced some of TV's most incredible comedies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/zelda-ocarina-of-time-remake-december-2026-new-merch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/animate-legend-of-zelda-ocarina-of-time-merch.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New The Legend of Zelda: Ocarina of Time Remake Merchandise Announced for December 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Zelda: Ocarina Of Time Remake New December 2026 Release Officially Confirmed</div>
+      
+      
+      <div class="summary">The Legend of Zelda: Ocarina of Time remake has been off to a phenomenal start, garnering critical and commercial acclaim in abundance.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/george-rr-martins-best-non-game-of-thrones-books-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/dying-of-the-light-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            George R.R. Martin’s 7 Best Non-Game of Thrones Books, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">George R.R. Martin will forever be associated with his book series, A Song of Ice and Fire, and HBO’s adaptation, Game of Thrones, but there's considerably more to his bibliography than scheming Lannisters, fire-breathing dragons, and the unending wa&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/fbi-jeremy-sisto-jubal-valentine-cia-crossover-december-7/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/it-l6ftzl-1794841350-1.jpg?q=49&fit=contain&w=2800&h=1400&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            FBI's Jeremy Sisto to Return as Jubal in CBS Crossover Episode of CIA
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘FBI’ Officially Confirms Returning Star in New CBS Crossover</div>
+      
+      
+      <div class="summary">Over the years, CBS' fan-favorite police procedural FBI has seen its share of cast exits, beginning with Connie Nielsen. She appeared as SAC Ellen Solberg only in the series premiere, then was replaced by Sela Ward as SAC Dana Mosier.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/wrath-of-man-guy-ritchie-jason-statham-leaving-tubi-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/04/wrath-of-man-jason-statham.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wrath of Man: Jason Statham's Guy Ritchie Crime Thriller Is Leaving Tubi Soon
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jason Statham’s Guy Ritchie Crime Thriller Is Officially Losing Its Free Streaming Home</div>
+      
+      
+      <div class="summary">For someone as prolific as Guy Ritchie, you'd expect him to be one of the industry's most reliable box-office hitmakers. But the truth is that Ritchie hasn't had a box-office hit in five years. In this time, he has directed five movies, with two on t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/taylor-sheridan-landman-season-3-release-window-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/sharedimages/2026/01/landman-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Landman: Taylor Sheridan's No. 1 Hit Series Officially Won't Return Until 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan’s No. 1 Hit Series Officially Won’t Return Until 2027</div>
+      
+      
+      <div class="summary">Taylor Sheridan fans have had plenty of new shows to watch this year, and the Yellowstone creator still has plenty of content to give before the year turns to 2027.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-far-side-comics-ever-ranked-gary-larson/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/09/screen-shot-2026-09-10-at-11-12-25-am.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gary Larson's 10 Greatest 'Far Side' Comics, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">What, exactly, is the measure of greatness when it comes to comic strips? The daily newspaper comic is a very limiting art form, with only a few panels — sometimes just one panel — to make a joke.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-man-in-the-high-castle-philip-dick-alternate-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/john-smith-walks-down-the-street-holding-a-gun-with-a-car-on-fire-in-the-background-in-the-man-in-the-high-castle.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Man in the High Castle: Ridley Scott's 40-Episode Philip K. Dick Adaptation Nails Alternate History
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ridley Scott’s 40-Episode Philip K. Dick Sci-Fi Series Nails Alternate History</div>
+      
+      
+      <div class="summary">Even the tiniest alternate events in history could have rippled into a radically different present. An acclaimed Philip K. Dick adaptation on Prime Video takes this idea to extremes and delivers a compelling alternate history drama.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/the-legend-of-vox-machina-prime-video-rec/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/critical-role.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Legend of Vox Machina: Prime Video's 48-Episode Fantasy Series Surpasses Rings of Power
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Goodbye 'Rings of Power,' Prime Video’s Legendary 48-Episode Fantasy Series Is Even Better</div>
+      
+      
+      <div class="summary">Rings of Power is back on Prime Video for a third helping of fantasy storytelling, and we won’t pretend we aren’t enamored with all the shenanigans happening in Middle-earth right now.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-office-cast-reunion-nbc-100th-anniversary-steve-carell/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/the-office-nbc-rainn-wilson-steve-carell.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'The Office' Is Officially Getting Its Biggest Reunion Yet
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Office squad is getting back together, and it's shaping up to be bigger than ever. Widely regarded as one of the greatest sitcoms of all time, the NBC series appeared on several critics' year-end best-of lists during its run and won multiple majo&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/playstation-plus-bonus-free-download-control-resonant/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/08/ss_422f3eed36d3033c4b0f4fde485c29b980e49454-1920x1080.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            PS Plus Premium Drops Free 4-Hour Trial for 9/10 Adventure Game Control Resonant
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: PlayStation Plus Officially Drops Bonus Free Download For 9/10 2026 Adventure Game</div>
+      
+      
+      <div class="summary">PlayStation Plus members are getting yet another bonus free download in November, this time around for a 9/10 adventure game that was released this year. It’s been a pretty nice period for those who are subscribed to Sony’s gaming service.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/inception-ending-christopher-nolan-elliot-page-himesh-patel-the-odyssey/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/himesh-patel-in-the-odyssey-2026.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Odyssey Stars Himesh Patel and Elliot Page Discuss Working with Christopher Nolan
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 16 Years Later, ’Inception’s Ending Is Still a Mystery to One of Its Biggest Stars</div>
+      
+      
+      <div class="summary">Summary Collider's Steve Weintraub talks with Himesh Patel and Elliot Page for The Odyssey. The Odyssey is available on Premium VOD, 4K, and DVD, and returns to theaters in IMAX 70mm on December 11.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/firefly-sci-fi-classic-14-episodes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/wash-zoe-and-mal-looking-worried-in-the-cockpit-in-firefly.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Firefly: The 14-Episode Sci-Fi Series That Became an All-Time Classic
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 10/10 Sci-Fi Series Needed Just 14 Episodes To Become An All-Time Classic</div>
+      
+      
+      <div class="summary">It only took this science fiction series 14 episodes to cement itself as one of the classics of the genre. The science fiction genre is jam-packed with fantastic, incredible, acclaimed, and cult TV shows of every stripe.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-dark-peak-existential-sci-fi/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/7095bd4a-af92-4c9b-a796-cd0b9226c617.jpeg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dark: Netflix's 26-Episode Time Travel Masterpiece Explores Existential Sci-Fi
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s 26-Episode Time Travel Masterpiece Delivers Unmatched Existential Sci-Fi</div>
+      
+      
+      <div class="summary">Rewind Father Time's hands back one decade ago, Netflix quietly released a time travel masterpiece. Some time travel stories tweak the past timeline and alter the future. Others go one step further and explore the possibility of the past, the present&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/bookish-season-2-pbs-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/mark-gatiss-as-gabriel-book-in-bookish-on-pbs.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bookish: Mark Gatiss' New Murder Mystery Series Returns in 2 Months
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget Sherlock, Creator's Hit New Murder Mystery Series Officially Returns In 2 Months</div>
+      
+      
+      <div class="summary">Sherlock co-creator Mark Gatiss has produced a hit original murder mystery series, and new episodes will premiere in the US in two months.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/fallout-ncr-february-2027-collectors-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/dark-horse-comics-fallout-ncr-power-armor-statue-gallery-6a34710240a1f.jpg?q=49&fit=contain&w=1500&h=1500&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fallout NCR Power Armor Statue Releases February 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Fallout: NCR Officially Releases February 2027 For Collectors</div>
+      
+      
+      <div class="summary">There's little doubt at this point that the Prime Video adaptation of Fallout has done wonders for restoring some confidence in the franchise, and bringing in new fans from around the world.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/ironheart-perfect-sci-fi-fantasy-mix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/07/ironheart-season-1-ep-6-7.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ironheart: Disney's 6-Part Superhero Series Blends Sci-Fi and Fantasy
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney's 6-Part Superhero Series Is The Perfect Mix Of Sci-Fi & Fantasy</div>
+      
+      
+      <div class="summary">Since science fiction and fantasy are at odds, it can be tough to blend the two. Sci-fi is supposed to be rooted in some kind of logic — an A.I. becomes sentient, an alien visitor comes to Earth, an astronaut gets stranded in space with no fuel, etc.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-new-series-the-law-of-beasts-crime-thriller-binge-watch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/netflix-the-law-of-beasts.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Law of Beasts: Netflix's 4-Part Crime Thriller Hits #2 Worldwide
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s New 4-Part Crime Thriller Is #2 Worldwide & The Ultimate One-Night Binge</div>
+      
+      
+      <div class="summary">Netflix's new 4-part crime thriller is trending #2 worldwide, offering a gripping one-night binge inspired by a disturbing real-life murder case.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/john-wick-untitled-game-prequel-setting-confirmed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/sharedimages/2026/02/john-wick-game-press-image-1.jpg?q=49&fit=crop&w=480&h=270&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Untitled John Wick Video Game Prequel Set Before the Impossible Task
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: John Wick Franchise Officially Returning In New Prequel Set Years Before The Impossible Task</div>
+      
+      
+      <div class="summary">John Wick: Chapter 4 concluded with the death of the titular character, thus appearing to put an end to its epic saga.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/resident-evil-remake-collection-2027-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/resident-evil-2-remake.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            New Resident Evil Remake Collection Officially Announced For 2027
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Having originally launched in March 1996, the Resident Evil franchise is celebrating its 30th anniversary this year, and with twelve mainline titles and over sixty total releases ranging from mobile, spin-offs, and remakes, it is safe to say that the&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/hbo-max-sharp-objects-psychological-thriller-character-development/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/02/limited-series-sharp-objects.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Sharp Objects: HBO's 8-Part Psychological Thriller Is a Masterclass in Character Development
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: HBO's 8-Part Psychological Thriller Delivers A Masterclass In Character Development</div>
+      
+      
+      <div class="summary">HBO's acclaimed 8-part psychological thriller starring Amy Adams is a masterclass in character development, family drama, and building suspense.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/paramount-plus-yellowjackets-season-4-final-season-end-of-era/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/nat-yellowjackets-season-4.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 21 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Yellowjackets Season 4 Marks the End of an Era for Paramount's Psychological Thriller
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: It's Officially The End Of An Era For Paramount's 4-Part Psychological Thriller</div>
+      
+      
+      <div class="summary">It's officially the end of an era for Paramount+'s acclaimed psychological thriller as its fourth and final season premieres with a deadly new chapter.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <span class="current">4</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/5.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

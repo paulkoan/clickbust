@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-21 16:06 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>33 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>96 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>104 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>6 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>10 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>63 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>54 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>124 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>10 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://movieweb.com/madden-christian-bale-streaming-prime-video-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/04/christian-bale-boxing-movie-the-fighter-streaming-peacock-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Christian Bale's Madden Defies Critics to Become #1 on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Christian Bale's New Amazon Movie Defies Critics To Score #1 Spot on Streaming</div>
+      
+      
+      <div class="summary">It didn’t take long for Christian Bale's latest to make a big impact on streaming. After just two days, the film is already the most popular movie on Prime Video despite earning a wave of negative reviews from critics.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/lilo-stitch-2-jacob-batalon-joins-returning-cast/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/12/mcdspma_sp018.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lilo & Stitch 2 Adds Spider-Man Star as Disney Confirms Returning Cast
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Published Nov 20, 2026, 10:28 AM EST Lee Freitag is a senior author at CBR, with more than four years of experience in entertainment and pop culture journalism.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/matt-dinniman-fiona-the-hippo-death-response/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/author-matt-dinniman-at-the-strand.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Matt Dinniman Responds To The Loss Of Fiona The Hippo
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fiona the Hippo became a global icon after her premature birth in 2017. Her fight to survive inspired many people, including Dungeon Crawler Carl author Matt Dinniman. In fact, the author dedicated the first book in the series to Cincinnati's beloved&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/kate-berlant-hbo-maxcomedy-special-parmesan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/instar55223504.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Kate Berlant's Audience Is Throwing Wine in the Lobby, And the Comedian is Thrilled
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">I often think about a conversation I heard between stand-up icons Chris Rock and Jerry Seinfeld regarding their opinion on live shows and touring. In Seinfeld’s mind, the audience coming to his shows were coming to hear “the act.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-altruists-netflix-rotten-tomatoes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/06/netflix-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's The Altruists Debuts with 78% Rotten Tomatoes Score
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's New 8-Part True Crime Series Debuts With Impressive Rotten Tomatoes Score</div>
+      
+      
+      <div class="summary">There was a point in 2022 when Hollywood seemed obsessed with scammers and spectacular corporate meltdowns. The Dropout, WeCrashed, and Super Pumped all got their turn, but the genre has lost some steam since then.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2321758/alan-cumming-zooey-deschanel-sci-fi-twist-wizard-of-oz-tin-man/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/alan-cumming-and-zooey-deschanels-forgotten-show-put-a-sci-fi-twist-on-the-wizard-of-oz/l-intro-1795102192.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tin Man: Alan Cumming and Zooey Deschanel's Sci-Fi Twist on The Wizard of Oz
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Alan Cumming And Zooey Deschanel's Forgotten Show Put A Sci-Fi Twist On The Wizard Of Oz</div>
+      
+      
+      <div class="summary">Alan Cumming And Zooey Deschanel's Forgotten Show Put A Sci-Fi Twist On The Wizard Of Oz Syfy People who haven't seen "The Wizard of Oz" are still familiar with the concept.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/david-boreanaz-rockford-files-nbc-reboot-angel-recast-brandon-t-jackson/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/02/david-boreanaz-looking-to-the-side-as-seeley-booth-in-a-scene-from-bones.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            David Boreanaz's Rockford Files Reboot Casts Brandon T. Jackson as Angel
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: David Boreanaz’s Rockford Files Reboot Officially Recasts Original Character From NBC Detective Series</div>
+      
+      
+      <div class="summary">Published Nov 20, 2026, 10:15 AM EST Jeff Dodge (he/him), a published author and graduate of Western Washington University, has been a TV news editor for many years and has had the chance to interview multiple reality show stars, including Randy Jack&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/classic-sci-fi-anime-weekend-binge/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/motoko-kusanagi-in-ghost-in-the-shell-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Classic Sci-Fi Anime You Can Finish in One Weekend
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Sometimes, it can be hard trying to get into a new anime series. With some of the best series running multiple seasons and dozens of episodes, the time investment can be daunting. That said, not every great series wants to run forever.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/persona-6-wont-end-the-series-atlus-rpg/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/7091807/Screen_Shot_2016-09-13_at_9.47.53_AM.0.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Persona 7 Already Teased Before Persona 6 Has an Official Release Date
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Now that Grand Theft Auto 6 is actually out and playable, we can no longer make "we really got X before GTA 6" jokes. Seemingly to make up for that loss, Atlus is giving us the opportunity to use the very same joke for Persona 6.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/mobland-season-3-filming-tom-hardy-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/tcdmobl_i8112.jpg?q=49&fit=contain&w=750&h=422&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            MobLand Season 3 Begins Production with Tom Hardy Returning
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Guy Ritchie’s MobLand Season 3 Hits Major Milestone With Tom Hardy’s Return</div>
+      
+      
+      <div class="summary">MobLand is back in action. The British crime drama series MobLand was created by Ronan Bennett for Paramount+ and originally began as a prequel to Showtime's Ray Donovan before becoming its own story.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2318862/photoshop-free-alternatives-most-edits-no-subscription/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/6-free-alternatives-to-photoshop-you-should-try-asap/l-intro-1794913183.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Free Alternatives To Photoshop You Should Try ASAP
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">6 Free Alternatives To Photoshop You Should Try ASAP Gorodenkoff/Getty Images Arguably the most well-known image editing software of all time, Photoshop is so popular that it became a verb. But not everyone agrees with the crown prince of pixel pushi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/sunrise-on-the-reaping-francis-lawrence-interview/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/solstice-unit-250916-00315-f.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hunger Games Director Reveals Why 'Sunrise on the Reaping' Is the Darkest Movie in Franchise History
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Hunger Games Director Reveals Why He Made the Darkest Movie in Franchise History</div>
+      
+      
+      <div class="summary">Francis Lawrence, the director of every single Hunger Games movie except the first one, likes to listen to music while working on set, with an earbud in one ear and the other left free to catch everything else that’s happening around him.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/marshals-hell-high-water-storyline/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/09/marshals-riley-green-luke-grimes.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Years Later, 'Marshals' Rewrites Taylor Sheridan’s Greatest Western
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Taylor Sheridan has become the most compelling chronicler of both the modern West and the Old West, turning dusty ranches, fractured families, and businesses into arenas for moral reckoning.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/mobland-season-3-filming-begins/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/mobland-tom-hardy-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            MobLand Season 3 Production Begins, Confirmed by Paramount+
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Fate of Tom Hardy's Guy Ritchie Series Officially Revealed After Season 2 Finale</div>
+      
+      
+      <div class="summary">There are few families on television quite as vile as the Harrigans, and unfortunately for everyone who crosses their path, their retirement plans appear to be, well, as alive as some of their rivals.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ai-artificial-intelligence-steven-spielberg-4k-steelbook-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/steven-spielberg-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Steven Spielberg's A.I. Artificial Intelligence Returns in 4K for 25th Anniversary
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 25 Years Later, Steven Spielberg’s Sci-Fi Classic Officially Returns in 4K</div>
+      
+      
+      <div class="summary">Steven Spielberg made his grand return to science fiction this year with Disclosure Day. The director has a widely varied filmography, but sci-fi is the genre he most frequently returns to.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/baldurs-gate-3-shadowheart-prequel-cover-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/wm/2026/11/baldurs-gate_1024.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Baldur's Gate 3 Prequel Novel 'Shadowheart' Gets First Look and Release Date
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Baldur’s Gate 3’ Officially Reveals First Look at New Prequel Novel</div>
+      
+      
+      <div class="summary">Free Shadowheart from her pod at the beginning of Baldur’s Gate 3, and she’ll help you get off a crashing mind flayer ship. Ask what she was doing before she got there, and you’ll find out how far rescuing someone actually gets you.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/heroic-alfred-pennyworth-moments-from-batman-comics/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2022/06/Alfred-Pennyworth-In-The-Batman.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Heroic Alfred Pennyworth Moments From Batman Comics
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">What makes Alfred Pennyworth a valued member of the Bat-Family? The butler has assisted Batman and all of his many allies with investigative intel, medical attention, and even moral guidance when needed.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/apple-tv-foundation-sci-fi-unfilmable-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/pilou-asbaek-as-the-mule-in-foundation.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Apple TV Adapts Isaac Asimov's Foundation Into a Modern Epic
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV Is Turning Sci-Fi’s Most 'Unfilmable' Classic Into a Modern Epic</div>
+      
+      
+      <div class="summary">One of the greatest sci-fi stories to come from Isaac Asimov's mind was thought unfilmable for decades, but has recently become a modern television epic in Apple TV's critically acclaimed Foundation series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-save-how-to-grand-theft-auto/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/gta-6-how-to-save-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How to save in GTA 6
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Unless you're keeping the game suspended while your console sleeps, you need to know how to save in Grand Theft Auto 6. This is the sort of game where not saving can undo hours of progress, which is absolutely gutting when it happens.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/presumed-innocent-season-2-trailer-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/matthew-rhys-in-presumed-innocent.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Presumed Innocent Season 2 Trailer and Release Date Revealed by Apple TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Apple TV's Smash-Hit Crime Thriller Finally Returns With Star-Studded Trailer & Release Date</div>
+      
+      
+      <div class="summary">Published Nov 20, 2026, 9:57 AM EST Marcos Melendez is an entertainment journalist who has been active since 2017. His past work can be read on Collider, Escapist, ScreenRant, CBR, and Full Circle Cinema. He is currently a News Editor for MovieWeb.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2322599/gta-6-new-heat-system-cop-memory-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/gta-6s-new-heat-system-makes-cops-actually-remember-what-you-look-like/l-intro-1795135005.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6's New 'Heat' System Makes Cops Actually Remember What You Look Like
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">GTA 6's New 'Heat' System Makes Cops Actually Remember What You Look Like Vardanyan Karen/Shutterstock Rockstar implemented some interesting changes to the wanted system in "Grand Theft Auto 6," and one of them may look familiar if you played 2008's &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/warbreaker-mistborn-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/vin-mistborn-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brandon Sanderson's Warbreaker Deserves a Sequel, 17 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 17 Years Later, Brandon Sanderson's "Anti-Mistborn" High Fantasy Book Deserves a Sequel</div>
+      
+      
+      <div class="summary">As Apple TV moves forward with its film adaptation of Brandon Sanderson's Mistborn, the prolific fantasy author continues to gain mainstream recognition.Known for creating magic systems with clearly defined rules, Sanderson is also developing an Appl&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/pedro-pascal-hailed-for-performance-the-last-of-us/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/06/movieweb-featured-image-template-2026-06-30t072717-898.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Pedro Pascal Hailed for Extraordinary Performance in The Last of Us as Series Nears End
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Pedro Pascal Hailed for "Extraordinary" Performance as Post-Apocalyptic HBO Smash Hit Nears Its End</div>
+      
+      
+      <div class="summary">It's not unusual for TV adaptations to stray from their source material that they become completely irrelevant to the original story. But HBO's acclaimed post-apocalyptic series never fell into that category, staying faithful to the popular video gam&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hyped-up-anime-remakes-everyone-already-forgot/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/urusei-yatsura-2022-anime-reboot-urusei-tilts-head-smiling-with-teal-hair-around-her-face.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Urusei Yatsura Remake Fails to Recapture Original's Popularity
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Hyped-Up Anime Remakes Everyone Already Forgot About</div>
+      
+      
+      <div class="summary">Remaking a beloved anime can be exciting, especially when they promise to bring popular classics back for a new generation. They allow people who loved the original to reacquaint themselves with familiar characters, and let a whole new audience exper&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/percy-jackson-season-3-episode-2-ending-prophecy-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/two-kids-from-camp-half-blood-snooping-in-percy-jackson-season-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Percy Jackson Season 3, Episode 2 Ending: Breaking Down The Prophecy & How It Connects To Annabeth
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: This article includes SPOILERS for Percy Jackson season 3, episodes 1 & 2. One section will have The Titan's Curse book spoilers, and it will be clearly marked.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/todays-wordle-hints-answer-november-20-2026-puzzle-1980/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/image-psd-24.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Today's Wordle Hints & Answer - November 20, 2026 (Puzzle #1980)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are hardly any Wordle puzzles that don't have a level of deceit to them, yet today's answer may fall into that category. Rarely has there ever been a Wordle that is so evenly structured, giving players more than enough opportunities to search f&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/new-spider-man-replacement-arthropod-infernal-hulk/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/the-mcu-s-spider-man-jumps-in-front-of-a-web-of-his-villains.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Officially Names Peter Parker's Monstrous Spider-Man Form 'The Arthropod'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Officially Announces Name Of New Spider-Man Replacement</div>
+      
+      
+      <div class="summary">Marvel reveals the name of its new Spider-Man, with a dark twist that flips Peter Parker's story upside down.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-odyssey-most-unrealistic-moment-christopher-nolan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/men-on-a-ship-in-the-odyssey.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Christopher Nolan Explains Why The Odyssey's Ship-Handling Scenes Were Harder to Believe Than Monsters
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Odyssey's Most Unrealistic Moment Explained By Christopher Nolan</div>
+      
+      
+      <div class="summary">Christopher Nolan's The Odyssey follows Odysseus on his long journey home after the Trojan War, where he encounters everything from the Cyclops to powerful gods determined to interfere with his return.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/from-tv-series-american-attack-on-titan/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/sharedimages/2026/06/from-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            From, the 40-Episode Horror Series on MGM+, Is America's Answer to Attack on Titan
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 40-Episode Mystery Horror Series Now On Netflix Is America's Answer To Attack On Titan</div>
+      
+      
+      <div class="summary">Attack on Titan is consistently ranked among the best anime ever, but for those looking for an American take on a similar concept, there's a horror hit that has some surprising similarities. Attack on Titan began in 2009 as a Japanese manga made by H&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/wrath-of-man-statham-eastwood-stream-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2025/03/wrath-of-man-1.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 20 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jason Statham & Scott Eastwood's 'Wrath of Man' Is a Global Streaming Hit
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jason Statham & Scott Eastwood's (Very) Intense 119-Minute Action Thriller Is a Global Streaming Hit</div>
+      
+      
+      <div class="summary">One of Jason Statham's best action movies from the last ten years has become one of the biggest streaming hits in the world.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <span class="current">15</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/16.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>
