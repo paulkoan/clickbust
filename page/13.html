@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-26 22:07 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>20 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>109 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>3 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>62 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>41 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>131 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>19 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://screenrant.com/keanu-reeves-constantine-2-r-rated-update-francis-lawrence/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/keanu-reeves-posing-for-a-photo-on-the-john-wick-chapter-4-red-carpet.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Constantine 2 Gets R-Rated Update From Director Francis Lawrence
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Keanu Reeves’ Fantasy Thriller Sequel Gets Very R-Rated Update From Director</div>
+      
+      
+      <div class="summary">Keanu Reeves' Constantine 2 will be leaning into its R-rated aesthetic. Reeves previously led the 2005 adaptation of the fantasy thriller DC Comics character, following the occult expert as he investigates a string of demonic occurrences in Los Angel&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/bad-lieutenant-tokyo-united-states-release-date-march-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/01/terrence-flashes-handcuffs-in-bad-lieutenant-port-of-call-new-orleans.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nicolas Cage's 'Bad Lieutenant' Franchise Returns with 'Bad Lieutenant: Tokyo' in 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Nicolas Cage's Cult Crime Thriller Franchise Finally Sets Return Date After 18 Years</div>
+      
+      
+      <div class="summary">Bad Lieutenant is back. A third movie in the Bad Lieutenant franchise is coming out in the United States next year, after its Japanese release in 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/frieren-new-manga-series-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/734cc00a-3a88-4276-b00e-acc1d36d84df.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Frieren Officially Returns With a Brand-New Prequel This December
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Amid the original manga's ongoing hiatus, Frieren: Beyond Journey's End is finally ready to tell a brand-new story. The upcoming limited manga series will give longtime fans a completely different perspective on their favorite fantasy world.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/focker-in-law-no-post-credits-reason-to-stay/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/focker-in-law-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Focker-In-Law Doesn’t Have A Post-Credits Scene, But There’s A Reason To Stay
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">26 years after Meet the Parents, Ben Stiller's fan-favorite comedy franchise has a brand-new addition, Focker-in-Law.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/legendary-fighting-game-franchise-celebrates-30th-anniversary-free-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/06/kasumi-from-dead-or-alive-6.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dead or Alive 6 Last Round Gets Free 30th Anniversary Update
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Legendary Fighting Game Franchise Celebrates 30th Anniversary With Free Update</div>
+      
+      
+      <div class="summary">To celebrate Dead or Alive's release on November 26, 1996, developers at Team Ninja and publishers Koei Tecmo have just released a massive, free update for the most recent installment in the series, Dead or Alive 6 Last Round.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/dc-comics-jim-lee-replacement-josh-silverman-skydance-merger/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/dc_comics_2024-dc-bullet.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DC Comics Restructures Leadership, Jim Lee Reports to New Management
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: DC Comics Officially Replaces Jim Lee With Former Marvel Executive</div>
+      
+      
+      <div class="summary">The DC universe is still reeling from the shocking departures of James Gunn and Peter Safran this month and what it means for the future of the superheroes on-screen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/naruto-every-jinchuriki-ranked-weakest-to-strongest/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/naruto-uzumaki-3-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Naruto Jinchuriki, Ranked From Weakest to Strongest
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Jinchuriki are some of the most powerful ninja in Naruto, with incredible chakra reserves due to the Tailed Beasts sealed within them. However, gaining such power comes with some severe consequences.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/ad-astra-directors-cut-criterion-collection-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/ad-astra-brad-pitt.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brad Pitt's Ad Astra in Talks for Director's Cut
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Brad Pitt's 7-Year-Old Space Adventure Is in Talks for a Director's Cut</div>
+      
+      
+      <div class="summary">Brad Pitt's underseen sci-fi movie Ad Astra may be getting a second edition. Ad Astra director James Gray is out promoting his latest movie, the thriller Paper Tiger. During an interview, he revealed there'd been discussion of a possible Ad Astra dir&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/rings-of-power-season-3-episodes-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/rings-of-power-sauron-nazgul.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 8 Episodes of 'The Rings of Power' Season 3, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Spoiler Alert: This list contains spoilers for The Rings of Power Season 3.This season of The Lord of the Rings: The Rings of Power has pushed things in a brighter direction than before. Although not perfect, the Prime Video series has made a concert&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/blade-runner-2099-story-characters-timeline/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/michelle-yeoh-s-olwen-and-hunter-schafer-s-cora-in-a-blade-runner-2099-promo-still.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Blade Runner 2099 - Story, Timeline & Characters Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! This article contains SPOILERS for Blade Runner 2099 season 1.Though it is the most recent installment in a 44-year-old franchise, the world, story, and characters of Blade Runner 2099 are all very new, and they deserve an introduction.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/dc-comics-new-52-was-always-bound-to-fail/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2023/05/justice-league-new-52-promo-cropped.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            DC Comics' New 52 Was Always Bound To Fail And The Signs Were Obvious
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The fact that DC Comics does a lot of reboots to its continuity has been a running joke among comic book fandoms for several years now. And while that has been the case for several stories in recent years, a lot of these problems can be traced back t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-adrenaline-how-to-get/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/gta-6-adrenaline.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How to get adrenaline in GTA 6
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Adrenaline acts as an emergency boost to all your stats in Grand Theft Auto 6, as it temporarily negates health, stamina, and focus loss. It's meant to get you out of an emergency situation safely or help you burst into a tense situation and mop it u&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-10-best-fantasy-books-in-literary-history/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/copy-of-collider-template-2026-04-03t100921-191.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Best Fantasy Books in Literary History, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Fantasy stories let audiences escape reality and journey to far-off lands and brand-new worlds. We’ve seen and felt these tangible worlds on screen, but many of the very best fantasy narratives began on the page.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/disney-bob-iger-chris-evans-captain-america-the-first-avenger-movie-chris-hemsworth-thor" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/captain-america-evans.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Report: Ex-Disney Boss Bob Iger Does Not Like Chris Evans' Captain America 1 - But At Least He Really Enjoyed Chris Hemsworth's Thor
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Captain America (Chris Evans) may have been the First Avenger, but his debut apparently didn't move former Disney CEO Bob Iger.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/the-rings-of-power-season-3-sauron-kneels-why-tolkien-fall-of-numenor-tactical-surrender" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/sauron.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Why Sauron Kneels In 'The Rings Of Power' Season 3 Finale Is All Because Of His Tactical Surrender Plan That Sets Up Tolkien's Fall of Númenor
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Sauron (Charlie Vickers) makes the surprising decision to surrender in The Lord of the Rings: The Rings of Power's Season 3 finale.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/chris-pratt-star-lord-return-mcu-james-gunn-guardians-4" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/starlord_cxLNGr3.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Chris Pratt Knows When Star-Lord Will Return To The MCU & Wants James Gunn To Return For Guardians 4
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Chris Pratt knows when Star-Lord could make his long-awaited MCU return after a three-year hiatus. Pratt's cosmic hero last appeared in Guardians of the Galaxy Vol. 3, where he stepped down as team leader and returned to Earth, reuniting with his gra&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/macys-thanksgiving-day-parade-postponed/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/turkey-mascot-thanksgiving-2023.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Macy's Thanksgiving Day Parade Has Officially Been Postponed
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While major movies and TV shows continue to push forward in theaters and at home, Thanksgiving in the United States will also bring one of the biggest public events of the year: the Macy's Thanksgiving Day Parade.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/normal-bob-odenkirk-stream-hbo-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/bob-odenkirk-holds-a-shotgun-in-normal.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bob Odenkirk's 91-Minute Action Thriller 'Normal' Finds Streaming Success
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Bob Odenkirk's 91-Minute 'John Wick' Substitute Action Thriller Is One of the Biggest Movies in the World</div>
+      
+      
+      <div class="summary">As popular as action movies are, their formula can sometimes become tiresome. Yes, we know what we're getting with the latest Liam Neeson or Jason Statham movie, yet it feels like a breath of fresh air when an action movie offers a fresh take on the &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-classic-fantasy-books-read-2026-holidays/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/northern-lights-book-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Greatest Classic Fantasy Books To Read in the Winter
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">As the temperatures drop and the Christmas lights begin to twinkle, you might find yourself wanting to enjoy some type of media.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/exoprimal-capcom-shutting-down-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/ss_e86abd66a1098f48451d0659216b16c2a75f1b84-1920x1080.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Capcom Is Officially Shutting Down Exoprimal
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Capcom Is Officially Killing Its 'Jurassic World Meets Overwatch' Shooter</div>
+      
+      
+      <div class="summary">Four years after the game's launch, Capcom is officially shutting down Exoprimal, the company's 5v5 action game about a futuristic dinosaur crisis.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/peanuts-google-snoopy-woodstock-thanksgiving/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/peanuts-woodstock-and-snoopy-thanksgiving.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Google Adds Adorable Snoopy And Woodstock Easter Egg For Thanksgiving
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Every year on the fourth Thursday of November, people across the United States gather for the special harvest feast that is Thanksgiving.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-hawk-canceled-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/06/will-ferrell-in-the-hawk.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Officially Confirms Fate of Will Ferrell's 'The Hawk' After 1 Season
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When it premiered on Netflix back in July, The Hawk brought audiences the first television comedy to star Will Ferrell, a legendary film lead. Ferrell, who also co-created and produced the series, plays Lonnie "The Hawk" Hawkins.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-peewees-billboard-location-challenge-waink/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/peewees-billboard_gta6.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All Peewees Billboard locations in GTA 6
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Peewees Billboards are one of the many scannable WAiNK collectibles in Grand Theft Auto 6, but they're also part of the Mr. Enigma X Peewees scavenger hunt. Mr. Enigma, a play on Dr.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2328769/3d-printers-deep-discounts-black-friday/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-3d-printers-with-deep-discounts-you-should-buy-during-black-friday/l-intro-1795642789.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 3D Printers With Deep Discounts You Should Buy During Black Friday
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 3D Printers With Deep Discounts You Should Buy During Black Friday We may receive a commission on purchases made from links. Black Friday is here, and the internet is buzzing with discounts and deals. It's a great day to find deals on virtually any&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/gta-6-permanent-stat-strength-cardio-focus-increase/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/04/gta-6-lucia-screenshot.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            GTA 6: How To Permanently Increase All Stats
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are three main stats you'll need to pay attention to throughout your Grand Theft Auto 6 playthrough: Strength, Cardio, and Focus.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-body-controversy-netflix-hit-thriller-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/the-dance-team-is-dressed-up-in-halloween-costumes-in-netflix-s-the-body-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's The Body Is Both Controversial and Among 2026's Best Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's Controversial 8-Part Thriller Is Also One Of The Year's Best Series</div>
+      
+      
+      <div class="summary">Among Netflix’s many 2026 releases is an eight-part thriller that is both one of the streamer’s best shows of the year and one of the most controversial.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/final-fantasy-6-crystal-edition-vinyl-2027-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/final-fantasy-6-art.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Final Fantasy 40th Anniversary Crystal Edition Compilation Album Arrives 2027
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Final Fantasy 6 Officially Returning In 2027's Crystal Edition</div>
+      
+      
+      <div class="summary">Final Fantasy 6 is making an official comeback in 2027 with the new release of the Crystal Edition, and fans of both the title and the larger franchise may want to keep this arrival on their radar.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/upcoming-sci-fi-space-opera-movies-event-decade-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/gylmwzata6jvegmedorhti.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gundam and 3 Other Upcoming Space Operas Ranked by Hype
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 4 Upcoming Space Operas That Will Compete For Being The Sci-Fi Movie Event Of The Decade, Ranked By Hype</div>
+      
+      
+      <div class="summary">The world of sci-fi is in a truly promising position right now, with a range of space opera movies on the horizon that hold the potential to be the defining event of the decade for the sci-fi genre, depending on how good they are upon release, and ho&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/rings-of-power-season-3-questions/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/movie-web-sandbox-2026-11-25t134942-312.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            20 Biggest Questions After 'Rings of Power' Season 3, Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Lord of the Rings: The Rings of Power ended with one of the most significant events of the Second Age of Middle-earth, and set up the end game for the entire planned five-season run of Prime Video's epic juggernaut. The critically-acclaimed fanta&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/classic-arcade-game-finally-heads-to-consoles-31-years-after-launch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/02/xbox-s-new-playstation-port-is-a-big-mistake-for-microsoft.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Arcade Classic 'Dirt Dash' Finally Comes to Consoles After 31 Years
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Classic Arcade Game Finally Heads to Consoles 31 Years After Launch</div>
+      
+      
+      <div class="summary">The Arcade Archives is back with another gem as Dirt Dash joins the lineup. It's been over 30 years since this arcade cabinet classic was released, and 2026 marks the first time that it will be heading to consoles.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <span class="current">13</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/14.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

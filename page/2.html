@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-26 22:07 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>20 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>109 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>3 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>62 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>41 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>131 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>19 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/i-saw-spawn-christmas-thriller-santa-claus-final-girl-interview-todd-mcfarlane/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/spawn-1-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Best Part of Spawn’s Christmas Thriller Is Letting Santa Be the Final Girl
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Of all the things I expected to worry about while reading a Christmas slasher set in the Spawn Universe, whether Santa Claus could get a 911 dispatcher to stay on the phone was pretty far down the list. In I Saw Santa, Nicholas finds the Anderson fam&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/the-iron-giant-streaming-hbo-max-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/06/irongiant1999-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Iron Giant: 1999 Animated Sci-Fi Classic with 96% RT Comes to HBO Max
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Beloved Sci-Fi Animated Movie of the '90s With 96% RT Is Coming to HBO Max</div>
+      
+      
+      <div class="summary">When cinephiles think of animated movies from the nineties, the Disney Renaissance immediately comes to mind: a 10-year run that saw Walt Disney Animation Studios return to producing critically acclaimed, commercially successful features like The Lit&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/percy-jackson-season-3-changes-better-than-the-book/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/by-14.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Percy Jackson Season 3 the Oracle Choosing Is Better Than the Books
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">This article contains spoilers for Percy Jackson Season 3, Episodes 1 and 2, and for The Titan's Curse.Percy Jackson and the Olympians is one of the biggest fantasy shows airing right now.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-high-fantasy-movies-ever-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/10/aragorn-coronation.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest High Fantasy Movies of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Mostly rooted in myths and imagination, fantasy movies offer a visual outlet for everything magical. From mythical creatures to whimsical lands, fantasy movies build a world of their own.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-netflix-shows-2026-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/04/beef-season-2-carey-mulligan.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Netflix Shows of 2026, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">2026 has been a year of growth and expansion for Netflix. With its intriguing plots, fantastic production, and well-designed characters that leave an impact, Netflix has rolled out several great shows this year.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/cbs-matlock-season-3-release-date-january-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/matlock-season-2-episode-11-kathy-bates.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            CBS’ ‘Matlock’ Officially Sets Season 3 Release Date
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">For the first time since its 2024 premiere, Matlock has not been on CBS's fall schedule, marking an intentional strategic shift rather than a cancellation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/the-sims-4-free-maker-pack-holiday-giveaway-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/19683316/Same_Sex_Couple_16x9.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Sims 4 Officially Makes 13 DLCs Free for a Limited Time
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Sims 4 has received a steady stream of contentsince it launched 12 years ago. However, 2026 has been particularly dry. The last major expansion, Royalty & Legacy, was released in February, and aside from kits, the game hasn't received much conten&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/from-streaming-success-netflix-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/from-season-4-finale-harold-perrineau.jpg?q=49&fit=contain&w=1400&h=700&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            From Becomes Most-Watched Show on Netflix
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: TV’s Best Sci-Fi Thriller Is Officially the New King of Netflix</div>
+      
+      
+      <div class="summary">From's success is rare among TV shows. The MGM+ horror-thriller began in relative anonymity but has become one of the most-watched shows after four years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/9-1-1-season-10-nashville-season-2-return-2027-abc/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/01/athena.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘9-1-1’ and ‘9-1-1: Nashville’ Will Officially Return in 2027
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 9-1-1 franchise returned for its second year with two shows on ABC's schedule. The flagship series is in its tenth season, which featured a massive volcano in Los Angeles in its first several episodes.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/the-lowdown-season-3-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/fx-s-the-lowdown-l-r-betty-gilpin-and-ethan-hawke-photo-credit-fx-copy.png?q=49&fit=contain&w=3000&h=2002&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            FX's The Lowdown Gets Season 3 Tease from Ethan Hawke
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Goodbye Taylor Sheridan, TV's 100% Rated Crime Thriller Gets an Explosive Season 3 Update</div>
+      
+      
+      <div class="summary">Taylor Sheridan isn't the only one finding success with crime dramas set in Oklahoma. FX has quietly built up quite a following with its own Tulsa-set series starring Ethan Hawke, though its offbeat humor and unconventional leading man make it a rath&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/perfect-lord-of-the-rings-cast-in-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/09/Lord-of-the-Rings_-The-Fellowship-of-the-Ring.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Perfect Lord of the Rings Cast if It Were Made in 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Lord of the Rings is the most totemic fantasy film franchise of all time. Along with Harry Potter in the 2000s, it precipitated a revival of fantasy cinema that hasn't been matched since.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/primetime-robert-pattinson-blu-ray-release/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/primetime-blu-ray-front.jpg?q=49&fit=contain&w=1228&h=1500&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Robert Pattinson's 'Primetime' Gets Blu-ray Release Date
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Robert Pattinson's (Very) Intense 110-Minute Crime Thriller Officially Sets New Release</div>
+      
+      
+      <div class="summary">Robert Pattinson is on an undeniable career run, landing iconic roles while also taking on unpredictable, left-field projects​​​​​​ .</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2329223/spacex-build-more-ai-compute-than-google-entire-existence/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/spacex-might-build-more-ai-compute-in-18-months-than-google-has-in-its-existence/l-intro-1795719690.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            SpaceX Might Build More AI Compute In 18 Months Than Google Has In Its Existence
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">SpaceX Might Build More AI Compute In 18 Months Than Google Has In Its Existence gguy/Shutterstock SpaceX may be best known for its advances in space exploration, but the company is also aiming to become one of the biggest players in the artificial i&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/in-defense-of-the-return-of-jafar/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/vs-disney-aladdinthereturnofjafardisney-0-27.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Disney's Direct-to-Video 'The Return of Jafar' Is Worth Revisiting 32 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 32 Years Later, Disney's Most Notorious Cash-Grab Sequel Is Better Than You Remember</div>
+      
+      
+      <div class="summary">Ever since former Disney CEO Bob Chapek released his autobiography last September, a rather unexpected Disney movie has been a topic for discussion: the direct-to-VHS sequel to Aladdin titled The Return of Jafar.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/hexed-magic-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/hexed-billie-doe-using-powers.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Disney's Hexed Designed Its Magic System
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning - this article contains spoilers for 'Hexed'.On Nov. 25, Disney pushed into this year's Thanksgiving festivities with the release of Hexed, the 65th movie in Walt Disney Animation Studios' history.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/i-am-legend-ending-failure-francis-lawrence/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/05/i-am-legend-2007-dog.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            19 Years Later, I Am Legend Director Apologizes for 'Failure' Ending
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Director Francis Lawrence's I Am Legend has a sequel in development, with Will Smith set to return to reprise his role. This changes the ending of the first film as it was originally released, with Lawrence now describing how the movie initially ende&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/sci-fi-shows-releasing-after-blade-runner-2099/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/blade-runner-2099_hzdzah.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Biggest Sci-Fi Shows Releasing After Blade Runner 2099
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After the release of Blade Runner 2099, which was arguably the biggest science fiction show of 2026, sci-fi fans still have eight other upcoming shows to look forward to.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/day-drinker-rating-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/08/johnny-depp-in-day-drinker.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Lionsgate's Day Drinker Starring Johnny Depp Gets R Rating for Violent Content
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Johnny Depp's 2027 Revenge Thriller Gets (Very) R-Rated Update</div>
+      
+      
+      <div class="summary">Johnny Depp is making his way back into the Hollywood mainstream, and his next movie looks to be a considerably darker affair than his recent return to theaters.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/star-trek-deep-space-nine-little-green-men-episode/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/quark-armin-shimerman-nog-aron-eisenberg-rom-max-grodenchik-star-trek-deep-space-nine-little-green-men.jpg?q=49&fit=contain&w=2000&h=1000&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How 'Star Trek: Deep Space Nine' Episode 'Little Green Men' Challenges Fan Criticisms
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Trek Fans Are Wrong About 'Deep Space Nine,' and This Episode Proves It</div>
+      
+      
+      <div class="summary">Star Trek: Deep Space Nine is not the most hated series in the Star Trek franchise – that title typically falls to Star Trek: Discovery – but it's light-years away from being the most loved by Trekkies, and there are a number of reasons why it's low &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/beast-avengers-doomsday-redesign-the-marvels-post-credit" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/beast-avengers-doomsday-design-mcu.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Beast’s Avengers: Doomsday Redesign Sparks The Marvels Post-Credit Scene Concerns
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Kelsey Grammer's Beast is returning to the MCU after a brief appearance in The Marvels, but his design looks noticeably different in Avengers: Doomsday.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/spider-man-3-new-costumes-peter-parker-next-appearance/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/tom-holland-s-peter-parker-wears-his-spider-man-mcu-costume-in-concept-art-by-ryan-meinerding.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Marvel Officially Unveils 3 New Spider-Man Costumes For Peter Parker
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel brings back three famous Spider-Man costumes for Peter Parker's return to action. Spider-Man’s classic red-and-blue costume is without a doubt one of the most easily identifiable superhero designs ever created thanks to Steve Ditko’s timeless &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/alexandra-daddario-wonder-woman-dc-casting-art/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/alexandra-daddario-with-a-mural-of-flowers-behind-her-in-a-mayfair-witches-poster.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Alexandra Daddario Suits Up As Wonder Woman In New DCU Art Following James Gunn’s DC Exit
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Alexandra Daddario dons Wonder Woman's suit in new DC Universe fan art amid franchise turmoil. Daddario has become one of the most popular picks for who could play DC's next Wonder Woman.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/gilmore-girls-chilton-choate-real-school-inspiration-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2021/10/Gilmore-girls-Real-life-Chilton-school.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gilmore Girls: The Real Life Chilton School (& Celebrities Who Went There)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Chilton school, Rory’s prep school from Gilmore Girls, is inspired by a real-life school with a long list of celebrities who went there.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/hunger-games-movies-arena-screentime-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/the-hunger-games.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Hunger Games Movie, Ranked By How Much The Hunger Games Are Actually In Them
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Given that The Hunger Games franchise is literally named for the Games themselves, they are obviously a central part of these books and movies. However, time in the arena is actually only one part of the focus.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/jason-statham-crank-high-voltage-starz-top-movie-2026-streaming-chart/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2020/10/Jason-Statham-in-Crank-High-Voltage.jpg?q=49&fit=contain&w=2100&h=1050&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jason Statham's Crank: High Voltage Dominates As Starz's #1 Movie Of 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jason Statham’s 96-Minute Action Thriller Thoroughly Dominates As Streaming’s #1 Movie Of 2026</div>
+      
+      
+      <div class="summary">Jason Statham's nearly two-decade-old action thriller has found renewed success on streaming. Known for starring in some of Jason Statham's best revenge action movies, including The Transporter, The Beekeeper, and The Expendables, the actor has built&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-grinch-who-stole-christmas-2-script-conditions-ron-howard/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/jim-carrey-as-the-grinch-being-grimacing-in-how-the-grinch-stole-christmas.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jim Carrey's The Grinch 2 Conditions Get Exciting New Update From Ron Howard
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">How the Grinch Stole Christmas director Ron Howard opens up about the Jim Carrey sequel, more than two decades after the iconic comedy’s release. For years, Universal Pictures’ fantasy comedy has been a holiday rewatch staple.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-sci-fi-books-that-have-aged-well-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/dune-part-two_i6e6dx.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Classic Sci-Fi Books That Have Aged Like Fine Wine
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">More often than not, science fiction offers the finest a literary mind can conceptualize. From mind-boggling futuristic scientific inventions and alien encounters to surveillance governments and artificial intelligence, science fiction has been a pla&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/elf-original-casting-selma-blair-jovie/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2020/01/Elf-Movie-Poster.jpg?q=70&fit=contain&w=480&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Elf's Surprising Original Casting Plans Revealed 23 Years Later: Selma Blair Considered for Jovie
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Beloved Christmas Classic’s Surprising Original Casting Plans Revealed 23 Years Later</div>
+      
+      
+      <div class="summary">An iconic modern Christmas classic almost looked completely different. Over twenty years after Elf arrived in theaters, new details about the Christmas classic have surfaced regarding Zooey Deschanel's character.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/kill-bill-james-bond-villain-warren-beatty.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2023/05/Bulworth-2-warren-beatty-900x506.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Warren Beatty Was Originally Considered for Bill in Kill Bill as a Bond-Inspired Villain
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The James Bond-Inspired Kill Bill Villain We Never Got To See</div>
+      
+      
+      <div class="summary">This revelation raises questions about how Beatty’s interpretation might have shaped the character and the overall tone of the film.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2328064/marvel-movies-watch-before-avengers-doomsday/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-marvel-movies-you-have-to-watch-before-avengers-doomsday/l-intro-1795703965.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Marvel Movies You Have To Watch Before Avengers: Doomsday
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Marvel Movies You Have To Watch Before Avengers: Doomsday Marvel Studios/Static Media Back when the world was prepping for what felt like the final film in the Marvel Cinematic Universe, "Avengers: Endgame," everyone and their MCU-loving aunt was p&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <span class="current">2</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/3.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

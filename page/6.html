@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-26 22:07 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>20 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>109 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>3 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>62 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>41 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>131 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>19 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.bgr.com/2327465/gta-6-missable-side-quests-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-gta-6-side-quests-you-probably-missed/l-intro-1795560616.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 GTA 6 Side Quests You Probably Missed
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 GTA 6 Side Quests You Probably Missed Some of the most memorable missions in "Grand Theft Auto 6" aren't ones that the game will actually ever tell you about.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/hancock-2-will-smith-script/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/02/untitled-design-18-9.jpg?q=49&fit=contain&w=1920&h=1080&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Hancock 2' Script Written by Will Smith, Director Peter Berg Confirms
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 18 Years Later, Sequel To Will Smith's $630M Action Fantasy Hit Is Finally Moving Forward</div>
+      
+      
+      <div class="summary">After years of languishing in development hell, a sequel to one of the biggest commercial hits in the multi-billion-dollar repertoire of Academy Award winner and Hollywood icon Will Smith is closer than ever.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/you-can-see-everything-digital-debut-box-office-removed-from-1400-theaters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/you-can-see-everything-2026-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nathan Fielder’s New 3-Hour A24 Movie Is an Instant Digital Hit
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">After a stellar six-week run in domestic theaters, A24's latest word-of-mouth hit of the year has officially debuted on digital, taking the number-one spot on the domestic iTunes chart.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-complete-manga-under-100-chapters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/02/uzumaki.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Complete Manga Under 100 Chapters
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Committing to a multi-hundred-chapter epic demands months of reading, yet some of the most unforgettable stories in manga achieve perfection in a fraction of that space.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/greatest-crime-movies-2000s-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2022/11/in-layer-cake.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            9 Greatest Crime Movies of the 2000s, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Ask 10 true cinephiles for the best crime movie of the 2000s, and you will likely get 10 different answers. It's what makes this particular topic so fascinating to argue about. There is a smorgasbord of intensely dramatic genre-related crime films th&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-the-mosquito-bowl-rotten-tomatoes-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/the-mosquito-bowl-header-1.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Mosquito Bowl on Netflix Divides Critics and Audiences
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's 127-Minute WWII Thriller Hailed 'Best Movie Since Saving Private Ryan' After Dividing Critics</div>
+      
+      
+      <div class="summary">A new World War II sports drama came out on Netflix on Nov. 25. The Mosquito Bowl first debuted in theaters on Oct. 30, and now, less than one month later, it's available to stream. However, critics and audiences are divided on their thoughts about t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/spiderman-brand-new-day-re-release-avengers-doomsday-scene-report/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/tom-holland-s-spider-man-surprised-in-spider-man-brand-new-day.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spider-Man: Brand New Day Reportedly Adding Avengers: Doomsday Scene In New Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Spider-Man: Brand New Day's re-release connects to the next Avengers movie. Tom Holland's Spider-Man franchise leveled up when it came back earlier this year, as Spider-Man: Brand New Day passed the $2.5 billion mark at the global box office, becomin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-mosquito-bowl-true-story-changes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/tom-francis-and-ray-nicholson-in-the-mosquito-bowl.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Mosquito Bowl's 8 Biggest True Story Changes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix's The Mosquito Bowl tells a remarkable true story that blends football with war, honoring the lives of four real men who fought in World War II.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/stranger-things-netflix-no-replacement/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/steve-robin-jonathan-and-nancy-in-stranger-things-season-5.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            One Year After Final Season, Stranger Things' Legacy Remains Unmatched
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 12 Months Later, The Harsh Truth About Netflix's Stranger Things Is Official</div>
+      
+      
+      <div class="summary">Although it has now officially been a year since Netflix’s Stranger Things began its final season, the harsh reality about the show’s legacy is only coming to light in November 2026.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/shang-chi-2-movie-update/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/article/draharrRbo2l7U3A1bdqYTBf89vhFp.jpg?q=49&fit=contain&w=1519&h=800&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Shang-Chi 2' Script Actively Being Written, Writer Confirms
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel's Best Phase 4 Movie Finally Gets Promising Sequel Update 5 Years Later</div>
+      
+      
+      <div class="summary">Marvel introduced quite a few new faces after Avengers: Endgame, though some have been waiting considerably longer than others to return to the big screen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-ocarina-of-time-layoffs/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/vintage_vice_city_pack_exclusive_looks_01-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The One Reason Nintendo and Rockstar Can Make Games Like Ocarina of Time and GTA 6
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Though wildly different in tone and scope, both Rockstar Games’ Grand Theft Auto 6 and Nintendo’s remake of The Legend of Zelda: Ocarina of Time exemplify the craft of making video games at its finest. Each one is redolent with attention to detail.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/steven-spielberg-wwii-movies-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/tom-hanks-matt-damon-edward-burns-saving-private-ryan.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 4 Steven Spielberg World War II Movies, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Steven Spielberg is one of the most prolific filmmakers of modern cinema. Across five decades, he has moved effortlessly between genres, redefining the blockbuster with Jaws and Jurassic Parkand reinventing adventure with Indiana Jones.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/blade-runner-2099-mercerism/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/movieweb-featured-image-template-2026-11-23t133120-818.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Blade Runner 2099' Finally Canonizes the Wild Book Lore That Both Movies Ignored
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! Spoilers ahead for Blade Runner 2099, Episode 6, "Kill the Killers."Blade Runner 2099 is the latest addition to the cinematic franchise that director Ridley Scott established with the first movie in 1982.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/best-80s-superhero-tv/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2024/10/24-9.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Superhero TV Shows From the 1980s That Perfectly Captured the Decade
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 1980s were gloriously campy, bringing neon colors, stylized action, and entertaining adventures to the screen. Other genres were just as colorful, but superheroes were the decade's biggest stars.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/josh-brolin-world-war-2-behind-enemy-lines-release-date-netflix-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/josh-brolin.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Josh Brolin’s WWII Miniseries Officially Premieres on Netflix in 1 Week
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Collider · Best Picture Which Oscar Best PictureIs Your Perfect Movie? Five winners · ten questions · one envelope Five Oscar Best Picture winners. Five completely different visions of what cinema can be and what it can do to you.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/percy-jackson-titans-curse-saddest-fantasy-quote-ever/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2024/02/the-titan-s-curse-book-cover.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Percy Jackson's The Titan's Curse: A Heartbreaking Quote That Still Hurts 19 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 19 Years Later, Percy Jackson's Most Heartbreaking Quote Hits Harder Than Ever</div>
+      
+      
+      <div class="summary">It's an exciting time to be a fan of Percy Jackson & the Olympians. Rick Riordan's hit fantasy book series has been a staple of most young readers' early excursions for over two decades, combining the epic ins and outs of Greek mythology with a moder&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/doctor-who-scariest-episode-listen/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/the-doctor-in-doctor-who-listen-episode.png?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Doctor Who's 'Listen' Is Still the Scariest Episode 12 Years Later
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 12 Years Later, Doctor Who’s Best Episode Is Still the Scariest Hour in TV History</div>
+      
+      
+      <div class="summary">Across its 63-year history, Doctor Who has boasted no shortage of memorable and terrifying horror episodes, including Season 3’s “Blink” and Season 2’s “Tooth and Claw.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/fantastic-four-stories-every-marvel-fan-should-read/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/03/10-best-fantastic-four-eras-ranked.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Fantastic Four Stories Every Marvel Fan Should Read
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A lot of younger readers might not be aware of how important The Fantastic Four has been to the medium of comics throughout the years.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/spider-man-brand-new-day-genre-shift-awards/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/spider-man-on-the-street-in-spider-man-brand-new-day.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Spider-Man: Brand New Day Submitted for Awards as Musical or Comedy
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Sony's $2.5 Billion Spider-Man Movie Gets Unexpected Genre Shift</div>
+      
+      
+      <div class="summary">Spider-Man: Brand New Day has not only been 2026's most successful movie of the year, but one of the highest-grossing movies ever. Ahead of the award season for this year's batch of movies, though, the MCU movie is getting a bit of a genre switch-up.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-book-endings-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/the-dark-tower-vii-2004-book-cover-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Best Book Endings of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When you read a book, you're probably going to have to dedicate a whole bunch of time to it, unless it’s a novella or unless you're just a supernaturally fast reader. If you're in the latter camp, good on you. Also, lucky you.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/ink-screening-danny-boyle-netflix-q-and-a/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/ink-jack-o-connell-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Win Tickets to Our Screening of 'Ink' and Q&A With Danny Boyle
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Hot off the press, Oscar-winning director Danny Boyle’s (Slumdog Millionaire) docudrama Ink, with Jack O’Connell (Sinners, 28 Years Later: Bone Temple) and Guy Pearce (The Brutalist, The Dog Stars), is heading to select theaters soon before debuting &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/florence-pugh-avengers-doomsday-dune-part-three-box-office-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/dune-part-3-florence-pugh.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Florence Pugh Stars in Both Avengers: Doomsday and Dune: Part Three, Out December 18
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Florence Pugh Is Officially Eyeing the Biggest Box Office Day in History in 3 Weeks</div>
+      
+      
+      <div class="summary">When Christopher Nolan's Oppenheimer and Greta Gerwig's Barbie opened on the same day in July 2023, what had initially been viewed as a rather peculiar bit of scheduling ended up being one of the best things to happen to the theatrical industry in ye&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/harrison-ford-air-force-one-leaving-peacock-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/06/air-force-one-family.jpg?q=70&fit=crop&w=825&dpr=1" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Air Force One, Harrison Ford's Action Thriller, Leaving Peacock on Nov. 30
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Harrison Ford’s 10/10 Action Thriller Is Leaving Streaming Soon</div>
+      
+      
+      <div class="summary">Harrison Ford has played plenty of memorable action heroes throughout his career, from Indiana Jones to Jack Ryan. But one of his most entertaining roles puts him in an especially unusual position: the Oval Office. In 1997's Air Force One, Ford plays&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2324264/forgotten-useful-ios-27-features/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/i-had-forgotten-about-these-5-useful-ios-27-features/l-intro-1795353683.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            I Had Forgotten About These 5 Useful iOS 27 Features
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">I Had Forgotten About These 5 Useful iOS 27 Features Apple rolled out iOS 27 on September 14, having announced it in June. After years of promises, Siri AI finally arrived and was the biggest new feature in the software update.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/legendary-racing-anime-to-watch-after-gta-6/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/04/speed-racer-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Legendary Racing Anime to Watch After Playing GTA 6
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Rockstar Games' Grand Theft Auto VI was one of the most highly-anticipated sequels of all-time. The sprawling single-player open-world action-adventure title was in production for nearly a decade and fans were beginning to wonder if it would ever get&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/todays-wordle-hints-answer-november-26-2026-puzzle-1986/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/image-psd-30.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Today's Wordle Hints & Answer - November 26, 2026 (Puzzle #1986)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are both rare and common pieces to the Wordle puzzle today, creating a mixture of ingredients that could turn out to be a confusing meal.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/tangles-movie-review/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/sarah-hugging-midge-tightly-in-their-backyard-in-tangles.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tangles Review: The Best Animated Movie Of 2026 Is The Good Kind Of Heartbreaking
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Tangles is an emotional movie, for obvious reasons – any story centered on a loved one suffering from Alzheimer's tends to strike right at the heart, even for those who haven't had a brush with it themselves. Remarkably, though, it isn't heavy.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/scarlett-johansson-jurassic-world-rebirth-leave-netflix-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/scarlett-johansson-posing-at-london-film-festival-premiere-of-ray-gunn.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jurassic World: Rebirth to Leave Netflix on December 26, 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Scarlett Johansson's $869M Sci-Fi Blockbuster Officially Being Wiped From Netflix 1 Month From Today</div>
+      
+      
+      <div class="summary">Scarlett Johansson starred in one of last year's biggest films, and the incredible science fiction thriller is set to leave Netflix in exactly one month.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/short-food-anime-binge-thanksgiving/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/kiyo-in-kyoto_-from-the-maiko-house-in-front-of-deaimon_-recipe-for-happiness-and-ramen-aka-neko-anime-featured-image.png?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Best Food Anime Fans Can Binge In One Weekend
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Food anime is best when a meal means more than what appears on the plate. A bowl of noodles might bring strangers together, while a homemade dinner gives a grieving family room to heal.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/best-family-guy-episodes-from-the-last-5-seasons/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/peter-and-joe-in-a-parody-of-top-gun-in-family-guy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Family Guy Episodes From The Last 5 Seasons
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Family Guy has recently kicked off its 25th season with the annual Halloween and Christmas specials that have become a tradition under Disney (if you can even call them specials; they’re literally just regular episodes, with the regular intro, runtim&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <span class="current">6</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/7.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

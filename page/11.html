@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-26 22:07 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>20 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>109 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>3 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>62 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>41 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>131 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>19 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://thedirect.com/article/daredevil-born-again-season-3-release-marvel-studios-mcu-disney-plus-show-window" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/daredevil-season-born-5.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Daredevil: Born Again Season 3 Official Release Window Update Confirms Marvel Studios Will Finally Deliver The MCU's First 3-Season Disney+ Show Across Three Consecutive Years
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel Studios has struggled with timeliness over the last couple of years. After Shang-Chi and the Legend of the Ten Rings hit theaters in 2021 and made a name for itself, the powers that be revealed their intention to make a sequel. Unfortunately, &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-anime-villains-hiding-in-plain-sight-all-along/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/11/reze-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Anime Villains Who Were Hiding In Plain Sight All Along
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are more than a few villains in anime who hide in plain sight. While other villains might display their villainy proudly, there are a handful who wait for the right moment to strike.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/sam-rockwell-wild-horse-nine-removed-from-1000-theaters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/wild-horse-nine.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Wild Horse Nine: Sam Rockwell's Spy Thriller Loses 1,000 Theaters
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Sam Rockwell’s New Spy Thriller Officially Says Goodbye to 1,000 Theaters</div>
+      
+      
+      <div class="summary">The last time Sam Rockwell worked with Martin McDonagh, he ended up winning an Academy Award for his performance in Three Billboards Outside Ebbing, Missouri, having previously worked with McDonagh on Seven Psychopaths.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/you-can-see-everything-the-odyssey-streaming-success-pvod-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/the-odyssey-matt-damon-scream.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Christopher Nolan's 'The Odyssey' Overtaken by A24 Documentary 'You Can See Everything' on Apple TV Store
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Christopher Nolan's $1.8B Epic Fantasy Finally Meets Its Match in A24's Surprise 2026 Hit</div>
+      
+      
+      <div class="summary">Christopher Nolan's The Odyssey is a 2026 box-office smash hit and has dominated the PVOD charts. However, it has finally met its match in A24's documentary You Can See Everything​​​​​​.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-fantasy-movie-from-every-decade-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/samwise-gamgee-lord-of-the-rings-sean-astin.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Best Fantasy Movie From Each of the Last 10 Decades
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In all forms of storytelling, fantasy is one of the most popular and enduring genres. Discussions of the greatest fantasy films usually focus on those in recent memory, but the genre's history on the big screen stretches back far further than the 21s&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-steamy-shows-adults-only-streaming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/bridgerton-ruth-gemmell-daniel-francis.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Best Steamy Shows for Adults Only You Can Stream Now
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are some TV shows that are immediate guilty pleasures because of the type of content they present. It’s not that we feel guilty because they’re bad, but because we blush when we tell our friends and family about them.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-holiday-gifts-tabletop-gamers-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/dungeons-dragons-world-of-warcraft-lich-king.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Holiday Gifts for Tabletop Gamers In 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The 2026 holiday season is fast approaching, and there are tabletop gamers who need gifts bought for them. Interest in board games, card games, and especially tabletop RPGs has exploded over the past few years, meaning there are countless options for&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/peacock-crime-thriller-series-the-good-daughter/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/nup_207236_03299-1.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Peacock's 'The Good Daughter' Crime Thriller Starring Rose Byrne and Meghann Fahy Is a Must-Watch
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Forget ‘Sharp Objects,’ Peacock’s Gripping Crime Thriller Is a Masterpiece From Start to Finish</div>
+      
+      
+      <div class="summary">In the past few years, Rose Byrne and Meghann Fahy have been two of Hollywood's most coveted actresses.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/god-of-war-faye-deborah-ann-woll-casting/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/6f708b90-f65d-4165-ace1-f8d0b342013e.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Deborah Ann Woll Cast as Faye in Prime Video's God of War Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: God Of War Officially Casts A Major Female Lead — She Deserves Her Own Spin-Off</div>
+      
+      
+      <div class="summary">Prime Video's God of War has officially found the perfect lead to play one of its major female characters. Based on Santa Monica Studio's video game series of the same name, God of War is one of the most exciting fantasy adaptations of the decade.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/star-wars-the-mandalorian-and-grogu-pop-up-storybook-release-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/star-wars_-the-mandalorian-grogu-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Disney's 'The Mandalorian Adventures with Grogu' Pop-Up Storybook Released Today
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Disney's 'The Mandalorian' Officially Returns Today</div>
+      
+      
+      <div class="summary">It's quite remarkable how much of the relationship between Pedro Pascal's Din Djarin and Grogu we've come to understand without ever hearing a word from one of them or seeing much of the other's face.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/netflix-best-anime-absolutely-deliver-on-the-hype/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/07/edward-and-alphonse-elric-in-fma-brotherhood.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Best Netflix Anime That Absolutely Deliver On the Hype
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Hype around an anime can ruin it before the first episode ends. Years of manga recognition and game fandom set a standard few adaptations reach, and fans notice every missed detail immediately.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2324209/one-ui-9-hidden-setting-block-ads-inside-apps-samsung/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/this-hidden-one-ui-9-setting-can-block-ads-inside-your-apps/l-intro-1795330826.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            One UI 9's AI Network Guard Setting Blocks Ads Inside Apps
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: This Hidden One UI 9 Setting Can Block Ads Inside Your Apps</div>
+      
+      
+      <div class="summary">This Hidden One UI 9 Setting Can Block Ads Inside Your Apps Tamer A Soliman/Shutterstock Samsung's One UI software layer that sits atop Android in the company's phones and tablets is generally liked for its nifty enhancements and features.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/kaley-cuoco-johnny-galecki-big-bang-theory.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2020/11/kaley-cuoco-sex-scenes-big-bang-theory-e1632855516912.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Kaley Cuoco Had a Crush on Johnny Galecki on The Big Bang Theory Set
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Kaley Cuoco Had A Crush On A Big Bang Theory Co-Star</div>
+      
+      
+      <div class="summary">Kaley Cuoco began crushing on Johnny Galecki on The Big Bang Theory set. By Jennifer Asencio | Published 35 seconds ago One of the main plots of The Big Bang Theory was the romance between Penny, the pretty girl, and Leonard, the nerd across the hall&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/every-black-clover-filler-episode/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/asta-in-front-of-yami-and-charmy-from-black-clover-filler-episodes.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Black Clover Filler List: Every Episode You Can Skip
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Although Yuki Tabata’s Black Clover stands as one of the major shonen series of its generation, the anime also faced its share of setbacks.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-video-games-snubbed-game-awards-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/fire-emblem-fortune-s-weave.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 5 Best Games Snubbed for the 2026 Game of the Year
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">At the end of every year, fans can come together to review the past 12 months and reflect on the greatest media they consumed, and as the most popular medium in the world, everyone has their opinions on video games.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/club-kid-rotten-tomatoes-audience-score/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/club-kid-2026-4.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Club Kid: A24's New Movie Earns 96% Audience Score on Rotten Tomatoes
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: A24's New Movie Has One Of The Year’s Best Rotten Tomatoes Audience Scores</div>
+      
+      
+      <div class="summary">A24’s latest movie has cemented itself as a hit with cinematic audiences. After starting out as a film distributor in 2012, A24 has evolved into a Hollywood powerhouse over the last decade.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dune-part-three-fan-theory-chani-scytale-shapeshifter/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/10/zendaya-as-chani-looking-up-in-dune-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Dune: Part Three Fan Theory Suggests Chani Is Actually Scytale
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Denis Villeneuve's first two Dune movies have already made some significant and fascinating changes to Frank Herbert's original novels, particularly when it comes to Zendaya's Chani.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/star-wars-maul-darth-vader-replacement-not-a-sith/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/darth-vader-and-boba-fett-in-star-wars-episode-v-the-empire-strikes-back-black-and-white.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Darth Maul: Star Wars' Darth Vader Replacement Who Didn't Need to Be a Sith
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Star Wars' Darth Vader Replacement Didn't Have To Be A Sith To Be A Badass</div>
+      
+      
+      <div class="summary">Star Wars' best Darth Vader replacement didn't need to be a Sith to be a fearsome badass. Star Wars is famous for its iconic villains, and Vader set the standard.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/studio-ghibli-lego-ideas-set-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/08/spirited-away-2001-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            LEGO Ideas Set 'The World of Studio Ghibli (Once Again!)' Gets Second Chance
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Ultimate Studio Ghibli LEGO Set Officially Gets a Second Chance</div>
+      
+      
+      <div class="summary">Between the elaborate architecture of the bathhouse in Spirited Away, the wonderfully impractical design of Howl’s moving castle, and the cozy little bakery where Kiki works, Hayao Miyazaki has spent decades giving LEGO enthusiasts an almost endless &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/locke-and-key-world-building/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/11/duncan-locke-locke-key.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'Locke & Key' Delivers a Masterclass in World-Building
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s 3-Part Fantasy Comic Adaptation Delivers a Masterclass in World-Building</div>
+      
+      
+      <div class="summary">Netflix has no shortage of fantasy series to fall into, but some feature more convincing and immersive worlds than others. World-building can make or break a fantasy story.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-wars-anakin-padme-age-difference/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/04/anakin-and-padme.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Star Wars: The Age Difference Between Anakin And Padmé, Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">One of the Star Wars prequels' most pressing tasks was establishing the parentage of Luke Skywalker and Princess Leia. Still, the original films never touched upon the identity of the twins' mother.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/marshals-south-park-success-paramount-plus-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/luke-grimes-as-kayce-dutton-on-marshals.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Yellowstone Spinoff 'Marshals' Dethroned on Paramount+ by South Park
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Taylor Sheridan's Hit Yellowstone Spinoff Dethroned on Paramount+ by 29-Year-Old Animated Comedy</div>
+      
+      
+      <div class="summary">As the second season of Taylor Sheridan’s Yellowstone spinoff continues, the series has officially been dethroned on streaming. South Park has regained its top crown from Marshals. According to FlixPatrol, the 29-year-old adult animated series is No.&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hunger-games-tv-series-first-quarter-quell/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/haymitch-abernathy-effie-trinket-and-katniss-everdeen-stand-together-in-the-hunger-games.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The First Quarter Quell Is the Perfect Story for a Hunger Games TV Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Hunger Games Already Has the Perfect Story for Its First TV Series</div>
+      
+      
+      <div class="summary">After the release of its sixth movie, The Hunger Games franchise is going from strength to strength, but it could have an even brighter future on the small screen.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/2026-anime-series-must-watch-masterpieces-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/mv5bzte5ztq1ymqtztm1oc00yzzmlthkyjetzdq4yzizyta2ndbjxkeyxkfqcgc-_v1_-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 2026 Anime Series Already Considered Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">2026 is almost over, and with the Fall 2026 season well underway, most of this year's anime has already debuted.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/percy-jackson-clarisse-mother-mystery-dior-goodjohn-response/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/adam-copeland-as-ares-standing-in-front-of-a-row-of-dead-soldiers-in-percy-jackson-season-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Percy Jackson's 21-Year-Old Ares Mystery Answered By Star
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: There are spoilers ahead for Percy Jackson and the Olympians season 3, episodes 1 and 2.EXCLUSIVE: A Percy Jackson and the Olympians mystery gets an answer 21 years later.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-mindhunter-season-3-cancellation-reason-david-fincher/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/mindhunter.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            David Fincher Officially Reveals Why Netflix Cancelled ‘Mindhunter’
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">For all the horrific things that were discussed over the course of two seasons of Mindhunter, some of the best scenes in the entire series involved two FBI agents sitting in a room talking to somebody.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/games-play-before-kicking-the-bucket/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/gta-6-jason-and-lucia.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Video Games To Play Before Kicking the Bucket
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Video games were once a niche medium that only the nerdiest of fans would play, but over the years, they have become a global sensation that almost everyone has experienced at some point.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/forgotten-turn-based-rpgs-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/radiant-historia-perfect-chronology-nintendo-3ds-art-banner.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Forgotten Turn-Based RPGs That Deserve Another Look
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While some gamers may prefer action RPGs, there's no shortage of iconic RPGs with turn-based combat. Classic games like Final Fantasy 7 and Chrono Trigger are still beloved by fans today, and modern titles like Persona 5 and Clair Obscur prove that t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-dark-academia-fantasy-books-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/the-atlas-six-by-olivie-blake-book-cover-banner.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest Dark Academia Fantasy Books of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The increased interest in fantasy literature has brought about several new sub-genres, like cozy narratives and romantasy.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/ufotable-witch-on-the-holy-night-success/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/02/demon-slayer-location.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ufotable's 'Witch on the Holy Night' Movie Drives Game to Record Player Count
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Demon Slayer Studio's New Anime Movie Drives Fantasy Classic to Record-Breaking Success</div>
+      
+      
+      <div class="summary">Studio Ufotable (Demon Slayer: Kimetsu no Yaiba) has spearheaded the comeback of a hit visual novel initially released in 2012. On Nov.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <span class="current">11</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/12.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

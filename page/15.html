@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-26 22:07 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>20 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>109 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>3 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>62 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>41 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>131 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>19 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.polygon.com/avengers-doomsday-patrick-stewart-tribute/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/patrick-stewart-x-men.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Avengers: Doomsday' Is Making Sure Patrick Stewart Gets a Proper Sendoff
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Patrick Stewart's final on-screen performance will arrive in December's Avengers: Doomsday, and Marvel is making sure the late actor receives a fitting farewell.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/best-ps5-playstation-5-games/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/jason_and_lucia_20-1-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 25 Best PS5 Games in 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">What are the best games on PlayStation 5? Hard as it is to believe, the PS5 is — by Sony's own admission — already well past the halfway point of its life-cycle. (It's even time to start thinking about PS6.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/brandon-sanderson-stormlight-archive-books-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/the-stormlight-archive-wind-and-truth.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Every Book in Brandon Sanderson's 'The Stormlight Archive' Series, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Stormlight Archive is an ongoing series by Brandon Sanderson, which exists in his shared literary universe known as the Cosmere. The premise of the Cosmere is that each series or stand-alone story takes place on its own planet within the same gal&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2328017/china-pushes-back-fcc-telecom-ban/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/the-latest-fcc-ban-is-going-after-scam-callers-heres-why-china-is-pushing-back/l-intro-1795618540.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Latest FCC Ban Is Going After Scam Callers - Here's Why China Is Pushing Back
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Latest FCC Ban Is Going After Scam Callers - Here's Why China Is Pushing Back Ao Zaa Studio/Shutterstock The Federal Communications Commission (FCC) is once again cracking down on Chinese telecommunications companies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/how-to-rob-a-bank-i-play-rocky-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/06/mv5bnmq2zdbkymitmdflni00zdy4lwe1ogitmte2njc5mjm2ztgyxkeyxkfqcgc-_v1_.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How to Rob a Bank Stumbles at Box Office Against Sylvester Stallone's I Play Rocky
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 'John Wick' Director's Action Thriller Officially Stumbles at Box Office Against New Sylvester Stallone Movie</div>
+      
+      
+      <div class="summary">Rarely does a single studio find itself on both sides of a major box-office upset. This month, a big-budget spectacle packed with household names went head-to-head with a modest production starring a relative newcomer, and heading into Thanksgiving, &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/clint-eastwood-favorite-movies/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/10/clint-eastwood.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 6 Best Clint Eastwood Movies, According to Clint Eastwood
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">In October 2010, as Hereafter was about to open, the AP asked Clint Eastwood to name his five favorite films that he'd directed. He named six. He had over 30 features to pick from by then, beginning with Play Misty for Me in 1971 and running through &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/cupertino-cast-jon-cryer-images-cbs-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/3259915_cupo_s1_1264b-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jon Cryer Returns to CBS for Guest Role in Legal Thriller 'Cupertino'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 10 Years Later, ‘Two and a Half Men’ Star Officially Returns to CBS</div>
+      
+      
+      <div class="summary">Jon Cryer has continued to pop up all around television in the eleven-plus years since his Emmy-winning run on Two and a Half Men came to an end.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/blade-runner-2099-finale-meaning-michelle-yeoh-hunter-schafer/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/blade-runner-2099-hunter-schafer-michelle-yeoh.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hunter Schafer Breaks Down the Meaning Behind 'Blade Runner 2099's Final Scenes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's Note: The following contains spoilers for the entire season of Blade Runner 2099.Blade Runner 2099 is officially out — the thrilling eight-episode series from creator/showrunner Silka Luisa drops today on Prime Video.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/lotr-rings-of-power-write-off-original-characters/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/rings-of-power-season-3.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Rings of Power Season 3 Drops Original Characters to Focus on Tolkien Lore
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Amazon Just Pulled the Plug on The Rings of Power’s Original Format After 4 Years</div>
+      
+      
+      <div class="summary">The third season of Prime Video's The Lord of the Rings: The Rings of Power recently concluded with the episode "The Doom of Men." Though the series has been mired in controversy from the moment of its announcement, it has carried on and steadily imp&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/eddie-murphy-tower-heist-action-comedy-netflix-success-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/josh-ben-stiller-and-slide-eddie-murphy-in-tower-heist.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tower Heist Becomes Global Netflix Hit 15 Years After Release
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Eddie Murphy's 104-Minute Ocean's Eleven Replacement Is a Global Netflix Hit 15 Years Later</div>
+      
+      
+      <div class="summary">Eddie Murphy is a talented and prolific actor who rose to prominence thanks to his tenure as a Saturday Night Live cast member before starring in iconic movies like Trading Places, Beverly Hills Cop, Coming to America, and more.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/avengers-doomsday-trailer-steve-rogers-best-quote/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/doomsday-steve.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            This Avengers: Doomsday's Line Is Already One of the MCU's Greatest Quotes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Two and a half years after the shocking and divisive reveal that Robert Downey Jr. had been cast as Doctor Doom, the wait for Avengers: Doomsday is nearly over. Disney recently released one last trailer for Doomsday, which is set to make its way to t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/from-tv-stephen-king-comparisons-7-billion-minutes-streaming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/b21fbdee-a275-40c5-9f25-a499b6bf4b37.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            From Nears 7 Billion Minutes Viewed Ahead Of 2027 Return
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Stephen King-Like Horror Series Nears 7 Billion Minutes Viewed Ahead Of 2027 Return</div>
+      
+      
+      <div class="summary">A horror series is scaring its way up streaming charts. There have been many successful horror TV shows in recent years, with HBO Max's IT: Welcome to Derry, Peacock's Crystal Lake, Prime Video's Carrie, and more finding success on different streamin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/avengers-doomsday-box-office-opening/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/chris-hemsworth-as-thor-in-avengers-doomsday.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            'Avengers: Doomsday' Box Office Already Breaking Records 3 Weeks Ahead of Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">2026 has been a good year for the box office so far, with five movies having already grossed over $1 billion. At least two more movies could cross crossing that threshold this year: Avengers: Doomsday and Dune: Part Three, which both open in theaters&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/fortnite-pirate-shop-access-token-cheaters-crack-down/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/10/one-piece-luffy-and-zoro.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fortnite Cracks Down on Pirate Shop Token Cheaters and Teammates
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With just over a week before Fortnite Treasure Hunters comes to an end, desperation has set in, as players begin to lose hope of finding the Pirate Shop Access token. This is the most coveted item in Fortnite history because it grants up to 28 days o&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/best-peanuts-charlie-brown-episodes-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/a-charlie-brown-thanksgiving-2.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 'Peanuts' Episodes That Are 10/10 Animated Masterpieces, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Peanuts has outlasted almost every cartoon on television, and its holiday specials are its bread and butter. Thanksgiving is Thursday, and A Charlie Brown Thanksgiving is streaming only on Apple TV this year, with no traditional linear broadcast airi&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/anime-better-dungeons-than-solo-leveling/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/02/wistoria-wand-and-sword-character-lihanna-owenzaus-casts-a-gold-light-magic-spell-with-one-hand.jpeg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Anime With Better Dungeons Than Solo Leveling
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Solo Leveling is one of the most celebrated action fantasies of modern times. Dungeon crawling plays a major role in the series but, even though the action scenes that take place within them are simply outstanding, Solo Leveling's dungeon are rather &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/bad-lieutenant-tokyo-release-date/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/sharedimages/2026/09/bad-lieutenant-tokyo-poster.jpg?q=49&fit=contain&w=480&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Bad Lieutenant: Tokyo Gets March 5, 2027 Release Date
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 17 Years Later, Nicolas Cage's R-Rated Action Thriller Franchise Confirms Sequel Release Date</div>
+      
+      
+      <div class="summary">Published Nov 25, 2026, 2:42 PM EST Marcos Melendez is an entertainment journalist who has been active since 2017. His past work can be read on Collider, Escapist, ScreenRant, CBR, and Full Circle Cinema. He is currently a News Editor for MovieWeb.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/kevin-feige-marvel-most-important-franchises-2026" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/kevin_feige_marvel_studios_.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Kevin Feige Reveals Marvel’s 3 Most Important Franchises In 2026
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Marvel Studios president Kevin Feige has revealed an unsurprising list of Marvel's most important franchises. The Marvel brand has always left a lasting impression on popular culture through its characters, but some have made a bigger mark than other&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-gentlemen-morocco-filming-season-3-change-show/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/untitled-design-2026-11-25t130204-857.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Gentlemen Season 3 Goes Global, Production Started
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Gentlemen Season 3 Update Will Change The Show Forever</div>
+      
+      
+      <div class="summary">This article contains spoilers for season 2 of The Gentlemen. Guy Ritchie's best crime movies have made him a creative powerhouse, dominating the gangster genre through his gritty crime comedies like Snatch and Lock, Stock, and Two Smoking Barrels.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-rookie-universe-abc-wednesday-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/10/the-rookie-nathan-fillion-1-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nathan Fillion’s ‘The Rookie’ Officially Returns With a Major Schedule Change
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Since its 2018 premiere, ABC's hit procedural The Rookie has performed well for the network. The series, led by Nathan Fillion, was an immediate hit, thanks to its premise of new beginnings and personal reinvention, no matter the challenges along the&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/quentin-tarantino-the-further-misadventures-of-cliff-booth-roundtable-interview-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/quentin-tarantino-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Announces Roundtable Companion Piece For The Further Mis-Adventures of Cliff Booth
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Officially Announces Companion Piece To Quentin Tarantino's New R-Rated Thriller</div>
+      
+      
+      <div class="summary">The Further Mis-Adventures of Cliff Booth is getting a companion piece. Serving as a spiritual sequel to Once Upon a Time in Hollywood (2019), the upcoming film hails from director David Fincher, with a script by Quentin Tarantino.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/mistborn-movie-script-timeline-setback-brandon-sanderson/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/07/mistborn-steve-argyle-endpaper-vin.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Brandon Sanderson’s Mistborn Movie Hits Writing Timeline Setback In New Update
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Brandon Sanderson's Mistborn script is taking longer than expected. Sanderson's seven-part fantasy novel series mixing everything from dystopian rebellion to magical wars and detective tales has been one of the most acclaimed and bestselling of recen&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-chosen-season-6-prime-video-streaming-success-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/02/the-chosen-season-5-paras-patel.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video’s ‘The Chosen’ Season 6 Surges to No. 1
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Prime Video is second only to Netflix in the streaming world when it comes to overall subscriber numbers, and it didn’t achieve that status without some great movies and shows along the way.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/war-for-the-planet-of-the-apes-hbo-max-streaming-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/01/matt-reeves.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Matt Reeves' 'Dawn of the Planet of the Apes' Returns to HBO Max
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 9 Years Later, Matt Reeves’ Sci-Fi Masterpiece Returns to Streaming</div>
+      
+      
+      <div class="summary">In the last few years, Matt Reeves has become widely known and celebrated as a director thanks to his work on The Batman starring Robert Pattinson.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/gta-6-standout-vehicles-key-lento-locations-list-grand-theft-auto/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/gta-6-standout-vehicles-key-lento-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All Key Lento standout vehicles in GTA 6
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There are 12 standout vehicles in Key Lento in Grand Theft Auto 6, ranging from an incredibly festive boat to a pizza delivery car, and finding them all is essential if you want to 100% complete the game.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/oceans-eleven-1960-2001-movies-leaving-hbo-max-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/george-clooney.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ocean's Eleven, Twelve, and Thirteen Leaving HBO Max
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 25 Years Later, George Clooney’s Near-Perfect Heist Classic Is Officially Leaving HBO Max</div>
+      
+      
+      <div class="summary">Brad Pitt has been booked and busy in the last few years, especially with his new survival thriller, Heart of the Beast (directed by David Ayer).</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2328093/tom-hardy-forgotten-dark-supernatural-series-streaming-free-taboo/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/tom-hardys-forgotten-dark-supernatural-series-is-streaming-for-free/intro-1795620614.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Tom Hardy's 'Taboo' Is Now Streaming for Free on Pluto TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Tom Hardy's Forgotten Dark Supernatural Series Is Streaming For Free</div>
+      
+      
+      <div class="summary">Tom Hardy's Forgotten Dark Supernatural Series Is Streaming For Free BBC Tom Hardy's gritty crime drama "MobLand" might've just finished its second season, but diehard fans of the actor have been longing for another show to return ever since it left &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/rings-of-power-season-3-finale-foreshadows-gandalf-two-towers-resurrection/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/rings-of-power-gandalf.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘The Rings of Power’ Just Foreshadowed Gandalf’s Most Powerful Lord of the Rings Scene
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Editor's note: The below contains spoilers for The Rings of Power Season 3 finale. Although The Lord of the Rings: The Rings of Power is set explicitly in the Second Age of J.R.R.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/video/josephine-channing-tatum-worried-about-his-young-co-star-set-stories/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/collider-set-stories-josephine-01.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Josephine: Channing Tatum Worried About His Young Co-Star | Set Stories
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Channing Tatum, Gemma Chan, Mason Reeves, and writer-director Beth de Araújo take Collider behind the scenes of Josephine (2026), sharing how they balanced the film's challenging subject matter with creating a positive experience for their young star&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/most-exciting-martial-arts-movies-all-time-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/enter-the-dragon-1973-6.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 10 Most Exciting Martial Arts Movies of All Time, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">If you like seeing people fighting but knowing it’s fictional and they're (probably) not getting too hurt, or generally consider yourself a fan of action movies, and you're not familiar with the martial arts genre… like, what are you doing? Watch mor&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <span class="current">15</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/16.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

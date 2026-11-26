@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-26 22:07 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>20 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>109 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>3 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>62 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>41 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>131 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>19 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://collider.com/books-2010s-officially-classics-today/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/pachinko-book-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            9 Books From the 2010s That Are Officially Classics Today
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">What makes a book a classic? It's a text that has stood the test of time for at least a few years and has proven to be substantially influential and widely celebrated over time.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/legend-of-zelda-master-collection-toon-link-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/05/a-surprised-link-and-a-screaming-ganondorf-from-zelda-the-wind-waker.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Toon Link Appears in 'The Legend of Zelda: Master Collection' Card Set
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Legend Of Zelda's Toon Link Officially Returning In New Collection</div>
+      
+      
+      <div class="summary">Toon Link is one of the most iconic characters in gaming history, despite it being just one of Link's various looks over the course of The Legend of Zelda franchise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/10-classic-books-worth-reading-over-and-over/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2026/11/pride-and-prejudice.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Classic Books Worth Reading Over and Over
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Most of us treat classic literature like a checklist to conquer in high school or college and then never touch those books again. You power through the plot, underline a few quotes for a term paper, and move on to whatever else is new.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/yellowstone-desperate-housewives-replacement-series-hunting-wives-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/the_hunting_wives_n_s2_e2_00_33_15_11rc_c.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'The Hunting Wives' Is a Steamy Texas Thriller with Two Seasons
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Yellowstone’ Meets ‘Desperate Housewives’ in Netflix’s Ambitious 2-Season Thriller</div>
+      
+      
+      <div class="summary">Of all the things Sophie O’Neil (Brittany Snow) could have packed for her first night out in East Texas, the one that might have spared her a great deal of trouble was a sanitary pad.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/superheroes-steal-other-heroes-origins/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/line-11-25-4b-origin-swap-dick-grayson-captain-marvel-header.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Superheroes Steal Other Heroes' Origins
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Welcome to The Line it is Drawn! So, every week, I post a topic here. You reply to it on the CSBG Twitter page (just write @csbg with your reply), our artists will each pick one of your suggestions and I will post their drawings based on your suggest&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/fantasy-books-better-than-harry-potter/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/2025/10/impossible-creatures-key-art.jpeg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            6 Fantasy Books Better Than Harry Potter
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There's no denying that Harry Potter continues to be a phenomenon. After seven bestsellers translated into multiple languages, years of extravagant midnight release parties, eight big-budget films, a stage play, and theme parks, there's still enormou&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/stopmotion-horror-streaming-tubi-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/stopmotion.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Horror Film 'Stopmotion' Streams Free on Tubi Starting Dec. 1
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The 'Most Original and Weirdest Horror Film of the Decade' Gets Free Streaming Home</div>
+      
+      
+      <div class="summary">December might be part of the holiday season, but big horror fans may still prefer to watch more horror flicks rather than typical Christmas movies. One good option that's heading to Tubi next month is a highly acclaimed horror flick that largely wen&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hulu-best-psychological-thriller-the-path-series/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/11/aaron-paul.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Hulu's 'The Path' Is a 36-Episode Psychological Thriller Starring Aaron Paul
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Hulu’s 36-Episode Psychological Thriller Series Is Perfect From Start to Finish</div>
+      
+      
+      <div class="summary">With three Emmy wins for his role as Jesse Pinkman, Aaron Paul confirmed his pop culture icon status by starring in Breaking Bad. Even though Vince Gilligan initially intended to kill Jesse off, Paul’s inherent likability created the glue that held t&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/severance-apple-tv-episodes-perfect-from-start-to-finish/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/574eac17-433f-41db-b53a-a251cf907cfd.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 19 Episodes of Apple TV's 'Severance' Are Perfect From Start to Finish
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: All 19 Episodes Of Apple TV's Sci-Fi Thriller Masterpiece Are Perfect From Start To Finish</div>
+      
+      
+      <div class="summary">The opening hook can make or break a sci-fi series. If a sci-fi show does not introduce a compelling concept in its opening episodes, it is almost destined to fail. However, a gripping opening hook is not enough to keep viewers invested in the long r&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-peripheral-william-gibson-adaptation-almost-perfect/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/01/android-in-the-peripheral.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's 'The Peripheral' Was Cancelled Before Reaching Its Potential
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Prime Video's 8-Part William Gibson Adaptation Was Robbed Of Its Chance To Be A 10/10 Sci-Fi Series</div>
+      
+      
+      <div class="summary">Prime Video had a short-lived William Gibson cyberpunk sci-fi series that had all the elements to develop into a 10/10 show, but its potential was never realized onscreen. Prime Video's TV show catalog features quite a few notable sci-fi series.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/henry-cavill-highlander-reboot-james-bond-role-comparison/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/highlander-reboot-henry-cavill-first-look.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Henry Cavill's Highlander Reboot Will Be A Better Role Than James Bond
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">With the official announcement that Robert Pattinson will be the next James Bond, fans clamoring for Henry Cavill to take on the iconic role have been met with disappointment.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/unplayable-ps1-games-that-once-considered-masterpieces/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/05/crash-bandicoot-on-the-cover-to-his-original-playstaion-game.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Unplayable PS1 Games That Were Once Considered Masterpieces
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The original PlayStation made a big splash and took the world by storm when it first launched in 1994. It was neither the first 32-bit console nor the first to use CDs instead of cartridges, but it was the first to get 32-bit gaming and CD-ROM techno&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-rings-of-power-season-3-episodes-7-8-highest-rated-imdb-record/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/charlie-vickers-sauron-looking-in-awe-while-raising-celebrimbor-s-hammer-to-mount-doom-in-the-lord-of-the-rings-the-rings-of-power-season-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Rings Of Power Season 3's Final Episodes Set All-Time Series IMDb Record
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: There are spoilers ahead for The Lord of the Rings: The Rings of Power season 3, episodes 7 and 8.The Lord of the Rings: The Rings of Power season 3 sets the one record to rule them all.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/gurren-lagann-blu-ray-black-friday-sale/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/gurren-lagann-legendary-mech-anime.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Gurren Lagann Blu-ray Box Set Gets Massive Discount Ahead of Black Friday Sale
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Legendary Award-Winning Mech Anime Gets Massive Discount Ahead Of Black Friday Sale</div>
+      
+      
+      <div class="summary">The holidays are approaching, and anime fans may want to stay alert to stellar new deals, such as one particularly iconic mecha anime's Blu-ray box set getting a killer discount.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/netflix-series-top-boy-gangster-thriller-masterpiece-binge-watch/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/ashley-walters-as-dushane-in-top-boy-season-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            All 32 Episodes of Netflix's 'Top Boy' Are Perfect From Start to Finish
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: All 32 Episodes Of Netflix’s Gangster Thriller Masterpiece Are Perfect From Start To Finish</div>
+      
+      
+      <div class="summary">All 32 episodes of Netflix's gangster thriller masterpiece deliver gripping crime drama, unforgettable characters, and relentless suspense from start to finish.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hbo-harry-potter-bigger-fantasy-than-game-of-thrones/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/10/hbo-max-new-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Harry Potter HBO Reboot Set to Challenge Game of Thrones' Reign
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: John Lithgow's New HBO Fantasy Show Is Already Bigger Than Game of Thrones in Every Way</div>
+      
+      
+      <div class="summary">A new king may be emerging in the fantasy television scene. HBO Max's forthcoming reboot of the Harry Potter franchise promises a new, in-depth adaptation of J.K. Rowling's iconic tale of wizardry and magic.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/calvin-and-hobbes-comics-societal-commentary/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/01/10-calvin-and-hobbes-comics-that-say-a-lot-about-society.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Calvin and Hobbes Comics That Say A Lot About Society
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">When Bill Watterson worked on the Calvin and Hobbes comic strip, he was always willing to defy convention. In a simple story about a six-year-old boy and his stuffed tiger, he explored topics that seemingly never fit the premise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://thedirect.com/article/netflix-minecraft-series-jack-black-sequel-movie" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://images.thedirect.com/media/article_full/1000014665.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">The Direct</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's Minecraft Series Hits Major Milestone Ahead Of Jack Black's Sequel Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix's Minecraft animated series officially hit a major milestone with a recent update. It's been over 2 years since Netflix announced in May 2024 that it is teaming up with Mojang Studios to produce a Minecraft animated show.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2324139/thin-laptop-disadvantages/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/4-disadvantages-of-using-thin-laptops/l-intro-1795289821.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            4 Disadvantages Of Using Thin Laptops
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">4 Disadvantages Of Using Thin Laptops Tada Images/Shutterstock Thin and light laptops are generally appreciated for their ease of portability and minimal aesthetic.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-hunting-wives-season-1-recap-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2025/07/screenshot-2025-07-24-at-5-04-03-pm.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            ‘The Hunting Wives’ Season 1 Recap: What To Remember Before Netflix’s Steamy Thriller Returns
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Netflix’s The Hunting Wives is one of the streamer's most addictive series: a soapy, raunchy romp that is delightfully unhinged from start to finish.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/jjk-characters-who-can-defeat-gojo-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/01/25699263.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Only 3 JJK Characters Can Defeat Satoru Gojo
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Satoru Gojo is one of the most popular characters in JJK, with one scene-stealing moment after another. From the moment he fought a Sukuna-possessed Yuji at the start of the series, he proved he was a force to be reckoned with.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/transformers-the-movie-40th-anniversary-upper-deck-trading-card-set/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/08/transformers-the-movie-40th-anniversary-blu-ray.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Transformers: The Movie Celebrates 40th Anniversary With Ultra-Rare 1-of-1 Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">A brand-new The Transformers: The Movie 40th anniversary release is just around the corner, and fans won't want to miss their chance to pick up some official 1-of-1 collectibles.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/nicolas-cage-fast-times-miserable.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2025/09/fasttimes_0008_Layer-1.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nicolas Cage Auditioned for 'Fast Times at Ridgemont High' but Was Passed Over
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The ’80s Comedy Classic That Made Nicolas Cage Miserable</div>
+      
+      
+      <div class="summary">Cameron Crowe, the mastermind behind the screenplay, initially envisioned David Lynch directing the film. But fate led him to Amy Heckerling, a punk-rock enthusiast fresh out of the American Film Institute.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/agatha-christie-books-based-real-crimes/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/pale-horse-rufus-sewell-1.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Agatha Christie Books Inspired by Real Crimes
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Agatha Christie did not write true crime. Instead, her talent was imagining complex and compelling puzzles surrounding a murder.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/expanse-franchise-2027-return-telltale-prequel/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/06/7821135c-3b94-4c9a-8eb6-7fff3f0c32c2.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Expanse Franchise Officially Returns 2027 With 6-Part Prequel
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Expanse remains one of the most compelling science fiction franchises of the 21st century, and despite the television series coming to an end in 2022, it feels like we've barely scratched the surface of its incredible universe. Based on the bests&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/person-of-interest-better-westworld-jonathan-nolan-shows/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/westworld_zctmyy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Person of Interest: Jonathan Nolan's 103-Episode Sci-Fi Series That Improves on Westworld
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jonathan Nolan's 103-Episode Sci-Fi Series Is Westworld But Better</div>
+      
+      
+      <div class="summary">Jonathan Nolan has enjoyed a hugely successful career, helping shape some of modern sci-fi’s most ambitious films and TV shows. However, among his many achievements sits a particularly frustrating misfire: HBO’s Westworld.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/hardest-80s-games-ever-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/ninja-gaiden-nes-box-art.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Games That Are Officially the Hardest of the '80s, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Games were much harder on average during the '80s, and the most difficult retro games of the decade are downright brutal. Many console games of the era originated in arcades, and tested players' skills at every turn even when they weren't trying to g&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/most-unwatchable-90s-anime-cartoon-network/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/04/detective-conan-looking-inquisitive-in-detective-conan-the-darkest-nightmare-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Most Unwatchable '90s Anime That Aired on Cartoon Network
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Cartoon Network gave Americans a front row ticket to Japanese anime. Toonami and Adult Swim helped air a variety of Japanese shows, from magical-girl adventures to violent science-fiction experiments.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/jake-gyllenhaal-apple-tv-presumed-innocent-season-2-absence/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/cb4b5b40-1cb6-417f-bf2d-7e545bb926ad.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Presumed Innocent Season 2 Returns Without Jake Gyllenhaal, Starring Rachel Brosnahan
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jake Gyllenhaal’s Apple TV Thriller Officially Returns Without Him — But That’s OK</div>
+      
+      
+      <div class="summary">Jake Gyllenhaal served as the lead in the first season of a hit crime thriller on Apple TV. The actor even went on to win his first Primetime Emmy for his performance in the show. However, in the same series' season 2, Jake Gyllenhaal has now been re&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/greatest-ttrpgs-let-you-play-as-spies/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/spycraft-d20-system-official-espionage-roleplaying-game-book-cover.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Greatest TTRPGs That Let You Play as Spies
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Tabletop role-playing games are always a fun way to spend an afternoon with friends, as they allow anyone to play out any number of scenarios in a fictional setting. One of the most fascinating variants of TTRPGs is the one that lets players step int&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <span class="current">10</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/12.html">12</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/11.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>

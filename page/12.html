@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickbust — Rewritten Headlines</title>
+<meta name="description" content="Clickbait-free headlines from your favourite sites">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="HrPazGiSD1g-kaGJxhzL6YpOUAYGMlK4_nvy_uz4QAo" />
+<link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=cybr.fi&sz=32">
+
+<!-- Google Discover / News meta -->
+<meta property="og:title" content="Clickbust — Rewritten Headlines">
+<meta property="og:description" content="Clickbait-free headlines from your favourite sites">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://clickbust.cybr.fi">
+<meta property="og:image" content="https://clickbust.cybr.fi/assets/og-default.svg">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Clickbust — Rewritten Headlines" href="https://clickbust.cybr.fi/feed.xml">
+
+<!-- JSON-LD Site schema for Google Discover -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Clickbust \u2014 Rewritten Headlines",
+  "url": "https://clickbust.cybr.fi",
+  "description": "Clickbait-free headlines from your favourite sites",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Paul Murphy",
+    "url": "https://clickbust.cybr.fi",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://clickbust.cybr.fi/assets/og-default.svg"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://clickbust.cybr.fi?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    border-bottom: 1px solid #1e1e2e;
+    margin-bottom: 30px;
+  }
+  header h1 { font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  header p { color: #888; font-size: 0.9rem; }
+  .nav-links { margin-top: 12px; }
+  .nav-links a {
+    color: #7c5cfc;
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin: 0 8px;
+  }
+  .nav-links a:hover { text-decoration: underline; }
+  .preferred-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #7c5cfc;
+    border: 1px solid #3a3a5c;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .preferred-source:hover {
+    border-color: #7c5cfc;
+    background: rgba(124, 92, 252, 0.08);
+  }
+  .preferred-source .icon { font-size: 1rem; }
+  .preferred-source .hint {
+    display: block;
+    color: #666;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 1px;
+  }
+  .article-card {
+    display: block;
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .article-card:hover { border-color: #7c5cfc; }
+  .article-card .card-inner {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .article-card .card-thumb {
+    flex-shrink: 0;
+    width: 160px;
+    height: 100px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #2a2a4a;
+  }
+  @media (max-width: 600px) {
+    .article-card .card-inner { flex-direction: column; }
+    .article-card .card-thumb { width: 100%; height: auto; aspect-ratio: 16/9; }
+  }
+  .article-card .card-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .article-card .card-body { flex: 1; min-width: 0; }
+  .article-card h2 { font-size: 1.15rem; margin-bottom: 8px; line-height: 1.4; }
+  .article-card h2 .clickable-title { color: #e0e0e0; }
+  .article-card p.meta {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+  }
+  .article-card p.meta .site-tag {
+    display: inline-block;
+    background: #2a2a4a;
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    font-size: 0.75rem;
+  }
+  .article-card .summary {
+    color: #999;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .article-card .clickbait-badge {
+    display: inline-block;
+    background: #3a1a1a;
+    color: #ff6b6b;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .original-title {
+    color: #666;
+    font-size: 0.8rem;
+    text-decoration: line-through;
+    margin-top: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #555;
+    font-size: 0.8rem;
+  }
+  footer a { color: #7c5cfc; text-decoration: none; }
+  .stats {
+    text-align: center;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .site-card {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #2a2a4a;
+    text-align: center;
+    transition: border-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .site-card:hover { border-color: #7c5cfc; }
+  .site-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .site-card h2 { font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .site-card p { color: #888; font-size: 0.85rem; }
+  .recent-section h3 {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+  .pagination a, .pagination span {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #7c5cfc;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .pagination a:hover { background: rgba(124, 92, 252, 0.1); }
+  .pagination .current {
+    background: #7c5cfc;
+    color: #fff;
+    font-weight: 600;
+  }
+  .pagination .disabled { color: #444; pointer-events: none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clickbust — Rewritten Headlines</h1>
+  <p>Clickbait-free headlines from your favourite sites</p>
+  <div class="nav-links">
+    <a href="https://clickbust.cybr.fi/notes/">Notes</a>
+    <a href="https://clickbust.cybr.fi/about.html">About</a>
+  </div>
+  <div style="margin-top: 16px;">
+    <a href="https://google.com/preferences/source?q=clickbust.cybr.fi" class="preferred-source" target="_blank" rel="noopener">
+      <span class="icon">+</span>
+      <span>
+        Add Clickbust as preferred source
+        <span class="hint">Follow clickbust.cybr.fi in Google Discover to get clickbait-free headlines</span>
+      </span>
+    </a>
+  </div>
+</header>
+
+<div class="stats">
+  30 articles shown · 500 total · 9 sites · Generated 2026-11-26 22:07 UTC
+</div>
+
+<div class="site-grid">
+
+  <a href="/bgr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.bgr.com&sz=64" alt="" width="48" height="48">
+    <h2>BGR</h2>
+    <p>20 articles</p>
+  </a>
+
+  <a href="/cbr.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.cbr.com&sz=64" alt="" width="48" height="48">
+    <h2>CBR</h2>
+    <p>107 articles</p>
+  </a>
+
+  <a href="/collider.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=collider.com&sz=64" alt="" width="48" height="48">
+    <h2>Collider</h2>
+    <p>109 articles</p>
+  </a>
+
+  <a href="/giant-freakin-robot.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.giantfreakinrobot.com&sz=64" alt="" width="48" height="48">
+    <h2>Giant Freakin Robot</h2>
+    <p>8 articles</p>
+  </a>
+
+  <a href="/looper.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.looper.com&sz=64" alt="" width="48" height="48">
+    <h2>Looper</h2>
+    <p>3 articles</p>
+  </a>
+
+  <a href="/movieweb.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.movieweb.com&sz=64" alt="" width="48" height="48">
+    <h2>Movieweb</h2>
+    <p>62 articles</p>
+  </a>
+
+  <a href="/polygon.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=www.polygon.com&sz=64" alt="" width="48" height="48">
+    <h2>Polygon</h2>
+    <p>41 articles</p>
+  </a>
+
+  <a href="/screenrant.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=screenrant.com&sz=64" alt="" width="48" height="48">
+    <h2>ScreenRant</h2>
+    <p>131 articles</p>
+  </a>
+
+  <a href="/the-direct.html" class="site-card">
+    <img src="https://www.google.com/s2/favicons?domain=thedirect.com&sz=64" alt="" width="48" height="48">
+    <h2>The Direct</h2>
+    <p>19 articles</p>
+  </a>
+
+</div>
+
+<div class="recent-section">
+<h3>Recent Articles</h3>
+
+<main>
+
+<a href="https://www.looper.com/2328914/the-lord-of-the-rings-the-rings-of-power-season-3-ending-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.looper.com/img/gallery/the-lord-of-the-rings-the-rings-of-power-season-3-ending-explained/l-intro-1795655894.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Looper</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The Lord Of The Rings: The Rings Of Power Season 3 Ending Explained
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Lord Of The Rings: The Rings Of Power Season 3 Ending Explained Static Media Contains spoilers for "The Lord of the Rings: The Rings of Power" Season 3, Episodes 7 and 8 — "Orodruin" and "The Doom of Men" "The Lord of the Rings: The Rings of Powe&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/guy-ritchie-mobland-season-3-cast-gregg-sulkin/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/06/mobland-season-1-tom-hardy.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            MobLand Season 3 Casts Gregg Sulkin in Recurring Role
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Guy Ritchie and Tom Hardy’s Hit Crime Series Officially Casts Its First New Character</div>
+      
+      
+      <div class="summary">Editor's Note: The following contains spoilers for 'MobLand' Season 2Given where we left Tom Hardy at the end of the second season of MobLand, the last thing Harry Da Souza probably needs in his life is more people to contend with.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/spy-x-family-best-manga-covers-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2025/05/it-was-getting-spy-x-family-numbers-official-translator-reveals-why-a-shonen-jump-sci-fi-action-hit-went-international.png?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            7 Best Spy x Family Manga Covers, Ranked
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Tatsuya Endo's Spy x Family has been a standout shonen success story ever since it made its debut on March 25, 2019. Over the past seven years, the manga's playful mix of found family tenderness, slapstick silliness, and espionage action have made th&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/the-rookie-north-nathan-fillion-production-milestone/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/the-rookie-north-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Nathan Fillion’s The Rookie Spinoff Officially Hits Major Filming Milestone Ahead Of January Release
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The star of The Rookie: North just shared a major production milestone ahead of the police procedural's January series premiere on ABC. The Rookie: North will be the third show in the franchise, which began in 2018 with Nathan Fillion playing rookie &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/apple-tv-mystery-shows-every-episode-masterpiece/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/07/severance-britt-lower.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            8 Apple TV Mystery Shows Where Every Episode Is a Masterpiece
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">There's a whole lot of mystery waiting to be uncovered on Apple TV. The award-winning streaming platform knows how to set the stage, placing mysteries in the unlikeliest situations while experimenting with the genre along the way.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-the-body-streaming-success-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/the-body-gabriela-windey-kristina-bogic.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'The Body' Becomes No. 1 New Series
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix’s ‘Euphoria’ Replacement Is Officially the Streamer’s No. 1 New Series</div>
+      
+      
+      <div class="summary">Buoyed by the same controversy that it briefly battled, Netflix's new teen horror series has emerged as a word-of-mouth hit. The show courted controversy with religious audiences, some of whom signed a petition demanding its cancellation.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/one-piece-strongest-devil-fruit-ranked/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/young-luffy-with-the-gum-gum-fruit-with-gear-five-luffy-and-imu-in-the-background.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            25 Strongest One Piece Devil Fruits, Ranked (So Far)
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Naruto has its chakra and jutsu, Hunter x Hunter has Nen, Bleach has Reiryoku, and One Piece has its devil fruits. A distinctive power system is the hallmark of a successful battle shonen franchise.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/neagley-best-2026-action-thriller-series-reacher/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/untitled-design-2026-11-25t214558-222.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Neagley Beats Reacher as 2026's Best Thriller Series on Prime Video
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Reacher's Prime Video Replacement Is 2026's Best Thriller Series</div>
+      
+      
+      <div class="summary">Reacher has held its place in the top spot as Prime Video's best action series since it first aired in 2022.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/superman-new-power-fire-sunlight/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2025/11/superman-and-super-family-fighting-the-lobo-race.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Superman Debuts Fiery New Power No Other Kryptonian Has
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Most superheroes use just one superpower to battle the forces of evil, and there are a decent number of them who are fortunate enough to have several powers. Then there are the powerful DC characters like Superman, who has one of the most stacked lin&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/clashing-through-the-snow-rings-of-power-success-prime-video-streaming/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/clashing-through-the-snow.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Prime Video's 'Clashing Through the Snow' Tops 'The Rings of Power' on Streaming Chart
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Lord of the Rings Loses Streaming Crown to Prime Video's New 107-Minute Christmas Movie</div>
+      
+      
+      <div class="summary">The Lord of the Rings: The Rings of Power has fallen from the top spot on the Prime Video streaming chart. The new Christmas movie Clashing Through the Snow has taken its place. The Lord of the Rings: The Rings of Power remains the No. 1 show on Prim&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/cbs-moves-cupertino-to-sunday-night-midseason-2027/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/09/a-close-up-of-luke-grimes-as-kayce-dutton-in-marshals.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            CBS Adds 100% RT-Rated 'Cupertino' to Sunday Lineup, Upgrades 'Tracker' and 'Marshals'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: CBS Is Giving Tracker & Marshals a 100% RT Upgrade in 2027</div>
+      
+      
+      <div class="summary">CBS is upgrading Marshals and Tracker, adding its freshman legal drama, Cupertino, to close out its Sunday night roster starting midseason in 2027.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-best-thriller-series-alias-grace-mystery-binge/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/alias-grace-netflix-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'Alias Grace' Is a 6-Episode Period Mystery You Can Binge in an Afternoon
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix's Haunting 6-Episode Period Mystery Is a Binge You Can Finish in an Afternoon</div>
+      
+      
+      <div class="summary">Over the last few years, dark crime thrillers, true crime documentaries, and harrowing "based on a true story" limited series have dominated Netflix's TV output. The streamer knows that a lot of subscribers have a type, and it has leaned heavily into&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/unwatchable-movies-cash-grabs/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/fantastic-four-2015.jpeg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Unwatchable Movies That Were Pure Cash Grabs
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Essentially, a cash-grab film is a movie made primarily—or even solely—to make a quick profit by riding on an existing brand or trend, rather than telling a high-quality story that feels creative or necessary in the slightest.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/netflix-yellowstone-replacement-heartland-streaming-success-november-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/09/heartland-netflix-6.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix's 'Heartland' Reaches 7 Million Views in First Week
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: ‘Tulsa King’ Star’s New ‘Yellowstone’ Replacement Officially Passes Major Milestone</div>
+      
+      
+      <div class="summary">Despite a relatively soft debut, Netflix's latest original film, a neo-Western mystery thriller, appears to have found its footing on the viewership charts.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/the-body-star-sara-boustany-netflix-return/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/the-body-emily-roman-sara-boustany-kristina-bogic.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Netflix Confirms Sara Boustany's Return in New Indie Drama 'Between Us and the River'
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Netflix Officially Confirms ‘The Body’ Star’s Return</div>
+      
+      
+      <div class="summary">Netflix has delivered yet another viral smash hit, and two weeks into its release, it remains the talk of town.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/batman-knightfall-part-1-streaming-release-date-hbo-max-december-2026/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/11/img_5483-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Batman: Knightfall Part I Sets HBO Max Release Date for December 7, 2026
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: New R-Rated Batman Movie Officially Sets HBO Max Release Ahead of Sequel</div>
+      
+      
+      <div class="summary">HBO Max is going all in on its end-of-the-year and New Year’s strategy. Firstly, the streaming platform has launched its Black Friday sale as of November 23 (it will last till November 30), with its Basic (with Ads) subscription available at 50% off &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/blade-runner-2099-season-2-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/tcdblru_zu006-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Blade Runner 2099 Season 2 - Renewal Status & Everything We Know
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning! This article contains SPOILERS for Blade Runner 2099.After a somewhat ambiguous ending, there's room for Blade Runner 2099 to continue, but there's no guarantee that it will get a second season yet. The ending of Blade Runner 2099 season 1 w&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/jason-momoa-protecting-jared-mpa-streak-ruben-fleischer/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/05/jason-momoa-posing-for-a-photo-on-the-see-season-3-red-carpet.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jason Momoa's Protecting Jared Gets PG-13, Extending Fleischer's 7-Year Streak
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Jason Momoa's New Netflix Action Movie Officially Breaks 7-Year Rating Streak</div>
+      
+      
+      <div class="summary">Jason Momoa has a new action movie lined up on Netflix, and its official rating continues a streak that’s lasted on for nearly a decade. 2026 has been a big year for Momoa, with the actor starring in four movies.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.bgr.com/2328843/samsung-galaxy-features-set-up-before-winter/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.bgr.com/img/gallery/5-samsung-galaxy-features-you-should-set-up-before-winter/l-intro-1795648072.jpg" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">BGR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            5 Samsung Galaxy Features You Should Set Up Before Winter
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">5 Samsung Galaxy Features You Should Set Up Before Winter Framesira/Shutterstock Winter is right around the corner.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.giantfreakinrobot.com/ent/super/justice-league-of-america-tv-pilot.html" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://www.giantfreakinrobot.com/wp-content/uploads/2023/11/jlamain.png" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Giant Freakin Robot</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            The 1997 'Justice League of America' TV Movie Is a Low-Budget Disaster
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: The Justice League Movie DC Never Wants You To See</div>
+      
+      
+      <div class="summary">By Douglas Helm | Published 40 seconds ago DC may want you to forget about Zack Snyder’s divisive 2017 live-action Justice League film, but the comic book giant really doesn’t want you to see the 1997 television film Justice League of America.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://movieweb.com/marvel-studios-addresses-ghost-rider-villain/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.moviewebimages.com/wordpress/wp-content/uploads/2026/07/ghost-rider-1.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Movieweb</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Kevin Feige Addresses Ghost Rider Casting Rumors for Ryan Gosling Film
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Marvel Studios Officially Addresses Major Villain Casting After 'Avengers: Doomsday'</div>
+      
+      
+      <div class="summary">Nicolas Cage presented audiences with the live-action version of the character Johnny Blaze, or more famously, Ghost Rider, in 2007.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/rings-of-power-sauron-surrender-season-4-setup-mckay-payne-explained/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/11/sauron-sitting-on-his-throne-in-rings-of-power-season-3.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            How Sauron’s Bold Rings Of Power Decision Sets Up Season 4 Explained By Creators
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Warning: There are spoilers ahead for The Lord of the Rings: The Rings of Power season 3, episode 8, "The Doom of Men."Sauron (Charlie Vickers) has a bold new plan heading into The Lord of the Rings: The Rings of Power season 4.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://screenrant.com/dungeon-crawler-carl-audiobooks-jeff-hays-least-favorite-character-voice/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.srcdn.com/wordpress/wp-content/uploads/2026/09/jeff-hays-dungeon-crawler-carl.jpg?w=1200&h=675&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">ScreenRant</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Jeff Hays’ Least Favorite Dungeon Crawler Carl Character Voice Isn’t Who You’d Expect
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">While Dungeon Crawler Carl fans wait for news on Book 9 and the TV adaptation, audiobook narrator Jeff Hays and series author Matt Dinniman have offered plenty of fun behind-the-scenes tidbits.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.polygon.com/ridley-scott-alien-leaving-netflix/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.polygonimages.com/wordpress/wp-content/uploads/chorus/uploads/chorus_asset/file/24421888/607392372.jpg?q=49&fit=crop&w=825&dpr=2" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Polygon</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Ridley Scott's 'Alien' Leaving Netflix on December 1
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: Ridley Scott’s Sci-Fi Thriller Masterpiece Is Officially Being Removed From Netflix</div>
+      
+      
+      <div class="summary">Ridley Scott is one of those staple filmmakers. The 88-year-old English director has made countless noteworthy films, TV shows, and commercials over the course of his prolific career, dabbling in so many genres that it’s difficult to narrow down the &hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hbo-harry-potter-series-fred-george-weasley-first-look/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/05/arabella-stanton-hermione-dominic-mclaughlin-harry-alastair-stout-ron-harry-potter-hbo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Fred and George Weasley Officially Arrive in New Look at HBO’s ‘Harry Potter’
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Wands at the ready. HBO's new Harry Potter adaptation is exactly one month away, with the first episode of Harry Potter and the Philosopher's Stone set to debut on December 25. Recently, a first full scene of the opening episode was released and caus&hellip;</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://collider.com/hbo-max-half-price-deal/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.colliderimages.com/wordpress/wp-content/uploads/2026/03/hbo-logo.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">Collider</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            HBO Max Officially Goes Half Price for a Full Year Ahead of ‘Harry Potter’
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">The Harry Potter series is all set to be released on December 25, 2026, on HBO and HBO Max. And now, roughly a month earlier, the streaming platform has decided to launch a massive discount. This will allow HBO to gain traction in three major ways.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/star-trek-ds9-in-the-pale-moonlight-changed-sci-fi-tv/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/andrew-robinson-as-garak-on-star-trek-deep-space-nine.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            28 Years Ago, Star Trek: Deep Space Nine's 'In the Pale Moonlight' Changed TV
+            <span class="clickbait-badge">REWRITTEN</span>
+          
+        </span>
+      </h2>
+      
+      <div class="original-title">Original: 28 Years Ago, Star Trek: Deep Space Nine's Boldest War Episode Changed TV Forever</div>
+      
+      
+      <div class="summary">Star Trek: Deep Space Nine's "In the Pale Moonlight" (Season 6, Episode 19) is one of those Star Trek episodes that leaves a lasting impression on both die-hard fans and casual viewers alike.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/best-james-bond-movies-letterboxd-ranked-list/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/james-bond-lights-his-cigarette-in-dr-no.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 26 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            10 Greatest James Bond Movies Ever, According to Letterboxd
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">James Bond is one of the most timeless franchises in cinematic history. It set the gold standard for action-packed spy films and has been an audience favorite since its first film arrived in 1962.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/kevin-feige-addresses-connor-storrie-ghost-rider-casting-rumor/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/03/ryan-gosling-project-hail-mary-paris-premiere.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            Kevin Feige Addresses "Not Very Creative" Casting Rumor for Ryan Gosling's Ghost Rider
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Back in October, rumors were swirling about Heated Rivalry star Connor Storrie reportedly being in talks to play an unnamed villain in the newest Ghost Rider movie. Now, it seems that those reports were in fact nothing but rumors.</div>
+      
+    </div>
+  </div>
+</a>
+
+<a href="https://www.cbr.com/doctor-who-billie-piper-explains-exit/" class="article-card">
+  <div class="card-inner">
+    
+    <div class="card-thumb">
+      <img src="https://static0.cbrimages.com/wordpress/wp-content/uploads/2026/11/david-tennant-as-the-doctor-and-billie-piper-as-rose-tyler-on-doctor-who.jpg?w=1600&h=900&fit=crop" alt="" loading="lazy">
+    </div>
+    
+    <div class="card-body">
+      <p class="meta">
+        <span class="site-tag">CBR</span>
+        
+        &middot; 25 Nov 2026
+        
+      </p>
+      <h2>
+        <span class="clickable-title">
+          
+            20 Years Later, Billie Piper Reveals the Real Reason She Walked Away From Doctor Who
+          
+        </span>
+      </h2>
+      
+      
+      <div class="summary">Doctor Who’s long run has included plenty of stars that have come and gone. One of them, Billie Piper, is finally opening up about what made her leave the British sci-fi fantasy series two decades after it happened.</div>
+      
+    </div>
+  </div>
+</a>
+
+</main>
+
+
+<div class="pagination">
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">&laquo; Newer</a>
+    
+  
+
+  
+    
+      <a href="https://clickbust.cybr.fi/">1</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/2.html">2</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/3.html">3</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/4.html">4</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/5.html">5</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/6.html">6</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/7.html">7</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/8.html">8</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/9.html">9</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/10.html">10</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/11.html">11</a>
+    
+  
+    
+      <span class="current">12</span>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/13.html">13</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/14.html">14</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/15.html">15</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/16.html">16</a>
+    
+  
+    
+      <a href="https://clickbust.cybr.fi/page/17.html">17</a>
+    
+  
+
+  
+    <a href="https://clickbust.cybr.fi/page/13.html">Older &raquo;</a>
+  
+</div>
+
+
+</div>
+
+<footer>
+  <p>Powered by <a href="https://github.com/paulkoan/clickbust">Clickbust</a> · All articles link to original sources</p>
+</footer>
+</body>
+</html>
